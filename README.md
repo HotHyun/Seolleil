@@ -25,15 +25,18 @@ pnpm build
 docker compose up -d --build
 ```
 
-Services:
+Services in Docker Compose:
 
-- App: `http://localhost:3000`
-- PgAdmin: `http://localhost:5050`
+- App container exposes port `3000`.
+- PgAdmin container exposes port `80`.
 - PostgreSQL: internal service `postgres:5432`
 
 The app container runs `pnpm db:deploy` before `pnpm start`.
 
-For Coolify, use this repository's `docker-compose.yml`. Set strong values for:
+For Coolify, use this repository's `docker-compose.yml`. Coolify should route to
+the exposed app port instead of binding host port `3000` directly.
+
+Set strong values for:
 
 ```txt
 POSTGRES_PASSWORD

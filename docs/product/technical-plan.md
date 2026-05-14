@@ -27,6 +27,7 @@ Coolify에서 Docker Compose 기반으로 앱과 PostgreSQL을 운영한다.
 운영 도메인:
 
 - `https://ski.hothyun.com`
+- PgAdmin: `https://ski-admin.hothyun.com`
 
 ## 기본 서비스 구성
 

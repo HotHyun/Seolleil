@@ -24,6 +24,10 @@
 
 Coolify에서 Docker Compose 기반으로 앱과 PostgreSQL을 운영한다.
 
+운영 도메인:
+
+- `https://ski.hothyun.com`
+
 ## 기본 서비스 구성
 
 ```txt
@@ -52,5 +56,4 @@ PgAdmin
 - PostgreSQL 백업 방식.
 - edit token/share token 길이와 만료 정책.
 - Docker Compose 서비스 구성.
-- 도메인, HTTPS, 리버스 프록시 운영 방식.
 - Umami와 앱 DB의 백업/복구 정책.

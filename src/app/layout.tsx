@@ -4,6 +4,7 @@ import { MountainSnow } from "lucide-react";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ski.hothyun.com"),
   title: "Korean Ski",
   description: "국내 스키장 추천과 스키 트립 준비 체크리스트"
 };
@@ -41,4 +42,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

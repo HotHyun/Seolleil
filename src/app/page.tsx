@@ -1,12 +1,15 @@
 import {
   ArrowRight,
   CheckCircle2,
+  ClipboardCheck,
   Circle,
   ExternalLink,
   MapPinned,
   ReceiptText,
   Route,
-  ShieldCheck
+  ShieldCheck,
+  Snowflake,
+  WalletCards
 } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { Button } from "@/components/ui/button";
@@ -59,6 +62,69 @@ export default function HomePage() {
         <Feature icon={<Route />} title="조건 기반 추천" description="출발지, 날짜, 예산, 우선순위를 반영해 운영 중인 스키장만 추천합니다." />
         <Feature icon={<ReceiptText />} title="가격 비교" description="리프트권, 렌탈, 교통비를 항목별로 나누고 선택 전에는 범위로 보여줍니다." />
         <Feature icon={<ShieldCheck />} title="공유 체크리스트" description="편집 링크와 읽기 전용 공유 링크를 분리해 동행자에게 상태만 공유합니다." />
+      </section>
+      <section className="border-y bg-zinc-950 text-white">
+        <div className="page-shell grid gap-8 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-center md:py-16">
+          <div>
+            <p className="text-sm font-semibold text-lime-300">왜 필요한가</p>
+            <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
+              스키장 찾는 시간보다, 준비 빠뜨릴까 걱정하는 시간이 더 깁니다.
+            </h2>
+          </div>
+          <div className="grid gap-3">
+            <ProblemRow label="정보" text="리프트권, 렌탈, 셔틀, 운영현황 링크가 스키장마다 흩어져 있습니다." />
+            <ProblemRow label="가격" text="날짜, 시간권, 렌탈샵에 따라 비용이 달라져 비교가 번거롭습니다." />
+            <ProblemRow label="준비" text="초보자는 장갑, 고글, 보호대, 운영 확인 같은 기본 준비도 놓치기 쉽습니다." />
+          </div>
+        </div>
+      </section>
+      <section className="page-shell py-12 md:py-16">
+        <div className="mb-8 max-w-2xl">
+          <p className="text-sm font-semibold text-lime-700">How it works</p>
+          <h2 className="mt-2 text-3xl font-black sm:text-4xl">세 번만 결정하면 트립이 만들어집니다.</h2>
+        </div>
+        <div className="grid gap-4 md:grid-cols-3">
+          <Step number="01" icon={<MapPinned />} title="조건 입력" text="방문 날짜, 출발지, 인원, 교통, 장비/의류 보유 여부를 입력합니다." />
+          <Step number="02" icon={<WalletCards />} title="추천 비교" text="스키장 3곳을 이동 시간, 예상 비용, 렌탈 후보와 함께 비교합니다." />
+          <Step number="03" icon={<ClipboardCheck />} title="준비 관리" text="트립 생성 후 예약/결제/준비 상태를 체크리스트로 업데이트합니다." />
+        </div>
+      </section>
+      <section className="bg-[#f4f6f0]">
+        <div className="page-shell grid gap-8 py-12 md:grid-cols-[1fr_1fr] md:items-center md:py-16">
+          <div className="space-y-4">
+            <p className="text-sm font-semibold text-lime-700">For beginners</p>
+            <h2 className="text-3xl font-black leading-tight sm:text-4xl">
+              처음 가는 사람에게 필요한 건, 멋진 설명보다 빠뜨리지 않는 순서입니다.
+            </h2>
+            <p className="leading-7 text-muted-foreground">
+              Korean Ski는 스키장 추천에서 끝나지 않고, 리프트권 확인부터 렌탈샵 선택,
+              운영현황 확인, 준비물까지 하나의 트립으로 묶어 관리합니다.
+            </p>
+          </div>
+          <div className="grid gap-3">
+            <ValueRow icon={<Snowflake />} title="초보 친화 추천" text="초보 점수, 접근성, 렌탈 편의성을 함께 반영합니다." />
+            <ValueRow icon={<ReceiptText />} title="날짜 기준 비용" text="방문 날짜와 시간권을 기준으로 예상 비용을 계산합니다." />
+            <ValueRow icon={<ShieldCheck />} title="읽기 전용 공유" text="동행자에게는 수정 권한 없이 일정과 준비 상태만 공유합니다." />
+          </div>
+        </div>
+      </section>
+      <section className="page-shell py-12 md:py-16">
+        <div className="rounded-xl border bg-zinc-950 p-6 text-white md:p-8">
+          <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="text-sm font-semibold text-lime-300">Ready</p>
+              <h2 className="mt-2 text-3xl font-black sm:text-4xl">이번 주말 스키 트립을 3분 안에 만들어보세요.</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-300">
+                로그인 없이 시작하고, 트립이 만들어지면 편집 링크와 읽기 전용 공유 링크로 관리합니다.
+              </p>
+            </div>
+            <AnalyticsLink href="/plan" eventName="home_bottom_cta_click">
+              <Button className="w-full bg-lime-300 text-zinc-950 hover:bg-lime-200 md:w-auto">
+                트립 만들기 <ArrowRight className="h-4 w-4" />
+              </Button>
+            </AnalyticsLink>
+          </div>
+        </div>
       </section>
     </main>
   );
@@ -175,6 +241,54 @@ function Feature({
       </div>
       <h2 className="font-black">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-muted-foreground">{description}</p>
+    </div>
+  );
+}
+
+function ProblemRow({ label, text }: { label: string; text: string }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-white/5 p-4">
+      <div className="text-sm font-black text-lime-300">{label}</div>
+      <p className="mt-1 text-sm leading-6 text-zinc-300">{text}</p>
+    </div>
+  );
+}
+
+function Step({
+  number,
+  icon,
+  title,
+  text
+}: {
+  number: string;
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="rounded-lg border bg-white p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-lime-100 text-lime-900 [&_svg]:h-5 [&_svg]:w-5">
+          {icon}
+        </div>
+        <div className="text-sm font-black text-zinc-300">{number}</div>
+      </div>
+      <h3 className="mt-5 text-xl font-black">{title}</h3>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">{text}</p>
+    </div>
+  );
+}
+
+function ValueRow({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+  return (
+    <div className="flex gap-4 rounded-lg border bg-white p-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-950 text-lime-300 [&_svg]:h-5 [&_svg]:w-5">
+        {icon}
+      </div>
+      <div>
+        <h3 className="font-black">{title}</h3>
+        <p className="mt-1 text-sm leading-6 text-muted-foreground">{text}</p>
+      </div>
     </div>
   );
 }

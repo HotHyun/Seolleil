@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Trip {
+  id                     String           @id @default(cuid())
+  editTokenHash          String           @unique
+  shareTokenHash         String           @unique
+  resortId               String
+  resortNameSnapshot     String
+  selectedRecommendation Json?
+  season                 String
+  visitDate              DateTime
+  departureLocation      String
+  peopleCount            Int
+  skillLevel             SkillLevel
+  rideType               RideType
+  transportType          TransportType
+  tripDuration           TripDuration
+  ownsEquipment          Boolean
+  ownsClothing           Boolean
+  needRental             Boolean
+  needClothing           Boolean
+  budgetMin              Int?
+  budgetMax              Int?
+  lodgingCostInput       Int?
+  liftTicketTimeSlot     String
+  selectedRentalShopId   String?
+  selectedRentalOptionId String?
+  status                 TripStatus       @default(planning)
+  archivedAt             DateTime?
+  expiresAt              DateTime?
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  tasks                  TripTask[]
+  events                 AnalyticsEvent[]
+
+  @@index([resortId])
+  @@index([visitDate])
+}
+
+model TripTask {
+  id          String         @id @default(cuid())
+  tripId      String
+  trip        Trip           @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  category    TaskCategory
+  isDefault   Boolean        @default(true)
+  title       String
+  status      TripTaskStatus @default(needs_check)
+  externalUrl String?
+  dueDate     DateTime?
+  memo        String?
+  sortOrder   Int
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([tripId, category, sortOrder])
+}
+
+model AnalyticsEvent {
+  id        String   @id @default(cuid())
+  tripId    String?
+  trip      Trip?    @relation(fields: [tripId], references: [id], onDelete: SetNull)
+  eventName String
+  properties Json?
+  createdAt DateTime @default(now())
+
+  @@index([eventName, createdAt])
+  @@index([tripId])
+}
+
+enum SkillLevel {
+  first_time
+  beginner
+  intermediate
+  advanced
+}
+
+enum RideType {
+  ski
+  snowboard
+}
+
+enum TransportType {
+  car
+  shuttle
+  bus
+}
+
+enum TripDuration {
+  same_day
+  overnight
+}
+
+enum TripStatus {
+  planning
+  ready
+  completed
+  archived
+  deleted
+}
+
+enum TaskCategory {
+  lift_ticket
+  equipment_rental
+  clothing_rental
+  transport
+  lodging
+  operation_status
+  gear
+  safety
+  custom
+}
+
+enum TripTaskStatus {
+  not_needed
+  needs_check
+  planned
+  reserved
+  paid
+  prepared
+}
+

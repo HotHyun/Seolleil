@@ -22,7 +22,7 @@ export function AuthNav({ session }: { session: Session | null }) {
   }
 
   const image = session.user.image;
-  const name = session.user.name ?? "내 프로필";
+  const name = session.user.name ?? "내 스키 트립";
   const email = session.user.email;
 
   return (
@@ -48,7 +48,7 @@ export function AuthNav({ session }: { session: Session | null }) {
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <a href="/my-trips">
-            <UserCircle className="h-4 w-4" /> 내 프로필
+            <UserCircle className="h-4 w-4" /> 내 스키 트립
           </a>
         </DropdownMenuItem>
         <ThemeMenuItem />

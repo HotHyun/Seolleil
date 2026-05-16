@@ -1,3 +1,5 @@
+import { rentalPriceRules } from "@/data/prices";
+import { getRentalShopsForResort, getResort } from "@/data/resorts";
 import type { TripInput } from "@/lib/types";
 
 export type DefaultTask = {
@@ -78,3 +80,30 @@ export function isTaskComplete(category: string, status: string) {
   return status === "prepared" || status === "paid";
 }
 
+export function externalUrlForTask({
+  resortId,
+  selectedRentalOptionId,
+  category,
+  title
+}: {
+  resortId: string;
+  selectedRentalOptionId?: string | null;
+  category: string;
+  title: string;
+}) {
+  const resort = getResort(resortId);
+  const selectedRental = selectedRentalOptionId
+    ? rentalPriceRules.find((rule) => rule.id === selectedRentalOptionId)
+    : undefined;
+  const selectedShop = selectedRental?.rentalShopId
+    ? getRentalShopsForResort(resortId).find((shop) => shop.id === selectedRental.rentalShopId)
+    : undefined;
+
+  if (category === "lift_ticket") return resort?.liftTicketUrl ?? resort?.officialUrl;
+  if (category === "equipment_rental" || category === "clothing_rental") {
+    return selectedRental?.bookingUrl ?? selectedShop?.url ?? resort?.rentalUrl ?? resort?.officialUrl;
+  }
+  if (category === "operation_status") return resort?.slopeStatusUrl ?? resort?.officialUrl;
+  if (category === "transport" && title.includes("경로")) return resort?.mapLinks.naver ?? resort?.mapLinks.kakao;
+  return undefined;
+}

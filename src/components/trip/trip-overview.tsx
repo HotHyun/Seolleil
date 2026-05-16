@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { rentalPriceRules } from "@/data/prices";
 import { getRentalShopsForResort, getResort } from "@/data/resorts";
-import type { CostEstimate, CostItem, PriceConfidence } from "@/lib/types";
+import { estimateTripCost } from "@/lib/pricing";
+import type { CostEstimate, CostItem, PriceConfidence, TimeSlot } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 
 type TripOverviewData = {
@@ -13,6 +14,19 @@ type TripOverviewData = {
   resortNameSnapshot: string;
   selectedRecommendation: unknown;
   selectedRentalOptionId: string | null;
+  visitDate: Date;
+  departureLocation: string;
+  peopleCount: number;
+  transportType: "car" | "shuttle" | "bus";
+  tripDuration: "same_day" | "overnight";
+  skillLevel: "first_time" | "beginner" | "intermediate" | "advanced";
+  rideType: "ski" | "snowboard";
+  ownsEquipment: boolean;
+  ownsClothing: boolean;
+  budgetMin: number | null;
+  budgetMax: number | null;
+  lodgingCostInput: number | null;
+  liftTicketTimeSlot: string;
 };
 
 const confidenceLabels: Record<PriceConfidence, string> = {
@@ -28,6 +42,30 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
   const rentalOption = trip.selectedRentalOptionId
     ? rentalPriceRules.find((rule) => rule.id === trip.selectedRentalOptionId)
     : undefined;
+  const currentCost = resort
+    ? estimateTripCost(
+        resort,
+        {
+          visitDate: trip.visitDate.toISOString().slice(0, 10),
+          departureLocation: trip.departureLocation,
+          peopleCount: trip.peopleCount,
+          tripDuration: trip.tripDuration,
+          skillLevel: trip.skillLevel,
+          rideType: trip.rideType,
+          ownsEquipment: trip.ownsEquipment,
+          ownsClothing: trip.ownsClothing,
+          transportType: trip.transportType,
+          budgetMin: trip.budgetMin ?? undefined,
+          budgetMax: trip.budgetMax ?? undefined,
+          priorities: ["beginner", "close", "rental"],
+          liftTicketTimeSlot: trip.liftTicketTimeSlot as TimeSlot,
+          lodgingCostInput: trip.lodgingCostInput ?? undefined
+        },
+        trip.selectedRentalOptionId ?? undefined
+      )
+    : null;
+  const priceChanged =
+    cost && currentCost && Math.abs(currentCost.representative - cost.representative) >= 1000;
   const rentalShop = rentalOption?.rentalShopId
     ? getRentalShopsForResort(trip.resortId).find((shop) => shop.id === rentalOption.rentalShopId)
     : undefined;
@@ -48,6 +86,11 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
               <div className="mt-1 text-xs font-semibold text-muted-foreground">
                 대표 {formatCurrency(cost.representative)} · {confidenceLabels[cost.confidence]}
               </div>
+              {priceChanged ? (
+                <div className="mt-2 rounded-md bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-200">
+                  현재 static 가격 기준 대표 총액은 {formatCurrency(currentCost.representative)}입니다. 생성 당시 가격과 다를 수 있습니다.
+                </div>
+              ) : null}
             </div>
             <div className="space-y-2">
               {cost.items.map((item) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, CalendarClock, Trash2 } from "lucide-react";
+import { AlertCircle, CalendarClock, ExternalLink, Trash2 } from "lucide-react";
 import {
   addTaskAction,
   deleteTaskAction,
@@ -19,6 +19,7 @@ type Task = {
   status: string;
   memo: string | null;
   dueDate: Date | null;
+  externalUrl: string | null;
   isDefault: boolean;
 };
 
@@ -68,7 +69,19 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
               <div key={task.id} className="flex items-start gap-2 rounded-md bg-muted px-3 py-2 text-sm">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <div>
-                  <div className="font-semibold">{task.title}</div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <div className="font-semibold">{task.title}</div>
+                    {task.externalUrl ? (
+                      <a
+                        href={task.externalUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary"
+                      >
+                        링크 <ExternalLink className="h-3 w-3" />
+                      </a>
+                    ) : null}
+                  </div>
                   {task.dueDate ? (
                     <div className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground">
                       <CalendarClock className="h-3 w-3" />

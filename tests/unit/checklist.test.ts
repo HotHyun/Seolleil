@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDefaultTasks, dueDateFromVisit, isTaskComplete } from "@/lib/checklist";
+import { buildDefaultTasks, dueDateFromVisit, externalUrlForTask, isTaskComplete } from "@/lib/checklist";
 import { tripInput } from "../fixtures/trip-input";
 
 describe("checklist", () => {
@@ -37,5 +37,22 @@ describe("checklist", () => {
     expect(isTaskComplete("gear", "prepared")).toBe(true);
     expect(isTaskComplete("gear", "not_needed")).toBe(false);
   });
-});
 
+  it("returns contextual external links for default task categories", () => {
+    expect(
+      externalUrlForTask({
+        resortId: "konjiam",
+        category: "lift_ticket",
+        title: "리프트권 확인"
+      })
+    ).toContain("konjiam");
+    expect(
+      externalUrlForTask({
+        resortId: "konjiam",
+        selectedRentalOptionId: "konjiam-goodgear-package",
+        category: "equipment_rental",
+        title: "장비 렌탈 예약"
+      })
+    ).toContain("gonjiam");
+  });
+});

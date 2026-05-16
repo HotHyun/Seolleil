@@ -3,12 +3,13 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { buildDefaultTasks, dueDateFromVisit } from "@/lib/checklist";
+import { buildDefaultTasks, dueDateFromVisit, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
 import { parseTripInput } from "@/lib/trip-input";
+import type { TripInput } from "@/lib/types";
 
 async function findEditableTrip(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
@@ -98,6 +99,12 @@ export async function createTripAction(formData: FormData) {
           status: task.status,
           isDefault: true,
           sortOrder: task.sortOrder,
+          externalUrl: externalUrlForTask({
+            resortId,
+            selectedRentalOptionId,
+            category: task.category,
+            title: task.title
+          }),
           dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
         }))
       },
@@ -115,6 +122,104 @@ export async function createTripAction(formData: FormData) {
   });
 
   redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}`);
+}
+
+export async function updateTripDetailsAction(formData: FormData) {
+  const accessTrip = await findEditableTrip(formData);
+  if (!accessTrip || accessTrip.status === "archived" || accessTrip.status === "deleted") {
+    throw new Error("수정할 수 없는 트립입니다.");
+  }
+
+  const current = await prisma.trip.findUnique({ where: { id: accessTrip.id } });
+  if (!current) throw new Error("트립을 찾을 수 없습니다.");
+
+  const input: TripInput = {
+    visitDate: String(formData.get("visitDate") ?? current.visitDate.toISOString().slice(0, 10)),
+    departureLocation: current.departureLocation,
+    peopleCount: Number(formData.get("peopleCount") ?? current.peopleCount),
+    tripDuration: current.tripDuration,
+    skillLevel: current.skillLevel,
+    rideType: current.rideType,
+    ownsEquipment: current.ownsEquipment,
+    ownsClothing: current.ownsClothing,
+    transportType: String(formData.get("transportType") ?? current.transportType) as TripInput["transportType"],
+    budgetMin: current.budgetMin ?? undefined,
+    budgetMax: current.budgetMax ?? undefined,
+    priorities: ["beginner", "close", "rental"],
+    liftTicketTimeSlot: String(formData.get("liftTicketTimeSlot") ?? current.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"],
+    lodgingCostInput: Number(formData.get("lodgingCostInput") ?? current.lodgingCostInput ?? 0) || undefined
+  };
+  const selectedRentalOptionValue = String(formData.get("selectedRentalOptionId") ?? "");
+  const selectedRentalOptionId =
+    selectedRentalOptionValue && selectedRentalOptionValue !== "skip"
+      ? selectedRentalOptionValue
+      : undefined;
+  const recommendation = getRecommendations(input).find((item) => item.resort.id === current.resortId);
+  if (!recommendation) throw new Error("선택한 스키장의 추천/가격을 다시 계산할 수 없습니다.");
+  const visitDate = new Date(`${input.visitDate}T00:00:00`);
+
+  await prisma.trip.update({
+    where: { id: current.id },
+    data: {
+      selectedRecommendation: {
+        score: recommendation.score,
+        reasons: recommendation.reasons,
+        travelMinutes: recommendation.travelMinutes,
+        travelKm: recommendation.travelKm,
+        cost: recommendation.cost
+      },
+      visitDate,
+      peopleCount: input.peopleCount,
+      transportType: input.transportType,
+      lodgingCostInput: input.lodgingCostInput,
+      liftTicketTimeSlot: input.liftTicketTimeSlot,
+      selectedRentalOptionId,
+      events: {
+        create: {
+          eventName: "trip_details_updated",
+          properties: {
+            peopleCount: input.peopleCount,
+            transportType: input.transportType,
+            liftTicketTimeSlot: input.liftTicketTimeSlot
+          }
+        }
+      }
+    }
+  });
+
+  const defaultTasks = buildDefaultTasks(input);
+  for (const task of defaultTasks) {
+    await prisma.tripTask.updateMany({
+      where: { tripId: current.id, category: task.category, title: task.title, isDefault: true },
+      data: {
+        externalUrl: externalUrlForTask({
+          resortId: current.resortId,
+          selectedRentalOptionId,
+          category: task.category,
+          title: task.title
+        }),
+        dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
+      }
+    });
+  }
+
+  revalidateTripAccess(formData);
+}
+
+export async function updateTripStatusAction(formData: FormData) {
+  const status = String(formData.get("status") ?? "");
+  const trip = await findEditableTrip(formData);
+  if (!trip || trip.status === "archived" || trip.status === "deleted") {
+    throw new Error("수정할 수 없는 트립입니다.");
+  }
+  await prisma.trip.update({
+    where: { id: trip.id },
+    data: {
+      status: status as never,
+      events: { create: { eventName: "trip_status_changed", properties: { status } } }
+    }
+  });
+  revalidateTripAccess(formData);
 }
 
 export async function attachTripToAccountAction(formData: FormData) {

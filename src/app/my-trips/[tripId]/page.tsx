@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { ShareLinkBox } from "@/components/share-link-box";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
+import { TripEditForm } from "@/components/trip/trip-edit-form";
 import { TripCostAndBooking } from "@/components/trip/trip-overview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -104,6 +105,14 @@ export default async function MyTripDetailPage({
 
         <aside className="space-y-5">
           <ProgressSummary tasks={trip.tasks} />
+          <Card>
+            <CardHeader>
+              <CardTitle>트립 수정</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TripEditForm trip={trip} />
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>공유</CardTitle>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Trash2 } from "lucide-react";
+import { AlertCircle, CalendarClock, Trash2 } from "lucide-react";
 import {
   addTaskAction,
   deleteTaskAction,
@@ -10,6 +10,7 @@ import {
 import { StatusSelect } from "@/components/trip/status-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
+import { isTaskComplete } from "@/lib/checklist";
 
 type Task = {
   id: string;
@@ -40,12 +41,57 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
     acc[label].push(task);
     return acc;
   }, {});
+  const activeTasks = tasks.filter((task) => task.status !== "not_needed");
+  const completedTasks = activeTasks.filter((task) => isTaskComplete(task.category, task.status));
+  const needsAttention = activeTasks
+    .filter((task) => !isTaskComplete(task.category, task.status))
+    .sort((a, b) => dueTime(a) - dueTime(b))
+    .slice(0, 3);
 
   return (
     <div className="space-y-5">
+      <section className="glass-panel rounded-xl p-4">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <div className="text-sm font-semibold text-muted-foreground">오늘 확인할 것</div>
+            <div className="mt-1 text-2xl font-black">
+              {completedTasks.length}/{activeTasks.length} 완료
+            </div>
+          </div>
+          <div className="rounded-full bg-primary/15 px-3 py-1 text-sm font-black text-primary">
+            {activeTasks.length ? Math.round((completedTasks.length / activeTasks.length) * 100) : 100}%
+          </div>
+        </div>
+        {needsAttention.length ? (
+          <div className="mt-4 grid gap-2">
+            {needsAttention.map((task) => (
+              <div key={task.id} className="flex items-start gap-2 rounded-md bg-muted px-3 py-2 text-sm">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <div>
+                  <div className="font-semibold">{task.title}</div>
+                  {task.dueDate ? (
+                    <div className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      <CalendarClock className="h-3 w-3" />
+                      {new Intl.DateTimeFormat("ko-KR").format(new Date(task.dueDate))}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="mt-3 text-sm text-muted-foreground">남은 필수 확인 항목이 없습니다.</p>
+        )}
+      </section>
       {Object.entries(groups).map(([label, group]) => (
         <section key={label} className="glass-panel rounded-xl">
-          <div className="border-b px-4 py-3 font-black">{label}</div>
+          <div className="flex items-center justify-between border-b px-4 py-3">
+            <div className="font-black">{label}</div>
+            <div className="text-xs font-semibold text-muted-foreground">
+              {group.filter((task) => task.status !== "not_needed" && isTaskComplete(task.category, task.status)).length}/
+              {group.filter((task) => task.status !== "not_needed").length}
+            </div>
+          </div>
           <div className="divide-y">
             {group.map((task) => (
               <div key={task.id} className="grid gap-3 p-4 md:grid-cols-[1fr_160px_1fr_auto] md:items-center">
@@ -93,6 +139,10 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
       </form>
     </div>
   );
+}
+
+function dueTime(task: Task) {
+  return task.dueDate ? new Date(task.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
 }
 
 function AccessFields({ editToken, tripId }: { editToken?: string; tripId?: string }) {

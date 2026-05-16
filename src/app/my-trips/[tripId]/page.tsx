@@ -8,6 +8,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { ShareLinkBox } from "@/components/share-link-box";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
+import { TripCostAndBooking } from "@/components/trip/trip-overview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
@@ -95,6 +96,8 @@ export default async function MyTripDetailPage({
               </div>
             </CardContent>
           </Card>
+
+          <TripCostAndBooking trip={trip} />
 
           <TaskList tasks={trip.tasks} tripId={trip.id} />
         </section>

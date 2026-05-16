@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { CalendarDays, MapPin, Users } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -30,19 +31,28 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
       <div className="mb-6">
         <StatusBadge tone="good">읽기 전용 공유</StatusBadge>
         <h1 className="mt-3 text-3xl font-black md:text-5xl">{trip.resortNameSnapshot} 트립</h1>
-        <p className="mt-2 text-muted-foreground">
-          {new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} · {trip.peopleCount}명
-        </p>
       </div>
       <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
-        <ProgressSummary tasks={trip.tasks} />
+        <aside className="space-y-5">
+          <Card>
+            <CardHeader>
+              <CardTitle>일정</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3 text-sm">
+              <ShareInfo icon={<CalendarDays />} label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
+              <ShareInfo icon={<Users />} label="인원" value={`${trip.peopleCount}명`} />
+              <ShareInfo icon={<MapPin />} label="교통" value={trip.transportType} />
+            </CardContent>
+          </Card>
+          <ProgressSummary tasks={trip.tasks} />
+        </aside>
         <Card>
           <CardHeader>
-            <CardTitle>체크리스트 상태</CardTitle>
+            <CardTitle>예약·준비 상태</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="divide-y">
-              {trip.tasks.map((task) => (
+              {trip.tasks.filter((task) => task.status !== "not_needed").map((task) => (
                 <div key={task.id} className="flex items-center justify-between gap-3 py-3">
                   <div>
                     <div className="font-semibold">{task.title}</div>
@@ -63,6 +73,18 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
   );
 }
 
+function ShareInfo({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-md bg-muted p-3">
+      <span className="[&_svg]:h-4 [&_svg]:w-4">{icon}</span>
+      <div>
+        <div className="text-xs font-semibold text-muted-foreground">{label}</div>
+        <div className="font-black">{value}</div>
+      </div>
+    </div>
+  );
+}
+
 function statusLabel(status: string) {
   return (
     {
@@ -75,4 +97,3 @@ function statusLabel(status: string) {
     }[status] ?? status
   );
 }
-

@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
@@ -48,15 +49,17 @@ export default function ResortsPage() {
                 <Score label="렌탈" value={resort.rentalConvenienceScore} />
               </div>
               <div className="mt-4 flex gap-2">
+                <Link href={`/resorts/${resort.id}`} className="flex-1">
+                  <Button className="w-full">상세</Button>
+                </Link>
                 <AnalyticsLink
                   href={resort.officialUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1"
                   eventName="external_link_click"
                   eventData={{ type: "official", resortId: resort.id }}
                 >
-                  <Button variant="secondary" className="w-full">
+                  <Button variant="secondary">
                     공식 <ExternalLink className="h-4 w-4" />
                   </Button>
                 </AnalyticsLink>

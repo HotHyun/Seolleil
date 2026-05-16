@@ -7,6 +7,7 @@
 ## 문서 목록
 
 - `mvp.md`: MVP 범위, 타깃 사용자, 핵심 플로우, 제외 범위.
+- `october-launch-roadmap.md`: 2026년 10월 런칭을 위한 월별 로드맵과 품질 기준.
 - `decisions.md`: 지금까지 확정된 제품/기술 의사결정.
 - `data-model.md`: 스키장, 트립, 가격, 공유 링크의 기획 단계 데이터 모델.
 - `pricing.md`: 시즌별 static 가격 데이터 운영 방식과 비용 계산 정책.

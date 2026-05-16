@@ -8,8 +8,9 @@ type LinkTarget = {
 };
 
 const timeoutMs = 8000;
+const fatalStatuses = new Set([404, 410]);
 
-function uniqLinks() {
+function collectLinks() {
   const links: LinkTarget[] = [];
   for (const resort of resorts) {
     links.push({ scope: "resort.official", id: resort.id, url: resort.officialUrl });
@@ -30,16 +31,20 @@ function uniqLinks() {
     if (rule.sourceUrl) links.push({ scope: "rental_price_rule", id: rule.id, url: rule.sourceUrl });
   }
 
-  const seen = new Set<string>();
-  return links.filter((link) => {
-    const key = `${link.scope}:${link.id}:${link.url}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  return links;
 }
 
-async function check(link: LinkTarget) {
+function uniqLinksByUrl() {
+  const grouped = new Map<string, { url: string; references: LinkTarget[] }>();
+  for (const link of collectLinks()) {
+    const current = grouped.get(link.url) ?? { url: link.url, references: [] };
+    current.references.push(link);
+    grouped.set(link.url, current);
+  }
+  return [...grouped.values()];
+}
+
+async function check(link: { url: string; references: LinkTarget[] }) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
@@ -47,16 +52,28 @@ async function check(link: LinkTarget) {
     if (response.status === 405 || response.status === 403) {
       response = await fetch(link.url, { method: "GET", redirect: "follow", signal: controller.signal });
     }
-    return { ...link, ok: response.status >= 200 && response.status < 400, status: response.status };
+    return {
+      ...link,
+      ok: response.status >= 200 && response.status < 400,
+      fatal: fatalStatuses.has(response.status),
+      status: response.status
+    };
   } catch (error) {
-    return { ...link, ok: false, status: "error", error: error instanceof Error ? error.message : String(error) };
+    return {
+      ...link,
+      ok: false,
+      fatal: false,
+      status: "error",
+      error: error instanceof Error ? error.message : String(error)
+    };
   } finally {
     clearTimeout(timer);
   }
 }
 
 async function main() {
-  const links = uniqLinks();
+  const rawLinks = collectLinks();
+  const links = uniqLinksByUrl();
   const results = [];
 
   for (const link of links) {
@@ -64,13 +81,34 @@ async function main() {
   }
 
   const failed = results.filter((result) => !result.ok);
-  console.log(`Checked ${results.length} links. Failed: ${failed.length}`);
+  const fatal = failed.filter((result) => result.fatal);
+  const warnings = failed.filter((result) => !result.fatal);
+  console.log(`Checked ${links.length} unique URLs from ${rawLinks.length} references.`);
+  console.log(`Failed unique URLs: ${failed.length} (${fatal.length} fatal, ${warnings.length} warning).`);
 
-  for (const result of failed) {
-    console.log(`- [${result.scope}] ${result.id}: ${result.status} ${result.url}`);
+  if (fatal.length > 0) {
+    console.log("");
+    console.log("Fatal broken links:");
+    for (const result of fatal) {
+      console.log(formatResult(result));
+    }
   }
 
-  if (failed.length > 0) process.exit(1);
+  if (warnings.length > 0) {
+    console.log("");
+    console.log("Warning links, often caused by bot blocking, timeout, or temporary server responses:");
+    for (const result of warnings) {
+      console.log(formatResult(result));
+    }
+  }
+
+  if (fatal.length > 0) process.exit(1);
+}
+
+function formatResult(result: Awaited<ReturnType<typeof check>>) {
+  const sample = result.references.slice(0, 4).map((ref) => `${ref.scope}:${ref.id}`).join(", ");
+  const suffix = result.references.length > 4 ? `, +${result.references.length - 4} more` : "";
+  return `- ${result.status} ${result.url} (${result.references.length} refs: ${sample}${suffix})`;
 }
 
 void main();

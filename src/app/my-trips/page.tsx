@@ -43,7 +43,7 @@ export default async function MyTripsPage() {
     <main className="page-shell py-8">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="mb-2 text-sm font-semibold text-orange-400">My Trips</p>
+          <p className="mb-2 text-sm font-semibold text-primary">My Trips</p>
           <h1 className="text-3xl font-black md:text-5xl">내 스키 트립</h1>
         </div>
         <a href="/plan">
@@ -62,7 +62,7 @@ export default async function MyTripsPage() {
               <a key={trip.id} href={`/my-trips/${trip.id}`} className="block">
                 <Card className="h-full transition hover:border-zinc-400 hover:shadow-sm">
                   <CardHeader>
-                    <div className="text-sm font-semibold text-orange-400">{trip.season}</div>
+                    <div className="text-sm font-semibold text-primary">{trip.season}</div>
                     <CardTitle>{trip.resortNameSnapshot} 트립</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -82,7 +82,7 @@ export default async function MyTripsPage() {
                         <span>{progress}%</span>
                       </div>
                       <div className="h-2 rounded-full bg-muted">
-                        <div className="h-2 rounded-full bg-orange-500" style={{ width: `${progress}%` }} />
+                        <div className="h-2 rounded-full bg-primary" style={{ width: `${progress}%` }} />
                       </div>
                     </div>
                   </CardContent>

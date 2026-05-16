@@ -44,7 +44,8 @@ export async function createTripAction(formData: FormData) {
   const session = await auth();
   const input = parseTripInput(formData);
   const resortId = String(formData.get("resortId") ?? "");
-  const selectedRentalOptionId = String(formData.get("selectedRentalOptionId") ?? "") || undefined;
+  const selectedRentalOptionValue = String(formData.get("selectedRentalOptionId") ?? "");
+  const selectedRentalOptionId = selectedRentalOptionValue && selectedRentalOptionValue !== "skip" ? selectedRentalOptionValue : undefined;
   const recommendation = getRecommendations(input).find((item) => item.resort.id === resortId);
 
   if (!recommendation) {

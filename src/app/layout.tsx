@@ -3,6 +3,7 @@ import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { auth } from "@/auth";
 import { AuthNav } from "@/components/auth/auth-nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -17,15 +18,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const session = await auth();
 
   return (
-    <html lang="ko">
+    <html lang="ko" suppressHydrationWarning>
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('korean-ski-theme');if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}"
+          }}
+        />
         {umamiId && umamiScript ? (
           <Script defer src={umamiScript} data-website-id={umamiId} strategy="afterInteractive" />
         ) : null}
-        <header className="sticky top-0 z-30 border-b border-white/10 bg-[#211f2e]/82 backdrop-blur-xl">
+        <header className="sticky top-0 z-30 border-b bg-card/85 backdrop-blur-xl">
           <div className="page-shell flex h-16 items-center justify-between">
-            <a href="/" className="flex items-center gap-2 font-black text-white">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-orange-400">
+            <a href="/" className="flex items-center gap-2 font-black text-foreground">
+              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
                 <MountainSnow className="h-5 w-5" />
               </span>
               Korean Ski
@@ -37,6 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <a href="/plan" className="hidden hover:text-foreground sm:inline">
                 트립 만들기
               </a>
+              <ThemeToggle />
               <AuthNav session={session} />
             </nav>
           </div>

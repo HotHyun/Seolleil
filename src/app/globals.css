@@ -3,6 +3,24 @@
 @tailwind utilities;
 
 :root {
+  --background: 0 0% 98%;
+  --foreground: 240 6% 10%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 6% 10%;
+  --muted: 210 12% 93%;
+  --muted-foreground: 240 4% 42%;
+  --accent: 83 86% 64%;
+  --accent-foreground: 240 6% 10%;
+  --primary: 83 86% 64%;
+  --primary-foreground: 240 6% 10%;
+  --destructive: 0 72% 50%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 220 10% 86%;
+  --input: 220 10% 82%;
+  --ring: 83 86% 64%;
+}
+
+.dark {
   --background: 246 17% 14%;
   --foreground: 0 0% 96%;
   --card: 247 16% 20%;
@@ -13,8 +31,6 @@
   --accent-foreground: 0 0% 100%;
   --primary: 22 95% 55%;
   --primary-foreground: 0 0% 100%;
-  --destructive: 0 72% 50%;
-  --destructive-foreground: 0 0% 100%;
   --border: 247 14% 30%;
   --input: 247 14% 34%;
   --ring: 22 95% 55%;
@@ -27,11 +43,18 @@
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at 20% 0%, hsl(252 18% 24% / 0.9), transparent 34rem),
-    radial-gradient(circle at 86% 12%, hsl(22 95% 45% / 0.12), transparent 28rem),
+    radial-gradient(circle at 20% 0%, hsl(83 86% 82% / 0.5), transparent 34rem),
+    radial-gradient(circle at 86% 12%, hsl(210 18% 88% / 0.75), transparent 28rem),
     hsl(var(--background));
   color: hsl(var(--foreground));
   font-feature-settings: "tnum";
+}
+
+.dark body {
+  background:
+    radial-gradient(circle at 20% 0%, hsl(252 18% 24% / 0.9), transparent 34rem),
+    radial-gradient(circle at 86% 12%, hsl(22 95% 45% / 0.12), transparent 28rem),
+    hsl(var(--background));
 }
 
 .page-shell {
@@ -41,7 +64,12 @@ body {
 
 .glass-panel {
   border: 1px solid hsl(var(--border));
+  background: hsl(var(--card) / 0.9);
+  box-shadow: 0 22px 70px hsl(240 20% 50% / 0.14);
+  backdrop-filter: blur(22px);
+}
+
+.dark .glass-panel {
   background: hsl(var(--card) / 0.78);
   box-shadow: 0 22px 70px hsl(240 20% 6% / 0.28);
-  backdrop-filter: blur(22px);
 }

@@ -46,7 +46,7 @@ export default async function MyTripDetailPage({
 
   return (
     <main className="page-shell py-8">
-      <div className="mb-5 rounded-lg border border-orange-500/30 bg-orange-500/10 p-4 text-orange-100">
+      <div className="mb-5 rounded-lg border border-primary/30 bg-primary/10 p-4 text-primary">
         <div className="font-black">내 트립에 저장되어 있습니다.</div>
         <p className="mt-1 text-sm">이 화면은 로그인한 본인만 수정할 수 있습니다. 공유할 때는 읽기 전용 공유 링크를 사용하세요.</p>
       </div>

@@ -2,14 +2,15 @@
 
 ## Direction
 
-Korean Ski uses a practical dark-mode trip planner interface.
+Korean Ski supports both light mode and dark mode.
 
-The product should feel like a modern travel planning tool, not a marketing landing page. The visual direction is inspired by dense ski-trip dashboards: dark surfaces, compact information cards, sharp contrast, and a warm action color.
+The product should feel like a modern travel planning tool, not a marketing landing page. Light mode keeps the original white/charcoal/lime direction. Dark mode uses dense ski-trip dashboard styling with dark surfaces, compact information cards, sharp contrast, and a warm action color.
 
 ## Core Principles
 
 - Use one top header. Do not use a persistent sidebar for the MVP.
-- Dark mode is the default visual mode.
+- Light mode and dark mode must both be supported.
+- Theme switching is controlled by the top-header toggle and persisted in `localStorage`.
 - Keep the original product flow: home, plan form, recommendations, trip detail, share page.
 - Prioritize dense but readable trip information.
 - Avoid decorative-only UI. Every visible block should help planning, comparing, booking, or checking status.
@@ -19,14 +20,13 @@ The product should feel like a modern travel planning tool, not a marketing land
 
 Use CSS variables from `src/app/globals.css`.
 
-- Background: deep charcoal violet.
-- Surface: translucent dark card.
-- Border: low-contrast violet gray.
-- Primary/action: orange.
-- Muted text: cool gray.
-- Success/progress should use the same orange family unless semantic green is truly needed.
+- Light background: near-white.
+- Light primary/action: lime.
+- Dark background: deep charcoal violet.
+- Dark primary/action: orange.
+- Surface, border, muted, primary, and ring colors must come from CSS variables in `globals.css`.
 
-Do not reintroduce the previous lime accent as the main product color.
+Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, `muted`, `card`, and `border` tokens so both themes work.
 
 ## Layout
 
@@ -54,7 +54,7 @@ Do not reintroduce the previous lime accent as the main product color.
 
 ### Buttons
 
-- Primary buttons use orange fill.
+- Primary buttons use `primary` fill.
 - Secondary buttons use translucent dark surface with border.
 - Ghost buttons should be reserved for low-emphasis actions.
 - Buttons use `rounded-lg`, bold text, and visible focus rings.
@@ -62,20 +62,19 @@ Do not reintroduce the previous lime accent as the main product color.
 ### Inputs
 
 - Use local shadcn-style primitives from `src/components/ui/field.tsx`.
-- Inputs and selects should have:
-  - dark surface
+- Inputs, selects, and date pickers should have:
+  - token-based surface
   - border
   - subtle shadow
   - `focus-visible:ring`
   - disabled state
-- Native `select` must use a custom chevron.
-- Native `date` inputs are acceptable for MVP but must use the same input class.
+- Select uses Radix/shadcn-style `Select`, including styled option content.
+- Date selection uses a shadcn-style popover date picker.
 
 ### Badges
 
 - Neutral badges use muted surfaces.
-- Positive/highlight badges use orange-tinted surfaces.
-- Avoid lime badges unless a future semantic state needs green specifically.
+- Positive/highlight badges use `primary`-tinted surfaces.
 
 ## Page Guidance
 
@@ -125,4 +124,3 @@ pnpm test
 ```
 
 Do not run `pnpm build` for routine UI checks unless the user explicitly asks for build/deploy verification.
-

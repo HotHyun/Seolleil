@@ -7,8 +7,9 @@ import {
   updateTaskMemoAction,
   updateTaskStatusAction
 } from "@/app/actions";
+import { StatusSelect } from "@/components/trip/status-select";
 import { Button } from "@/components/ui/button";
-import { Input, Select } from "@/components/ui/field";
+import { Input } from "@/components/ui/field";
 
 type Task = {
   id: string;
@@ -19,15 +20,6 @@ type Task = {
   dueDate: Date | null;
   isDefault: boolean;
 };
-
-const statusOptions = [
-  ["not_needed", "필요 없음"],
-  ["needs_check", "확인 필요"],
-  ["planned", "예정"],
-  ["reserved", "예약 완료"],
-  ["paid", "결제 완료"],
-  ["prepared", "준비 완료"]
-];
 
 const categoryLabels: Record<string, string> = {
   lift_ticket: "예약/구매",
@@ -68,13 +60,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
                 <form action={updateTaskStatusAction}>
                   <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
-                  <Select name="status" defaultValue={task.status} onChange={(event) => event.currentTarget.form?.requestSubmit()}>
-                    {statusOptions.map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </Select>
+                  <StatusSelect name="status" defaultValue={task.status} />
                 </form>
                 <form action={updateTaskMemoAction} className="flex gap-2">
                   <AccessFields editToken={editToken} tripId={tripId} />

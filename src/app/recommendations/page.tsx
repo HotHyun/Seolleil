@@ -5,7 +5,7 @@ import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select } from "@/components/ui/field";
+import { SelectField } from "@/components/ui/select-field";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getCategoryRecommendations, getRecommendations } from "@/lib/recommendation";
 import type { Priority, TimeSlot, TripDuration, TripInput } from "@/lib/types";
@@ -26,7 +26,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
       <AnalyticsTrack eventName="recommendation_view" eventData={{ count: recommendations.length }} />
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="mb-2 text-sm font-semibold text-orange-400">Recommendations</p>
+          <p className="mb-2 text-sm font-semibold text-primary">Recommendations</p>
           <h1 className="text-3xl font-black md:text-5xl">조건에 맞는 추천 3곳</h1>
         </div>
         <a href="/plan">
@@ -114,16 +114,19 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                     </div>
                   </div>
                   <label className="mb-2 block text-sm font-semibold">렌탈 옵션 선택</label>
-                  <Select name="selectedRentalOptionId" defaultValue="">
-                    <option value="">나중에 선택</option>
-                    {rentalOptions.flatMap(({ shop, options }) =>
-                      options.map((option) => (
-                        <option key={option.id} value={option.id}>
-                          {shop.name} - {option.label} ({formatCurrency(option.representativePrice)})
-                        </option>
-                      ))
-                    )}
-                  </Select>
+                  <SelectField
+                    name="selectedRentalOptionId"
+                    defaultValue="skip"
+                    options={[
+                      { value: "skip", label: "나중에 선택" },
+                      ...rentalOptions.flatMap(({ shop, options }) =>
+                        options.map((option) => ({
+                          value: option.id,
+                          label: `${shop.name} - ${option.label} (${formatCurrency(option.representativePrice)})`
+                        }))
+                      )
+                    ]}
+                  />
                   <Button type="submit" className="mt-4 w-full">
                     이 스키장으로 트립 만들기
                   </Button>

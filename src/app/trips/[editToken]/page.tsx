@@ -110,7 +110,7 @@ export default async function TripEditPage({
             </CardHeader>
             <CardContent className="space-y-3">
               {session?.user && trip.userId === session.user.id ? (
-                <div className="flex items-start gap-2 rounded-md bg-orange-500/10 p-3 text-sm text-orange-100">
+                <div className="flex items-start gap-2 rounded-md bg-primary/10 p-3 text-sm text-primary">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>이 트립은 내 트립 목록에 저장되어 있습니다.</span>
                 </div>

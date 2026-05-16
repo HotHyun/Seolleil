@@ -2,6 +2,14 @@
 
 배포 후 수동 점검용 체크리스트다.
 
+원격 자동 점검:
+
+```bash
+E2E_BASE_URL=https://ski.hothyun.com pnpm test:e2e:remote
+```
+
+이 명령은 배포된 앱을 대상으로 실행하며 로컬 `pnpm build`를 수행하지 않는다.
+
 ## 비로그인 플로우
 
 - 홈에서 `스키 트립 만들기` 진입.
@@ -11,6 +19,8 @@
 - 체크리스트 상태 변경 가능.
 - 읽기 전용 공유 링크 재발급 가능.
 
+자동화: `tests/e2e/landing.spec.ts`, `tests/e2e/recommendations.spec.ts`, `tests/e2e/core-flow.spec.ts`
+
 ## 로그인 플로우
 
 - Google 로그인 가능.
@@ -18,6 +28,8 @@
 - 로그인 상태에서 만든 트립이 내 목록에 표시.
 - 비로그인 트립에서 로그인 후 내 트립에 저장 가능.
 - 로그아웃 가능.
+
+자동화: `tests/e2e/landing.spec.ts`에서 로그인 진입점까지 확인한다. Google OAuth 실제 왕복은 배포 후 수동 점검한다.
 
 ## 트립 상세
 
@@ -34,12 +46,16 @@
 - `not_needed` 항목은 노출되지 않음.
 - edit link, 사용자 정보, 개인 메모, 삭제/재발급 버튼이 보이지 않음.
 
+자동화: `tests/e2e/core-flow.spec.ts`
+
 ## 스키장/추천
 
 - 스키장 디렉토리에서 상세 진입 가능.
 - 스키장 상세에서 공식 링크, 운영현황, 리프트권, 렌탈, 지도 링크 동작.
 - 추천 결과 없음 상태가 깨지지 않음.
 - 렌탈 옵션 없음 상태가 깨지지 않음.
+
+자동화: `tests/e2e/recommendations.spec.ts`, `tests/e2e/mobile-layout.spec.ts`, `tests/e2e/accessibility.spec.ts`
 
 ## 모바일
 
@@ -48,3 +64,5 @@
 - 트립 수정 폼이 1열로 표시.
 - 체크리스트 상태 변경과 메모 저장 버튼이 터치 가능.
 - 공유 페이지 카드가 화면 폭을 넘지 않음.
+
+자동화: `tests/e2e/mobile-layout.spec.ts`, `tests/e2e/accessibility.spec.ts`

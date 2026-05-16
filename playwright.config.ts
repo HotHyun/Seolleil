@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? "http://127.0.0.1:3211";
+const remoteBaseURL = process.env.E2E_BASE_URL ?? process.env.PLAYWRIGHT_BASE_URL;
+const baseURL = remoteBaseURL ?? "http://127.0.0.1:3211";
+const useRemoteTarget = Boolean(remoteBaseURL);
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -19,7 +21,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "retain-on-failure"
   },
-  webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER
+  webServer: useRemoteTarget || process.env.PLAYWRIGHT_SKIP_WEBSERVER
     ? undefined
     : {
         command:

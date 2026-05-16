@@ -35,14 +35,16 @@ export function Field({
   className
 }: {
   label: string;
-  children: React.ReactNode;
+  children: React.ReactElement<{ id?: string }>;
   className?: string;
 }) {
+  const generatedId = React.useId();
+  const childId = children.props.id ?? generatedId;
+
   return (
     <div className={cn("space-y-2", className)}>
-      <Label>{label}</Label>
-      {children}
+      <Label htmlFor={childId}>{label}</Label>
+      {React.cloneElement(children, { id: childId })}
     </div>
   );
 }
-

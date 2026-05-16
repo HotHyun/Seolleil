@@ -1,0 +1,29 @@
+import { describe, expect, it } from "vitest";
+import { getCategoryRecommendations, getRecommendations } from "@/lib/recommendation";
+import { tripInput } from "../fixtures/trip-input";
+
+describe("recommendation", () => {
+  it("returns operating resorts with explanations and cost", () => {
+    const recommendations = getRecommendations(tripInput());
+
+    expect(recommendations.length).toBeGreaterThan(3);
+    expect(recommendations.every((item) => item.resort.operationStatus === "operating")).toBe(true);
+    expect(recommendations[0].reasons.length).toBeGreaterThanOrEqual(2);
+    expect(recommendations[0].cost.representative).toBeGreaterThan(0);
+  });
+
+  it("filters out resorts without night ski when night is a priority", () => {
+    const recommendations = getRecommendations(tripInput({ priorities: ["night", "close", "cheap"] }));
+
+    expect(recommendations.every((item) => item.resort.nightSkiAvailable)).toBe(true);
+  });
+
+  it("produces category recommendations", () => {
+    const categories = getCategoryRecommendations(tripInput());
+
+    expect(categories.map((category) => category.label)).toEqual(
+      expect.arrayContaining(["가장 가까움", "가장 저렴함", "초보자 추천", "렌탈 편함"])
+    );
+  });
+});
+

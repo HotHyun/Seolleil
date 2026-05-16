@@ -360,6 +360,142 @@ export const resorts: SkiResort[] = [
 
 export const rentalShops: RentalShop[] = [
   {
+    id: "jisan-boong",
+    resortId: "jisan",
+    name: "붕어빵 렌탈샵",
+    url: "https://jisanboong.com/price",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%A7%80%EC%82%B0%20%EB%B6%95%EC%96%B4%EB%B9%B5%20%EB%A0%8C%ED%83%88%EC%83%B5"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 5,
+    recommendationTags: ["외부샵", "가격표확인", "픽업"],
+    sourceUrl: "https://jisanboong.com/price",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "vivaldi-thedream",
+    resortId: "vivaldi",
+    name: "더드림 렌탈 패키지",
+    url: "https://www.waug.com/ko/themes/506/",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EB%8D%94%EB%93%9C%EB%A6%BC%20%EB%A0%8C%ED%83%88"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 10,
+    recommendationTags: ["외부샵", "패키지", "예약처"],
+    sourceUrl: "https://www.waug.com/ko/themes/506/",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "phoenix-snowlab",
+    resortId: "phoenix",
+    name: "스노우랩 휘닉스파크점",
+    url: "https://www.millim.in/goods/view/SNOWL-0001",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%8A%A4%EB%85%B8%EC%9A%B0%EB%9E%A9%20%ED%9C%98%EB%8B%89%EC%8A%A4%ED%8C%8C%ED%81%AC"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 6,
+    recommendationTags: ["외부샵", "예약처", "리조트인근"],
+    sourceUrl: "https://www.millim.in/goods/view/SNOWL-0001",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-drsnow",
+    resortId: "yongpyong",
+    name: "닥터스노우",
+    url: "https://drsnow.kr/theme/IDEN_TN1/mobile/s02_01.php",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%9A%A9%ED%8F%89%20%EB%8B%A5%ED%84%B0%EC%8A%A4%EB%85%B8%EC%9A%B0"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 7,
+    recommendationTags: ["외부샵", "가격표확인", "픽업"],
+    sourceUrl: "https://drsnow.kr/theme/IDEN_TN1/mobile/s02_01.php",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "high1-ski-no1",
+    resortId: "high1",
+    name: "하이원스키샵1호점",
+    url: "https://www.hi-one.kr/sub/sub04_03.php",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%ED%95%98%EC%9D%B4%EC%9B%90%EC%8A%A4%ED%82%A4%EC%83%B51%ED%98%B8%EC%A0%90"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 10,
+    recommendationTags: ["외부샵", "가격표확인", "픽업"],
+    sourceUrl: "https://www.hi-one.kr/sub/sub04_03.php",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "alpensia-waug-rental",
+    resortId: "alpensia",
+    name: "알펜시아 예약처 렌탈 패키지",
+    url: "https://www.waug.com/ko/themes/506/",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%95%8C%ED%8E%9C%EC%8B%9C%EC%95%84%20%EB%A0%8C%ED%83%88%EC%83%B5"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: false,
+    pickupAvailable: false,
+    deliveryAvailable: false,
+    distanceMinutes: 0,
+    recommendationTags: ["예약처", "장비렌탈", "리조트"],
+    sourceUrl: "https://www.waug.com/ko/themes/506/",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "o2-resort-package",
+    resortId: "o2",
+    name: "오투리조트 리프트·렌탈 패키지",
+    url: "https://www.youthdaily.co.kr/mobile/article.html?no=204986",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%98%A4%ED%88%AC%EB%A6%AC%EC%A1%B0%ED%8A%B8%20%EB%A0%8C%ED%83%88"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: false,
+    deliveryAvailable: false,
+    distanceMinutes: 0,
+    recommendationTags: ["리조트", "패키지", "보도자료"],
+    sourceUrl: "https://www.youthdaily.co.kr/mobile/article.html?no=204986",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-baegam",
+    resortId: "muju",
+    name: "백암스키샵",
+    url: "https://www.100am.co.kr/",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EB%AC%B4%EC%A3%BC%20%EB%B0%B1%EC%95%94%EC%8A%A4%ED%82%A4%EC%83%B5"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 8,
+    recommendationTags: ["외부샵", "가격표확인", "픽업"],
+    sourceUrl: "https://www.100am.co.kr/",
+    lastCheckedAt: checkedAt
+  },
+  {
     id: "konjiam-official-rental",
     resortId: "konjiam",
     name: "곤지암리조트 공식 렌탈",

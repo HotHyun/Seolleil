@@ -3,6 +3,7 @@ import { priceRules, rentalPriceRules } from "@/data/prices";
 import type {
   CostEstimate,
   CostItem,
+  DayType,
   PriceConfidence,
   RentalPriceRule,
   SkiResort,
@@ -17,13 +18,36 @@ function combineConfidence(items: CostItem[]): PriceConfidence {
   return "confirmed";
 }
 
-function resolveLiftPrice(resortId: string, timeSlot: TimeSlot) {
-  return priceRules.find(
-    (rule) =>
-      rule.resortId === resortId &&
-      rule.itemType === "lift_ticket" &&
-      (rule.timeSlot === timeSlot || rule.timeSlot === "all")
-  );
+function getVisitDayType(visitDate: string): DayType {
+  const date = new Date(`${visitDate}T00:00:00`);
+  if (Number.isNaN(date.getTime())) return "all";
+  const day = date.getDay();
+  if (day === 5) return "friday";
+  if (day === 0 || day === 6) return "weekend";
+  return "weekday";
+}
+
+function dayTypeScore(ruleDayType: DayType, visitDayType: DayType) {
+  if (ruleDayType === visitDayType) return 4;
+  if (visitDayType === "friday" && ruleDayType === "weekday") return 3;
+  if (ruleDayType === "all") return 1;
+  return 0;
+}
+
+function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate: string) {
+  const visitDayType = getVisitDayType(visitDate);
+  return priceRules
+    .filter(
+      (rule) =>
+        rule.resortId === resortId &&
+        rule.itemType === "lift_ticket" &&
+        (rule.timeSlot === timeSlot || rule.timeSlot === "all") &&
+        dayTypeScore(rule.dayType, visitDayType) > 0
+    )
+    .sort(
+      (a, b) =>
+        dayTypeScore(b.dayType, visitDayType) - dayTypeScore(a.dayType, visitDayType)
+    )[0];
 }
 
 function resolveRentalPrice(
@@ -108,7 +132,7 @@ export function estimateTripCost(
 ): CostEstimate {
   const people = Math.max(1, input.peopleCount);
   const items: CostItem[] = [];
-  const lift = resolveLiftPrice(resort.id, input.liftTicketTimeSlot);
+  const lift = resolveLiftPrice(resort.id, input.liftTicketTimeSlot, input.visitDate);
 
   if (lift) {
     const adult = lift.adultPrice ?? lift.priceMin;

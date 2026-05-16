@@ -40,5 +40,12 @@ describe("pricing", () => {
     expect(options.length).toBeGreaterThanOrEqual(2);
     expect(options[0].options.length).toBeGreaterThan(0);
   });
-});
 
+  it("uses date-specific lift rules before all-day fallback rules", () => {
+    const weekday = estimateTripCost(konjiam, tripInput({ visitDate: "2026-01-14", liftTicketTimeSlot: "4h" }));
+    const weekend = estimateTripCost(konjiam, tripInput({ visitDate: "2026-01-17", liftTicketTimeSlot: "4h" }));
+
+    expect(weekday.items.find((item) => item.key === "lift_ticket")?.representative).toBe(162000);
+    expect(weekend.items.find((item) => item.key === "lift_ticket")?.representative).toBe(192000);
+  });
+});

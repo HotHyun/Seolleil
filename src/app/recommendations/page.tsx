@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SelectField } from "@/components/ui/select-field";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getCategoryRecommendations, getRecommendations } from "@/lib/recommendation";
-import type { Priority, TimeSlot, TripDuration, TripInput } from "@/lib/types";
+import type { CostItem, PriceConfidence, Priority, RentalPriceRule, TimeSlot, TripDuration, TripInput } from "@/lib/types";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
 
 type PageProps = {
@@ -122,10 +122,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                     <h3 className="font-black">비용 요약</h3>
                     <div className="mt-3 space-y-2">
                       {recommendation.cost.items.map((item) => (
-                        <div key={item.key} className="flex justify-between gap-3 text-sm">
-                          <span className="text-muted-foreground">{item.label}</span>
-                          <span className="font-semibold">{formatCurrency(item.representative ?? item.min)}</span>
-                        </div>
+                        <CostLine key={item.key} item={item} />
                       ))}
                     </div>
                   </div>
@@ -138,11 +135,22 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                       ...rentalOptions.flatMap(({ shop, options }) =>
                         options.map((option) => ({
                           value: option.id,
-                          label: `${shop.name} - ${option.label} (${formatCurrency(option.representativePrice)})`
+                          label: `${shop.id.endsWith("official-rental") ? "공식" : "외부"} · ${shop.name} · ${option.label} (${formatCurrency(option.representativePrice)})`
                         }))
                       )
                     ]}
                   />
+                  <div className="mt-4 space-y-2">
+                    <div className="text-xs font-semibold text-muted-foreground">렌탈 후보 비교</div>
+                    {rentalOptions.flatMap(({ shop, options }) =>
+                      options
+                        .filter((option) => option.itemType === "equipment_clothing_package" || option.itemType === "equipment")
+                        .slice(0, 2)
+                        .map((option) => (
+                          <RentalOptionLine key={option.id} option={option} shopName={shop.name} official={shop.id.endsWith("official-rental")} />
+                        ))
+                    )}
+                  </div>
                   <Button type="submit" className="mt-4 w-full">
                     이 스키장으로 트립 만들기
                   </Button>
@@ -153,6 +161,80 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
         })}
       </section>
     </main>
+  );
+}
+
+const confidenceLabels: Record<PriceConfidence, string> = {
+  confirmed: "확인됨",
+  estimated: "추정",
+  phone_confirmed: "전화확인",
+  unavailable: "확인필요"
+};
+
+function CostLine({ item }: { item: CostItem }) {
+  const price = formatCurrency(item.representative ?? item.min);
+  return (
+    <div className="rounded-md border bg-white/7 px-3 py-2 text-sm">
+      <div className="flex justify-between gap-3">
+        <span className="text-muted-foreground">{item.label}</span>
+        <span className="font-semibold">{price}</span>
+      </div>
+      {item.sourceName || item.lastCheckedAt ? (
+        <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-muted-foreground">
+          <span>{confidenceLabels[item.confidence]}</span>
+          {item.sourceName ? <span>{item.sourceName}</span> : null}
+          {item.lastCheckedAt ? <span>{item.lastCheckedAt} 확인</span> : null}
+          {item.sourceUrl ? (
+            <AnalyticsLink
+              href={item.sourceUrl}
+              target="_blank"
+              rel="noreferrer"
+              eventName="external_link_click"
+              eventData={{ type: "price_source", sourceName: item.sourceName ?? item.key }}
+              className="inline-flex items-center gap-1 text-primary"
+            >
+              출처 <ExternalLink className="h-3 w-3" />
+            </AnalyticsLink>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function RentalOptionLine({
+  option,
+  shopName,
+  official
+}: {
+  option: RentalPriceRule;
+  shopName: string;
+  official: boolean;
+}) {
+  return (
+    <div className="rounded-md border bg-white/7 px-3 py-2 text-xs">
+      <div className="flex items-center justify-between gap-2">
+        <span className="font-bold">{shopName}</span>
+        <span className="font-semibold text-primary">{formatCurrency(option.representativePrice)}</span>
+      </div>
+      <div className="mt-1 flex flex-wrap gap-2 text-muted-foreground">
+        <span>{official ? "공식 렌탈" : "외부 렌탈샵"}</span>
+        <span>{option.label}</span>
+        <span>{confidenceLabels[option.confidence]}</span>
+        {option.sourceUrl ? (
+          <AnalyticsLink
+            href={option.sourceUrl}
+            target="_blank"
+            rel="noreferrer"
+            eventName="external_link_click"
+            eventData={{ type: "rental_source", sourceName: shopName }}
+            className="text-primary"
+          >
+            출처
+          </AnalyticsLink>
+        ) : null}
+      </div>
+    </div>
   );
 }
 

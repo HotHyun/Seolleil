@@ -282,6 +282,107 @@ export const priceRules: PriceRule[] = liftSeeds.flatMap((seed) =>
   }))
 );
 
+const daySpecificPriceRules: PriceRule[] = [
+  {
+    id: "konjiam-lift-4h-weekday",
+    resortId: "konjiam",
+    season: CURRENT_SEASON,
+    itemType: "lift_ticket",
+    label: "곤지암리조트 4h 리프트권 주중",
+    validFrom: seasonStart,
+    validTo: seasonEnd,
+    dayType: "weekday",
+    timeSlot: "4h",
+    adultPrice: 81000,
+    childPrice: 63000,
+    priceMin: 81000,
+    priceMax: 81000,
+    sourceType: "official_site",
+    sourceName: "곤지암리조트 25/26 얼리버드 리프트권 공지",
+    sourceUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    bookingUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    confidence: "confirmed",
+    lastCheckedAt: checkedAt,
+    verifiedByHuman: true,
+    verificationNote: "공식 공지의 주중 4시간 정상가 기준.",
+    memo: "날짜가 주중이면 all 규칙보다 우선 적용한다."
+  },
+  {
+    id: "konjiam-lift-4h-weekend",
+    resortId: "konjiam",
+    season: CURRENT_SEASON,
+    itemType: "lift_ticket",
+    label: "곤지암리조트 4h 리프트권 주말",
+    validFrom: seasonStart,
+    validTo: seasonEnd,
+    dayType: "weekend",
+    timeSlot: "4h",
+    adultPrice: 96000,
+    childPrice: 75000,
+    priceMin: 96000,
+    priceMax: 96000,
+    sourceType: "official_site",
+    sourceName: "곤지암리조트 25/26 얼리버드 리프트권 공지",
+    sourceUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    bookingUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    confidence: "confirmed",
+    lastCheckedAt: checkedAt,
+    verifiedByHuman: true,
+    verificationNote: "공식 공지의 주말 4시간 정상가 기준.",
+    memo: "날짜가 주말이면 all 규칙보다 우선 적용한다."
+  },
+  {
+    id: "konjiam-lift-6h-weekday",
+    resortId: "konjiam",
+    season: CURRENT_SEASON,
+    itemType: "lift_ticket",
+    label: "곤지암리조트 6h 리프트권 주중",
+    validFrom: seasonStart,
+    validTo: seasonEnd,
+    dayType: "weekday",
+    timeSlot: "6h",
+    adultPrice: 87000,
+    childPrice: 68000,
+    priceMin: 87000,
+    priceMax: 87000,
+    sourceType: "official_site",
+    sourceName: "곤지암리조트 25/26 얼리버드 리프트권 공지",
+    sourceUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    bookingUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    confidence: "confirmed",
+    lastCheckedAt: checkedAt,
+    verifiedByHuman: true,
+    verificationNote: "공식 공지의 주중 6시간 정상가 기준.",
+    memo: "날짜가 주중이면 all 규칙보다 우선 적용한다."
+  },
+  {
+    id: "konjiam-lift-6h-weekend",
+    resortId: "konjiam",
+    season: CURRENT_SEASON,
+    itemType: "lift_ticket",
+    label: "곤지암리조트 6h 리프트권 주말",
+    validFrom: seasonStart,
+    validTo: seasonEnd,
+    dayType: "weekend",
+    timeSlot: "6h",
+    adultPrice: 105000,
+    childPrice: 82000,
+    priceMin: 105000,
+    priceMax: 105000,
+    sourceType: "official_site",
+    sourceName: "곤지암리조트 25/26 얼리버드 리프트권 공지",
+    sourceUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    bookingUrl: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603",
+    confidence: "confirmed",
+    lastCheckedAt: checkedAt,
+    verifiedByHuman: true,
+    verificationNote: "공식 공지의 주말 6시간 정상가 기준.",
+    memo: "날짜가 주말이면 all 규칙보다 우선 적용한다."
+  }
+];
+
+priceRules.push(...daySpecificPriceRules);
+
 type RentalSeed = {
   shopId: string;
   sourceType: PriceSourceType;
@@ -295,6 +396,94 @@ type RentalSeed = {
 };
 
 const rentalSeedOverrides: Record<string, RentalSeed> = {
+  "jisan-boong": {
+    shopId: "jisan-boong",
+    sourceType: "official_site",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "25/26 가격표 페이지 확보. 시간권/주중/주말 세부 옵션은 방문 전 재확인 필요.",
+    equipment: 15000,
+    clothing: 20000,
+    packagePrice: 35000,
+    maxExtra: 10000
+  },
+  "vivaldi-thedream": {
+    shopId: "vivaldi-thedream",
+    sourceType: "travel_agency",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "WAUG 더드림 패키지 노출가 기반. 옵션별 실제 결제금액 재확인 필요.",
+    equipment: 14000,
+    clothing: 20000,
+    packagePrice: 34000,
+    maxExtra: 15000
+  },
+  "phoenix-snowlab": {
+    shopId: "phoenix-snowlab",
+    sourceType: "official_booking",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "밀림 예약 상품 페이지 기반. 옵션별 가격은 예약 화면에서 재확인 필요.",
+    equipment: 30000,
+    clothing: 25000,
+    packagePrice: 55000,
+    maxExtra: 15000
+  },
+  "yongpyong-drsnow": {
+    shopId: "yongpyong-drsnow",
+    sourceType: "official_site",
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "닥터스노우 장비대여 페이지의 주간권 가격 텍스트 기준.",
+    equipment: 35000,
+    clothing: 25000,
+    packagePrice: 60000,
+    maxExtra: 10000
+  },
+  "high1-ski-no1": {
+    shopId: "high1-ski-no1",
+    sourceType: "official_site",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "하이원스키샵1호점 의류/장비 이용가격 페이지 기반. 이미지 가격표 재확인 필요.",
+    equipment: 18000,
+    clothing: 20000,
+    packagePrice: 38000,
+    maxExtra: 12000
+  },
+  "alpensia-waug-rental": {
+    shopId: "alpensia-waug-rental",
+    sourceType: "travel_agency",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "WAUG 알펜시아 리프트/장비 렌탈권 노출가 기반. 의류는 제공 여부 불확실.",
+    equipment: 35000,
+    clothing: 0,
+    packagePrice: 35000,
+    maxExtra: 10000
+  },
+  "o2-resort-package": {
+    shopId: "o2-resort-package",
+    sourceType: "travel_agency",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "오투리조트 리프트·렌탈 패키지 보도자료 기반. 세부 가격은 공식 예약 오픈 시 재확인 필요.",
+    equipment: 25000,
+    clothing: 20000,
+    packagePrice: 45000,
+    maxExtra: 12000
+  },
+  "muju-baegam": {
+    shopId: "muju-baegam",
+    sourceType: "official_site",
+    confidence: "estimated",
+    verifiedByHuman: false,
+    verificationNote: "백암스키샵 가격표/견적 페이지 기반. 시간권별 실제 가격 재확인 필요.",
+    equipment: 20000,
+    clothing: 20000,
+    packagePrice: 40000,
+    maxExtra: 10000
+  },
   "konjiam-goodgear": {
     shopId: "konjiam-goodgear",
     sourceType: "official_site",
@@ -391,7 +580,7 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
   };
   const maxExtra = seed.maxExtra ?? 8000;
 
-  return [
+  const rules: RentalPriceRule[] = [
     {
       ...common,
       id: `${shop.id}-equipment-ski`,
@@ -415,8 +604,11 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: seed.equipment,
       priceMax: seed.equipment + maxExtra,
       memo: "25/26 시즌 출처 기반 장비 렌탈 가격."
-    },
-    {
+    }
+  ];
+
+  if (shop.clothingRentalAvailable) {
+    rules.push({
       ...common,
       id: `${shop.id}-clothing`,
       itemType: "clothing",
@@ -427,8 +619,8 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: seed.clothing,
       priceMax: seed.clothing + maxExtra,
       memo: "25/26 시즌 출처 기반 의류 렌탈 가격."
-    },
-    {
+    });
+    rules.push({
       ...common,
       id: `${shop.id}-package`,
       itemType: "equipment_clothing_package",
@@ -439,6 +631,8 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: seed.packagePrice,
       priceMax: seed.packagePrice + maxExtra,
       memo: "25/26 시즌 출처 기반 장비+의류 패키지 가격."
-    }
-  ];
+    });
+  }
+
+  return rules;
 });

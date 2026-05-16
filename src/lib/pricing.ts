@@ -119,6 +119,12 @@ export function estimateTripCost(
       min: lift.priceMin ? lift.priceMin * people : undefined,
       max: lift.priceMax ? lift.priceMax * people : undefined,
       confidence: lift.confidence,
+      sourceType: lift.sourceType,
+      sourceName: lift.sourceName,
+      sourceUrl: lift.sourceUrl,
+      bookingUrl: lift.bookingUrl,
+      lastCheckedAt: lift.lastCheckedAt,
+      verifiedByHuman: lift.verifiedByHuman,
       note: lift.memo
     });
   } else {
@@ -136,6 +142,12 @@ export function estimateTripCost(
       min: rental.priceMin ? rental.priceMin * people : undefined,
       max: rental.priceMax ? rental.priceMax * people : undefined,
       confidence: rental.confidence,
+      sourceType: rental.sourceType,
+      sourceName: rental.sourceName,
+      sourceUrl: rental.sourceUrl,
+      bookingUrl: rental.bookingUrl,
+      lastCheckedAt: rental.lastCheckedAt,
+      verifiedByHuman: rental.verifiedByHuman,
       note: rental.memo
     });
   }
@@ -173,4 +185,3 @@ export function getRentalOptionsForResort(resortId: string) {
     options: rentalPriceRules.filter((rule) => rule.rentalShopId === shop.id)
   }));
 }
-

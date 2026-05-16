@@ -51,15 +51,21 @@ export const priceRules: PriceRule[] = resorts.flatMap((resort) => {
     priceMin: Math.round((base * multiplier * 0.85) / 1000) * 1000,
     priceMax: Math.round((base * multiplier * 1.12) / 1000) * 1000,
     sourceType: "official_site",
+    sourceName: `${resort.name} 공식 요금 안내`,
     sourceUrl: resort.liftTicketUrl,
+    bookingUrl: resort.liftTicketUrl,
     confidence: "estimated",
     lastCheckedAt: checkedAt,
     verifiedByHuman: false,
+    verificationNote: "2026/27 시즌 실제 요금 수동 검증 전",
     memo: "MVP 초기 더미 가격. 시즌 가격 조사 후 static 데이터로 교체 필요."
   }));
 });
 
 export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) => {
+  const resort = resorts.find((item) => item.id === shop.resortId);
+  if (resort?.operationStatus !== "operating") return [];
+
   const official = shop.id.endsWith("official-rental");
   const equipment = official ? 32000 : 26000;
   const clothing = official ? 28000 : 22000;
@@ -82,9 +88,13 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: equipment,
       priceMax: equipment + 8000,
       sourceType: official ? "official_site" : "naver_booking",
+      sourceName: shop.name,
       sourceUrl: shop.sourceUrl,
+      bookingUrl: shop.url ?? shop.sourceUrl,
       confidence: "estimated",
       lastCheckedAt: checkedAt,
+      verifiedByHuman: false,
+      verificationNote: "2026/27 시즌 실제 요금 수동 검증 전",
       memo: "MVP 초기 더미 가격. 시즌 가격 조사 후 검증 필요."
     },
     {
@@ -104,9 +114,13 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: equipment,
       priceMax: equipment + 9000,
       sourceType: official ? "official_site" : "naver_booking",
+      sourceName: shop.name,
       sourceUrl: shop.sourceUrl,
+      bookingUrl: shop.url ?? shop.sourceUrl,
       confidence: "estimated",
       lastCheckedAt: checkedAt,
+      verifiedByHuman: false,
+      verificationNote: "2026/27 시즌 실제 요금 수동 검증 전",
       memo: "MVP 초기 더미 가격. 시즌 가격 조사 후 검증 필요."
     },
     {
@@ -126,9 +140,13 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: clothing,
       priceMax: clothing + 7000,
       sourceType: official ? "official_site" : "naver_booking",
+      sourceName: shop.name,
       sourceUrl: shop.sourceUrl,
+      bookingUrl: shop.url ?? shop.sourceUrl,
       confidence: "estimated",
       lastCheckedAt: checkedAt,
+      verifiedByHuman: false,
+      verificationNote: "2026/27 시즌 실제 요금 수동 검증 전",
       memo: "MVP 초기 더미 가격. 시즌 가격 조사 후 검증 필요."
     },
     {
@@ -148,11 +166,14 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
       priceMin: packagePrice,
       priceMax: packagePrice + 12000,
       sourceType: official ? "official_site" : "naver_booking",
+      sourceName: shop.name,
       sourceUrl: shop.sourceUrl,
+      bookingUrl: shop.url ?? shop.sourceUrl,
       confidence: "estimated",
       lastCheckedAt: checkedAt,
+      verifiedByHuman: false,
+      verificationNote: "2026/27 시즌 실제 요금 수동 검증 전",
       memo: "MVP 초기 더미 가격. 시즌 가격 조사 후 검증 필요."
     }
   ];
 });
-

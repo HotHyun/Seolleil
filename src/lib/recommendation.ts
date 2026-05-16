@@ -1,6 +1,12 @@
 import { departureLocations, getRentalShopsForResort, resorts } from "@/data/resorts";
 import { estimateTripCost } from "@/lib/pricing";
-import type { Priority, Recommendation, SkiResort, TripInput } from "@/lib/types";
+import type {
+  Priority,
+  Recommendation,
+  RecommendationCategory,
+  SkiResort,
+  TripInput
+} from "@/lib/types";
 
 const priorityWeight = [3, 2, 1];
 
@@ -107,22 +113,68 @@ export function buildRequiredTasks(input: TripInput) {
   return tasks;
 }
 
-export function getCategoryRecommendations(input: TripInput) {
-  const recs = getRecommendations(input);
-  const byCost = [...recs].sort((a, b) => a.cost.representative - b.cost.representative)[0];
-  const byAccess = [...recs].sort((a, b) => (a.travelMinutes ?? 999) - (b.travelMinutes ?? 999))[0];
-  const byBeginner = [...recs].sort((a, b) => b.resort.beginnerScore - a.resort.beginnerScore)[0];
-  const byRental = [...recs].sort(
-    (a, b) => b.resort.rentalConvenienceScore - a.resort.rentalConvenienceScore
-  )[0];
-  const byScale = [...recs].sort((a, b) => b.resort.resortScaleScore - a.resort.resortScaleScore)[0];
-
-  return [
-    { label: "가장 가까움", recommendation: byAccess },
-    { label: "가장 저렴함", recommendation: byCost },
-    { label: "초보자 추천", recommendation: byBeginner },
-    { label: "렌탈 편함", recommendation: byRental },
-    { label: "1박/리조트형", recommendation: byScale }
-  ].filter((item) => item.recommendation);
+function topThree(recommendations: Recommendation[]) {
+  return recommendations.slice(0, 3);
 }
 
+export function getCategoryRecommendations(input: TripInput): RecommendationCategory[] {
+  const recs = getRecommendations(input);
+  const byCost = [...recs].sort((a, b) => a.cost.representative - b.cost.representative);
+  const byAccess = [...recs].sort((a, b) => (a.travelMinutes ?? 999) - (b.travelMinutes ?? 999));
+  const byBeginner = [...recs].sort((a, b) => b.resort.beginnerScore - a.resort.beginnerScore);
+  const byRental = [...recs].sort(
+    (a, b) => b.resort.rentalConvenienceScore - a.resort.rentalConvenienceScore
+  );
+  const byScale = [...recs].sort((a, b) => b.resort.resortScaleScore - a.resort.resortScaleScore);
+  const byNight = recs
+    .filter((recommendation) => recommendation.resort.nightSkiAvailable)
+    .sort((a, b) => b.score - a.score);
+  const byTransport = [...recs].sort((a, b) => b.resort.transportScore - a.resort.transportScore);
+
+  const categories: RecommendationCategory[] = [
+    {
+      id: "close",
+      label: "가까운 곳 TOP 3",
+      description: "출발지 기준 이동 시간이 짧은 순서",
+      recommendations: topThree(byAccess)
+    },
+    {
+      id: "cheap",
+      label: "저렴한 곳 TOP 3",
+      description: "리프트권, 렌탈, 교통 포함 예상 총액 기준",
+      recommendations: topThree(byCost)
+    },
+    {
+      id: "beginner",
+      label: "초보 친화 TOP 3",
+      description: "초보 코스와 준비 동선 점수 기준",
+      recommendations: topThree(byBeginner)
+    },
+    {
+      id: "rental",
+      label: "렌탈 편한 TOP 3",
+      description: "렌탈 선택지와 가격 비교 편의 기준",
+      recommendations: topThree(byRental)
+    },
+    {
+      id: "scale",
+      label: "1박/리조트형 TOP 3",
+      description: "규모와 리조트형 이용 적합도 기준",
+      recommendations: topThree(byScale)
+    },
+    {
+      id: "night",
+      label: "야간 가능 TOP 3",
+      description: "야간 스키 가능 후보 중 종합 점수 기준",
+      recommendations: topThree(byNight)
+    },
+    {
+      id: "transport",
+      label: "교통 편한 TOP 3",
+      description: "셔틀/버스 접근성과 이동 편의 기준",
+      recommendations: topThree(byTransport)
+    }
+  ];
+
+  return categories.filter((category) => category.recommendations.length > 0);
+}

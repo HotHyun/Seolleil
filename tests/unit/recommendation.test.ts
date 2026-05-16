@@ -22,8 +22,9 @@ describe("recommendation", () => {
     const categories = getCategoryRecommendations(tripInput());
 
     expect(categories.map((category) => category.label)).toEqual(
-      expect.arrayContaining(["가장 가까움", "가장 저렴함", "초보자 추천", "렌탈 편함"])
+      expect.arrayContaining(["가까운 곳 TOP 3", "저렴한 곳 TOP 3", "초보 친화 TOP 3", "렌탈 편한 TOP 3"])
     );
+    expect(categories.every((category) => category.recommendations.length <= 3)).toBe(true);
+    expect(categories.every((category) => category.recommendations.length > 0)).toBe(true);
   });
 });
-

@@ -25,6 +25,14 @@ export type PriceConfidence =
   | "phone_confirmed"
   | "unavailable";
 
+export type PriceSourceType =
+  | "official_site"
+  | "official_booking"
+  | "naver_booking"
+  | "smartstore"
+  | "travel_agency"
+  | "phone";
+
 export type SkiResort = {
   id: string;
   name: string;
@@ -105,17 +113,14 @@ export type PriceRule = {
   childPrice?: number;
   priceMin?: number;
   priceMax?: number;
-  sourceType:
-    | "official_site"
-    | "official_booking"
-    | "naver_booking"
-    | "smartstore"
-    | "travel_agency"
-    | "phone";
+  sourceType: PriceSourceType;
+  sourceName?: string;
   sourceUrl?: string;
+  bookingUrl?: string;
   confidence: PriceConfidence;
   lastCheckedAt: string;
   verifiedByHuman: boolean;
+  verificationNote?: string;
   memo?: string;
 };
 
@@ -141,16 +146,14 @@ export type RentalPriceRule = {
   representativePrice?: number;
   priceMin?: number;
   priceMax?: number;
-  sourceType:
-    | "official_site"
-    | "official_booking"
-    | "naver_booking"
-    | "smartstore"
-    | "travel_agency"
-    | "phone";
+  sourceType: PriceSourceType;
+  sourceName?: string;
   sourceUrl?: string;
+  bookingUrl?: string;
   confidence: PriceConfidence;
   lastCheckedAt: string;
+  verifiedByHuman: boolean;
+  verificationNote?: string;
   memo?: string;
 };
 
@@ -193,6 +196,12 @@ export type CostItem = {
   max?: number;
   representative?: number;
   confidence: PriceConfidence;
+  sourceType?: PriceSourceType;
+  sourceName?: string;
+  sourceUrl?: string;
+  bookingUrl?: string;
+  lastCheckedAt?: string;
+  verifiedByHuman?: boolean;
   note?: string;
 };
 
@@ -207,3 +216,9 @@ export type Recommendation = {
   rentalShops: RentalShop[];
 };
 
+export type RecommendationCategory = {
+  id: "close" | "cheap" | "beginner" | "rental" | "scale" | "night" | "transport";
+  label: string;
+  description: string;
+  recommendations: Recommendation[];
+};

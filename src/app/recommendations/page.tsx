@@ -34,12 +34,28 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
         </a>
       </div>
 
-      <section className="mb-8 grid gap-3 md:grid-cols-5">
-        {categories.map((item) => (
-          <Card key={item.label}>
+      <section className="mb-8 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        {categories.map((category) => (
+          <Card key={category.id}>
             <CardContent className="p-4">
-              <div className="text-xs font-semibold text-muted-foreground">{item.label}</div>
-              <div className="mt-1 font-black">{item.recommendation.resort.name}</div>
+              <div className="text-xs font-semibold text-muted-foreground">{category.label}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{category.description}</div>
+              <ol className="mt-3 space-y-2">
+                {category.recommendations.map((recommendation, index) => (
+                  <li key={recommendation.resort.id} className="flex items-center justify-between gap-2 text-sm">
+                    <span className="font-bold">
+                      {index + 1}. {recommendation.resort.name}
+                    </span>
+                    <span className="shrink-0 text-xs font-semibold text-primary">
+                      {category.id === "cheap"
+                        ? formatCurrency(recommendation.cost.representative)
+                        : category.id === "close"
+                          ? formatMinutes(recommendation.travelMinutes)
+                          : `${recommendation.score}점`}
+                    </span>
+                  </li>
+                ))}
+              </ol>
             </CardContent>
           </Card>
         ))}

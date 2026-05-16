@@ -72,6 +72,7 @@ Routine validation:
 
 ```bash
 pnpm typecheck
+pnpm data:validate
 pnpm test
 ```
 

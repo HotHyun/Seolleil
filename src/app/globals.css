@@ -39,17 +39,6 @@ body {
   width: min(1220px, calc(100% - 32px));
 }
 
-.app-frame {
-  min-height: 100vh;
-}
-
-@media (min-width: 1024px) {
-  .app-frame {
-    display: grid;
-    grid-template-columns: 184px minmax(0, 1fr);
-  }
-}
-
 .glass-panel {
   border: 1px solid hsl(var(--border));
   background: hsl(var(--card) / 0.78);

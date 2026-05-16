@@ -40,6 +40,7 @@ The MVP intentionally does not include in-app payment, real-time crawling, instr
 - `tests/integration`: feature-level flow tests without a browser.
 - `tests/e2e`: Playwright browser tests.
 - `docs/product`: living product planning documents.
+- `docs/design.md`: UI design system and visual rules.
 - `docs/testing.md`: test strategy and commands.
 - `docker-compose.yml`: production/Coolify compose file.
 - `docker-compose.test.yml`: local test PostgreSQL.
@@ -181,6 +182,9 @@ DATABASE_URL="postgresql://korean_ski:korean_ski_test@localhost:55432/korean_ski
 ## UI Guidelines
 
 - Mobile-first.
+- Use the design system in `docs/design.md`.
+- Keep one sticky top header; do not add a persistent sidebar for MVP.
+- Dark mode is the default visual direction.
 - The home page is also the landing page and should communicate the product value immediately.
 - Avoid empty first screens on desktop.
 - Keep operational screens dense, scannable, and practical.

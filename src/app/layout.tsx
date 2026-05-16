@@ -29,18 +29,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Script defer src={umamiScript} data-website-id={umamiId} strategy="afterInteractive" />
         ) : null}
         <header className="sticky top-0 z-30 border-b bg-card/85 backdrop-blur-xl">
-          <div className="page-shell flex h-16 items-center justify-between">
-            <a href="/" className="flex items-center gap-2 font-black text-foreground">
-              <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+          <div className="page-shell flex h-16 items-center justify-between gap-3">
+            <a href="/" className="flex min-w-0 items-center gap-2 font-black text-foreground">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
                 <MountainSnow className="h-5 w-5" />
               </span>
-              Korean Ski
+              <span className="hidden xs:inline sm:inline">Korean Ski</span>
             </a>
-            <nav className="flex items-center gap-3 text-sm font-bold text-muted-foreground">
-              <a href="/resorts" className="hidden hover:text-foreground sm:inline">
+            <nav className="flex shrink-0 items-center gap-2 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">
+              <a href="/resorts" className="rounded-md px-2 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
                 스키장
               </a>
-              <a href="/plan" className="hidden hover:text-foreground sm:inline">
+              <a href="/plan" className="rounded-md px-2 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
                 트립 만들기
               </a>
               <AuthNav session={session} />

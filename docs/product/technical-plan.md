@@ -36,6 +36,7 @@ Next.js app
 PostgreSQL
 Prisma migration
 Static seasonal data in code
+Optional auth
 Umami self-host
 PgAdmin
 ```
@@ -45,7 +46,10 @@ PgAdmin
 - 가격 데이터는 DB 관리자 화면이 아니라 코드의 static season data로 관리한다.
 - 가격 변경 시 코드를 수정하고 재배포한다.
 - 트립 데이터는 PostgreSQL에 저장한다.
-- 로그인 없이 edit token/share token으로 접근을 제어한다.
+- 로그인은 선택 사항으로 제공한다.
+- 비로그인 트립 생성은 유지한다.
+- 로그인 사용자는 내 트립 목록에서 본인 트립에 접근한다.
+- edit token/share token 접근 방식은 로그인 도입 후에도 유지한다.
 - 공유 링크는 읽기 전용으로 제한한다.
 - Umami는 웹 분석용으로 사용한다.
 - 제품 핵심 이벤트는 앱 PostgreSQL에도 저장한다.
@@ -54,6 +58,7 @@ PgAdmin
 ## 추후 결정 필요
 
 - Next.js App Router 사용 여부.
+- 인증 제공자: Google, Kakao, 이메일 매직링크 중 선택.
 - PostgreSQL 백업 방식.
 - edit token/share token 길이와 만료 정책.
 - Docker Compose 서비스 구성.

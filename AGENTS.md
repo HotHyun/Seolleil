@@ -8,10 +8,11 @@ Korean Ski is a mobile-first web app for planning Korean ski trips. It provides:
 - Rule-based resort recommendations.
 - Date-aware static seasonal pricing.
 - Trip itinerary and checklist tracking.
+- Optional login and a personal trip list.
 - Edit links for private trip management.
 - Read-only share links for itinerary, checklist, and reservation status.
 
-The MVP intentionally does not include login, in-app payment, real-time crawling, instructor matching, or live rental inventory.
+The MVP intentionally does not include in-app payment, real-time crawling, instructor matching, or live rental inventory.
 
 ## Stack
 
@@ -78,7 +79,10 @@ Current key product docs:
 
 ## Auth And Sharing
 
-- MVP has no user login.
+- MVP has optional login.
+- Anonymous trip creation must remain possible.
+- Logged-in users can access their trips from a personal trip list.
+- Anonymous trips can be attached to a user account from the edit link flow.
 - Trips are stored in PostgreSQL.
 - Private edit access uses edit tokens.
 - Public sharing uses read-only share links.
@@ -201,4 +205,3 @@ DATABASE_URL="postgresql://korean_ski:korean_ski_test@localhost:55432/korean_ski
 - Check `git status --short` before committing.
 - Commit focused changes with clear messages.
 - Push to `origin/main` when the user asks to publish or when deployment fixes are complete.
-

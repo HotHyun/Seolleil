@@ -14,6 +14,7 @@
 
 ### PostgreSQL 저장 데이터
 
+- 사용자 계정.
 - 사용자가 생성한 트립.
 - 트립 체크리스트.
 - editToken/shareToken 해시.
@@ -30,6 +31,29 @@
 
 - MVP에서는 트립 생성 전 임시 입력값을 서버에 저장하지 않는다.
 - 사용자가 스키장을 선택하고 트립을 생성하는 시점부터 DB에 저장한다.
+
+## User
+
+```ts
+type User = {
+  id: string;
+  email?: string;
+  name?: string;
+  imageUrl?: string;
+  authProvider: "google" | "kakao" | "email";
+  providerAccountId: string;
+  createdAt: string;
+  updatedAt: string;
+};
+```
+
+## Account Link Policy
+
+- 트립은 `userId` 없이 생성될 수 있다.
+- 로그인 사용자가 트립을 생성하면 `userId`를 저장한다.
+- 비로그인 트립은 edit link로 접근한 뒤 로그인하면 계정에 연결할 수 있다.
+- 하나의 트립은 한 명의 소유 사용자에게 연결한다.
+- 공유 링크 접근자는 트립 소유자가 아니며 읽기 권한만 가진다.
 
 ## Ski Resort
 
@@ -160,6 +184,7 @@ type RentalPriceRule = {
 ```ts
 type Trip = {
   id: string;
+  userId?: string;
   editToken: string;
   shareToken: string;
   resortId: string;

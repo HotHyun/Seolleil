@@ -13,7 +13,7 @@
 - `pricing.md`: 시즌별 static 가격 데이터 운영 방식과 비용 계산 정책.
 - `recommendation.md`: 룰 기반 추천 전략.
 - `technical-plan.md`: 기술 스택, 배포, 운영 방향.
-- `share-security.md`: 로그인 없는 편집/공유 링크 보안 정책.
+- `share-security.md`: 선택적 로그인, 편집 링크, 공유 링크 보안 정책.
 - `analytics.md`: 성과 지표, 이벤트 수집, Umami/PgAdmin 운영 정책.
 - `ui-design.md`: UI 스타일링, 컴포넌트, 레이아웃 방향.
 - `resort-dataset.md`: 국내 스키장 데이터셋 범위와 수집/검증 정책.

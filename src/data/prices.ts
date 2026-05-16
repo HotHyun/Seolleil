@@ -193,9 +193,9 @@ const liftSeeds: LiftSeed[] = [
     slots: {
       "2h": { adult: 40000, min: 36000, max: 45000 },
       "3h": { adult: 50000, min: 45000, max: 56000 },
-      "4h": { adult: 60000, child: 36000, confidence: "confirmed" },
-      "6h": { adult: 66000, child: 40000, confidence: "confirmed" },
-      night: { adult: 47000, child: 30000, confidence: "confirmed" },
+      "4h": { adult: 60000, child: 36000 },
+      "6h": { adult: 66000, child: 40000 },
+      night: { adult: 47000, child: 30000 },
       full_day: { adult: 76000, min: 66000, max: 86000 }
     }
   },

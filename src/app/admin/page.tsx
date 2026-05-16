@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { BarChart3, ExternalLink, Share2, Snowflake, SquareCheckBig } from "lucide-react";
 import { auth } from "@/auth";
 import { StatusBadge } from "@/components/status-badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { isAdminSession } from "@/lib/admin";
 import { prisma } from "@/lib/prisma";
@@ -74,6 +76,11 @@ export default async function AdminPage() {
         <StatusBadge tone="good">Admin</StatusBadge>
         <h1 className="mt-3 text-3xl font-black md:text-5xl">운영 대시보드</h1>
         <p className="mt-2 text-muted-foreground">최근 30일 기준으로 MVP 핵심 지표를 확인합니다.</p>
+        <div className="mt-4">
+          <Link href="/admin/data-quality">
+            <Button variant="secondary">데이터 품질 보기</Button>
+          </Link>
+        </div>
       </div>
 
       <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">

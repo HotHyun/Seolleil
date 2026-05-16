@@ -26,6 +26,21 @@ ADMIN_EMAILS=owner@example.com,operator@example.com
 - 최근 30일 이벤트 Top.
 - 최근 트립과 준비 진행률.
 
+## 데이터 품질 화면
+
+`/admin/data-quality`에서 static 데이터 품질을 확인한다.
+
+제공 정보:
+
+- 배포를 막는 데이터 오류.
+- 운영상 보강해야 하는 경고.
+- confirmed 가격 비율.
+- estimated 가격 목록.
+- 리조트별 리프트/렌탈 가격 수.
+- 리조트별 외부 렌탈샵 수.
+- 누락된 리프트 시간권.
+- 26/27 시즌 교체 대상 수.
+
 ## PgAdmin과 역할 분리
 
 `/admin`은 빠른 제품 운영 판단용이다.

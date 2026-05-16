@@ -73,7 +73,10 @@ Routine validation:
 ```bash
 pnpm typecheck
 pnpm data:validate
+pnpm data:report
 pnpm test
 ```
 
 Build and E2E checks are reserved for deploy verification or browser-specific changes.
+
+`pnpm data:links`는 외부 네트워크를 사용하므로 routine validation에는 포함하지 않고, 가격/렌탈 링크를 대량 수정했을 때 수동으로 실행한다.

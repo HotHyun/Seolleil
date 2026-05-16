@@ -11,7 +11,7 @@ export default function PlanPage() {
     <main className="page-shell py-8">
       <AnalyticsTrack eventName="trip_form_start" />
       <div className="mb-8 max-w-3xl">
-        <p className="mb-2 text-sm font-semibold text-lime-700">Trip Builder</p>
+        <p className="mb-2 text-sm font-semibold text-orange-400">Trip Builder</p>
         <h1 className="text-3xl font-black md:text-5xl">조건을 입력하면 추천 3곳을 비교합니다.</h1>
       </div>
       <form action="/recommendations" className="grid gap-4">
@@ -125,7 +125,7 @@ export default function PlanPage() {
           </Field>
         </StepCard>
 
-        <div className="sticky bottom-4 z-10 rounded-lg border bg-white p-3 shadow-lg">
+        <div className="sticky bottom-4 z-10 rounded-lg border bg-white/7 p-3 shadow-lg">
           <Button type="submit" className="w-full">
             추천 결과 보기
           </Button>
@@ -140,7 +140,7 @@ function StepCard({ icon, title, children }: { icon: React.ReactNode; title: str
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <span className="text-lime-700 [&_svg]:h-5 [&_svg]:w-5">{icon}</span>
+          <span className="text-orange-400 [&_svg]:h-5 [&_svg]:w-5">{icon}</span>
           {title}
         </CardTitle>
       </CardHeader>

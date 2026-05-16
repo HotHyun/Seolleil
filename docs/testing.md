@@ -45,9 +45,9 @@ Scope:
 - Recommendation page.
 - Responsive mobile rendering.
 
-Playwright builds the app and starts the Next standalone server on port `3211`
-by default. This keeps E2E behavior close to production and avoids
-environment-dependent development server behavior.
+Playwright currently builds the app and starts the Next standalone server on port `3211`
+by default. Because this is resource-intensive, do not run E2E as part of the
+routine validation loop unless browser coverage is specifically needed.
 
 Install browsers before first E2E run:
 
@@ -68,9 +68,11 @@ Then run the target tests.
 
 ## Full Local Check
 
+Routine validation:
+
 ```bash
 pnpm typecheck
 pnpm test
-pnpm build
-pnpm test:e2e
 ```
+
+Build and E2E checks are reserved for deploy verification or browser-specific changes.

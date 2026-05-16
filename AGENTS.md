@@ -129,20 +129,18 @@ Use `pnpm`.
 pnpm install
 pnpm typecheck
 pnpm test
-pnpm build
-pnpm test:e2e
 ```
 
 Useful scripts:
 
 - `pnpm dev`: run local Next dev server.
-- `pnpm build`: generate Prisma client and build Next.
+- `pnpm build`: generate Prisma client and build Next. Do not run this as a routine validation step unless the user asks for build/deploy verification.
 - `pnpm typecheck`: TypeScript check.
 - `pnpm test`: all Vitest tests.
 - `pnpm test:unit`: unit tests only.
 - `pnpm test:integration`: integration tests only.
 - `pnpm test:e2e`: Playwright E2E.
-- `pnpm test:all`: typecheck, Vitest, and Playwright.
+- `pnpm test:all`: typecheck, Vitest, and Playwright. Avoid this for routine checks because Playwright currently runs a production build.
 - `pnpm db:generate`: Prisma generate.
 - `pnpm db:migrate`: local Prisma migration.
 - `pnpm db:deploy`: deploy migrations.
@@ -157,13 +155,14 @@ Use these defaults:
 - Multi-step feature behavior without browser: integration test in `tests/integration`.
 - User-visible routing/forms/responsive behavior: E2E test in `tests/e2e`.
 
-Current required full check:
+Routine validation:
 
 ```bash
-pnpm test:all
+pnpm typecheck
+pnpm test
 ```
 
-Playwright builds and starts the standalone app on port `3211` by default.
+Playwright currently builds and starts the standalone app on port `3211` by default. Run E2E only when explicitly needed or when a compatible already-running server is available.
 
 Before first E2E run on a new machine:
 

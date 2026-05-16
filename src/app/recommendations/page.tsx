@@ -26,7 +26,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
       <AnalyticsTrack eventName="recommendation_view" eventData={{ count: recommendations.length }} />
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="mb-2 text-sm font-semibold text-lime-700">Recommendations</p>
+          <p className="mb-2 text-sm font-semibold text-orange-400">Recommendations</p>
           <h1 className="text-3xl font-black md:text-5xl">조건에 맞는 추천 3곳</h1>
         </div>
         <a href="/plan">
@@ -97,7 +97,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                     ) : null}
                   </div>
                 </div>
-                <form action={createTripAction} className="border-t bg-white p-5 lg:border-l lg:border-t-0">
+                <form action={createTripAction} className="border-t bg-white/7 p-5 lg:border-l lg:border-t-0">
                   {Object.entries(inputToHidden(input)).map(([key, value]) => (
                     <input key={key} type="hidden" name={key} value={value} />
                   ))}
@@ -139,7 +139,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
 
 function MiniStat({ icon, label, value }: { icon?: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-md border bg-white p-3">
+    <div className="rounded-md border bg-white/7 p-3">
       <div className="mb-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
         {icon ? <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">{icon}</span> : null}
         {label}

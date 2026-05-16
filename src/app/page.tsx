@@ -19,11 +19,11 @@ import { resorts } from "@/data/resorts";
 export default function HomePage() {
   const active = resorts.filter((resort) => resort.operationStatus === "operating");
   return (
-    <main className="bg-white">
-      <section className="border-b bg-[linear-gradient(180deg,#ffffff_0%,#f4f6f0_100%)]">
+    <main className="bg-white/7">
+      <section className="border-b bg-transparent">
         <div className="page-shell grid gap-8 py-8 md:min-h-[calc(100vh-4rem)] md:grid-cols-[0.95fr_1.05fr] md:items-center md:gap-10 md:py-12">
           <div className="space-y-6 md:space-y-7">
-            <div className="inline-flex rounded-full bg-lime-100 px-3 py-1 text-sm font-semibold text-lime-950">
+            <div className="inline-flex rounded-full bg-orange-500/15 px-3 py-1 text-sm font-semibold text-orange-100">
               국내 스키장 전체 기반 MVP
             </div>
             <div className="space-y-4">
@@ -66,7 +66,7 @@ export default function HomePage() {
       <section className="border-y bg-zinc-950 text-white">
         <div className="page-shell grid gap-8 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-center md:py-16">
           <div>
-            <p className="text-sm font-semibold text-lime-300">왜 필요한가</p>
+            <p className="text-sm font-semibold text-orange-400">왜 필요한가</p>
             <h2 className="mt-3 text-3xl font-black leading-tight sm:text-4xl md:text-5xl">
               스키장 찾는 시간보다, 준비 빠뜨릴까 걱정하는 시간이 더 깁니다.
             </h2>
@@ -80,7 +80,7 @@ export default function HomePage() {
       </section>
       <section className="page-shell py-12 md:py-16">
         <div className="mb-8 max-w-2xl">
-          <p className="text-sm font-semibold text-lime-700">How it works</p>
+          <p className="text-sm font-semibold text-orange-400">How it works</p>
           <h2 className="mt-2 text-3xl font-black sm:text-4xl">세 번만 결정하면 트립이 만들어집니다.</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -89,10 +89,10 @@ export default function HomePage() {
           <Step number="03" icon={<ClipboardCheck />} title="준비 관리" text="트립 생성 후 예약/결제/준비 상태를 체크리스트로 업데이트합니다." />
         </div>
       </section>
-      <section className="bg-[#f4f6f0]">
+      <section className="bg-white/5">
         <div className="page-shell grid gap-8 py-12 md:grid-cols-[1fr_1fr] md:items-center md:py-16">
           <div className="space-y-4">
-            <p className="text-sm font-semibold text-lime-700">For beginners</p>
+            <p className="text-sm font-semibold text-orange-400">For beginners</p>
             <h2 className="text-3xl font-black leading-tight sm:text-4xl">
               처음 가는 사람에게 필요한 건, 멋진 설명보다 빠뜨리지 않는 순서입니다.
             </h2>
@@ -112,14 +112,14 @@ export default function HomePage() {
         <div className="rounded-xl border bg-zinc-950 p-6 text-white md:p-8">
           <div className="grid gap-6 md:grid-cols-[1fr_auto] md:items-center">
             <div>
-              <p className="text-sm font-semibold text-lime-300">Ready</p>
+              <p className="text-sm font-semibold text-orange-400">Ready</p>
               <h2 className="mt-2 text-3xl font-black sm:text-4xl">이번 주말 스키 트립을 3분 안에 만들어보세요.</h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-300">
                 로그인 없이 시작하고, 트립이 만들어지면 편집 링크와 읽기 전용 공유 링크로 관리합니다.
               </p>
             </div>
             <AnalyticsLink href="/plan" eventName="home_bottom_cta_click">
-              <Button className="w-full bg-lime-300 text-zinc-950 hover:bg-lime-200 md:w-auto">
+              <Button className="w-full bg-orange-500 text-white hover:bg-orange-400 md:w-auto">
                 트립 만들기 <ArrowRight className="h-4 w-4" />
               </Button>
             </AnalyticsLink>
@@ -132,14 +132,14 @@ export default function HomePage() {
 
 function ProductPreview({ activeCount }: { activeCount: number }) {
   return (
-    <div className="rounded-xl border bg-white p-2 shadow-2xl shadow-zinc-200/80 sm:p-3">
+    <div className="rounded-xl border bg-white/7 p-2 shadow-2xl shadow-black/35 sm:p-3">
       <div className="rounded-lg bg-zinc-950 p-3 text-white sm:p-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <div className="text-sm font-semibold text-zinc-300">추천 결과 미리보기</div>
             <div className="mt-1 text-xl font-black sm:text-2xl">비발디파크 스키월드</div>
           </div>
-          <div className="w-fit rounded-md bg-lime-300 px-3 py-2 text-center text-zinc-950">
+          <div className="w-fit rounded-md bg-orange-500 px-3 py-2 text-center text-white">
             <div className="text-xs font-bold">운영</div>
             <div className="text-xl font-black">{activeCount}</div>
           </div>
@@ -170,10 +170,10 @@ function ProductPreview({ activeCount }: { activeCount: number }) {
           <ChecklistItem done text="렌탈샵 선택" />
           <ChecklistItem text="운영현황 확인" />
           <ChecklistItem text="장갑/고글 준비" />
-          <div className="mt-4 rounded-md bg-lime-100 p-3">
-            <div className="text-xs font-semibold text-lime-900">진행률</div>
-            <div className="mt-1 h-2 rounded-full bg-white">
-              <div className="h-2 w-1/2 rounded-full bg-lime-500" />
+          <div className="mt-4 rounded-md bg-orange-500/15 p-3">
+            <div className="text-xs font-semibold text-orange-200">진행률</div>
+            <div className="mt-1 h-2 rounded-full bg-white/7">
+              <div className="h-2 w-1/2 rounded-full bg-orange-500" />
             </div>
           </div>
         </PreviewCard>
@@ -205,7 +205,7 @@ function PreviewStat({ label, value }: { label: string; value: string }) {
 
 function PreviewCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border bg-white p-3 sm:p-4">
+    <div className="rounded-lg border bg-white/7 p-3 sm:p-4">
       <div className="mb-3 text-sm font-black">{title}</div>
       <div className="space-y-2">{children}</div>
     </div>
@@ -219,7 +219,7 @@ function PreviewLine({ text }: { text: string }) {
 function ChecklistItem({ text, done = false }: { text: string; done?: boolean }) {
   return (
     <div className="flex items-center gap-2 text-sm">
-      {done ? <CheckCircle2 className="h-4 w-4 text-lime-600" /> : <Circle className="h-4 w-4 text-zinc-300" />}
+      {done ? <CheckCircle2 className="h-4 w-4 text-orange-400" /> : <Circle className="h-4 w-4 text-zinc-300" />}
       <span className={done ? "font-semibold" : "text-muted-foreground"}>{text}</span>
     </div>
   );
@@ -235,8 +235,8 @@ function Feature({
   description: string;
 }) {
   return (
-    <div className="rounded-lg border bg-white p-4 sm:p-5">
-      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-lime-100 text-lime-900 [&_svg]:h-5 [&_svg]:w-5">
+    <div className="rounded-lg border bg-white/7 p-4 sm:p-5">
+      <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-orange-500/15 text-orange-200 [&_svg]:h-5 [&_svg]:w-5">
         {icon}
       </div>
       <h2 className="font-black">{title}</h2>
@@ -248,7 +248,7 @@ function Feature({
 function ProblemRow({ label, text }: { label: string; text: string }) {
   return (
     <div className="rounded-lg border border-white/10 bg-white/5 p-4">
-      <div className="text-sm font-black text-lime-300">{label}</div>
+      <div className="text-sm font-black text-orange-400">{label}</div>
       <p className="mt-1 text-sm leading-6 text-zinc-300">{text}</p>
     </div>
   );
@@ -266,9 +266,9 @@ function Step({
   text: string;
 }) {
   return (
-    <div className="rounded-lg border bg-white p-5">
+    <div className="rounded-lg border bg-white/7 p-5">
       <div className="flex items-start justify-between gap-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-lime-100 text-lime-900 [&_svg]:h-5 [&_svg]:w-5">
+        <div className="flex h-11 w-11 items-center justify-center rounded-md bg-orange-500/15 text-orange-200 [&_svg]:h-5 [&_svg]:w-5">
           {icon}
         </div>
         <div className="text-sm font-black text-zinc-300">{number}</div>
@@ -281,8 +281,8 @@ function Step({
 
 function ValueRow({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
   return (
-    <div className="flex gap-4 rounded-lg border bg-white p-4">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-950 text-lime-300 [&_svg]:h-5 [&_svg]:w-5">
+    <div className="flex gap-4 rounded-lg border bg-white/7 p-4">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-950 text-orange-400 [&_svg]:h-5 [&_svg]:w-5">
         {icon}
       </div>
       <div>

@@ -52,7 +52,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
   return (
     <div className="space-y-5">
       {Object.entries(groups).map(([label, group]) => (
-        <section key={label} className="rounded-lg border bg-white">
+        <section key={label} className="glass-panel rounded-xl">
           <div className="border-b px-4 py-3 font-black">{label}</div>
           <div className="divide-y">
             {group.map((task) => (
@@ -98,7 +98,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
           </div>
         </section>
       ))}
-      <form action={addTaskAction} className="flex gap-2 rounded-lg border bg-white p-4">
+      <form action={addTaskAction} className="glass-panel flex gap-2 rounded-xl p-4">
         <AccessFields editToken={editToken} tripId={tripId} />
         <Input name="title" placeholder="직접 체크 항목 추가" />
         <Button type="submit" className="shrink-0">

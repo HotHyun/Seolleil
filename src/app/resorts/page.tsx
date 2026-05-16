@@ -17,7 +17,7 @@ export default function ResortsPage() {
     <main className="page-shell py-8">
       <AnalyticsTrack eventName="resort_detail_view" eventData={{ page: "directory" }} />
       <div className="mb-8">
-        <p className="mb-2 text-sm font-semibold text-lime-700">Directory</p>
+        <p className="mb-2 text-sm font-semibold text-orange-400">Directory</p>
         <h1 className="text-3xl font-black md:text-5xl">국내 스키장 디렉토리</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
           운영/휴장/unknown 상태를 구분해 보여줍니다. 실시간 운영현황은 공식 링크에서 확인하세요.

@@ -6,9 +6,8 @@ MVP에서는 Umami와 자체 DB 이벤트를 함께 사용한다.
 
 - Umami: 페이지뷰, 유입 경로, 기기, 브라우저, 기본 클릭 이벤트 확인.
 - 자체 DB 이벤트: 트립 생성, 스키장 선택, 체크리스트 변경, 외부 링크 클릭 등 제품 핵심 지표 확인.
-- PgAdmin: MVP 단계에서 PostgreSQL 이벤트 데이터를 직접 조회하는 운영 도구.
-
-별도 내부 관리자 대시보드는 MVP에서 만들지 않는다.
+- `/admin`: 운영자가 핵심 제품 지표를 빠르게 확인하는 내부 대시보드.
+- PgAdmin: PostgreSQL 이벤트 데이터를 직접 조회하는 운영 도구.
 
 ## 도구
 
@@ -32,7 +31,13 @@ MVP에서는 Umami와 자체 DB 이벤트를 함께 사용한다.
 ### PgAdmin
 
 - MVP 단계에서는 PgAdmin으로 DB 이벤트를 직접 확인한다.
-- 별도 분석 관리자 화면은 만들지 않는다.
+- SQL 기반 상세 분석과 원시 데이터 디버깅에 사용한다.
+
+### 내부 어드민
+
+- `/admin` 경로에서 제공한다.
+- 접근 권한은 `ADMIN_EMAILS` 환경변수로 제한한다.
+- 전체 트립 수, 최근 30일 트립 생성, 체크리스트 변경, 외부 링크 클릭, 공유 조회, 인기 스키장, 최근 트립을 확인한다.
 
 ## 추적할 Umami 이벤트
 
@@ -47,10 +52,13 @@ MVP에서는 Umami와 자체 DB 이벤트를 함께 사용한다.
 ## 저장할 자체 DB 이벤트
 
 - `trip_created`
-- `resort_selected`
+- `trip_details_updated`
+- `trip_status_changed`
+- `trip_attached_to_account`
+- `share_link_regenerated`
 - `task_status_changed`
 - `trip_deleted`
-- `external_link_clicked`
+- `external_link_click`
 - `share_page_viewed`
 
 ## 이벤트 데이터 모델

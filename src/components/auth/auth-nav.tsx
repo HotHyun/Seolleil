@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { LogOut, UserCircle } from "lucide-react";
+import { BarChart3, LogOut, UserCircle } from "lucide-react";
 import { signOutAction } from "@/app/auth-actions";
 import { ThemeMenuItem } from "@/components/theme-toggle";
 import {
@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import type { Session } from "next-auth";
+import { isAdminSession } from "@/lib/admin";
 
 export function AuthNav({ session }: { session: Session | null }) {
   if (!session?.user) {
@@ -24,6 +25,7 @@ export function AuthNav({ session }: { session: Session | null }) {
   const image = session.user.image;
   const name = session.user.name ?? "내 스키 트립";
   const email = session.user.email;
+  const admin = isAdminSession(session);
 
   return (
     <DropdownMenu>
@@ -52,6 +54,13 @@ export function AuthNav({ session }: { session: Session | null }) {
           </a>
         </DropdownMenuItem>
         <ThemeMenuItem />
+        {admin ? (
+          <DropdownMenuItem asChild>
+            <a href="/admin">
+              <BarChart3 className="h-4 w-4" /> 운영 대시보드
+            </a>
+          </DropdownMenuItem>
+        ) : null}
         <DropdownMenuSeparator />
         <form action={signOutAction}>
           <button

@@ -370,3 +370,25 @@ export async function regenerateShareLinkAction(formData: FormData) {
   const tripId = String(formData.get("tripId") ?? "");
   redirect(editToken ? `/trips/${editToken}?share=${shareToken}` : `/my-trips/${tripId}?share=${shareToken}`);
 }
+
+export async function recordExternalLinkClickAction(formData: FormData) {
+  const tripId = String(formData.get("tripId") ?? "") || undefined;
+  const eventName = String(formData.get("eventName") ?? "external_link_click");
+  const href = String(formData.get("href") ?? "");
+  const type = String(formData.get("type") ?? "");
+  const resortId = String(formData.get("resortId") ?? "");
+  const sourceName = String(formData.get("sourceName") ?? "");
+
+  await prisma.analyticsEvent.create({
+    data: {
+      tripId,
+      eventName,
+      properties: {
+        href,
+        type,
+        resortId,
+        sourceName
+      }
+    }
+  });
+}

@@ -62,7 +62,21 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
       </section>
 
       <section className="grid gap-4">
-        {recommendations.slice(0, 3).map((recommendation, index) => {
+        {recommendations.length === 0 ? (
+          <Card>
+            <CardContent className="flex min-h-64 flex-col items-center justify-center gap-4 text-center">
+              <div>
+                <h2 className="text-2xl font-black">조건에 맞는 추천 결과가 없습니다.</h2>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  야간/교통 조건을 낮추거나 출발지를 바꿔 다시 시도해 주세요.
+                </p>
+              </div>
+              <a href="/plan">
+                <Button>조건 다시 입력</Button>
+              </a>
+            </CardContent>
+          </Card>
+        ) : recommendations.slice(0, 3).map((recommendation, index) => {
           const rentalOptions = getRentalOptionsForResort(recommendation.resort.id);
           return (
             <Card key={recommendation.resort.id} className="overflow-hidden">

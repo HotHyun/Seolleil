@@ -72,6 +72,7 @@ PgAdmin
   - `AUTH_SECRET`.
   - `AUTH_GOOGLE_ID`.
   - `AUTH_GOOGLE_SECRET`.
+  - `ADMIN_EMAILS`: `/admin` 접근을 허용할 Google 계정 이메일 목록.
 
 ## 추후 결정 필요
 

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { buildDefaultTasks, dueDateFromVisit } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
@@ -9,7 +10,38 @@ import { getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
 import { parseTripInput } from "@/lib/trip-input";
 
+async function findEditableTrip(formData: FormData) {
+  const editToken = String(formData.get("editToken") ?? "");
+  const tripId = String(formData.get("tripId") ?? "");
+
+  if (editToken) {
+    return prisma.trip.findUnique({
+      where: { editTokenHash: hashToken(editToken) },
+      select: { id: true, status: true, userId: true }
+    });
+  }
+
+  if (tripId) {
+    const session = await auth();
+    if (!session?.user?.id) return null;
+    return prisma.trip.findFirst({
+      where: { id: tripId, userId: session.user.id },
+      select: { id: true, status: true, userId: true }
+    });
+  }
+
+  return null;
+}
+
+function revalidateTripAccess(formData: FormData) {
+  const editToken = String(formData.get("editToken") ?? "");
+  const tripId = String(formData.get("tripId") ?? "");
+  if (editToken) revalidatePath(`/trips/${editToken}`);
+  if (tripId) revalidatePath(`/my-trips/${tripId}`);
+}
+
 export async function createTripAction(formData: FormData) {
+  const session = await auth();
   const input = parseTripInput(formData);
   const resortId = String(formData.get("resortId") ?? "");
   const selectedRentalOptionId = String(formData.get("selectedRentalOptionId") ?? "") || undefined;
@@ -28,6 +60,7 @@ export async function createTripAction(formData: FormData) {
 
   const trip = await prisma.trip.create({
     data: {
+      userId: session?.user?.id,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -83,15 +116,51 @@ export async function createTripAction(formData: FormData) {
   redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}`);
 }
 
+export async function attachTripToAccountAction(formData: FormData) {
+  const session = await auth();
+  const editToken = String(formData.get("editToken") ?? "");
+
+  if (!session?.user?.id) {
+    redirect(`/login?callbackUrl=/trips/${editToken}`);
+  }
+
+  const trip = await prisma.trip.findUnique({
+    where: { editTokenHash: hashToken(editToken) },
+    select: { id: true, userId: true, status: true }
+  });
+
+  if (!trip || trip.status === "archived" || trip.status === "deleted") {
+    throw new Error("계정에 저장할 수 없는 트립입니다.");
+  }
+
+  if (trip.userId && trip.userId !== session.user.id) {
+    throw new Error("이미 다른 계정에 저장된 트립입니다.");
+  }
+
+  if (!trip.userId) {
+    await prisma.trip.update({
+      where: { id: trip.id },
+      data: {
+        userId: session.user.id,
+        events: {
+          create: {
+            eventName: "trip_attached_to_account"
+          }
+        }
+      }
+    });
+  }
+
+  revalidatePath(`/trips/${editToken}`);
+  revalidatePath("/my-trips");
+}
+
 export async function updateTaskStatusAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const taskId = String(formData.get("taskId") ?? "");
   const status = String(formData.get("status") ?? "");
 
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    select: { id: true, status: true }
-  });
+  const trip = await findEditableTrip(formData);
 
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
@@ -105,7 +174,7 @@ export async function updateTaskStatusAction(formData: FormData) {
     data: { tripId: trip.id, eventName: "task_status_changed", properties: { taskId, status } }
   });
 
-  revalidatePath(`/trips/${editToken}`);
+  revalidateTripAccess(formData);
 }
 
 export async function updateTaskMemoAction(formData: FormData) {
@@ -113,15 +182,12 @@ export async function updateTaskMemoAction(formData: FormData) {
   const taskId = String(formData.get("taskId") ?? "");
   const memo = String(formData.get("memo") ?? "");
 
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    select: { id: true, status: true }
-  });
+  const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
   await prisma.tripTask.updateMany({ where: { id: taskId, tripId: trip.id }, data: { memo } });
-  revalidatePath(`/trips/${editToken}`);
+  revalidateTripAccess(formData);
 }
 
 export async function addTaskAction(formData: FormData) {
@@ -129,10 +195,13 @@ export async function addTaskAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   if (!title) return;
 
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    include: { tasks: { orderBy: { sortOrder: "desc" }, take: 1 } }
-  });
+  const accessTrip = await findEditableTrip(formData);
+  const trip = accessTrip
+    ? await prisma.trip.findUnique({
+        where: { id: accessTrip.id },
+        include: { tasks: { orderBy: { sortOrder: "desc" }, take: 1 } }
+      })
+    : null;
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
@@ -147,38 +216,34 @@ export async function addTaskAction(formData: FormData) {
       sortOrder: (trip.tasks[0]?.sortOrder ?? 999) + 10
     }
   });
-  revalidatePath(`/trips/${editToken}`);
+  revalidateTripAccess(formData);
 }
 
 export async function deleteTaskAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const taskId = String(formData.get("taskId") ?? "");
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    select: { id: true, status: true }
-  });
+  const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
   await prisma.tripTask.deleteMany({ where: { id: taskId, tripId: trip.id, isDefault: false } });
-  revalidatePath(`/trips/${editToken}`);
+  revalidateTripAccess(formData);
 }
 
 export async function deleteTripAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
-  const trip = await prisma.trip.findUnique({ where: { editTokenHash: hashToken(editToken) } });
+  const trip = editToken
+    ? await prisma.trip.findUnique({ where: { editTokenHash: hashToken(editToken) } })
+    : await findEditableTrip(formData);
   if (!trip) throw new Error("트립을 찾을 수 없습니다.");
   await prisma.analyticsEvent.create({ data: { tripId: trip.id, eventName: "trip_deleted" } });
   await prisma.trip.delete({ where: { id: trip.id } });
-  redirect("/");
+  redirect(editToken ? "/" : "/my-trips");
 }
 
 export async function regenerateShareLinkAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    select: { id: true, status: true }
-  });
+  const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("공유 링크를 재발급할 수 없는 트립입니다.");
   }
@@ -196,5 +261,6 @@ export async function regenerateShareLinkAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?share=${shareToken}`);
+  const tripId = String(formData.get("tripId") ?? "");
+  redirect(editToken ? `/trips/${editToken}?share=${shareToken}` : `/my-trips/${tripId}?share=${shareToken}`);
 }

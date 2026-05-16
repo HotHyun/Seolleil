@@ -41,7 +41,7 @@ const categoryLabels: Record<string, string> = {
   custom: "커스텀"
 };
 
-export function TaskList({ tasks, editToken }: { tasks: Task[]; editToken: string }) {
+export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToken?: string; tripId?: string }) {
   const groups = tasks.reduce<Record<string, Task[]>>((acc, task) => {
     const label = categoryLabels[task.category] ?? task.category;
     acc[label] = acc[label] ?? [];
@@ -66,7 +66,7 @@ export function TaskList({ tasks, editToken }: { tasks: Task[]; editToken: strin
                   ) : null}
                 </div>
                 <form action={updateTaskStatusAction}>
-                  <input type="hidden" name="editToken" value={editToken} />
+                  <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
                   <Select name="status" defaultValue={task.status} onChange={(event) => event.currentTarget.form?.requestSubmit()}>
                     {statusOptions.map(([value, label]) => (
@@ -77,7 +77,7 @@ export function TaskList({ tasks, editToken }: { tasks: Task[]; editToken: strin
                   </Select>
                 </form>
                 <form action={updateTaskMemoAction} className="flex gap-2">
-                  <input type="hidden" name="editToken" value={editToken} />
+                  <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
                   <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모" />
                   <Button variant="secondary" className="h-11 shrink-0" type="submit">
@@ -86,7 +86,7 @@ export function TaskList({ tasks, editToken }: { tasks: Task[]; editToken: strin
                 </form>
                 {!task.isDefault ? (
                   <form action={deleteTaskAction}>
-                    <input type="hidden" name="editToken" value={editToken} />
+                    <AccessFields editToken={editToken} tripId={tripId} />
                     <input type="hidden" name="taskId" value={task.id} />
                     <Button variant="ghost" type="submit" aria-label="삭제">
                       <Trash2 className="h-4 w-4" />
@@ -99,7 +99,7 @@ export function TaskList({ tasks, editToken }: { tasks: Task[]; editToken: strin
         </section>
       ))}
       <form action={addTaskAction} className="flex gap-2 rounded-lg border bg-white p-4">
-        <input type="hidden" name="editToken" value={editToken} />
+        <AccessFields editToken={editToken} tripId={tripId} />
         <Input name="title" placeholder="직접 체크 항목 추가" />
         <Button type="submit" className="shrink-0">
           추가
@@ -109,3 +109,11 @@ export function TaskList({ tasks, editToken }: { tasks: Task[]; editToken: strin
   );
 }
 
+function AccessFields({ editToken, tripId }: { editToken?: string; tripId?: string }) {
+  return (
+    <>
+      {editToken ? <input type="hidden" name="editToken" value={editToken} /> : null}
+      {tripId ? <input type="hidden" name="tripId" value={tripId} /> : null}
+    </>
+  );
+}

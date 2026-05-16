@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
+import { auth } from "@/auth";
+import { AuthNav } from "@/components/auth/auth-nav";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -9,9 +11,10 @@ export const metadata: Metadata = {
   description: "국내 스키장 추천과 스키 트립 준비 체크리스트"
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
   const umamiScript = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
+  const session = await auth();
 
   return (
     <html lang="ko">
@@ -34,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <a href="/plan" className="hover:text-foreground">
                 트립 만들기
               </a>
+              <AuthNav session={session} />
             </nav>
           </div>
         </header>

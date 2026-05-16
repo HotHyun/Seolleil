@@ -39,13 +39,12 @@ type User = {
   id: string;
   email?: string;
   name?: string;
-  imageUrl?: string;
-  authProvider: "google" | "kakao" | "email";
-  providerAccountId: string;
-  createdAt: string;
-  updatedAt: string;
+  emailVerified?: string;
+  image?: string;
 };
 ```
+
+인증 관련 `Account`, `Session`, `VerificationToken`, `Authenticator` 모델은 Auth.js Prisma Adapter 표준 모델을 사용한다.
 
 ## Account Link Policy
 

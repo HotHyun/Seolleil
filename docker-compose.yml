@@ -5,6 +5,10 @@ services:
       dockerfile: Dockerfile
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-korean_ski}:${POSTGRES_PASSWORD:-korean_ski}@postgres:5432/${POSTGRES_DB:-korean_ski}?schema=public
+      AUTH_URL: ${AUTH_URL:-https://ski.hothyun.com}
+      AUTH_SECRET: ${AUTH_SECRET:-}
+      AUTH_GOOGLE_ID: ${AUTH_GOOGLE_ID:-}
+      AUTH_GOOGLE_SECRET: ${AUTH_GOOGLE_SECRET:-}
       NEXT_PUBLIC_UMAMI_WEBSITE_ID: ${NEXT_PUBLIC_UMAMI_WEBSITE_ID:-}
       NEXT_PUBLIC_UMAMI_SCRIPT_URL: ${NEXT_PUBLIC_UMAMI_SCRIPT_URL:-}
     depends_on:

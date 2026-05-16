@@ -10,6 +10,8 @@ datasource db {
 
 model Trip {
   id                     String           @id @default(cuid())
+  userId                 String?
+  user                   User?            @relation(fields: [userId], references: [id], onDelete: SetNull)
   editTokenHash          String           @unique
   shareTokenHash         String           @unique
   resortId               String
@@ -42,7 +44,68 @@ model Trip {
   events                 AnalyticsEvent[]
 
   @@index([resortId])
+  @@index([userId, visitDate])
   @@index([visitDate])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+  authenticators Authenticator[]
+  trips         Trip[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
 }
 
 model TripTask {

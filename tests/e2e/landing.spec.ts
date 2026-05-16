@@ -19,5 +19,12 @@ test.describe("landing page", () => {
     await expect(page.getByText("비발디파크 스키월드")).toBeVisible();
     await expect(page.getByRole("link", { name: /스키 트립 만들기/ }).first()).toBeVisible();
   });
-});
 
+  test("exposes optional login entry point", async ({ page }) => {
+    await page.goto("/");
+
+    await page.getByRole("link", { name: "로그인" }).click();
+    await expect(page.getByRole("heading", { name: "내 트립 저장하기" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Google로 계속하기" })).toBeVisible();
+  });
+});

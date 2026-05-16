@@ -62,8 +62,16 @@ PgAdmin
 - 1차: Google OAuth.
 - 2차 후보: Kakao OAuth.
 - 3차 후보: 이메일 매직링크.
+- 구현: Auth.js + Prisma Adapter.
+- 세션 저장: PostgreSQL database session.
+- OAuth callback URL: `https://ski.hothyun.com/api/auth/callback/google`.
 - 인증 구현은 Next.js와 Prisma/PostgreSQL 연동이 쉬운 방식을 우선한다.
 - 로그인은 필수 진입 조건이 아니며, 트립 복구와 내 트립 목록을 위한 선택 기능이다.
+- 필수 환경변수:
+  - `AUTH_URL`.
+  - `AUTH_SECRET`.
+  - `AUTH_GOOGLE_ID`.
+  - `AUTH_GOOGLE_SECRET`.
 
 ## 추후 결정 필요
 

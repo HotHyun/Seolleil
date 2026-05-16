@@ -43,11 +43,27 @@ POSTGRES_PASSWORD
 PGADMIN_DEFAULT_PASSWORD
 PGADMIN_PUBLIC_URL=https://ski-admin.hothyun.com
 NEXT_PUBLIC_SITE_URL=https://ski.hothyun.com
+AUTH_URL=https://ski.hothyun.com
+AUTH_SECRET
+AUTH_GOOGLE_ID
+AUTH_GOOGLE_SECRET
 NEXT_PUBLIC_UMAMI_WEBSITE_ID
 NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ```
 
 If Umami is not ready yet, leave the Umami variables empty.
+
+For Google OAuth, configure this authorized redirect URI in Google Cloud:
+
+```txt
+https://ski.hothyun.com/api/auth/callback/google
+```
+
+Generate `AUTH_SECRET` with:
+
+```bash
+openssl rand -base64 32
+```
 
 ## Environment
 
@@ -59,6 +75,10 @@ Coolify can override these values:
 DATABASE_URL
 PGADMIN_PUBLIC_URL
 NEXT_PUBLIC_SITE_URL
+AUTH_URL
+AUTH_SECRET
+AUTH_GOOGLE_ID
+AUTH_GOOGLE_SECRET
 NEXT_PUBLIC_UMAMI_WEBSITE_ID
 NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ```

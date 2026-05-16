@@ -22,7 +22,8 @@ export default defineConfig({
   webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER
     ? undefined
     : {
-        command: "pnpm build && HOSTNAME=127.0.0.1 PORT=3211 node .next/standalone/server.js",
+        command:
+          "pnpm build && AUTH_SECRET=playwright-test-secret HOSTNAME=127.0.0.1 PORT=3211 node .next/standalone/server.js",
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000

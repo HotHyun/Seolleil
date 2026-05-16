@@ -80,6 +80,7 @@ Current key product docs:
 ## Auth And Sharing
 
 - MVP has optional login.
+- Initial auth provider is Google OAuth via Auth.js and the Prisma Adapter.
 - Anonymous trip creation must remain possible.
 - Logged-in users can access their trips from a personal trip list.
 - Anonymous trips can be attached to a user account from the edit link flow.

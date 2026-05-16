@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Copy, ExternalLink, ShieldAlert, Trash2 } from "lucide-react";
-import { deleteTripAction, regenerateShareLinkAction } from "@/app/actions";
+import { CheckCircle2, Copy, ExternalLink, ShieldAlert, Trash2 } from "lucide-react";
+import { auth } from "@/auth";
+import { attachTripToAccountAction, deleteTripAction, regenerateShareLinkAction } from "@/app/actions";
+import { signInWithGoogleAction } from "@/app/auth-actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { ShareLinkBox } from "@/components/share-link-box";
@@ -28,6 +30,7 @@ export default async function TripEditPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { editToken } = await params;
+  const session = await auth();
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
   const trip = await prisma.trip.findUnique({
@@ -101,6 +104,38 @@ export default async function TripEditPage({
 
         <aside className="space-y-5">
           <ProgressSummary tasks={trip.tasks} />
+          <Card>
+            <CardHeader>
+              <CardTitle>내 트립</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {session?.user && trip.userId === session.user.id ? (
+                <div className="flex items-start gap-2 rounded-md bg-lime-50 p-3 text-sm text-lime-950">
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>이 트립은 내 트립 목록에 저장되어 있습니다.</span>
+                </div>
+              ) : session?.user ? (
+                <form action={attachTripToAccountAction}>
+                  <input type="hidden" name="editToken" value={editToken} />
+                  <Button className="w-full" type="submit">
+                    내 트립에 저장
+                  </Button>
+                </form>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    로그인하면 이 링크를 따로 저장하지 않아도 내 트립 목록에서 다시 열 수 있습니다.
+                  </p>
+                  <form action={signInWithGoogleAction}>
+                    <input type="hidden" name="callbackUrl" value={`/trips/${editToken}`} />
+                    <Button className="w-full" type="submit">
+                      Google로 로그인하고 저장
+                    </Button>
+                  </form>
+                </>
+              )}
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>공유</CardTitle>

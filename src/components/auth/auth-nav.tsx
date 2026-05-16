@@ -51,16 +51,15 @@ export function AuthNav({ session }: { session: Session | null }) {
             <UserCircle className="h-4 w-4" /> 내 프로필
           </a>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <ThemeMenuItem />
-        </DropdownMenuItem>
+        <ThemeMenuItem />
         <DropdownMenuSeparator />
         <form action={signOutAction}>
-          <DropdownMenuItem asChild>
-            <button type="submit" className="w-full">
-              <LogOut className="h-4 w-4" /> 로그아웃
-            </button>
-          </DropdownMenuItem>
+          <button
+            type="submit"
+            className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition hover:bg-muted focus:bg-muted"
+          >
+            <LogOut className="h-4 w-4" /> 로그아웃
+          </button>
         </form>
       </DropdownMenuContent>
     </DropdownMenu>

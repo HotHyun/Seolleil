@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Moon, Sun } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const storageKey = "korean-ski-theme";
 
@@ -39,7 +40,7 @@ export function ThemeToggle() {
   );
 }
 
-export function ThemeMenuItem() {
+export function ThemeMenuItem({ className }: { className?: string }) {
   const [theme, setTheme] = React.useState<"light" | "dark">("light");
 
   React.useEffect(() => {
@@ -57,7 +58,14 @@ export function ThemeMenuItem() {
   }
 
   return (
-    <button type="button" onClick={toggleTheme} className="flex w-full items-center gap-2">
+    <button
+      type="button"
+      onClick={toggleTheme}
+      className={cn(
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition hover:bg-muted focus:bg-muted",
+        className
+      )}
+    >
       {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
       {theme === "dark" ? "라이트모드로 전환" : "다크모드로 전환"}
     </button>

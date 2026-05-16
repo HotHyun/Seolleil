@@ -38,3 +38,28 @@ export function ThemeToggle() {
     </button>
   );
 }
+
+export function ThemeMenuItem() {
+  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+
+  React.useEffect(() => {
+    const stored = window.localStorage.getItem(storageKey);
+    const nextTheme = stored === "dark" || stored === "light" ? stored : "light";
+    setTheme(nextTheme);
+    applyTheme(nextTheme);
+  }, []);
+
+  function toggleTheme() {
+    const nextTheme = theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+    window.localStorage.setItem(storageKey, nextTheme);
+    applyTheme(nextTheme);
+  }
+
+  return (
+    <button type="button" onClick={toggleTheme} className="flex w-full items-center gap-2">
+      {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      {theme === "dark" ? "라이트모드로 전환" : "다크모드로 전환"}
+    </button>
+  );
+}

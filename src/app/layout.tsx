@@ -3,7 +3,6 @@ import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { auth } from "@/auth";
 import { AuthNav } from "@/components/auth/auth-nav";
-import { ThemeToggle } from "@/components/theme-toggle";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -44,7 +43,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               <a href="/plan" className="hidden hover:text-foreground sm:inline">
                 트립 만들기
               </a>
-              <ThemeToggle />
               <AuthNav session={session} />
             </nav>
           </div>

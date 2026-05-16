@@ -1,6 +1,6 @@
 import type { Priority, TimeSlot } from "@/lib/types";
 
-export const CURRENT_SEASON = "2026-2027";
+export const CURRENT_SEASON = "2025-2026";
 
 export const priorityLabels: Record<Priority, string> = {
   close: "가까움",
@@ -22,4 +22,3 @@ export const timeSlotLabels: Record<TimeSlot, string> = {
   full_day: "종일권",
   all: "전체"
 };
-

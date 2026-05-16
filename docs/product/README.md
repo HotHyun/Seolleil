@@ -11,6 +11,7 @@
 - `decisions.md`: 지금까지 확정된 제품/기술 의사결정.
 - `data-model.md`: 스키장, 트립, 가격, 공유 링크의 기획 단계 데이터 모델.
 - `pricing.md`: 시즌별 static 가격 데이터 운영 방식과 비용 계산 정책.
+- `seasonal-price-sources.md`: 25/26 시즌 가격 데이터 출처와 26/27 교체 체크리스트.
 - `recommendation.md`: 룰 기반 추천 전략.
 - `technical-plan.md`: 기술 스택, 배포, 운영 방향.
 - `share-security.md`: 선택적 로그인, 편집 링크, 공유 링크 보안 정책.

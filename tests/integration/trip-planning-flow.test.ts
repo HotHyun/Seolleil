@@ -27,12 +27,12 @@ describe("trip planning feature flow", () => {
     expect(tasks.find((task) => task.title === "의류 렌탈 예약")?.status).toBe("planned");
   });
 
-  it("keeps non-operating resorts out of recommendations but present in dataset", () => {
-    expect(resorts.some((resort) => resort.operationStatus !== "operating")).toBe(true);
+  it("uses the 13-resort MVP dataset and recommends only operating resorts", () => {
+    expect(resorts).toHaveLength(13);
+    expect(resorts.some((resort) => resort.id === "bearstown")).toBe(false);
 
     const recommendations = getRecommendations(tripInput());
 
     expect(recommendations.every((item) => item.resort.operationStatus === "operating")).toBe(true);
   });
 });
-

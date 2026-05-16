@@ -355,66 +355,127 @@ export const resorts: SkiResort[] = [
     tags: ["남부권", "부산근교"],
     operationStatus: "operating",
     lastCheckedAt: checkedAt
-  },
-  {
-    id: "bearstown",
-    name: "베어스타운",
-    region: "경기 포천",
-    address: "경기도 포천시 내촌면 금강로2536번길 27",
-    officialUrl: "https://www.bearstown.com/",
-    slopeStatusUrl: "https://www.bearstown.com/",
-    liftTicketUrl: "https://www.bearstown.com/",
-    mapLinks: {
-      naver: "https://map.naver.com/p/search/%EB%B2%A0%EC%96%B4%EC%8A%A4%ED%83%80%EC%9A%B4",
-      kakao: "https://map.kakao.com/link/search/%EB%B2%A0%EC%96%B4%EC%8A%A4%ED%83%80%EC%9A%B4"
-    },
-    bookingLinks: [],
-    nightSkiAvailable: false,
-    beginnerScore: 70,
-    familyScore: 70,
-    accessScore: 76,
-    priceLevel: 3,
-    resortScaleScore: 68,
-    transportScore: 50,
-    rentalConvenienceScore: 50,
-    tags: ["휴장확인필요"],
-    operationStatus: "unknown",
-    lastCheckedAt: checkedAt
   }
 ];
 
-export const rentalShops: RentalShop[] = resorts.flatMap((resort) => [
+export const rentalShops: RentalShop[] = [
   {
-    id: `${resort.id}-official-rental`,
-    resortId: resort.id,
-    name: `${resort.name} 공식 렌탈`,
-    url: resort.rentalUrl,
-    mapLinks: resort.mapLinks,
+    id: "konjiam-official-rental",
+    resortId: "konjiam",
+    name: "곤지암리조트 공식 렌탈",
+    url: "https://www.konjiamresort.co.kr/",
     equipmentRentalAvailable: true,
     clothingRentalAvailable: true,
     pickupAvailable: false,
     deliveryAvailable: false,
     distanceMinutes: 0,
     recommendationTags: ["공식", "리조트내"],
-    sourceUrl: resort.rentalUrl,
+    sourceUrl: "https://www.konjiamresort.co.kr/",
     lastCheckedAt: checkedAt
   },
   {
-    id: `${resort.id}-nearby-rental`,
-    resortId: resort.id,
-    name: `${resort.name} 인근 렌탈샵 후보`,
-    url: resort.mapLinks.naver,
-    mapLinks: resort.mapLinks,
+    id: "konjiam-goodgear",
+    resortId: "konjiam",
+    name: "장비좋은집",
+    url: "https://gonjiam.co.kr/",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EA%B3%A4%EC%A7%80%EC%95%94%20%EC%9E%A5%EB%B9%84%EC%A2%8B%EC%9D%80%EC%A7%91"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 6,
+    recommendationTags: ["외부샵", "가격표확인"],
+    sourceUrl: "https://gonjiam.co.kr/",
+    lastCheckedAt: checkedAt
+  },
+  ...resorts
+    .filter((resort) => resort.id !== "konjiam")
+    .map((resort) => ({
+      id: `${resort.id}-official-rental`,
+      resortId: resort.id,
+      name: `${resort.name} 공식 렌탈`,
+      url: resort.rentalUrl,
+      mapLinks: resort.mapLinks,
+      equipmentRentalAvailable: true,
+      clothingRentalAvailable: true,
+      pickupAvailable: false,
+      deliveryAvailable: false,
+      distanceMinutes: 0,
+      recommendationTags: ["공식", "리조트내"],
+      sourceUrl: resort.rentalUrl,
+      lastCheckedAt: checkedAt
+    })),
+  {
+    id: "elysian-worldski",
+    resortId: "elysian",
+    name: "월드스키",
+    url: "https://www.gwski.co.kr/theme/basic/page.php?gr_id=01&num=03",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%97%98%EB%A6%AC%EC%8B%9C%EC%95%88%20%EC%9B%94%EB%93%9C%EC%8A%A4%ED%82%A4"
+    },
     equipmentRentalAvailable: true,
     clothingRentalAvailable: true,
     pickupAvailable: true,
     deliveryAvailable: false,
     distanceMinutes: 8,
-    recommendationTags: ["외부샵", "가격비교"],
-    sourceUrl: resort.mapLinks.naver,
+    recommendationTags: ["외부샵", "가격표확인"],
+    sourceUrl: "https://www.gwski.co.kr/theme/basic/page.php?gr_id=01&num=03",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-daegwallyeong-sports",
+    resortId: "wellihilli",
+    name: "대관령스포츠",
+    url: "https://wellski.co.kr/m/payment.php?xch=payment",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%9B%B0%EB%A6%AC%ED%9E%90%EB%A6%AC%20%EB%8C%80%EA%B4%80%EB%A0%B9%EC%8A%A4%ED%8F%AC%EC%B8%A0"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: true,
+    distanceMinutes: 10,
+    recommendationTags: ["외부샵", "가격표확인", "배송"],
+    sourceUrl: "https://wellski.co.kr/m/payment.php?xch=payment",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-firstclub",
+    resortId: "oakvalley",
+    name: "오크밸리 스키&보드 강습센터",
+    url: "https://oak.thefirstclub.co.kr/dnb/user/userpage.php?lpage=page_7",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20%EB%A0%8C%ED%83%88%EC%83%B5"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 8,
+    recommendationTags: ["외부샵", "가격표확인"],
+    sourceUrl: "https://oak.thefirstclub.co.kr/dnb/user/userpage.php?lpage=page_7",
+    lastCheckedAt: checkedAt
+  },
+  {
+    id: "edenvalley-modooski",
+    resortId: "edenvalley",
+    name: "모두스키",
+    url: "https://modooski.imweb.me/15",
+    mapLinks: {
+      naver: "https://map.naver.com/p/search/%EC%97%90%EB%8D%B4%EB%B0%B8%EB%A6%AC%20%EB%AA%A8%EB%91%90%EC%8A%A4%ED%82%A4"
+    },
+    equipmentRentalAvailable: true,
+    clothingRentalAvailable: true,
+    pickupAvailable: true,
+    deliveryAvailable: false,
+    distanceMinutes: 8,
+    recommendationTags: ["외부샵", "가격표확인"],
+    sourceUrl: "https://modooski.imweb.me/15",
     lastCheckedAt: checkedAt
   }
-]);
+];
 
 export const departureLocations: DepartureLocation[] = [
   {
@@ -434,8 +495,7 @@ export const departureLocations: DepartureLocation[] = [
       alpensia: { minutes: 165, km: 186 },
       o2: { minutes: 210, km: 238 },
       muju: { minutes: 190, km: 220 },
-      edenvalley: { minutes: 300, km: 365 },
-      bearstown: { minutes: 80, km: 70 }
+      edenvalley: { minutes: 300, km: 365 }
     }
   },
   {
@@ -455,8 +515,7 @@ export const departureLocations: DepartureLocation[] = [
       alpensia: { minutes: 175, km: 192 },
       o2: { minutes: 220, km: 244 },
       muju: { minutes: 200, km: 230 },
-      edenvalley: { minutes: 310, km: 375 },
-      bearstown: { minutes: 70, km: 58 }
+      edenvalley: { minutes: 310, km: 375 }
     }
   },
   {
@@ -476,8 +535,7 @@ export const departureLocations: DepartureLocation[] = [
       alpensia: { minutes: 175, km: 190 },
       o2: { minutes: 220, km: 250 },
       muju: { minutes: 165, km: 190 },
-      edenvalley: { minutes: 280, km: 340 },
-      bearstown: { minutes: 110, km: 105 }
+      edenvalley: { minutes: 280, km: 340 }
     }
   }
 ];
@@ -489,4 +547,3 @@ export function getResort(id: string) {
 export function getRentalShopsForResort(resortId: string) {
   return rentalShops.filter((shop) => shop.resortId === resortId);
 }
-

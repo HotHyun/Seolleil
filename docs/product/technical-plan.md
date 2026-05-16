@@ -47,6 +47,8 @@ PgAdmin
 - 가격 변경 시 코드를 수정하고 재배포한다.
 - 트립 데이터는 PostgreSQL에 저장한다.
 - 로그인은 선택 사항으로 제공한다.
+- MVP 인증 제공자는 Google OAuth부터 지원한다.
+- Kakao OAuth와 이메일 매직링크는 추후 확장으로 둔다.
 - 비로그인 트립 생성은 유지한다.
 - 로그인 사용자는 내 트립 목록에서 본인 트립에 접근한다.
 - edit token/share token 접근 방식은 로그인 도입 후에도 유지한다.
@@ -55,10 +57,17 @@ PgAdmin
 - 제품 핵심 이벤트는 앱 PostgreSQL에도 저장한다.
 - MVP 단계의 DB 이벤트 확인은 PgAdmin으로 처리한다.
 
+## 인증 계획
+
+- 1차: Google OAuth.
+- 2차 후보: Kakao OAuth.
+- 3차 후보: 이메일 매직링크.
+- 인증 구현은 Next.js와 Prisma/PostgreSQL 연동이 쉬운 방식을 우선한다.
+- 로그인은 필수 진입 조건이 아니며, 트립 복구와 내 트립 목록을 위한 선택 기능이다.
+
 ## 추후 결정 필요
 
 - Next.js App Router 사용 여부.
-- 인증 제공자: Google, Kakao, 이메일 매직링크 중 선택.
 - PostgreSQL 백업 방식.
 - edit token/share token 길이와 만료 정책.
 - Docker Compose 서비스 구성.

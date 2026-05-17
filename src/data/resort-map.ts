@@ -29,6 +29,15 @@ export type NearbyLodging = {
   lastCheckedAt: string;
 };
 
+export type NearbyMapItem = GeoPoint & {
+  id: string;
+  resortId: string;
+  type: "rental" | "lodging";
+  name: string;
+  meta: string;
+  href?: string;
+};
+
 export const resortMapPoints: ResortMapPoint[] = [
   { resortId: "konjiam", lat: 37.3373, lng: 127.2966, sourceName: "곤지암리조트 주소 기준", sourceUrl: "https://www.konjiamresort.co.kr/", lastCheckedAt: checkedAt },
   { resortId: "jisan", lat: 37.2177, lng: 127.3435, sourceName: "지산 포레스트 리조트 주소 기준", sourceUrl: "https://www.jisanresort.co.kr/", lastCheckedAt: checkedAt },
@@ -109,4 +118,50 @@ export function getNearbySummary(resortId: string, rentalShops: RentalShop[]) {
     rentalCount: rentalShops.filter((shop) => shop.resortId === resortId).length,
     lodgingCount: getNearbyLodgingsForResort(resortId).length
   };
+}
+
+export function getNearbyMapItems(resortId: string, rentalShops: RentalShop[]) {
+  const point = getResortMapPoint(resortId);
+  if (!point) return [];
+
+  const offsets = [
+    { lat: 0.009, lng: 0.006 },
+    { lat: -0.008, lng: 0.008 },
+    { lat: 0.006, lng: -0.009 },
+    { lat: -0.007, lng: -0.006 },
+    { lat: 0.012, lng: 0.0 },
+    { lat: 0.0, lng: 0.012 }
+  ];
+
+  const rentals: NearbyMapItem[] = rentalShops
+    .filter((shop) => shop.resortId === resortId)
+    .map((shop, index) => {
+      const offset = offsets[index % offsets.length];
+      return {
+        id: shop.id,
+        resortId,
+        type: "rental",
+        name: shop.name,
+        meta: `${shop.id.endsWith("official-rental") ? "공식 렌탈" : "렌탈샵"}${shop.distanceMinutes !== undefined ? ` · 약 ${shop.distanceMinutes}분` : ""}`,
+        href: shop.mapLinks?.naver ?? shop.url,
+        lat: point.lat + offset.lat,
+        lng: point.lng + offset.lng
+      };
+    });
+
+  const lodgings: NearbyMapItem[] = getNearbyLodgingsForResort(resortId).map((lodging, index) => {
+    const offset = offsets[(index + rentals.length) % offsets.length];
+    return {
+      id: lodging.id,
+      resortId,
+      type: "lodging",
+      name: lodging.name,
+      meta: lodging.distanceMinutes === 0 ? "공식/리조트 숙박" : `약 ${lodging.distanceMinutes}분`,
+      href: lodging.url ?? lodging.mapLinks?.naver,
+      lat: point.lat + offset.lat * 1.4,
+      lng: point.lng + offset.lng * 1.4
+    };
+  });
+
+  return [...rentals, ...lodgings];
 }

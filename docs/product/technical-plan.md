@@ -41,6 +41,29 @@ Umami self-host
 PgAdmin
 ```
 
+## 지도 구현 계획
+
+초기 지도 UX는 외부 지도 SDK 없이 정적 좌표 데이터와 자체 지도형 UI로 제공한다.
+
+- 스키장 좌표와 주변 숙박/렌탈 후보는 `src/data`의 static data로 관리한다.
+- 지도 SDK 키가 없어도 `/resorts`와 `/resorts/[id]`가 동작해야 한다.
+- 실제 길찾기, 영업시간, 리뷰, 최신 장소 정보는 네이버 지도/카카오맵 외부 링크로 보낸다.
+- 외부 지도 SDK 연동 시 클라이언트 노출 가능한 공개 키만 `NEXT_PUBLIC_*` 환경변수로 사용한다.
+
+지도 SDK 후보:
+
+- Kakao Maps JavaScript API: `NEXT_PUBLIC_KAKAO_MAP_APP_KEY`
+- NAVER Maps JavaScript API v3: `NEXT_PUBLIC_NAVER_MAP_NCP_KEY_ID`
+
+승인/설정 필요 항목:
+
+- Kakao Developers에서 애플리케이션 생성.
+- Kakao Maps JavaScript 키 확인.
+- Web 플랫폼 사이트 도메인에 `https://ski.hothyun.com`과 로컬 개발 도메인 등록.
+- NAVER Cloud Platform Maps 애플리케이션 생성.
+- Web Dynamic Map 사용 설정.
+- 서비스 도메인에 `https://ski.hothyun.com`과 로컬 개발 도메인 등록.
+
 ## 운영 원칙
 
 - 가격 데이터는 DB 관리자 화면이 아니라 코드의 static season data로 관리한다.

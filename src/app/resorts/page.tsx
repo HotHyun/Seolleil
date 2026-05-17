@@ -5,7 +5,8 @@ import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { resorts } from "@/data/resorts";
+import { ResortMapExplorer } from "@/components/resort-map-explorer";
+import { rentalShops, resorts } from "@/data/resorts";
 
 export default function ResortsPage() {
   const sorted = [...resorts].sort((a, b) => {
@@ -21,10 +22,11 @@ export default function ResortsPage() {
         <p className="mb-2 text-sm font-semibold text-primary">Directory</p>
         <h1 className="text-3xl font-black md:text-5xl">국내 스키장 디렉토리</h1>
         <p className="mt-3 max-w-2xl text-muted-foreground">
-          운영/휴장/unknown 상태를 구분해 보여줍니다. 실시간 운영현황은 공식 링크에서 확인하세요.
+          지도에서 국내 스키장 위치를 먼저 확인하고, 스키장을 선택해 주변 숙박과 렌탈 후보를 이어서 확인하세요.
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <ResortMapExplorer resorts={sorted} rentalShops={rentalShops} />
+      <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {sorted.map((resort) => (
           <Card key={resort.id}>
             <CardHeader>

@@ -4,6 +4,7 @@ import { ExternalLink, MapPinned } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
+import { ResortNearbyPanel } from "@/components/resort-nearby-panel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { priceRules, rentalPriceRules } from "@/data/prices";
@@ -60,6 +61,15 @@ export default async function ResortDetailPage({ params }: PageProps) {
 
       <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
         <section className="space-y-5">
+          <Card>
+            <CardHeader>
+              <CardTitle>지도와 주변 정보</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResortNearbyPanel resort={resort} rentalShops={shops} />
+            </CardContent>
+          </Card>
+
           <Card>
             <CardHeader>
               <CardTitle>방문 전 확인</CardTitle>

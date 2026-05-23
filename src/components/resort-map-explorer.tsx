@@ -25,6 +25,10 @@ type KakaoMarker = {
   setMap: (map: KakaoMap | null) => void;
 };
 
+type KakaoCustomOverlay = {
+  setMap: (map: KakaoMap | null) => void;
+};
+
 declare global {
   interface Window {
     kakao?: {
@@ -32,6 +36,7 @@ declare global {
         LatLng: new (lat: number, lng: number) => unknown;
         Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap;
         Marker: new (options: { map: KakaoMap; position: unknown; title?: string }) => KakaoMarker;
+        CustomOverlay: new (options: { content: HTMLElement; map?: KakaoMap; position: unknown; yAnchor?: number }) => KakaoCustomOverlay;
         event: {
           addListener: (target: KakaoMarker, type: string, handler: () => void) => void;
         };
@@ -50,6 +55,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
   const mapRef = useRef<HTMLDivElement | null>(null);
   const kakaoMapRef = useRef<KakaoMap | null>(null);
   const markersRef = useRef<KakaoMarker[]>([]);
+  const selectedNearbyOverlayRef = useRef<KakaoCustomOverlay | null>(null);
   const selected = rows.find((row) => row.resort.id === selectedId) ?? rows[0];
   const selectedSummary = selected ? getNearbySummary(selected.resort.id, rentalShops) : { rentalCount: 0, lodgingCount: 0 };
   const nearbyItems = useMemo(
@@ -103,10 +109,29 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     kakaoMapRef.current.setLevel(showNearby ? 6 : 10);
   }, [selected?.point, showNearby]);
 
+  useEffect(() => {
+    selectedNearbyOverlayRef.current?.setMap(null);
+    selectedNearbyOverlayRef.current = null;
+
+    if (!selectedNearby || !kakaoMapRef.current || !window.kakao?.maps) return;
+
+    const position = new window.kakao.maps.LatLng(selectedNearby.lat, selectedNearby.lng);
+    kakaoMapRef.current.setCenter(position);
+    kakaoMapRef.current.setLevel(4);
+    selectedNearbyOverlayRef.current = new window.kakao.maps.CustomOverlay({
+      map: kakaoMapRef.current,
+      position,
+      yAnchor: 1.45,
+      content: createSelectedNearbyOverlay(selectedNearby)
+    });
+  }, [selectedNearby]);
+
   function drawKakaoMarkers(map: KakaoMap) {
     if (!window.kakao?.maps) return;
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
+    selectedNearbyOverlayRef.current?.setMap(null);
+    selectedNearbyOverlayRef.current = null;
 
     const resortMarkers = showNearby && selected ? [{ resort: selected.resort, point: selected.point }] : rows;
     resortMarkers.forEach(({ resort, point }) => {
@@ -358,22 +383,73 @@ function FallbackMap({
       {nearbyItems.map((item) => {
         const isSelected = item.id === selectedNearbyId;
         return (
-          <button
-            key={item.id}
-            type="button"
-            className={cn(
-              "absolute z-20 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              item.type === "rental" ? "bg-primary" : "bg-white",
-              isSelected ? "scale-150 border-primary" : "border-zinc-950"
-            )}
-            style={getMapPosition(item)}
-            onClick={() => onNearbySelect(item.id)}
-            aria-label={`${item.name} 선택`}
-          />
+          <div key={item.id} className="absolute z-20 -translate-x-1/2 -translate-y-1/2" style={getMapPosition(item)}>
+            {isSelected ? (
+              <div className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/60 bg-primary/15 shadow-[0_0_28px_hsl(var(--primary)/0.55)]" />
+            ) : null}
+            <button
+              type="button"
+              className={cn(
+                "relative rounded-full border-2 shadow-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                item.type === "rental" ? "bg-primary" : "bg-white",
+                isSelected ? "h-5 w-5 -translate-y-2 border-white shadow-2xl" : "h-3.5 w-3.5 border-zinc-950"
+              )}
+              onClick={() => onNearbySelect(item.id)}
+              aria-label={`${item.name} 선택`}
+            />
+            {isSelected ? (
+              <div className="pointer-events-none absolute left-1/2 top-6 w-max max-w-44 -translate-x-1/2 rounded-lg border border-white/15 bg-zinc-950/90 px-2.5 py-1.5 text-center text-[11px] font-black text-white shadow-xl">
+                {item.name}
+              </div>
+            ) : null}
+          </div>
         );
       })}
     </div>
   );
+}
+
+function createSelectedNearbyOverlay(item: NearbyMapItem) {
+  const wrapper = document.createElement("div");
+  wrapper.style.cssText = [
+    "position: relative",
+    "display: flex",
+    "flex-direction: column",
+    "align-items: center",
+    "gap: 6px",
+    "transform: translateY(-10px)",
+    "pointer-events: none"
+  ].join(";");
+
+  const label = document.createElement("div");
+  label.textContent = item.name;
+  label.style.cssText = [
+    "max-width: 190px",
+    "padding: 7px 10px",
+    "border-radius: 10px",
+    "border: 1px solid rgba(255,255,255,0.22)",
+    "background: rgba(9,9,11,0.92)",
+    "color: white",
+    "font-size: 12px",
+    "font-weight: 900",
+    "line-height: 1.25",
+    "text-align: center",
+    "box-shadow: 0 18px 36px rgba(0,0,0,0.35)",
+    "backdrop-filter: blur(14px)"
+  ].join(";");
+
+  const pin = document.createElement("div");
+  pin.style.cssText = [
+    "width: 18px",
+    "height: 18px",
+    "border-radius: 999px",
+    "border: 3px solid white",
+    `background: ${item.type === "rental" ? "hsl(var(--primary))" : "#ffffff"}`,
+    "box-shadow: 0 0 0 10px rgba(255,122,26,0.2), 0 0 32px rgba(255,122,26,0.72), 0 12px 24px rgba(0,0,0,0.45)"
+  ].join(";");
+
+  wrapper.append(label, pin);
+  return wrapper;
 }
 
 function SelectedResortCard({

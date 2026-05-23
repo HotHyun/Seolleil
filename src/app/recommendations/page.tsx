@@ -39,7 +39,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
 
       <section className="mb-8 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {categories.map((category) => (
-          <Card key={category.id}>
+          <Card key={category.id} className="motion-card">
             <CardContent className="p-4">
               <div className="text-xs font-semibold text-muted-foreground">{category.label}</div>
               <div className="mt-1 text-xs text-muted-foreground">{category.description}</div>
@@ -88,7 +88,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
               .map((option) => ({ option, shop }))
           );
           return (
-            <Card key={recommendation.resort.id} className="overflow-hidden">
+            <Card key={recommendation.resort.id} className="motion-card overflow-hidden">
               <div className="grid gap-0 lg:grid-cols-[1fr_360px]">
                 <div className="p-5 md:p-6">
                   <div className="mb-3 flex flex-wrap items-center gap-2">

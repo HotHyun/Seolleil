@@ -36,36 +36,36 @@ export default function HomePage() {
         <div className="page-shell relative flex min-h-[calc(100svh-4rem)] flex-col justify-end py-8 sm:py-12 md:py-16">
           <div className="grid gap-8 pb-6 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end md:pb-10">
             <div className="max-w-4xl">
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-black backdrop-blur">
-              <Snowflake className="h-4 w-4 text-primary" />
-              한국 스키 여행을 한 번에 계획
+              <div className="animate-enter-up mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-black backdrop-blur">
+                <Snowflake className="h-4 w-4 text-primary" />
+                한국 스키 여행을 한 번에 계획
+              </div>
+              <h1 className="animate-enter-up animate-delay-1 max-w-4xl text-balance text-5xl font-black leading-[0.96] tracking-normal sm:text-6xl md:text-7xl xl:text-8xl">
+                한국 스키 여행을 예약 전까지 정리하는 앱.
+              </h1>
+              <p className="animate-enter-up animate-delay-2 mt-5 max-w-2xl text-base font-semibold leading-7 text-white/[0.82] sm:text-lg md:text-xl md:leading-8">
+                날짜와 조건만 입력하면 갈 만한 스키장, 예상 비용, 예약 확인 링크, 동행자 공유 체크리스트를 하나의 트립으로 만들어줍니다.
+              </p>
+              <div className="animate-enter-up animate-delay-3 mt-8 flex flex-col gap-3 sm:flex-row">
+                <AnalyticsLink href="/plan" eventName="home_hero_cta_click">
+                  <Button className="h-12 w-full px-5 text-base sm:w-auto">
+                    내게 맞는 스키장 찾기 <ArrowRight className="h-5 w-5" />
+                  </Button>
+                </AnalyticsLink>
+                <AnalyticsLink href="/resorts" eventName="home_hero_resorts_click">
+                  <Button variant="secondary" className="h-12 w-full border-white/[0.25] bg-white/[0.12] px-5 text-base text-white hover:bg-white/[0.18] sm:w-auto">
+                    스키장 둘러보기
+                  </Button>
+                </AnalyticsLink>
+              </div>
             </div>
-            <h1 className="max-w-4xl text-balance text-5xl font-black leading-[0.96] tracking-normal sm:text-6xl md:text-7xl xl:text-8xl">
-              한국 스키 여행을 예약 전까지 정리하는 앱.
-            </h1>
-            <p className="mt-5 max-w-2xl text-base font-semibold leading-7 text-white/[0.82] sm:text-lg md:text-xl md:leading-8">
-              날짜와 조건만 입력하면 갈 만한 스키장, 예상 비용, 예약 확인 링크, 동행자 공유 체크리스트를 하나의 트립으로 만들어줍니다.
-            </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <AnalyticsLink href="/plan" eventName="home_hero_cta_click">
-                <Button className="h-12 w-full px-5 text-base sm:w-auto">
-                  내게 맞는 스키장 찾기 <ArrowRight className="h-5 w-5" />
-                </Button>
-              </AnalyticsLink>
-              <AnalyticsLink href="/resorts" eventName="home_hero_resorts_click">
-                <Button variant="secondary" className="h-12 w-full border-white/[0.25] bg-white/[0.12] px-5 text-base text-white hover:bg-white/[0.18] sm:w-auto">
-                  스키장 둘러보기
-                </Button>
-              </AnalyticsLink>
-            </div>
-            </div>
-            <div className="hidden rounded-xl border border-white/[0.16] bg-zinc-950/70 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl lg:block">
+            <div className="animate-preview-float hidden rounded-xl border border-white/[0.16] bg-zinc-950/70 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl lg:block">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
                   <div className="text-xs font-black uppercase tracking-[0.18em] text-white/45">Trip preview</div>
                   <div className="mt-1 text-xl font-black">이번 주말 스키 초안</div>
                 </div>
-                <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <div className="animate-soft-pulse flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                   <MountainSnow className="h-5 w-5" />
                 </div>
               </div>
@@ -81,7 +81,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="grid gap-3 border-t border-white/[0.16] pt-5 sm:grid-cols-3 lg:max-w-4xl">
+          <div className="animate-enter-up animate-delay-3 grid gap-3 border-t border-white/[0.16] pt-5 sm:grid-cols-3 lg:max-w-4xl">
             <HeroStat icon={<MapPinned />} label="운영 스키장" value={`${activeCount}곳`} />
             <HeroStat icon={<ReceiptText />} label="예상 비용" value="날짜 기준" />
             <HeroStat icon={<ClipboardCheck />} label="준비 관리" value="공유 가능" />
@@ -197,7 +197,7 @@ function PreviewMetric({ label, value }: { label: string; value: string }) {
 
 function Feature({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
   return (
-    <div className="rounded-lg border bg-card/[0.82] p-4 shadow-sm">
+    <div className="motion-card rounded-lg border bg-card/[0.82] p-4 shadow-sm">
       <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-primary/15 text-primary [&_svg]:h-5 [&_svg]:w-5">
         {icon}
       </div>
@@ -209,7 +209,7 @@ function Feature({ icon, title, text }: { icon: ReactNode; title: string; text: 
 
 function Step({ number, icon, title, text }: { number: string; icon: ReactNode; title: string; text: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.06] p-5">
+    <div className="motion-card rounded-lg border border-white/10 bg-white/[0.06] p-5">
       <div className="flex items-start justify-between gap-4">
         <div className="flex h-11 w-11 items-center justify-center rounded-md bg-primary/[0.18] text-primary [&_svg]:h-5 [&_svg]:w-5">
           {icon}
@@ -224,7 +224,7 @@ function Step({ number, icon, title, text }: { number: string; icon: ReactNode; 
 
 function ValueRow({ icon, title, text }: { icon: ReactNode; title: string; text: string }) {
   return (
-    <div className="flex gap-4 rounded-lg border bg-card/[0.82] p-4 shadow-sm">
+    <div className="motion-card flex gap-4 rounded-lg border bg-card/[0.82] p-4 shadow-sm">
       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-zinc-950 text-primary [&_svg]:h-5 [&_svg]:w-5">
         {icon}
       </div>

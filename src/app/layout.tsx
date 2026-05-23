@@ -1,9 +1,17 @@
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { auth } from "@/auth";
 import { AuthNav } from "@/components/auth/auth-nav";
 import "@/app/globals.css";
+
+const pretendard = localFont({
+  src: "../../public/fonts/PretendardVariable.woff2",
+  display: "swap",
+  weight: "45 920",
+  variable: "--font-pretendard"
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ski.hothyun.com"),
@@ -18,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang="ko" suppressHydrationWarning>
-      <body>
+      <body className={pretendard.className}>
         <script
           dangerouslySetInnerHTML={{
             __html:

@@ -35,6 +35,10 @@ const INJECTED_STYLES = `
     background-clip: text;
     filter: drop-shadow(0 20px 36px rgba(0,0,0,0.58));
   }
+  .kski-white-hero {
+    color: #ffffff;
+    text-shadow: 0 22px 70px rgba(0,0,0,0.76), 0 3px 12px rgba(0,0,0,0.72);
+  }
   .kski-depth-card {
     background:
       radial-gradient(circle at var(--mouse-x, 65%) var(--mouse-y, 35%), rgba(255,255,255,0.16), transparent 32rem),
@@ -149,7 +153,6 @@ export function CinematicHero({
       });
       gsap.set(".kski-card", { y: window.innerHeight * 0.72, autoAlpha: 1, scale: 0.94 });
       gsap.set(".kski-phone-wrap, .kski-card-copy, .kski-card-brand, .kski-floating, .kski-widget", { autoAlpha: 0 });
-      gsap.set(".kski-final-cta", { autoAlpha: 0, y: 36, filter: "blur(18px)" });
 
       gsap.timeline({ delay: 0.2 })
         .to(".kski-eyebrow", { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.75, ease: "expo.out" })
@@ -188,7 +191,6 @@ export function CinematicHero({
         .fromTo(".kski-card-brand", { x: 34, autoAlpha: 0 }, { x: 0, autoAlpha: 1, duration: 0.8, ease: "power3.out" }, "<")
         .to({}, { duration: 0.9 })
         .to([".kski-phone-wrap", ".kski-floating", ".kski-card-copy", ".kski-card-brand"], { y: -34, scale: 0.94, autoAlpha: 0, stagger: 0.04, duration: 0.8, ease: "power3.in" })
-        .to(".kski-final-cta", { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "expo.out" }, "-=0.35")
         .to(".kski-card", { y: -window.innerHeight * 0.85, duration: 1, ease: "power3.in" });
     }, containerRef);
 
@@ -204,11 +206,11 @@ export function CinematicHero({
     >
       <style dangerouslySetInnerHTML={{ __html: INJECTED_STYLES }} />
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-70"
+        className="absolute inset-0 bg-cover bg-center opacity-82"
         style={{ backgroundImage: "url('/images/ski-hero.jpg')" }}
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.88),rgba(0,0,0,0.58),rgba(0,0,0,0.34))]" aria-hidden="true" />
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.62),rgba(0,0,0,0.36),rgba(0,0,0,0.18))]" aria-hidden="true" />
       <div className="kski-grid absolute inset-0 z-0 opacity-70" aria-hidden="true" />
       <div className="kski-film-grain" aria-hidden="true" />
 
@@ -219,8 +221,8 @@ export function CinematicHero({
             한국 스키 여행을 예약 전까지 정리
           </div>
           <h1 className="kski-hero-title text-balance text-5xl font-black leading-[0.94] tracking-normal sm:text-6xl md:text-8xl">
-            <span className="kski-title-line kski-reveal block">스키장 추천부터</span>
-            <span className="kski-title-line kski-reveal block kski-silver">비용, 준비, 공유까지.</span>
+            <span className="kski-title-line kski-reveal block kski-white-hero">스키장 추천부터</span>
+            <span className="kski-title-line kski-reveal block kski-white-hero">비용, 준비, 공유까지.</span>
           </h1>
           <p className="kski-copy kski-reveal mt-6 max-w-2xl text-base font-semibold leading-7 text-white/80 sm:text-lg md:text-xl md:leading-8">
             Korean Ski는 검색 결과를 늘어놓지 않고, 지금 예약 전에 결정해야 할 것들을 하나의 트립으로 압축합니다.
@@ -300,16 +302,6 @@ export function CinematicHero({
 
             <FloatingBadge className="kski-floating kski-reveal left-4 top-5 md:left-[34%] md:top-12" icon={<Share2 />} title="공유 링크" text="읽기 전용 준비 상태" />
             <FloatingBadge className="kski-floating kski-reveal bottom-6 right-4 md:bottom-16 md:right-[30%]" icon={<ClipboardCheck />} title="체크리스트" text="동행자와 같이 확인" />
-          </div>
-
-          <div className="kski-final-cta kski-reveal absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center">
-            <h2 className="kski-silver text-balance text-4xl font-black leading-tight md:text-6xl">이번 주말 스키 계획을 바로 만드세요.</h2>
-            <p className="mt-5 max-w-xl text-base font-semibold leading-7 text-blue-100/70 md:text-lg">
-              로그인 없이 시작하고, 나중에 계정에 연결해 내 트립으로 보관할 수 있습니다.
-            </p>
-            <a href={primaryHref} className="kski-cta-primary mt-8 inline-flex h-12 items-center justify-center gap-2 rounded-lg px-5 text-base font-black transition-transform hover:-translate-y-0.5">
-              트립 만들기 <ArrowRight className="h-5 w-5" />
-            </a>
           </div>
         </div>
       </div>

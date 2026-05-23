@@ -3,91 +3,25 @@ import {
   ArrowRight,
   CalendarDays,
   CheckCircle2,
-  ClipboardCheck,
   Clock3,
   Link2,
   MapPinned,
-  MountainSnow,
-  ReceiptText,
   Route,
   ShieldCheck,
-  Snowflake,
   UsersRound,
   WalletCards
 } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { Button } from "@/components/ui/button";
+import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
 import { resorts } from "@/data/resorts";
-
-const heroImage = "/images/ski-hero.jpg";
 
 export default function HomePage() {
   const activeCount = resorts.filter((resort) => resort.operationStatus === "operating").length;
 
   return (
     <main className="overflow-hidden bg-background">
-      <section
-        className="relative min-h-[calc(100svh-4rem)] border-b bg-cover bg-center text-white"
-        style={{ backgroundImage: `url(${heroImage})` }}
-      >
-        <div className="absolute inset-0 bg-black/70" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(0,0,0,0.86),rgba(0,0,0,0.55),rgba(0,0,0,0.22))]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-background/95 to-transparent" />
-        <div className="page-shell relative flex min-h-[calc(100svh-4rem)] flex-col justify-end py-8 sm:py-12 md:py-16">
-          <div className="grid gap-8 pb-6 lg:grid-cols-[minmax(0,1fr)_390px] lg:items-end md:pb-10">
-            <div className="max-w-4xl">
-              <div className="animate-enter-up mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-sm font-black backdrop-blur">
-                <Snowflake className="h-4 w-4 text-primary" />
-                한국 스키 여행을 한 번에 계획
-              </div>
-              <h1 className="animate-enter-up animate-delay-1 max-w-4xl text-balance text-5xl font-black leading-[0.96] tracking-normal sm:text-6xl md:text-7xl xl:text-8xl">
-                한국 스키 여행을 예약 전까지 정리하는 앱.
-              </h1>
-              <p className="animate-enter-up animate-delay-2 mt-5 max-w-2xl text-base font-semibold leading-7 text-white/[0.82] sm:text-lg md:text-xl md:leading-8">
-                날짜와 조건만 입력하면 갈 만한 스키장, 예상 비용, 예약 확인 링크, 동행자 공유 체크리스트를 하나의 트립으로 만들어줍니다.
-              </p>
-              <div className="animate-enter-up animate-delay-3 mt-8 flex flex-col gap-3 sm:flex-row">
-                <AnalyticsLink href="/plan" eventName="home_hero_cta_click">
-                  <Button className="h-12 w-full px-5 text-base sm:w-auto">
-                    내게 맞는 스키장 찾기 <ArrowRight className="h-5 w-5" />
-                  </Button>
-                </AnalyticsLink>
-                <AnalyticsLink href="/resorts" eventName="home_hero_resorts_click">
-                  <Button variant="secondary" className="h-12 w-full border-white/[0.25] bg-white/[0.12] px-5 text-base text-white hover:bg-white/[0.18] sm:w-auto">
-                    스키장 둘러보기
-                  </Button>
-                </AnalyticsLink>
-              </div>
-            </div>
-            <div className="animate-preview-float hidden rounded-xl border border-white/[0.16] bg-zinc-950/70 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl lg:block">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <div>
-                  <div className="text-xs font-black uppercase tracking-[0.18em] text-white/45">Trip preview</div>
-                  <div className="mt-1 text-xl font-black">이번 주말 스키 초안</div>
-                </div>
-                <div className="animate-soft-pulse flex h-11 w-11 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                  <MountainSnow className="h-5 w-5" />
-                </div>
-              </div>
-              <div className="space-y-3">
-                <PreviewRow label="추천 후보" value="곤지암 · 비발디 · 휘닉스" />
-                <PreviewRow label="예상 총액" value="1인 94,000원부터" />
-                <PreviewRow label="준비 상태" value="예약 확인 3개 남음" />
-              </div>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-center">
-                <PreviewMetric label="추천" value="3곳" />
-                <PreviewMetric label="가격" value="날짜별" />
-                <PreviewMetric label="공유" value="읽기전용" />
-              </div>
-            </div>
-          </div>
-          <div className="animate-enter-up animate-delay-3 grid gap-3 border-t border-white/[0.16] pt-5 sm:grid-cols-3 lg:max-w-4xl">
-            <HeroStat icon={<MapPinned />} label="운영 스키장" value={`${activeCount}곳`} />
-            <HeroStat icon={<ReceiptText />} label="예상 비용" value="날짜 기준" />
-            <HeroStat icon={<ClipboardCheck />} label="준비 관리" value="공유 가능" />
-          </div>
-        </div>
-      </section>
+      <CinematicHero activeResortCount={activeCount} />
 
       <section className="page-shell grid gap-8 py-12 md:grid-cols-[0.9fr_1.1fr] md:items-end md:py-16">
         <div>
@@ -160,38 +94,6 @@ export default function HomePage() {
         </div>
       </section>
     </main>
-  );
-}
-
-function HeroStat({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
-  return (
-    <div className="flex min-h-20 items-center gap-3 rounded-lg border border-white/[0.14] bg-white/[0.09] px-4 py-3 backdrop-blur">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground [&_svg]:h-5 [&_svg]:w-5">
-        {icon}
-      </div>
-      <div>
-        <div className="text-xs font-bold text-white/[0.62]">{label}</div>
-        <div className="mt-1 text-lg font-black">{value}</div>
-      </div>
-    </div>
-  );
-}
-
-function PreviewRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.06] px-3 py-3">
-      <span className="text-xs font-bold text-white/55">{label}</span>
-      <span className="text-sm font-black">{value}</span>
-    </div>
-  );
-}
-
-function PreviewMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg bg-white/[0.08] px-2 py-3">
-      <div className="text-[11px] font-bold text-white/45">{label}</div>
-      <div className="mt-1 text-sm font-black">{value}</div>
-    </div>
   );
 }
 

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { BarChart3, LogOut, UserCircle } from "lucide-react";
 import { signOutAction } from "@/app/auth-actions";
-import { ThemeMenuItem } from "@/components/theme-toggle";
+import { ThemeMenuItem, ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,9 +16,12 @@ import { isAdminSession } from "@/lib/admin";
 export function AuthNav({ session }: { session: Session | null }) {
   if (!session?.user) {
     return (
-      <a href="/login" className="hover:text-foreground">
-        로그인
-      </a>
+      <span className="inline-flex items-center gap-2">
+        <ThemeToggle />
+        <a href="/login" className="hover:text-foreground">
+          로그인
+        </a>
+      </span>
     );
   }
 

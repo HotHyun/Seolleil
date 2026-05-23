@@ -52,6 +52,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
   const [query, setQuery] = useState("");
   const [showNearby, setShowNearby] = useState(false);
   const [selectedNearbyId, setSelectedNearbyId] = useState<string | null>(null);
+  const [shouldFocusSelectedNearby, setShouldFocusSelectedNearby] = useState(false);
   const mapRef = useRef<HTMLDivElement | null>(null);
   const kakaoMapRef = useRef<KakaoMap | null>(null);
   const markersRef = useRef<KakaoMarker[]>([]);
@@ -118,15 +119,17 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     if (!selectedNearby || !kakaoMapRef.current || !window.kakao?.maps) return;
 
     const position = new window.kakao.maps.LatLng(selectedNearby.lat, selectedNearby.lng);
-    kakaoMapRef.current.setCenter(position);
-    kakaoMapRef.current.setLevel(4);
+    if (shouldFocusSelectedNearby) {
+      kakaoMapRef.current.setCenter(position);
+      kakaoMapRef.current.setLevel(4);
+    }
     selectedNearbyOverlayRef.current = new window.kakao.maps.CustomOverlay({
       map: kakaoMapRef.current,
       position,
       yAnchor: 1.45,
       content: createSelectedNearbyOverlay(selectedNearby)
     });
-  }, [selectedNearby]);
+  }, [selectedNearby, shouldFocusSelectedNearby]);
 
   function drawKakaoMarkers(map: KakaoMap) {
     if (!window.kakao?.maps) return;
@@ -159,26 +162,31 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
         position: new window.kakao.maps.LatLng(item.lat, item.lng),
         title: item.name
       });
-      window.kakao.maps.event.addListener(marker, "click", () => setSelectedNearbyId(item.id));
+      window.kakao.maps.event.addListener(marker, "click", () => selectNearby(item.id, false));
       markersRef.current.push(marker);
     });
   }
 
+  function selectNearby(id: string | null, focusMap: boolean) {
+    setShouldFocusSelectedNearby(focusMap);
+    setSelectedNearbyId(id);
+  }
+
   function openNearby() {
     setShowNearby(true);
-    setSelectedNearbyId(nearbyItems[0]?.id ?? null);
+    selectNearby(nearbyItems[0]?.id ?? null, false);
   }
 
   function closeNearby() {
     setShowNearby(false);
-    setSelectedNearbyId(null);
+    selectNearby(null, false);
   }
 
   return (
     <section className="grid min-h-[calc(100vh-4rem)] bg-background lg:grid-cols-[380px_1fr]">
       <aside className="z-20 flex max-h-[calc(100vh-4rem)] flex-col border-r bg-card shadow-xl max-lg:max-h-none lg:sticky lg:top-16">
         {showNearby && selected ? (
-          <NearbySidebar resort={selected.resort} items={nearbyItems} selectedId={selectedNearbyId} onBack={closeNearby} onSelect={setSelectedNearbyId} />
+          <NearbySidebar resort={selected.resort} items={nearbyItems} selectedId={selectedNearbyId} onBack={closeNearby} onSelect={(id) => selectNearby(id, true)} />
         ) : (
           <ResortSidebar
             rows={filteredRows}
@@ -188,7 +196,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
             onQueryChange={setQuery}
             onSelect={(id) => {
               setSelectedId(id);
-              setSelectedNearbyId(null);
+              selectNearby(null, false);
             }}
           />
         )}
@@ -204,7 +212,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
             selectedId={selected?.resort.id}
             selectedNearbyId={selectedNearbyId}
             onSelect={setSelectedId}
-            onNearbySelect={setSelectedNearbyId}
+            onNearbySelect={(id) => selectNearby(id, false)}
           />
         )}
 

@@ -79,7 +79,9 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
       if (!firstPoint) return;
 
       const center = new window.kakao.maps.LatLng(firstPoint.lat, firstPoint.lng);
-      const map = kakaoMapRef.current ?? new window.kakao.maps.Map(mapRef.current, { center, level: 12 });
+      const map = kakaoMapRef.current ?? new window.kakao.maps.Map(mapRef.current, { center, level: showNearby ? 6 : 10 });
+      map.setCenter(center);
+      map.setLevel(showNearby ? 6 : 10);
       kakaoMapRef.current = map;
       drawKakaoMarkers(map);
     };

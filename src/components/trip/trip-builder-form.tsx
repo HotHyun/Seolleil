@@ -62,6 +62,12 @@ export function TripBuilderForm() {
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    if (step < steps.length - 1) {
+      event.preventDefault();
+      goToNextStep();
+      return;
+    }
+
     const visitDate = new FormData(event.currentTarget).get("visitDate");
     if (!visitDate) {
       event.preventDefault();

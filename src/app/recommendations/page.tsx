@@ -6,10 +6,10 @@ import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
 import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { SelectField } from "@/components/ui/select-field";
 import { getRentalOptionsForResort } from "@/lib/pricing";
-import { getCategoryRecommendations, getRecommendations } from "@/lib/recommendation";
+import { getRecommendations } from "@/lib/recommendation";
 import type { CostItem, PriceConfidence, Priority, RentalPriceRule, TimeSlot, TripDuration, TripInput } from "@/lib/types";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
 
@@ -21,7 +21,6 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const input = parseParams(params);
   const recommendations = getRecommendations(input);
-  const categories = getCategoryRecommendations(input);
   const session = await auth();
   const isAuthenticated = Boolean(session?.user);
 
@@ -40,33 +39,6 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
           <Button variant="secondary">조건 다시 입력</Button>
         </a>
       </div>
-
-      <section className="mb-8 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        {categories.map((category) => (
-          <Card key={category.id} className="motion-card">
-            <CardContent className="p-4">
-              <div className="text-xs font-semibold text-muted-foreground">{category.label}</div>
-              <div className="mt-1 text-xs text-muted-foreground">{category.description}</div>
-              <ol className="mt-3 space-y-2">
-                {category.recommendations.map((recommendation, index) => (
-                  <li key={recommendation.resort.id} className="flex items-center justify-between gap-2 text-sm">
-                    <span className="font-bold">
-                      {index + 1}. {recommendation.resort.name}
-                    </span>
-                    <span className="shrink-0 text-xs font-semibold text-primary">
-                      {category.id === "cheap"
-                        ? formatCurrency(recommendation.cost.representative)
-                        : category.id === "close"
-                          ? formatMinutes(recommendation.travelMinutes)
-                          : `${recommendation.score}점`}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </CardContent>
-          </Card>
-        ))}
-      </section>
 
       <section className="grid gap-4">
         {recommendations.length === 0 ? (
@@ -92,7 +64,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
               .map((option) => ({ option, shop }))
           );
           return (
-            <Card key={recommendation.resort.id} className="motion-card overflow-hidden">
+            <Card key={recommendation.resort.id} className="overflow-hidden transition-colors hover:border-primary/50">
               <div className="grid gap-0 lg:grid-cols-[1fr_360px]">
                 <div className="p-5 md:p-6">
                   <div className="mb-3 flex flex-wrap items-center gap-2">

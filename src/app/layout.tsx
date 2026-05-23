@@ -49,7 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 스키장
               </a>
               <a href="/plan" className="rounded-md px-2 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
-                트립 만들기
+                트립 추천
               </a>
               <AuthNav session={session} />
             </nav>

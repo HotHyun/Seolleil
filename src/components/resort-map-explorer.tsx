@@ -486,8 +486,11 @@ function SelectedResortCard({
         <MapStat icon={<Shirt />} label="렌탈" value={`${summary.rentalCount}`} />
         <MapStat icon={<Hotel />} label="숙박" value={`${summary.lodgingCount}`} />
       </div>
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <Button className="flex-1" onClick={onOpenNearby}>주변 더 둘러보기</Button>
+      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+        <Link href={`/plan?resortId=${resort.id}`}>
+          <Button className="w-full">트립 만들기</Button>
+        </Link>
+        <Button variant="secondary" className="w-full" onClick={onOpenNearby}>주변 보기</Button>
         <Link href={`/resorts/${resort.id}`} className="flex-1">
           <Button variant="secondary" className="w-full">상세</Button>
         </Link>

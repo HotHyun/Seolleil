@@ -5,8 +5,10 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { buildDefaultTasks, dueDateFromVisit, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
+import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
+import { estimateTripCost } from "@/lib/pricing";
 import { prisma } from "@/lib/prisma";
-import { getRecommendations } from "@/lib/recommendation";
+import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
 import { parseTripInput } from "@/lib/trip-input";
 import type { TripInput } from "@/lib/types";
@@ -115,6 +117,94 @@ export async function createTripAction(formData: FormData) {
             resortId,
             peopleCount: input.peopleCount,
             transportType: input.transportType
+          }
+        }
+      }
+    }
+  });
+
+  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}`);
+}
+
+export async function createDirectTripAction(formData: FormData) {
+  const session = await auth();
+  const input = parseTripInput(formData);
+  const resortId = String(formData.get("resortId") ?? "");
+  const resort = getResort(resortId);
+
+  if (!resort) {
+    throw new Error("선택한 스키장을 찾을 수 없습니다.");
+  }
+
+  const departure = departureLocations.find((location) => location.id === input.departureLocation);
+  const distance = departure?.distances[resort.id];
+  const cost = estimateTripCost(resort, input);
+  const editToken = createToken();
+  const shareToken = createToken();
+  const visitDate = new Date(`${input.visitDate}T00:00:00`);
+  const expiresAt = new Date(visitDate);
+  expiresAt.setMonth(4, 30);
+  expiresAt.setFullYear(visitDate.getFullYear() + (visitDate.getMonth() >= 4 ? 1 : 0));
+
+  const trip = await prisma.trip.create({
+    data: {
+      userId: session?.user?.id,
+      editTokenHash: hashToken(editToken),
+      shareTokenHash: hashToken(shareToken),
+      resortId,
+      resortNameSnapshot: resort.name,
+      selectedRecommendation: {
+        score: 0,
+        reasons: [
+          "사용자가 직접 선택한 스키장입니다.",
+          distance ? `${departure?.label ?? "출발지"} 기준 약 ${distance.minutes}분 이동입니다.` : "출발지 기준 이동 정보는 공식 지도에서 확인하세요.",
+          `${resort.tags.slice(0, 2).join(", ")} 조건을 가진 스키장입니다.`
+        ],
+        travelMinutes: distance?.minutes,
+        travelKm: distance?.km,
+        cost
+      },
+      season: CURRENT_SEASON,
+      visitDate,
+      departureLocation: input.departureLocation,
+      peopleCount: input.peopleCount,
+      skillLevel: input.skillLevel,
+      rideType: input.rideType,
+      transportType: input.transportType,
+      tripDuration: input.tripDuration,
+      ownsEquipment: input.ownsEquipment,
+      ownsClothing: input.ownsClothing,
+      needRental: !input.ownsEquipment,
+      needClothing: !input.ownsClothing,
+      budgetMin: input.budgetMin,
+      budgetMax: input.budgetMax,
+      lodgingCostInput: input.lodgingCostInput,
+      liftTicketTimeSlot: input.liftTicketTimeSlot,
+      expiresAt,
+      tasks: {
+        create: buildDefaultTasks(input).map((task) => ({
+          category: task.category,
+          title: task.title,
+          status: task.status,
+          isDefault: true,
+          sortOrder: task.sortOrder,
+          externalUrl: externalUrlForTask({
+            resortId,
+            category: task.category,
+            title: task.title
+          }),
+          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
+        }))
+      },
+      events: {
+        create: {
+          eventName: "trip_created_from_resort",
+          properties: {
+            resortId,
+            peopleCount: input.peopleCount,
+            transportType: input.transportType,
+            requiredTasks: buildRequiredTasks(input),
+            rentalShopCount: getRentalShopsForResort(resortId).length
           }
         }
       }

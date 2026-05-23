@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, MapPinned } from "lucide-react";
+import { ArrowRight, ExternalLink, MapPinned } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
@@ -166,6 +167,11 @@ export default async function ResortDetailPage({ params }: PageProps) {
               <CardTitle>공식 링크</CardTitle>
             </CardHeader>
             <CardContent className="grid gap-2">
+              <Link href={`/plan?resortId=${resort.id}`}>
+                <Button className="w-full justify-between">
+                  이 스키장으로 트립 만들기 <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
               <ExternalButton href={resort.officialUrl} label="공식 사이트" type="official" resortId={resort.id} />
               <ExternalButton href={resort.slopeStatusUrl} label="운영현황/슬로프" type="slope_status" resortId={resort.id} />
               <ExternalButton href={resort.liftTicketUrl} label="리프트권" type="lift_ticket" resortId={resort.id} />

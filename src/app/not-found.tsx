@@ -19,7 +19,7 @@ export default function NotFound() {
               <Button>홈으로</Button>
             </Link>
             <Link href="/plan">
-              <Button variant="secondary">트립 만들기</Button>
+              <Button variant="secondary">트립 추천</Button>
             </Link>
           </div>
         </CardContent>

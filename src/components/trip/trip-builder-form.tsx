@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, MapPin, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Field, Input } from "@/components/ui/field";
@@ -10,6 +11,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { departureLocations } from "@/data/resorts";
 import { priorityLabels, timeSlotLabels } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import type { SkiResort } from "@/lib/types";
 
 const steps = [
   {
@@ -32,7 +34,15 @@ const steps = [
   }
 ];
 
-export function TripBuilderForm() {
+export function TripBuilderForm({
+  action = "/recommendations",
+  selectedResort,
+  isAuthenticated = false
+}: {
+  action?: string | ((formData: FormData) => void | Promise<void>);
+  selectedResort?: SkiResort;
+  isAuthenticated?: boolean;
+}) {
   const [step, setStep] = React.useState(0);
   const [maxStepReached, setMaxStepReached] = React.useState(0);
   const [error, setError] = React.useState("");
@@ -77,12 +87,20 @@ export function TripBuilderForm() {
   }
 
   return (
-    <form ref={formRef} action="/recommendations" onSubmit={handleSubmit} className="grid gap-5">
+    <form ref={formRef} action={action} onSubmit={handleSubmit} className="grid gap-5">
+      {selectedResort ? <input type="hidden" name="resortId" value={selectedResort.id} /> : null}
       <Card className="overflow-hidden">
         <div className="h-1 bg-muted">
           <div className="h-full bg-primary transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
         <CardHeader>
+          {selectedResort ? (
+            <div className="mb-4 rounded-lg border bg-primary/10 px-3 py-2">
+              <div className="text-xs font-black uppercase tracking-[0.16em] text-primary">Selected resort</div>
+              <div className="mt-1 font-black">{selectedResort.name}</div>
+              <div className="mt-0.5 text-xs font-semibold text-muted-foreground">{selectedResort.region}</div>
+            </div>
+          ) : null}
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{activeStep.eyebrow}</p>
@@ -271,9 +289,18 @@ export function TripBuilderForm() {
               다음 단계 <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
-            <Button type="submit" className="flex-1">
-              추천 결과 보기
-            </Button>
+            selectedResort ? (
+              <CreateTripSubmit
+                isAuthenticated={isAuthenticated}
+                label={`${selectedResort.name} 트립 만들기`}
+                className="w-full"
+                wrapperClassName="flex-1"
+              />
+            ) : (
+              <Button type="submit" className="flex-1">
+                추천 결과 보기
+              </Button>
+            )
           )}
         </div>
       </div>

@@ -14,7 +14,17 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 
-export function CreateTripSubmit({ isAuthenticated }: { isAuthenticated: boolean }) {
+export function CreateTripSubmit({
+  isAuthenticated,
+  label = "이 스키장으로 트립 만들기",
+  className = "mt-4 w-full",
+  wrapperClassName
+}: {
+  isAuthenticated: boolean;
+  label?: string;
+  className?: string;
+  wrapperClassName?: string;
+}) {
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const [loginHref, setLoginHref] = React.useState("/login");
 
@@ -24,8 +34,8 @@ export function CreateTripSubmit({ isAuthenticated }: { isAuthenticated: boolean
 
   if (isAuthenticated) {
     return (
-      <Button type="submit" className="mt-4 w-full">
-        이 스키장으로 트립 만들기
+      <Button type="submit" className={className}>
+        {label}
       </Button>
     );
   }
@@ -35,11 +45,11 @@ export function CreateTripSubmit({ isAuthenticated }: { isAuthenticated: boolean
   }
 
   return (
-    <div ref={wrapperRef}>
+    <div ref={wrapperRef} className={wrapperClassName}>
       <Dialog>
         <DialogTrigger asChild>
-          <Button type="button" className="mt-4 w-full">
-            이 스키장으로 트립 만들기
+          <Button type="button" className={className}>
+            {label}
           </Button>
         </DialogTrigger>
         <DialogContent>

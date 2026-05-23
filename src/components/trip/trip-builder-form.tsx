@@ -31,6 +31,12 @@ const steps = [
     title: "비용/선호",
     eyebrow: "Step 3",
     description: "예산과 우선순위를 정하면 추천 결과를 비교할 수 있습니다."
+  },
+  {
+    icon: CheckCircle2,
+    title: "확인",
+    eyebrow: "Step 4",
+    description: "입력한 조건으로 추천 결과를 보거나 트립을 바로 만듭니다."
   }
 ];
 
@@ -118,7 +124,7 @@ export function TripBuilderForm({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-5 grid grid-cols-3 gap-2">
+          <div className="mb-5 grid grid-cols-4 gap-2">
             {steps.map((item, index) => {
               const Icon = item.icon;
               const state = index === step ? "active" : index < step ? "done" : "upcoming";
@@ -265,6 +271,17 @@ export function TripBuilderForm({
               <Field label="숙박비 직접 입력">
                 <Input name="lodgingCostInput" type="number" min={0} step={10000} placeholder="1박이면 선택 입력" />
               </Field>
+            </StepPanel>
+
+            <StepPanel active={step === 3}>
+              <div className="rounded-xl border bg-muted/40 p-4 md:col-span-2">
+                <p className="text-sm font-black text-foreground">
+                  조건 입력이 끝났습니다.
+                </p>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  이전 단계로 돌아가 조건을 조정하거나, 아래 버튼으로 다음 화면을 진행하세요.
+                </p>
+              </div>
             </StepPanel>
           </div>
         </CardContent>

@@ -1,8 +1,10 @@
 import { CheckCircle2, ExternalLink, MapPinned, ReceiptText, Sparkles } from "lucide-react";
 import { createTripAction } from "@/app/actions";
+import { auth } from "@/auth";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
+import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SelectField } from "@/components/ui/select-field";
@@ -20,6 +22,8 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
   const input = parseParams(params);
   const recommendations = getRecommendations(input);
   const categories = getCategoryRecommendations(input);
+  const session = await auth();
+  const isAuthenticated = Boolean(session?.user);
 
   return (
     <main className="page-shell py-8">
@@ -183,9 +187,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                       <RentalOptionLine key={option.id} option={option} shopName={shop.name} official={shop.id.endsWith("official-rental")} />
                     ))}
                   </div>
-                  <Button type="submit" className="mt-4 w-full">
-                    이 스키장으로 트립 만들기
-                  </Button>
+                  <CreateTripSubmit isAuthenticated={isAuthenticated} />
                 </form>
               </div>
             </Card>

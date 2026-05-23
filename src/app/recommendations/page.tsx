@@ -1,4 +1,4 @@
-import { ExternalLink, MapPinned, ReceiptText } from "lucide-react";
+import { CheckCircle2, ExternalLink, MapPinned, ReceiptText, Sparkles } from "lucide-react";
 import { createTripAction } from "@/app/actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
@@ -27,7 +27,10 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="mb-2 text-sm font-semibold text-primary">Recommendations</p>
-          <h1 className="text-3xl font-black md:text-5xl">조건에 맞는 추천 3곳</h1>
+          <h1 className="text-balance text-3xl font-black md:text-5xl">예약 전에 비교할 추천 3곳</h1>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+            이동 시간, 날짜 기준 비용, 렌탈 후보를 한 화면에서 보고 바로 트립으로 저장하세요.
+          </p>
         </div>
         <a href="/plan">
           <Button variant="secondary">조건 다시 입력</Button>
@@ -78,26 +81,40 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
           </Card>
         ) : recommendations.slice(0, 3).map((recommendation, index) => {
           const rentalOptions = getRentalOptionsForResort(recommendation.resort.id);
+          const primaryRentalOptions = rentalOptions.flatMap(({ shop, options }) =>
+            options
+              .filter((option) => option.itemType === "equipment_clothing_package" || option.itemType === "equipment")
+              .slice(0, 2)
+              .map((option) => ({ option, shop }))
+          );
           return (
             <Card key={recommendation.resort.id} className="overflow-hidden">
               <div className="grid gap-0 lg:grid-cols-[1fr_360px]">
-                <div className="p-5">
+                <div className="p-5 md:p-6">
                   <div className="mb-3 flex flex-wrap items-center gap-2">
                     <StatusBadge tone="dark">추천 {index + 1}</StatusBadge>
                     {recommendation.resort.tags.map((tag) => (
                       <StatusBadge key={tag}>{tag}</StatusBadge>
                     ))}
                   </div>
-                  <h2 className="text-2xl font-black">{recommendation.resort.name}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{recommendation.resort.region}</p>
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <h2 className="text-2xl font-black md:text-3xl">{recommendation.resort.name}</h2>
+                      <p className="mt-1 text-sm text-muted-foreground">{recommendation.resort.region}</p>
+                    </div>
+                    <div className="rounded-lg border bg-primary/10 px-3 py-2 text-sm font-black text-primary">
+                      {formatCurrency(recommendation.cost.representative)}
+                    </div>
+                  </div>
                   <div className="mt-4 grid gap-3 md:grid-cols-3">
                     <MiniStat icon={<MapPinned />} label="예상 이동" value={formatMinutes(recommendation.travelMinutes)} />
-                    <MiniStat icon={<ReceiptText />} label="예상 총액" value={`${formatCurrency(recommendation.cost.min)}~`} />
+                    <MiniStat icon={<ReceiptText />} label="예상 총액" value={`${formatCurrency(recommendation.cost.min)}~${formatCurrency(recommendation.cost.max)}`} />
                     <MiniStat label="렌탈 후보" value={`${recommendation.rentalShops.length}곳`} />
                   </div>
-                  <ul className="mt-4 space-y-2 text-sm">
+                  <ul className="mt-4 grid gap-2 text-sm md:grid-cols-2">
                     {recommendation.reasons.map((reason) => (
-                      <li key={reason} className="rounded-md bg-muted px-3 py-2">
+                      <li key={reason} className="flex gap-2 rounded-md bg-muted px-3 py-2">
+                        <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                         {reason}
                       </li>
                     ))}
@@ -127,13 +144,19 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                     ) : null}
                   </div>
                 </div>
-                <form action={createTripAction} className="border-t bg-white/7 p-5 lg:border-l lg:border-t-0">
+                <form action={createTripAction} className="border-t bg-muted/40 p-5 lg:border-l lg:border-t-0">
                   {Object.entries(inputToHidden(input)).map(([key, value]) => (
                     <input key={key} type="hidden" name={key} value={value} />
                   ))}
                   <input type="hidden" name="resortId" value={recommendation.resort.id} />
-                  <div className="mb-4">
-                    <h3 className="font-black">비용 요약</h3>
+                  <div className="mb-4 rounded-lg border bg-card/80 p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-bold text-muted-foreground">날짜 기준 예상 총액</div>
+                        <h3 className="mt-1 text-2xl font-black">{formatCurrency(recommendation.cost.representative)}</h3>
+                      </div>
+                      <Sparkles className="h-5 w-5 text-primary" />
+                    </div>
                     <div className="mt-3 space-y-2">
                       {recommendation.cost.items.map((item) => (
                         <CostLine key={item.key} item={item} />
@@ -156,14 +179,9 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                   />
                   <div className="mt-4 space-y-2">
                     <div className="text-xs font-semibold text-muted-foreground">렌탈 후보 비교</div>
-                    {rentalOptions.flatMap(({ shop, options }) =>
-                      options
-                        .filter((option) => option.itemType === "equipment_clothing_package" || option.itemType === "equipment")
-                        .slice(0, 2)
-                        .map((option) => (
-                          <RentalOptionLine key={option.id} option={option} shopName={shop.name} official={shop.id.endsWith("official-rental")} />
-                        ))
-                    )}
+                    {primaryRentalOptions.slice(0, 3).map(({ option, shop }) => (
+                      <RentalOptionLine key={option.id} option={option} shopName={shop.name} official={shop.id.endsWith("official-rental")} />
+                    ))}
                   </div>
                   <Button type="submit" className="mt-4 w-full">
                     이 스키장으로 트립 만들기
@@ -188,7 +206,7 @@ const confidenceLabels: Record<PriceConfidence, string> = {
 function CostLine({ item }: { item: CostItem }) {
   const price = formatCurrency(item.representative ?? item.min);
   return (
-    <div className="rounded-md border bg-white/7 px-3 py-2 text-sm">
+    <div className="rounded-md border bg-background/40 px-3 py-2 text-sm">
       <div className="flex justify-between gap-3">
         <span className="text-muted-foreground">{item.label}</span>
         <span className="font-semibold">{price}</span>
@@ -226,7 +244,7 @@ function RentalOptionLine({
   official: boolean;
 }) {
   return (
-    <div className="rounded-md border bg-white/7 px-3 py-2 text-xs">
+    <div className="rounded-md border bg-card/80 px-3 py-2 text-xs">
       <div className="flex items-center justify-between gap-2">
         <span className="font-bold">{shopName}</span>
         <span className="font-semibold text-primary">{formatCurrency(option.representativePrice)}</span>
@@ -254,12 +272,12 @@ function RentalOptionLine({
 
 function MiniStat({ icon, label, value }: { icon?: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-md border bg-white/7 p-3">
+    <div className="rounded-md border bg-card/70 p-3">
       <div className="mb-1 flex items-center gap-1 text-xs font-semibold text-muted-foreground">
         {icon ? <span className="[&_svg]:h-3.5 [&_svg]:w-3.5">{icon}</span> : null}
         {label}
       </div>
-      <div className="font-black">{value}</div>
+      <div className="break-words font-black">{value}</div>
     </div>
   );
 }

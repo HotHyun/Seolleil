@@ -17,10 +17,10 @@ export function AuthNav({ session }: { session: Session | null }) {
   if (!session?.user) {
     return (
       <span className="inline-flex items-center gap-2">
-        <ThemeToggle />
         <a href="/login" className="hover:text-foreground">
           로그인
         </a>
+        <ThemeToggle />
       </span>
     );
   }

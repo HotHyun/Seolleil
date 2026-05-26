@@ -151,7 +151,7 @@ export function CinematicHero({
         y: 42,
         filter: "blur(16px)"
       });
-      gsap.set(".kski-card", { y: window.innerHeight * 0.72, autoAlpha: 1, scale: 0.94 });
+      gsap.set(".kski-card", { y: window.innerHeight * 1.06, autoAlpha: 1, scale: 0.94 });
       gsap.set(".kski-phone-wrap, .kski-card-copy, .kski-card-brand, .kski-floating, .kski-widget", { autoAlpha: 0 });
 
       gsap.timeline({ delay: 0.2 })
@@ -174,7 +174,7 @@ export function CinematicHero({
 
       scrollTl
         .to(".kski-hero-copy", { scale: 1.08, opacity: 0.12, filter: "blur(16px)", duration: 1.2, ease: "power2.inOut" }, 0)
-        .to(".kski-card", { y: 0, scale: 1, duration: 1.45, ease: "power3.inOut" }, 0)
+        .fromTo(".kski-card", { y: () => window.innerHeight * 1.06, scale: 0.94 }, { y: 0, scale: 1, duration: 1.45, ease: "power3.inOut", immediateRender: false }, 0.25)
         .to(".kski-card", {
           width: isMobile ? "94vw" : "88vw",
           height: isMobile ? "86vh" : "82vh",

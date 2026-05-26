@@ -184,7 +184,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
 
   return (
     <section className="grid min-h-[calc(100vh-4rem)] bg-background lg:grid-cols-[380px_1fr]">
-      <aside className="z-20 flex max-h-[calc(100vh-4rem)] flex-col border-r bg-card shadow-xl max-lg:max-h-none lg:sticky lg:top-16">
+      <aside className="order-2 z-20 flex min-w-0 w-full flex-col border-t bg-card shadow-xl lg:sticky lg:top-16 lg:order-1 lg:max-h-[calc(100vh-4rem)] lg:border-r lg:border-t-0">
         {showNearby && selected ? (
           <NearbySidebar resort={selected.resort} items={nearbyItems} selectedId={selectedNearbyId} onBack={closeNearby} onSelect={(id) => selectNearby(id, true)} />
         ) : (
@@ -202,7 +202,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
         )}
       </aside>
 
-      <div className="relative min-h-[560px] lg:min-h-[calc(100vh-4rem)]">
+      <div className="relative order-1 min-h-[620px] min-w-0 w-full lg:order-2 lg:min-h-[calc(100vh-4rem)]">
         {kakaoKey ? (
           <div ref={mapRef} className="absolute inset-0 bg-muted" />
         ) : (

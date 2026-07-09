@@ -8,6 +8,8 @@
 - PostgreSQL
 - Prisma
 - Tailwind CSS
+- Cloudflare Workers
+- Cloudflare Hyperdrive
 - Docker Compose
 
 ## Local
@@ -83,9 +85,56 @@ NEXT_PUBLIC_UMAMI_WEBSITE_ID
 NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ```
 
+## Cloudflare Workers
+
+The app can run as a Next.js Worker through OpenNext while PostgreSQL stays on
+OCI and is reached through Cloudflare Hyperdrive.
+
+```bash
+pnpm install
+pnpm db:generate
+pnpm cf:build
+pnpm cf:preview
+```
+
+Create the Hyperdrive configuration after the OCI PostgreSQL endpoint is
+reachable from Cloudflare:
+
+```bash
+pnpm wrangler login
+pnpm wrangler hyperdrive create korean-ski-postgres \
+  --connection-string="postgresql://USER:PASSWORD@HOST:5432/DB?schema=public"
+```
+
+Copy the returned Hyperdrive `id` into `wrangler.jsonc` under the `HYPERDRIVE`
+binding. For local Worker preview against a local database, avoid committing the
+connection string and export it before `pnpm cf:preview`:
+
+```bash
+export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgresql://korean_ski:change-me@localhost:5432/korean_ski?schema=public"
+export WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="$CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE"
+```
+
+Production secrets still need to be set in Cloudflare:
+
+```bash
+pnpm wrangler secret put AUTH_SECRET
+pnpm wrangler secret put AUTH_GOOGLE_ID
+pnpm wrangler secret put AUTH_GOOGLE_SECRET
+pnpm wrangler secret put ADMIN_EMAILS
+```
+
+Deploy with:
+
+```bash
+pnpm cf:deploy
+```
+
 ## Notes
 
 - Ski resort and pricing data are static code data for MVP.
 - Price values currently include MVP placeholder estimates and should be replaced with verified seasonal data.
 - edit/share tokens are stored as hashes only.
 - Read-only share links can be regenerated from the edit page.
+- OCI can keep running PostgreSQL and PgAdmin even when the Next.js app moves to
+  Cloudflare Workers.

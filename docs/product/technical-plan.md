@@ -9,20 +9,24 @@
 - UI Components: shadcn/ui.
 - Icons: lucide-react.
 - Forms: react-hook-form + zod.
-- Deployment: Docker Compose.
-- Hosting: Coolify.
-- Target server: OCI Free Tier Ampere.
+- Primary app deployment: Cloudflare Workers via OpenNext.
+- Database hosting: PostgreSQL on OCI Free Tier Block Storage.
+- Database access from Workers: Cloudflare Hyperdrive.
+- Legacy/self-host deployment: Docker Compose on Coolify remains available for fallback.
 
 ## 배포 환경
 
-초기 운영 서버:
+초기 운영 서버 가정은 OCI Free Tier 축소에 맞춰 변경한다. OCI는 앱 서버가 아니라
+공통 Linux 도구, PostgreSQL, PgAdmin, 백업 작업을 담당한다.
 
-- 4 OCPU.
-- 24 GB RAM.
+- 2 OCPU.
+- 12 GB RAM.
 - 200 GB Disk.
 - ARM 아키텍처.
 
-Coolify에서 Docker Compose 기반으로 앱과 PostgreSQL을 운영한다.
+Next.js 앱은 Cloudflare Workers에 배포한다. Worker는 Hyperdrive binding을 통해
+OCI PostgreSQL에 접근한다. Coolify/Docker Compose 배포는 롤백 또는 임시 자체
+호스팅 경로로 유지한다.
 
 운영 도메인:
 
@@ -32,9 +36,10 @@ Coolify에서 Docker Compose 기반으로 앱과 PostgreSQL을 운영한다.
 ## 기본 서비스 구성
 
 ```txt
-Next.js app
-PostgreSQL
-Prisma migration
+Cloudflare Worker Next.js app
+Cloudflare Hyperdrive
+OCI PostgreSQL
+Prisma migration from a trusted CLI/runtime
 Static seasonal data in code
 Optional auth
 Umami self-host
@@ -69,6 +74,7 @@ PgAdmin
 - 가격 데이터는 DB 관리자 화면이 아니라 코드의 static season data로 관리한다.
 - 가격 변경 시 코드를 수정하고 재배포한다.
 - 트립 데이터는 PostgreSQL에 저장한다.
+- PostgreSQL은 OCI에서 운영하고, Cloudflare Workers는 Hyperdrive를 통해 접근한다.
 - 로그인은 선택 사항으로 제공한다.
 - MVP 인증 제공자는 Google OAuth부터 지원한다.
 - Kakao OAuth와 이메일 매직링크는 추후 확장으로 둔다.
@@ -88,7 +94,7 @@ PgAdmin
 - 구현: Auth.js + Prisma Adapter.
 - 세션 저장: PostgreSQL database session.
 - OAuth callback URL: `https://ski.hothyun.com/api/auth/callback/google`.
-- 인증 구현은 Next.js와 Prisma/PostgreSQL 연동이 쉬운 방식을 우선한다.
+- 인증 구현은 Next.js, Auth.js, Prisma/PostgreSQL, Cloudflare Workers 연동이 쉬운 방식을 우선한다.
 - 로그인은 필수 진입 조건이 아니며, 트립 복구와 내 트립 목록을 위한 선택 기능이다.
 - 필수 환경변수:
   - `AUTH_URL`.
@@ -102,5 +108,6 @@ PgAdmin
 - Next.js App Router 사용 여부.
 - PostgreSQL 백업 방식.
 - edit token/share token 길이와 만료 정책.
-- Docker Compose 서비스 구성.
+- Cloudflare Workers 배포 자동화 방식.
+- Hyperdrive query cache 사용 범위와 read-after-write 일관성 정책.
 - Umami와 앱 DB의 백업/복구 정책.

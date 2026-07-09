@@ -1,6 +1,10 @@
 node_modules
+.pnpm-store
 .next
+.open-next
+.wrangler
 .env
+.dev.vars
 .env.local
 .env.*.local
 dist

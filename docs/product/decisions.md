@@ -61,20 +61,25 @@ MVP 예상 비용에는 아래 항목을 포함한다.
 
 ## 배포 환경 가정
 
-초기 배포 환경은 OCI Free Tier Ampere 인스턴스를 사용한다.
+초기 배포 환경은 OCI Free Tier Ampere 인스턴스와 Cloudflare Workers를 함께 사용한다.
 
-- 4 OCPU.
-- 24 GB RAM.
+- OCI Free Tier 최근 축소 기준: 2 OCPU.
+- 12 GB RAM.
 - 200 GB Disk.
 - ARM 아키텍처.
+- OCI는 PostgreSQL, PgAdmin, 백업, 공통 Linux 관리 도구를 담당한다.
+- Next.js 앱 서버와 SSR/API 실행은 Cloudflare Workers로 이전한다.
+- Workers에서 OCI PostgreSQL 접근은 Cloudflare Hyperdrive를 사용한다.
 
 ## 기술 스택
 
 - 웹 프레임워크: Next.js.
 - 데이터베이스: PostgreSQL.
 - ORM: Prisma.
-- 배포 방식: Docker Compose.
-- 호스팅/운영: Coolify에서 Docker Compose 기반으로 운영.
+- 앱 배포 방식: OpenNext 기반 Cloudflare Workers.
+- DB 운영 방식: OCI PostgreSQL.
+- DB 연결 방식: Cloudflare Hyperdrive.
+- 보조/롤백 배포 방식: Coolify에서 Docker Compose 기반으로 운영.
 - 프론트 방향: 모바일 웹 중심으로 설계하되 데스크톱도 대응한다.
 
 ## 성과 측정/분석

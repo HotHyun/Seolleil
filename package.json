@@ -22,7 +22,8 @@
     "cf:typegen": "wrangler types --env-interface CloudflareEnv src/types/cloudflare-env.d.ts",
     "data:validate": "tsx scripts/validate-static-data.ts",
     "data:report": "tsx scripts/report-static-data.ts",
-    "data:links": "tsx scripts/check-links.ts"
+    "data:links": "tsx scripts/check-links.ts",
+    "appwrite:schema": "tsx scripts/setup-appwrite-schema.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -46,6 +46,7 @@ APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
 APPWRITE_PROJECT_ID
 APPWRITE_API_KEY
 APPWRITE_DATABASE_ID=korean_ski
+APPWRITE_MIGRATIONS_COLLECTION_ID=schema_migrations
 APPWRITE_TRIPS_COLLECTION_ID=trips
 APPWRITE_TRIP_TASKS_COLLECTION_ID=trip_tasks
 APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID=analytics_events
@@ -99,6 +100,24 @@ pnpm wrangler secret put APPWRITE_API_KEY
 ```
 
 Set `APPWRITE_PROJECT_ID` in `wrangler.jsonc` to the real Appwrite project ID.
+
+Create or update the Appwrite database schema with:
+
+```bash
+APPWRITE_ENDPOINT="https://appwrite.hothyun.com/v1" \
+APPWRITE_PROJECT_ID="<project-id>" \
+APPWRITE_API_KEY="<api-key>" \
+APPWRITE_DATABASE_ID="korean_ski" \
+pnpm appwrite:schema
+```
+
+Or create a local `.env` from `.env.example`, fill in the Appwrite values, and run:
+
+```bash
+pnpm appwrite:schema
+```
+
+The schema command runs dated Appwrite migrations from `scripts/appwrite/migrations` and records applied IDs in the `schema_migrations` collection.
 
 Do not expose PostgreSQL `5432` publicly for this app, and do not add
 Cloudflare Hyperdrive bindings back to the app unless the product docs are

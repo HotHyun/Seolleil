@@ -11,6 +11,7 @@ APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
 APPWRITE_PROJECT_ID=<project-id>
 APPWRITE_API_KEY=<server-api-key>
 APPWRITE_DATABASE_ID=korean_ski
+APPWRITE_MIGRATIONS_COLLECTION_ID=schema_migrations
 APPWRITE_TRIPS_COLLECTION_ID=trips
 APPWRITE_TRIP_TASKS_COLLECTION_ID=trip_tasks
 APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID=analytics_events
@@ -32,6 +33,25 @@ Create database:
 ```txt
 korean_ski
 ```
+
+## Migrations
+
+Schema changes are tracked by dated files under `scripts/appwrite/migrations`.
+
+Run migrations with:
+
+```bash
+pnpm appwrite:schema
+```
+
+The script loads `.env` automatically, creates the `schema_migrations` collection, and records applied migration IDs.
+
+To add a migration:
+
+1. Create `scripts/appwrite/migrations/YYYYMMDDNNNN_short_name.ts`.
+2. Export a `Migration` object with an id matching the filename.
+3. Add it to `scripts/appwrite/migrations.ts`.
+4. Keep migrations idempotent where possible because Appwrite attributes/indexes may need retries while becoming available.
 
 ## `trips`
 

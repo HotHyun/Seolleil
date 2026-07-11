@@ -1,8 +1,8 @@
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { TripBuilderForm } from "@/components/trip/trip-builder-form";
 import { createDirectTripAction } from "@/app/actions";
-import { auth } from "@/auth";
 import { getResort } from "@/data/resorts";
+import { getSession } from "@/lib/session";
 
 export default async function PlanPage({
   searchParams
@@ -10,7 +10,7 @@ export default async function PlanPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const params = await searchParams;
-  const session = await auth();
+  const session = await getSession();
   const resortId = Array.isArray(params.resortId) ? params.resortId[0] : params.resortId;
   const selectedResort = resortId ? getResort(resortId) : undefined;
 

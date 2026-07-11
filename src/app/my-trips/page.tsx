@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CalendarDays, CheckCircle2, MapPin, Plus } from "lucide-react";
-import { auth } from "@/auth";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/session";
+import { getTripsByUserId, type TripRecord } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   title: "내 트립 | Korean Ski",
@@ -16,29 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default async function MyTripsPage() {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) redirect("/login?callbackUrl=/my-trips");
 
-  const trips = await prisma.trip.findMany({
-    where: {
-      userId: session.user.id,
-      status: { not: "deleted" }
-    },
-    orderBy: [{ visitDate: "asc" }, { createdAt: "desc" }],
-    select: {
-      id: true,
-      resortNameSnapshot: true,
-      season: true,
-      visitDate: true,
-      peopleCount: true,
-      transportType: true,
-      status: true,
-      tasks: {
-        select: { status: true },
-        orderBy: { sortOrder: "asc" }
-      }
-    }
-  });
+  const trips = await getTripsByUserId(session.user.id);
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const upcomingTrips = trips.filter((trip) => trip.visitDate >= today);
@@ -86,17 +67,6 @@ export default async function MyTripsPage() {
   );
 }
 
-type TripCardItem = {
-  id: string;
-  resortNameSnapshot: string;
-  season: string;
-  visitDate: Date;
-  peopleCount: number;
-  transportType: string;
-  status: string;
-  tasks: { status: string }[];
-};
-
 function SummaryCard({ label, value }: { label: string; value: string }) {
   return (
     <Card>
@@ -114,7 +84,7 @@ function TripSection({
   emptyText
 }: {
   title: string;
-  trips: TripCardItem[];
+  trips: TripRecord[];
   emptyText: string;
 }) {
   return (
@@ -138,11 +108,11 @@ function TripSection({
   );
 }
 
-function TripCard({ trip }: { trip: TripCardItem }) {
+function TripCard({ trip }: { trip: TripRecord }) {
   const activeTasks = trip.tasks.filter((task) => task.status !== "not_needed");
   const doneTasks = activeTasks.filter((task) => ["reserved", "paid", "prepared"].includes(task.status));
   const progress = activeTasks.length ? Math.round((doneTasks.length / activeTasks.length) * 100) : 100;
-  const statusLabel = trip.status === "planned" ? "계획중" : trip.status === "completed" ? "완료" : trip.status;
+  const statusLabel = trip.status === "planning" ? "계획중" : trip.status === "completed" ? "완료" : trip.status;
 
   return (
     <a href={`/my-trips/${trip.id}`} className="block">

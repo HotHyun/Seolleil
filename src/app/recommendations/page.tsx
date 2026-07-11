@@ -1,6 +1,5 @@
 import { CheckCircle2, ExternalLink, MapPinned, ReceiptText, Sparkles } from "lucide-react";
 import { createTripAction } from "@/app/actions";
-import { auth } from "@/auth";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
@@ -10,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { SelectField } from "@/components/ui/select-field";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getRecommendations } from "@/lib/recommendation";
+import { getSession } from "@/lib/session";
 import type { CostItem, PriceConfidence, Priority, RentalPriceRule, TimeSlot, TripDuration, TripInput } from "@/lib/types";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
 
@@ -21,7 +21,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const input = parseParams(params);
   const recommendations = getRecommendations(input);
-  const session = await auth();
+  const session = await getSession();
   const isAuthenticated = Boolean(session?.user);
 
   return (

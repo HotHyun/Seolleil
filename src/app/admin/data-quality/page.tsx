@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStaticDataReport } from "@/lib/data-validation";
-import { isAdminSession } from "@/lib/admin";
 
 export const metadata: Metadata = {
   title: "데이터 품질 | Korean Ski",
@@ -17,10 +14,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminDataQualityPage() {
-  const session = await auth();
-  if (!session?.user) redirect("/login?callbackUrl=/admin/data-quality");
-  if (!isAdminSession(session)) redirect("/");
-
   const report = getStaticDataReport();
   const errors = report.issues.filter((issue) => issue.severity === "error");
   const warnings = report.issues.filter((issue) => issue.severity === "warning");

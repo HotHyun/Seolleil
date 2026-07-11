@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
-import { auth } from "@/auth";
 import { AuthNav } from "@/components/auth/auth-nav";
+import { getSession } from "@/lib/session";
 import "@/app/globals.css";
 
 const pretendard = localFont({
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const umamiId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID;
   const umamiScript = process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL;
-  const session = await auth();
+  const session = await getSession();
 
   return (
     <html lang="ko" suppressHydrationWarning>

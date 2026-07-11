@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Copy, ExternalLink, Trash2 } from "lucide-react";
-import { auth } from "@/auth";
 import { deleteTripAction, regenerateShareLinkAction } from "@/app/actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
@@ -13,7 +12,8 @@ import { TripCostAndBooking } from "@/components/trip/trip-overview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
-import { prisma } from "@/lib/prisma";
+import { getSession } from "@/lib/session";
+import { getTripById } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -30,18 +30,15 @@ export default async function MyTripDetailPage({
   params: Promise<{ tripId: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const session = await auth();
+  const session = await getSession();
   if (!session?.user?.id) redirect("/login?callbackUrl=/my-trips");
 
   const { tripId } = await params;
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
-  const trip = await prisma.trip.findFirst({
-    where: { id: tripId, userId: session.user.id },
-    include: { tasks: { orderBy: [{ category: "asc" }, { sortOrder: "asc" }] } }
-  });
+  const trip = await getTripById(tripId);
 
-  if (!trip) notFound();
+  if (!trip || trip.userId !== session.user.id) notFound();
 
   const resort = getResort(trip.resortId);
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;

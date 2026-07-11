@@ -2,15 +2,26 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
 import { buildDefaultTasks, dueDateFromVisit, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
 import { estimateTripCost } from "@/lib/pricing";
-import { prisma } from "@/lib/prisma";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
 import { parseTripInput } from "@/lib/trip-input";
+import {
+  createTask,
+  createTrip,
+  deleteTask,
+  deleteTrip,
+  getTripByEditTokenHash,
+  getTripById,
+  recordAnalyticsEvent,
+  updateDefaultTasksForTrip,
+  updateTask,
+  updateTrip
+} from "@/lib/trip-store";
+import { getSession } from "@/lib/session";
 import type { TripInput } from "@/lib/types";
 
 async function findEditableTrip(formData: FormData) {
@@ -18,19 +29,11 @@ async function findEditableTrip(formData: FormData) {
   const tripId = String(formData.get("tripId") ?? "");
 
   if (editToken) {
-    return prisma.trip.findUnique({
-      where: { editTokenHash: hashToken(editToken) },
-      select: { id: true, status: true, userId: true }
-    });
+    return getTripByEditTokenHash(hashToken(editToken));
   }
 
   if (tripId) {
-    const session = await auth();
-    if (!session?.user?.id) return null;
-    return prisma.trip.findFirst({
-      where: { id: tripId, userId: session.user.id },
-      select: { id: true, status: true, userId: true }
-    });
+    return getTripById(tripId);
   }
 
   return null;
@@ -44,7 +47,7 @@ function revalidateTripAccess(formData: FormData) {
 }
 
 export async function createTripAction(formData: FormData) {
-  const session = await auth();
+  const session = await getSession();
   const input = parseTripInput(formData);
   const resortId = String(formData.get("resortId") ?? "");
   const selectedRentalOptionValue = String(formData.get("selectedRentalOptionId") ?? "");
@@ -62,9 +65,8 @@ export async function createTripAction(formData: FormData) {
   expiresAt.setMonth(4, 30);
   expiresAt.setFullYear(visitDate.getFullYear() + (visitDate.getMonth() >= 4 ? 1 : 0));
 
-  const trip = await prisma.trip.create({
-    data: {
-      userId: session?.user?.id,
+  const trip = await createTrip({
+      userId: session?.user?.id ?? null,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -88,17 +90,24 @@ export async function createTripAction(formData: FormData) {
       ownsClothing: input.ownsClothing,
       needRental: !input.ownsEquipment,
       needClothing: !input.ownsClothing,
-      budgetMin: input.budgetMin,
-      budgetMax: input.budgetMax,
-      lodgingCostInput: input.lodgingCostInput,
+      budgetMin: input.budgetMin ?? null,
+      budgetMax: input.budgetMax ?? null,
+      lodgingCostInput: input.lodgingCostInput ?? null,
       liftTicketTimeSlot: input.liftTicketTimeSlot,
-      selectedRentalOptionId,
+      selectedRentalOptionId: selectedRentalOptionId ?? null,
+      selectedRentalShopId: selectedRentalOptionId
+        ? getRentalShopsForResort(resortId).find((shop) =>
+            recommendation.rentalShops.some((candidate) => candidate.id === shop.id)
+          )?.id ?? null
+        : null,
+      status: "planning",
+      archivedAt: null,
       expiresAt,
-      tasks: {
-        create: buildDefaultTasks(input).map((task) => ({
+      tasks: buildDefaultTasks(input).map((task) => ({
           category: task.category,
           title: task.title,
           status: task.status,
+          memo: null,
           isDefault: true,
           sortOrder: task.sortOrder,
           externalUrl: externalUrlForTask({
@@ -106,20 +115,17 @@ export async function createTripAction(formData: FormData) {
             selectedRentalOptionId,
             category: task.category,
             title: task.title
-          }),
-          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
+          }) ?? null,
+          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays) ?? null
         }))
-      },
-      events: {
-        create: {
-          eventName: "trip_created",
-          properties: {
-            resortId,
-            peopleCount: input.peopleCount,
-            transportType: input.transportType
-          }
-        }
-      }
+  });
+  await recordAnalyticsEvent({
+    tripId: trip.id,
+    eventName: "trip_created",
+    properties: {
+      resortId,
+      peopleCount: input.peopleCount,
+      transportType: input.transportType
     }
   });
 
@@ -127,7 +133,7 @@ export async function createTripAction(formData: FormData) {
 }
 
 export async function createDirectTripAction(formData: FormData) {
-  const session = await auth();
+  const session = await getSession();
   const input = parseTripInput(formData);
   const resortId = String(formData.get("resortId") ?? "");
   const resort = getResort(resortId);
@@ -146,9 +152,8 @@ export async function createDirectTripAction(formData: FormData) {
   expiresAt.setMonth(4, 30);
   expiresAt.setFullYear(visitDate.getFullYear() + (visitDate.getMonth() >= 4 ? 1 : 0));
 
-  const trip = await prisma.trip.create({
-    data: {
-      userId: session?.user?.id,
+  const trip = await createTrip({
+      userId: session?.user?.id ?? null,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -176,38 +181,39 @@ export async function createDirectTripAction(formData: FormData) {
       ownsClothing: input.ownsClothing,
       needRental: !input.ownsEquipment,
       needClothing: !input.ownsClothing,
-      budgetMin: input.budgetMin,
-      budgetMax: input.budgetMax,
-      lodgingCostInput: input.lodgingCostInput,
+      budgetMin: input.budgetMin ?? null,
+      budgetMax: input.budgetMax ?? null,
+      lodgingCostInput: input.lodgingCostInput ?? null,
       liftTicketTimeSlot: input.liftTicketTimeSlot,
+      selectedRentalOptionId: null,
+      selectedRentalShopId: null,
+      status: "planning",
+      archivedAt: null,
       expiresAt,
-      tasks: {
-        create: buildDefaultTasks(input).map((task) => ({
+      tasks: buildDefaultTasks(input).map((task) => ({
           category: task.category,
           title: task.title,
           status: task.status,
+          memo: null,
           isDefault: true,
           sortOrder: task.sortOrder,
           externalUrl: externalUrlForTask({
             resortId,
             category: task.category,
             title: task.title
-          }),
-          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
+          }) ?? null,
+          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays) ?? null
         }))
-      },
-      events: {
-        create: {
-          eventName: "trip_created_from_resort",
-          properties: {
-            resortId,
-            peopleCount: input.peopleCount,
-            transportType: input.transportType,
-            requiredTasks: buildRequiredTasks(input),
-            rentalShopCount: getRentalShopsForResort(resortId).length
-          }
-        }
-      }
+  });
+  await recordAnalyticsEvent({
+    tripId: trip.id,
+    eventName: "trip_created_from_resort",
+    properties: {
+      resortId,
+      peopleCount: input.peopleCount,
+      transportType: input.transportType,
+      requiredTasks: buildRequiredTasks(input),
+      rentalShopCount: getRentalShopsForResort(resortId).length
     }
   });
 
@@ -220,7 +226,7 @@ export async function updateTripDetailsAction(formData: FormData) {
     throw new Error("수정할 수 없는 트립입니다.");
   }
 
-  const current = await prisma.trip.findUnique({ where: { id: accessTrip.id } });
+  const current = await getTripById(accessTrip.id);
   if (!current) throw new Error("트립을 찾을 수 없습니다.");
 
   const input: TripInput = {
@@ -248,9 +254,7 @@ export async function updateTripDetailsAction(formData: FormData) {
   if (!recommendation) throw new Error("선택한 스키장의 추천/가격을 다시 계산할 수 없습니다.");
   const visitDate = new Date(`${input.visitDate}T00:00:00`);
 
-  await prisma.trip.update({
-    where: { id: current.id },
-    data: {
+  await updateTrip(current.id, {
       selectedRecommendation: {
         score: recommendation.score,
         reasons: recommendation.reasons,
@@ -263,35 +267,33 @@ export async function updateTripDetailsAction(formData: FormData) {
       transportType: input.transportType,
       lodgingCostInput: input.lodgingCostInput,
       liftTicketTimeSlot: input.liftTicketTimeSlot,
-      selectedRentalOptionId,
-      events: {
-        create: {
-          eventName: "trip_details_updated",
-          properties: {
-            peopleCount: input.peopleCount,
-            transportType: input.transportType,
-            liftTicketTimeSlot: input.liftTicketTimeSlot
-          }
-        }
-      }
+      selectedRentalOptionId: selectedRentalOptionId ?? null
+  });
+  await recordAnalyticsEvent({
+    tripId: current.id,
+    eventName: "trip_details_updated",
+    properties: {
+      peopleCount: input.peopleCount,
+      transportType: input.transportType,
+      liftTicketTimeSlot: input.liftTicketTimeSlot
     }
   });
 
   const defaultTasks = buildDefaultTasks(input);
-  for (const task of defaultTasks) {
-    await prisma.tripTask.updateMany({
-      where: { tripId: current.id, category: task.category, title: task.title, isDefault: true },
-      data: {
-        externalUrl: externalUrlForTask({
-          resortId: current.resortId,
-          selectedRentalOptionId,
-          category: task.category,
-          title: task.title
-        }),
-        dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
-      }
-    });
-  }
+  await updateDefaultTasksForTrip(
+    current.id,
+    defaultTasks.map((task) => ({
+      category: task.category,
+      title: task.title,
+      externalUrl: externalUrlForTask({
+        resortId: current.resortId,
+        selectedRentalOptionId,
+        category: task.category,
+        title: task.title
+      }),
+      dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
+    }))
+  );
 
   revalidateTripAccess(formData);
 }
@@ -302,49 +304,29 @@ export async function updateTripStatusAction(formData: FormData) {
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
-  await prisma.trip.update({
-    where: { id: trip.id },
-    data: {
-      status: status as never,
-      events: { create: { eventName: "trip_status_changed", properties: { status } } }
-    }
-  });
+  await updateTrip(trip.id, { status: status as never });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_status_changed", properties: { status } });
   revalidateTripAccess(formData);
 }
 
 export async function attachTripToAccountAction(formData: FormData) {
-  const session = await auth();
+  const session = await getSession();
   const editToken = String(formData.get("editToken") ?? "");
 
   if (!session?.user?.id) {
     redirect(`/login?callbackUrl=/trips/${editToken}`);
   }
 
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    select: { id: true, userId: true, status: true }
-  });
-
+  const trip = await getTripByEditTokenHash(hashToken(editToken));
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("계정에 저장할 수 없는 트립입니다.");
   }
-
   if (trip.userId && trip.userId !== session.user.id) {
     throw new Error("이미 다른 계정에 저장된 트립입니다.");
   }
-
   if (!trip.userId) {
-    await prisma.trip.update({
-      where: { id: trip.id },
-      data: {
-        userId: session.user.id,
-        events: {
-          create: {
-            eventName: "trip_attached_to_account"
-          }
-        }
-      }
-    });
+    await updateTrip(trip.id, { userId: session.user.id });
+    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_attached_to_account" });
   }
 
   revalidatePath(`/trips/${editToken}`);
@@ -362,13 +344,10 @@ export async function updateTaskStatusAction(formData: FormData) {
     throw new Error("수정할 수 없는 트립입니다.");
   }
 
-  await prisma.tripTask.updateMany({
-    where: { id: taskId, tripId: trip.id },
-    data: { status: status as never }
-  });
-  await prisma.analyticsEvent.create({
-    data: { tripId: trip.id, eventName: "task_status_changed", properties: { taskId, status } }
-  });
+  const task = trip.tasks.find((item) => item.id === taskId);
+  if (!task) throw new Error("체크리스트 항목을 찾을 수 없습니다.");
+  await updateTask(taskId, { status: status as never });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_status_changed", properties: { taskId, status } });
 
   revalidateTripAccess(formData);
 }
@@ -382,7 +361,9 @@ export async function updateTaskMemoAction(formData: FormData) {
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
-  await prisma.tripTask.updateMany({ where: { id: taskId, tripId: trip.id }, data: { memo } });
+  const task = trip.tasks.find((item) => item.id === taskId);
+  if (!task) throw new Error("체크리스트 항목을 찾을 수 없습니다.");
+  await updateTask(taskId, { memo });
   revalidateTripAccess(formData);
 }
 
@@ -392,25 +373,19 @@ export async function addTaskAction(formData: FormData) {
   if (!title) return;
 
   const accessTrip = await findEditableTrip(formData);
-  const trip = accessTrip
-    ? await prisma.trip.findUnique({
-        where: { id: accessTrip.id },
-        include: { tasks: { orderBy: { sortOrder: "desc" }, take: 1 } }
-      })
-    : null;
+  const trip = accessTrip ? await getTripById(accessTrip.id) : null;
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
 
-  await prisma.tripTask.create({
-    data: {
+  const maxSortOrder = Math.max(...trip.tasks.map((task) => task.sortOrder), 999);
+  await createTask({
       tripId: trip.id,
       title,
       category: "custom",
       isDefault: false,
       status: "needs_check",
-      sortOrder: (trip.tasks[0]?.sortOrder ?? 999) + 10
-    }
+      sortOrder: maxSortOrder + 10
   });
   revalidateTripAccess(formData);
 }
@@ -422,18 +397,19 @@ export async function deleteTaskAction(formData: FormData) {
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
-  await prisma.tripTask.deleteMany({ where: { id: taskId, tripId: trip.id, isDefault: false } });
+  const task = trip.tasks.find((item) => item.id === taskId && !item.isDefault);
+  if (task) await deleteTask(task.id);
   revalidateTripAccess(formData);
 }
 
 export async function deleteTripAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const trip = editToken
-    ? await prisma.trip.findUnique({ where: { editTokenHash: hashToken(editToken) } })
+    ? await getTripByEditTokenHash(hashToken(editToken))
     : await findEditableTrip(formData);
   if (!trip) throw new Error("트립을 찾을 수 없습니다.");
-  await prisma.analyticsEvent.create({ data: { tripId: trip.id, eventName: "trip_deleted" } });
-  await prisma.trip.delete({ where: { id: trip.id } });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_deleted" });
+  await deleteTrip(trip.id);
   redirect(editToken ? "/" : "/my-trips");
 }
 
@@ -445,17 +421,8 @@ export async function regenerateShareLinkAction(formData: FormData) {
   }
 
   const shareToken = createToken();
-  await prisma.trip.update({
-    where: { id: trip.id },
-    data: {
-      shareTokenHash: hashToken(shareToken),
-      events: {
-        create: {
-          eventName: "share_link_regenerated"
-        }
-      }
-    }
-  });
+  await updateTrip(trip.id, { shareTokenHash: hashToken(shareToken) });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_regenerated" });
 
   const tripId = String(formData.get("tripId") ?? "");
   redirect(editToken ? `/trips/${editToken}?share=${shareToken}` : `/my-trips/${tripId}?share=${shareToken}`);
@@ -469,8 +436,7 @@ export async function recordExternalLinkClickAction(formData: FormData) {
   const resortId = String(formData.get("resortId") ?? "");
   const sourceName = String(formData.get("sourceName") ?? "");
 
-  await prisma.analyticsEvent.create({
-    data: {
+  await recordAnalyticsEvent({
       tripId,
       eventName,
       properties: {
@@ -479,6 +445,5 @@ export async function recordExternalLinkClickAction(formData: FormData) {
         resortId,
         sourceName
       }
-    }
   });
 }

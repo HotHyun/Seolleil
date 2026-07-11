@@ -4,8 +4,8 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { prisma } from "@/lib/prisma";
 import { hashToken } from "@/lib/tokens";
+import { getTripByShareTokenHash, recordAnalyticsEvent } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   robots: {
@@ -16,15 +16,10 @@ export const metadata: Metadata = {
 
 export default async function SharePage({ params }: { params: Promise<{ shareToken: string }> }) {
   const { shareToken } = await params;
-  const trip = await prisma.trip.findUnique({
-    where: { shareTokenHash: hashToken(shareToken) },
-    include: { tasks: { orderBy: [{ category: "asc" }, { sortOrder: "asc" }] } }
-  });
+  const trip = await getTripByShareTokenHash(hashToken(shareToken));
   if (!trip) notFound();
 
-  await prisma.analyticsEvent.create({
-    data: { tripId: trip.id, eventName: "share_page_viewed" }
-  });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
 
   return (
     <main className="page-shell py-8">

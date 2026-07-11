@@ -1,0 +1,142 @@
+# Appwrite Collections
+
+Korean Ski uses Appwrite Databases as the application persistence layer.
+
+## Environment
+
+Required server variables:
+
+```txt
+APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
+APPWRITE_PROJECT_ID=<project-id>
+APPWRITE_API_KEY=<server-api-key>
+APPWRITE_DATABASE_ID=korean_ski
+APPWRITE_TRIPS_COLLECTION_ID=trips
+APPWRITE_TRIP_TASKS_COLLECTION_ID=trip_tasks
+APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID=analytics_events
+```
+
+Required public variables:
+
+```txt
+NEXT_PUBLIC_SITE_URL=https://ski.hothyun.com
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
+```
+
+`APPWRITE_API_KEY` must only be configured as a server/Worker secret. Do not expose it to browser code.
+
+## Database
+
+Create database:
+
+```txt
+korean_ski
+```
+
+## `trips`
+
+String attributes:
+
+- `userId`, optional, size 255.
+- `editTokenHash`, required, size 128.
+- `shareTokenHash`, required, size 128.
+- `resortId`, required, size 128.
+- `resortNameSnapshot`, required, size 255.
+- `selectedRecommendation`, optional, size 65535.
+- `season`, required, size 64.
+- `departureLocation`, required, size 128.
+- `skillLevel`, required, size 32.
+- `rideType`, required, size 32.
+- `transportType`, required, size 32.
+- `tripDuration`, required, size 32.
+- `liftTicketTimeSlot`, required, size 32.
+- `selectedRentalShopId`, optional, size 128.
+- `selectedRentalOptionId`, optional, size 128.
+- `status`, required, size 32.
+
+Datetime attributes:
+
+- `visitDate`, required.
+- `archivedAt`, optional.
+- `expiresAt`, optional.
+
+Integer attributes:
+
+- `peopleCount`, required.
+- `budgetMin`, optional.
+- `budgetMax`, optional.
+- `lodgingCostInput`, optional.
+
+Boolean attributes:
+
+- `ownsEquipment`, required.
+- `ownsClothing`, required.
+- `needRental`, required.
+- `needClothing`, required.
+
+Indexes:
+
+- key index on `editTokenHash`.
+- key index on `shareTokenHash`.
+- key index on `userId`.
+- key index on `resortId`.
+- key index on `visitDate`.
+
+## `trip_tasks`
+
+String attributes:
+
+- `tripId`, required, size 255.
+- `category`, required, size 64.
+- `title`, required, size 255.
+- `status`, required, size 32.
+- `memo`, optional, size 4096.
+- `externalUrl`, optional, size 2048.
+
+Boolean attributes:
+
+- `isDefault`, required.
+
+Integer attributes:
+
+- `sortOrder`, required.
+
+Datetime attributes:
+
+- `dueDate`, optional.
+
+Indexes:
+
+- key index on `tripId`.
+- key index on `category`.
+- key index on `sortOrder`.
+
+## `analytics_events`
+
+String attributes:
+
+- `tripId`, optional, size 255.
+- `eventName`, required, size 128.
+- `properties`, optional, size 65535.
+
+Indexes:
+
+- key index on `tripId`.
+- key index on `eventName`.
+
+## Permissions
+
+The current Worker uses a server API key and application-level edit/share token checks.
+
+- Keep collection permissions restrictive.
+- Do not grant broad anonymous write access to collections.
+- `editTokenHash` and `shareTokenHash` store hashes only.
+- Raw edit/share tokens only appear in URLs and are never persisted.
+
+## Auth
+
+Enable Google OAuth in Appwrite Console:
+
+- Auth > Settings > OAuth2 Providers > Google.
+- Add `https://ski.hothyun.com` and local development hostnames to the Korean Ski project web platforms.
+- The app redirects to `/oauth` after Appwrite OAuth and stores the Appwrite session secret in an httpOnly cookie.

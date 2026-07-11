@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CheckCircle2, Copy, ExternalLink, ShieldAlert, Trash2 } from "lucide-react";
-import { auth } from "@/auth";
 import { attachTripToAccountAction, deleteTripAction, regenerateShareLinkAction } from "@/app/actions";
 import { signInWithGoogleAction } from "@/app/auth-actions";
 import { AnalyticsLink } from "@/components/analytics-link";
@@ -14,7 +13,7 @@ import { TripCostAndBooking } from "@/components/trip/trip-overview";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
-import { prisma } from "@/lib/prisma";
+import { getTripByEditTokenHash } from "@/lib/trip-store";
 import { hashToken } from "@/lib/tokens";
 
 export const metadata: Metadata = {
@@ -32,13 +31,9 @@ export default async function TripEditPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { editToken } = await params;
-  const session = await auth();
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
-  const trip = await prisma.trip.findUnique({
-    where: { editTokenHash: hashToken(editToken) },
-    include: { tasks: { orderBy: [{ category: "asc" }, { sortOrder: "asc" }] } }
-  });
+  const trip = await getTripByEditTokenHash(hashToken(editToken));
   if (!trip) notFound();
 
   const resort = getResort(trip.resortId);
@@ -121,18 +116,11 @@ export default async function TripEditPage({
               <CardTitle>내 트립</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {session?.user && trip.userId === session.user.id ? (
+              {trip.userId ? (
                 <div className="flex items-start gap-2 rounded-md bg-primary/10 p-3 text-sm text-primary">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>이 트립은 내 트립 목록에 저장되어 있습니다.</span>
                 </div>
-              ) : session?.user ? (
-                <form action={attachTripToAccountAction}>
-                  <input type="hidden" name="editToken" value={editToken} />
-                  <Button className="w-full" type="submit">
-                    내 트립에 저장
-                  </Button>
-                </form>
               ) : (
                 <>
                   <p className="text-sm text-muted-foreground">

@@ -5,11 +5,10 @@
 ## Stack
 
 - Next.js
-- PostgreSQL
-- Prisma
+- Appwrite Databases
 - Tailwind CSS
-- Cloudflare Workers
-- Cloudflare Hyperdrive
+- Cloudflare Workers via OpenNext
+- Self-hosted Appwrite on OCI
 - Docker Compose
 
 ## Local
@@ -41,31 +40,20 @@ the exposed app port instead of binding host port `3000` directly.
 Set strong values for:
 
 ```txt
-POSTGRES_PASSWORD
-PGADMIN_DEFAULT_PASSWORD
-PGADMIN_PUBLIC_URL=https://ski-admin.hothyun.com
 NEXT_PUBLIC_SITE_URL=https://ski.hothyun.com
-AUTH_URL=https://ski.hothyun.com
-AUTH_SECRET
-AUTH_GOOGLE_ID
-AUTH_GOOGLE_SECRET
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
+APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
+APPWRITE_PROJECT_ID
+APPWRITE_API_KEY
+APPWRITE_DATABASE_ID=korean_ski
+APPWRITE_TRIPS_COLLECTION_ID=trips
+APPWRITE_TRIP_TASKS_COLLECTION_ID=trip_tasks
+APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID=analytics_events
 NEXT_PUBLIC_UMAMI_WEBSITE_ID
 NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ```
 
 If Umami is not ready yet, leave the Umami variables empty.
-
-For Google OAuth, configure this authorized redirect URI in Google Cloud:
-
-```txt
-https://ski.hothyun.com/api/auth/callback/google
-```
-
-Generate `AUTH_SECRET` with:
-
-```bash
-openssl rand -base64 32
-```
 
 ## Environment
 
@@ -74,61 +62,47 @@ Copy `.env.example` to `.env` for local non-Docker use.
 Coolify can override these values:
 
 ```txt
-DATABASE_URL
-PGADMIN_PUBLIC_URL
 NEXT_PUBLIC_SITE_URL
-AUTH_URL
-AUTH_SECRET
-AUTH_GOOGLE_ID
-AUTH_GOOGLE_SECRET
+NEXT_PUBLIC_APPWRITE_ENDPOINT
+APPWRITE_ENDPOINT
+APPWRITE_PROJECT_ID
+APPWRITE_API_KEY
+APPWRITE_DATABASE_ID
+APPWRITE_TRIPS_COLLECTION_ID
+APPWRITE_TRIP_TASKS_COLLECTION_ID
+APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID
 NEXT_PUBLIC_UMAMI_WEBSITE_ID
 NEXT_PUBLIC_UMAMI_SCRIPT_URL
 ```
 
-## Cloudflare Workers
+## Appwrite Direction
 
-The app can run as a Next.js Worker through OpenNext while PostgreSQL stays on
-OCI and is reached through Cloudflare Hyperdrive.
+The Cloudflare Hyperdrive experiment has been stopped. The target architecture
+is:
 
-```bash
-pnpm install
-pnpm db:generate
-pnpm cf:build
-pnpm cf:preview
+```txt
+Cloudflare Pages/Workers/Next.js
+  -> HTTPS
+  -> appwrite.hothyun.com
+  -> Cloudflare Tunnel or proxied HTTPS
+  -> OCI self-hosted Appwrite
 ```
 
-Create the Hyperdrive configuration after the OCI PostgreSQL endpoint is
-reachable from Cloudflare:
+The app stores trips, checklist tasks, share links, and analytics events in
+Appwrite Databases through server-side Appwrite REST calls. Account login uses
+Appwrite Auth Google OAuth with an httpOnly session cookie.
+
+Before deploying to Cloudflare Workers:
 
 ```bash
-pnpm wrangler login
-pnpm wrangler hyperdrive create korean-ski-postgres \
-  --connection-string="postgresql://USER:PASSWORD@HOST:5432/DB?schema=public"
+pnpm wrangler secret put APPWRITE_API_KEY
 ```
 
-Copy the returned Hyperdrive `id` into `wrangler.jsonc` under the `HYPERDRIVE`
-binding. For local Worker preview against a local database, avoid committing the
-connection string and export it before `pnpm cf:preview`:
+Set `APPWRITE_PROJECT_ID` in `wrangler.jsonc` to the real Appwrite project ID.
 
-```bash
-export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="postgresql://korean_ski:change-me@localhost:5432/korean_ski?schema=public"
-export WRANGLER_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE="$CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE"
-```
-
-Production secrets still need to be set in Cloudflare:
-
-```bash
-pnpm wrangler secret put AUTH_SECRET
-pnpm wrangler secret put AUTH_GOOGLE_ID
-pnpm wrangler secret put AUTH_GOOGLE_SECRET
-pnpm wrangler secret put ADMIN_EMAILS
-```
-
-Deploy with:
-
-```bash
-pnpm cf:deploy
-```
+Do not expose PostgreSQL `5432` publicly for this app, and do not add
+Cloudflare Hyperdrive bindings back to the app unless the product docs are
+explicitly changed first.
 
 ## Notes
 
@@ -136,5 +110,5 @@ pnpm cf:deploy
 - Price values currently include MVP placeholder estimates and should be replaced with verified seasonal data.
 - edit/share tokens are stored as hashes only.
 - Read-only share links can be regenerated from the edit page.
-- OCI can keep running PostgreSQL and PgAdmin even when the Next.js app moves to
-  Cloudflare Workers.
+- Appwrite migration planning is documented in `docs/product/appwrite-architecture.md`.
+- Appwrite collection setup is documented in `docs/product/appwrite-collections.md`.

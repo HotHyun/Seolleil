@@ -2,26 +2,20 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "korean-ski",
   "main": ".open-next/worker.js",
-  "compatibility_date": "2026-07-08",
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "compatibility_date": "2026-07-11",
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "korean-ski"
-    }
-  ],
-  "hyperdrive": [
-    {
-      "binding": "HYPERDRIVE",
-      "id": "2bd57a8091644e68b1d3ba9f9bd54e79"
-    }
-  ],
-  "observability": {
-    "enabled": true,
-    "head_sampling_rate": 0.1
+  "vars": {
+    "NEXT_PUBLIC_SITE_URL": "https://ski.hothyun.com",
+    "NEXT_PUBLIC_APPWRITE_ENDPOINT": "https://appwrite.hothyun.com/v1",
+    "APPWRITE_ENDPOINT": "https://appwrite.hothyun.com/v1",
+    "APPWRITE_PROJECT_ID": "korean-ski",
+    "APPWRITE_DATABASE_ID": "korean_ski",
+    "APPWRITE_TRIPS_COLLECTION_ID": "trips",
+    "APPWRITE_TRIP_TASKS_COLLECTION_ID": "trip_tasks",
+    "APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID": "analytics_events"
   }
 }

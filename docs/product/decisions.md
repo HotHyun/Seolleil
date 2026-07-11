@@ -61,24 +61,31 @@ MVP 예상 비용에는 아래 항목을 포함한다.
 
 ## 배포 환경 가정
 
-초기 배포 환경은 OCI Free Tier Ampere 인스턴스와 Cloudflare Workers를 함께 사용한다.
+초기 배포 환경은 OCI Free Tier Ampere 인스턴스와 Cloudflare를 함께 사용하되,
+OCI의 역할은 직접 공개 PostgreSQL이 아니라 self-hosted Appwrite BaaS 운영으로
+전환한다.
 
 - OCI Free Tier 최근 축소 기준: 2 OCPU.
 - 12 GB RAM.
-- 200 GB Disk.
+- Boot volume or explicitly mounted data paths for Appwrite data/storage.
 - ARM 아키텍처.
-- OCI는 PostgreSQL, PgAdmin, 백업, 공통 Linux 관리 도구를 담당한다.
-- Next.js 앱 서버와 SSR/API 실행은 Cloudflare Workers로 이전한다.
-- Workers에서 OCI PostgreSQL 접근은 Cloudflare Hyperdrive를 사용한다.
+- OCI는 Appwrite, Appwrite 내부 데이터/스토리지, 백업, 공통 Linux 관리 도구를 담당한다.
+- Next.js 앱은 Cloudflare Pages/Workers 또는 호환 가능한 Next.js hosting으로 제공한다.
+- 앱은 Appwrite HTTPS API/SDK를 사용한다.
+- Workers에서 OCI PostgreSQL에 직접 TCP 연결하지 않는다.
+- Cloudflare Hyperdrive 기반 PostgreSQL 직접 연결 실험은 중단한다.
+- PostgreSQL 5432 public ingress는 사용하지 않는다.
 
 ## 기술 스택
 
 - 웹 프레임워크: Next.js.
-- 데이터베이스: PostgreSQL.
-- ORM: Prisma.
-- 앱 배포 방식: OpenNext 기반 Cloudflare Workers.
-- DB 운영 방식: OCI PostgreSQL.
-- DB 연결 방식: Cloudflare Hyperdrive.
+- 현재 데이터 저장: Appwrite Databases. Trip, TripTask, AnalyticsEvent는 Appwrite collections를 사용한다.
+- 목표 BaaS: OCI self-hosted Appwrite.
+- 인증: Appwrite Auth + Google OAuth.
+- 목표 데이터 저장: Appwrite Databases collections.
+- 목표 파일 저장: 필요 시 Appwrite Storage.
+- 앱 배포 방식: Cloudflare Pages/Workers 또는 Next.js 호환 hosting.
+- DB 연결 방식: Appwrite HTTPS API/SDK. Hyperdrive는 사용하지 않는다.
 - 보조/롤백 배포 방식: Coolify에서 Docker Compose 기반으로 운영.
 - 프론트 방향: 모바일 웹 중심으로 설계하되 데스크톱도 대응한다.
 
@@ -87,9 +94,9 @@ MVP 예상 비용에는 아래 항목을 포함한다.
 - 웹 분석 도구: Umami self-host.
 - Umami 운영 방식: Coolify에서 별도 서비스로 운영.
 - 앱에는 Umami tracking script를 삽입한다.
-- 제품 핵심 이벤트는 PostgreSQL의 자체 이벤트 테이블에도 저장한다.
+- 제품 핵심 이벤트는 Appwrite `analytics_events` collection에 저장한다.
 - MVP 단계에서는 별도 관리자 대시보드를 만들지 않는다.
-- MVP 단계의 DB 이벤트 확인은 PgAdmin을 사용한다.
+- Appwrite 전환 후 이벤트 확인은 Appwrite Console 또는 별도 운영 도구에서 처리한다.
 - Umami 용 PostgreSQL은 앱 DB와 분리된 별도 DB로 운영하는 것을 기본으로 한다.
 - 이벤트에는 개인정보, editToken/shareToken 원문을 저장하지 않는다.
 

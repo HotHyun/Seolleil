@@ -17,13 +17,13 @@
     "test:e2e:ui": "playwright test --ui",
     "test:all": "pnpm typecheck && pnpm test && pnpm test:e2e",
     "cf:build": "opennextjs-cloudflare build",
-    "cf:preview": "pnpm cf:build && wrangler dev",
-    "cf:deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "cf:preview": "pnpm cf:build && tsx scripts/with-env.ts wrangler dev",
+    "cf:deploy": "tsx scripts/with-env.ts opennextjs-cloudflare build && tsx scripts/with-env.ts opennextjs-cloudflare deploy",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv src/types/cloudflare-env.d.ts",
     "data:validate": "tsx scripts/validate-static-data.ts",
     "data:report": "tsx scripts/report-static-data.ts",
     "data:links": "tsx scripts/check-links.ts",
-    "appwrite:schema": "tsx scripts/setup-appwrite-schema.ts"
+    "appwrite:schema": "tsx scripts/with-env.ts tsx scripts/setup-appwrite-schema.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

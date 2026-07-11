@@ -1,4 +1,3 @@
-import { cookies } from "next/headers";
 import { NextResponse, type NextRequest } from "next/server";
 import { createSessionFromToken, SESSION_COOKIE } from "@/lib/session";
 
@@ -13,8 +12,8 @@ export async function GET(request: NextRequest) {
   }
 
   const session = await createSessionFromToken(userId, secret);
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE, session.secret, {
+  const response = NextResponse.redirect(new URL(safeCallbackUrl, request.url));
+  response.cookies.set(SESSION_COOKIE, session.secret, {
     path: "/",
     httpOnly: true,
     sameSite: "lax",
@@ -22,5 +21,5 @@ export async function GET(request: NextRequest) {
     expires: new Date(session.expire)
   });
 
-  return NextResponse.redirect(new URL(safeCallbackUrl, request.url));
+  return response;
 }

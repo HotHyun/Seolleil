@@ -16,7 +16,17 @@ const pretendard = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ski.hothyun.com"),
   title: "Korean Ski",
-  description: "국내 스키장 추천과 스키 트립 준비 체크리스트"
+  description: "국내 스키장 추천과 스키 트립 준비 체크리스트",
+  robots: {
+    index: false,
+    follow: false,
+    nocache: true,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true
+    }
+  }
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

@@ -78,7 +78,20 @@ export async function appwriteFetch<T>(path: string, init: RequestInit = {}) {
 }
 
 export function appwriteQuery(method: string, ...args: unknown[]) {
-  return `${method}(${args.map((arg) => JSON.stringify(arg)).join(",")})`;
+  if (method === "limit" || method === "offset" || method === "cursorAfter" || method === "cursorBefore") {
+    return JSON.stringify({ method, values: args });
+  }
+
+  if (method === "orderAsc" || method === "orderDesc" || method === "orderRandom") {
+    return JSON.stringify({ method, attribute: args[0] });
+  }
+
+  const [attribute, value] = args;
+  return JSON.stringify({
+    method,
+    attribute,
+    values: Array.isArray(value) ? value : [value]
+  });
 }
 
 export function documentPath(collectionId: string, documentId?: string) {

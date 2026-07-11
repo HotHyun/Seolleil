@@ -37,7 +37,7 @@ export async function getSession(): Promise<AppSession | null> {
 
 export function getOAuthUrl(provider: "google", success: string, failure: string) {
   const config = getAppwriteConfig();
-  const url = new URL(`${config.endpoint}/account/tokens/oauth2/${provider}`);
+  const url = new URL(`${config.oauthEndpoint}/account/tokens/oauth2/${provider}`);
   url.searchParams.set("project", config.projectId);
   url.searchParams.set("success", success);
   url.searchParams.set("failure", failure);

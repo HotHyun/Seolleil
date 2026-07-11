@@ -209,3 +209,5 @@ DATABASE_URL="postgresql://korean_ski:korean_ski_test@localhost:55432/korean_ski
 - Check `git status --short` before committing.
 - Commit focused changes with clear messages.
 - Push to `origin/main` when the user asks to publish or when deployment fixes are complete.
+- Do not deploy unless the user explicitly asks for deployment. Finishing a code change is not deployment approval.
+- After completing a work item, commit and push the completed code changes, but leave deployment for a separate explicit user instruction.

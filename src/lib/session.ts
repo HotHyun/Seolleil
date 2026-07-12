@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
-import { getAppwriteConfig } from "@/lib/appwrite";
+import { appwriteHeaders, getAppwriteConfig } from "@/lib/appwrite";
 
-export const SESSION_COOKIE = "korean_ski_appwrite_session";
+export const LEGACY_SESSION_COOKIE = "korean_ski_appwrite_session";
 
 export type AppSession = {
   user: {
@@ -18,7 +18,7 @@ type AppwriteAccount = {
 };
 
 export async function getSession(): Promise<AppSession | null> {
-  const sessionSecret = (await cookies()).get(SESSION_COOKIE)?.value;
+  const sessionSecret = await getSessionSecret();
   if (!sessionSecret) return null;
 
   try {
@@ -45,7 +45,7 @@ export function getOAuthUrl(provider: "google", success: string, failure: string
 }
 
 export async function createSessionFromToken(userId: string, secret: string) {
-  return accountFetch<{ secret: string; expire: string }>("/account/sessions/token", undefined, {
+  return accountAdminFetch<{ secret: string; expire: string }>("/account/sessions/token", {
     method: "POST",
     body: JSON.stringify({ userId, secret })
   });
@@ -75,4 +75,33 @@ async function accountFetch<T>(path: string, sessionSecret?: string, init: Reque
 
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
+}
+
+async function accountAdminFetch<T>(path: string, init: RequestInit = {}) {
+  const config = getAppwriteConfig();
+  const response = await fetch(`${config.endpoint}${path}`, {
+    ...init,
+    headers: {
+      ...appwriteHeaders(config),
+      ...(init.headers ?? {})
+    },
+    cache: "no-store"
+  });
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`Appwrite admin account request failed (${response.status}) ${path}: ${body}`);
+  }
+
+  if (response.status === 204) return undefined as T;
+  return response.json() as Promise<T>;
+}
+
+export function sessionCookieName() {
+  return `a_session_${getAppwriteConfig().projectId}`;
+}
+
+export async function getSessionSecret() {
+  const cookieStore = await cookies();
+  return cookieStore.get(sessionCookieName())?.value ?? cookieStore.get(LEGACY_SESSION_COOKIE)?.value;
 }

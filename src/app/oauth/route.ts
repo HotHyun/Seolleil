@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createSessionFromToken, SESSION_COOKIE } from "@/lib/session";
+import { createSessionFromToken, LEGACY_SESSION_COOKIE, sessionCookieName } from "@/lib/session";
 
 export async function GET(request: NextRequest) {
   const userId = request.nextUrl.searchParams.get("userId");
@@ -13,13 +13,14 @@ export async function GET(request: NextRequest) {
 
   const session = await createSessionFromToken(userId, secret);
   const response = NextResponse.redirect(new URL(safeCallbackUrl, request.url));
-  response.cookies.set(SESSION_COOKIE, session.secret, {
+  response.cookies.set(sessionCookieName(), session.secret, {
     path: "/",
     httpOnly: true,
     sameSite: "lax",
     secure: request.nextUrl.protocol === "https:",
     expires: new Date(session.expire)
   });
+  response.cookies.delete(LEGACY_SESSION_COOKIE);
 
   return response;
 }

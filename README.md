@@ -99,6 +99,12 @@ Before deploying to Cloudflare Workers:
 pnpm wrangler secret put APPWRITE_API_KEY
 ```
 
+The runtime API key needs these Appwrite scopes:
+
+- `sessions.write` for completing OAuth token login server-side.
+- `documents.read`, `documents.write`, and `documents.delete` for trip, task, and analytics documents.
+- Schema automation additionally needs database, collection, attribute, and index read/write scopes.
+
 Set `APPWRITE_PROJECT_ID` in `wrangler.jsonc` to the real Appwrite project ID.
 
 Create or update the Appwrite database schema with:

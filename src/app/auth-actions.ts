@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { cookies, headers } from "next/headers";
-import { deleteCurrentSession, getOAuthUrl, SESSION_COOKIE } from "@/lib/session";
+import { deleteCurrentSession, getOAuthUrl, getSessionSecret, LEGACY_SESSION_COOKIE, sessionCookieName } from "@/lib/session";
 
 export async function signInWithGoogleAction(formData: FormData) {
   const callbackUrl = String(formData.get("callbackUrl") ?? "/plan");
@@ -15,11 +15,12 @@ export async function signInWithGoogleAction(formData: FormData) {
 
 export async function signOutAction() {
   const cookieStore = await cookies();
-  const sessionSecret = cookieStore.get(SESSION_COOKIE)?.value;
+  const sessionSecret = await getSessionSecret();
   if (sessionSecret) {
     await deleteCurrentSession(sessionSecret).catch(() => undefined);
   }
-  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete(sessionCookieName());
+  cookieStore.delete(LEGACY_SESSION_COOKIE);
   redirect("/");
 }
 

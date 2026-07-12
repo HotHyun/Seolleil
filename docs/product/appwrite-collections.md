@@ -26,6 +26,11 @@ NEXT_PUBLIC_APPWRITE_ENDPOINT=https://appwrite.hothyun.com/v1
 
 `APPWRITE_API_KEY` must only be configured as a server/Worker secret. Do not expose it to browser code.
 
+The runtime Worker key needs `sessions.write` to complete Appwrite OAuth token
+login on the server, plus `documents.read`, `documents.write`, and
+`documents.delete` for application data access. Schema setup keys additionally
+need database, collection, attribute, and index read/write scopes.
+
 ## Database
 
 Create database:
@@ -159,4 +164,4 @@ Enable Google OAuth in Appwrite Console:
 
 - Auth > Settings > OAuth2 Providers > Google.
 - Add `https://ski.hothyun.com` and local development hostnames to the Korean Ski project web platforms.
-- The app redirects to `/oauth` after Appwrite OAuth and stores the Appwrite session secret in an httpOnly cookie.
+- The app redirects to `/oauth` after Appwrite OAuth and stores the Appwrite session secret in the Appwrite SSR cookie name `a_session_<PROJECT_ID>`.

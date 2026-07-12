@@ -76,8 +76,8 @@ const liftSeeds: LiftSeed[] = [
   {
     resortId: "elysian",
     resortName: "엘리시안 강촌",
-    sourceName: "25/26 전국 리프트권 정상가 정리",
-    sourceUrl: "https://100479.net/wp/?p=531",
+    sourceName: "엘리시안 강촌 25/26 공식 이용요금",
+    sourceUrl: "https://www.elysian.co.kr/about-gangchon/ski",
     sourceType: "official_site",
     verifiedByHuman: false,
     verificationNote: "8시간권 주중/주말 공개값 기반. 공식 예약 페이지 재검증 필요.",

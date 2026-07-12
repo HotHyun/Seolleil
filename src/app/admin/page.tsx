@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +20,7 @@ export default function AdminPage() {
         <StatusBadge tone="warn">Admin</StatusBadge>
         <h1 className="mt-3 text-3xl font-black md:text-5xl">운영 대시보드</h1>
         <p className="mt-2 text-muted-foreground">
-          Appwrite 전환 중에는 DB 집계 대시보드를 잠시 비활성화합니다. 정적 데이터 품질 점검은 계속 사용할 수 있습니다.
+          제품 지표는 Umami, 트립 단위 이벤트는 Appwrite Console에서 확인합니다. 이 앱은 별도 집계 대시보드를 운영하지 않습니다.
         </p>
         <div className="mt-4">
           <Link href="/admin/data-quality">
@@ -30,11 +31,12 @@ export default function AdminPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Appwrite 운영 메모</CardTitle>
+          <CardTitle>운영 도구</CardTitle>
         </CardHeader>
         <CardContent className="space-y-2 text-sm text-muted-foreground">
-          <p>트립, 체크리스트, 공유 조회 이벤트는 Appwrite Databases collections로 저장됩니다.</p>
-          <p>관리자 집계는 Appwrite query 기반으로 재구현할 예정입니다.</p>
+          <p>트립 생성 퍼널과 체크리스트 사용률은 Umami custom events로 확인합니다.</p>
+          <p>성공한 서버 상태 변화는 Appwrite analytics_events 컬렉션, 서버 오류는 Cloudflare Workers Logs에서 확인합니다.</p>
+          <a href="https://appwrite.hothyun.com" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-primary">Appwrite Console <ExternalLink className="h-3.5 w-3.5" /></a>
         </CardContent>
       </Card>
     </main>

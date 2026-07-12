@@ -1,16 +1,20 @@
 "use client";
 
-import { AlertCircle, CalendarClock, ExternalLink, Trash2 } from "lucide-react";
+import { AlertCircle, CalendarClock, ExternalLink, Plus, Trash2 } from "lucide-react";
 import {
   addTaskAction,
   deleteTaskAction,
-  updateTaskMemoAction,
+  updateTaskDetailsAction,
   updateTaskStatusAction
 } from "@/app/actions";
 import { StatusSelect } from "@/components/trip/status-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { isTaskComplete } from "@/lib/checklist";
+
+declare global {
+  interface Window { umami?: { track: (eventName: string, eventData?: Record<string, unknown>) => void } }
+}
 
 type Task = {
   id: string;
@@ -107,7 +111,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
           </div>
           <div className="divide-y">
             {group.map((task) => (
-              <div key={task.id} className="grid gap-3 p-4 md:grid-cols-[1fr_160px_1fr_auto] md:items-center">
+              <div key={task.id} className="grid gap-3 p-4 xl:grid-cols-[minmax(150px,1fr)_150px_minmax(0,2fr)_auto] xl:items-center">
                 <div>
                   <div className="font-semibold">{task.title}</div>
                   {task.dueDate ? (
@@ -116,17 +120,19 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
                     </div>
                   ) : null}
                 </div>
-                <form action={updateTaskStatusAction}>
+                <form action={updateTaskStatusAction} onSubmit={() => window.umami?.track("checklist_status_change")}>
                   <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
                   <StatusSelect name="status" defaultValue={task.status} />
                 </form>
-                <form action={updateTaskMemoAction} className="flex gap-2">
+                <form action={updateTaskDetailsAction} onSubmit={() => window.umami?.track("checklist_details_update")} className="grid gap-2 sm:grid-cols-[1fr_1fr_150px_auto]">
                   <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
-                  <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모" />
+                  {!task.isDefault ? <Input name="title" defaultValue={task.title} aria-label="체크 항목 이름" /> : <input type="hidden" name="title" value={task.title} />}
+                  <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모…" aria-label={`${task.title} 메모`} />
+                  <Input name="dueDate" type="date" defaultValue={task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 10) : ""} aria-label={`${task.title} 마감일`} />
                   <Button variant="secondary" className="h-11 shrink-0" type="submit">
-                    저장
+                    항목 저장
                   </Button>
                 </form>
                 {!task.isDefault ? (
@@ -143,11 +149,12 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
           </div>
         </section>
       ))}
-      <form action={addTaskAction} className="glass-panel flex gap-2 rounded-xl p-4">
+      <form action={addTaskAction} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_170px_auto]">
         <AccessFields editToken={editToken} tripId={tripId} />
-        <Input name="title" placeholder="직접 체크 항목 추가" />
+        <Input name="title" placeholder="직접 체크 항목 추가…" aria-label="새 체크 항목 이름" />
+        <Input name="dueDate" type="date" aria-label="새 체크 항목 마감일" />
         <Button type="submit" className="shrink-0">
-          추가
+          <Plus className="h-4 w-4" /> 항목 추가
         </Button>
       </form>
     </div>

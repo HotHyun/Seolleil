@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, ExternalLink, MapPinned } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
+import { PriceContextBanner } from "@/components/price-context-banner";
 import { StatusBadge } from "@/components/status-badge";
 import { ResortNearbyPanel } from "@/components/resort-nearby-panel";
 import { Button } from "@/components/ui/button";
@@ -86,14 +87,16 @@ export default async function ResortDetailPage({ params }: PageProps) {
             <CardHeader>
               <CardTitle>리프트권 가격 출처</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-2 md:grid-cols-2">
+            <CardContent className="space-y-3">
+              <PriceContextBanner compact />
+              <div className="grid gap-2 md:grid-cols-2">
               {liftPrices.map((price) => (
                 <div key={price.id} className="rounded-md border bg-white/7 p-3 text-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <div className="font-bold">{price.label}</div>
                       <div className="mt-1 text-xs text-muted-foreground">
-                        {price.dayType} · {confidenceLabels[price.confidence]} · {price.lastCheckedAt}
+                        {price.dayType} · <StatusBadge tone={price.confidence === "confirmed" ? "good" : price.confidence === "unavailable" ? "warn" : "neutral"}>{confidenceLabels[price.confidence]}</StatusBadge>
                       </div>
                     </div>
                     <div className="shrink-0 font-black">{formatCurrency(price.adultPrice ?? price.priceMin)}</div>
@@ -112,6 +115,7 @@ export default async function ResortDetailPage({ params }: PageProps) {
                   ) : null}
                 </div>
               ))}
+              </div>
             </CardContent>
           </Card>
 

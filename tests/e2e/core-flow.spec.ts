@@ -2,6 +2,17 @@ import { expect, test } from "@playwright/test";
 import { expectNoHorizontalOverflow, planQuery } from "./helpers";
 
 test.describe("core trip flow", () => {
+  test("protects account routes and rejects invalid capability tokens", async ({ page }) => {
+    await page.goto("/my-trips");
+    await expect(page).toHaveURL(/\/login\?callbackUrl=/);
+
+    await page.goto("/trips/not-a-valid-edit-token");
+    await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없습니다." })).toBeVisible();
+
+    await page.goto("/share/not-a-valid-share-token");
+    await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없습니다." })).toBeVisible();
+  });
+
   test("creates an editable trip and opens the read-only share link", async ({ page, context }) => {
     await page.goto(planQuery);
     await page.waitForLoadState("networkidle");

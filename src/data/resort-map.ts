@@ -41,7 +41,7 @@ export type NearbyMapItem = GeoPoint & {
 export const resortMapPoints: ResortMapPoint[] = [
   { resortId: "konjiam", lat: 37.3373, lng: 127.2966, sourceName: "곤지암리조트 주소 기준", sourceUrl: "https://www.konjiamresort.co.kr/", lastCheckedAt: checkedAt },
   { resortId: "jisan", lat: 37.2177, lng: 127.3435, sourceName: "지산 포레스트 리조트 주소 기준", sourceUrl: "https://www.jisanresort.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "vivaldi", lat: 37.6457, lng: 127.6842, sourceName: "비발디파크 주소 기준", sourceUrl: "https://www.sonohotelsresorts.com/vp/", lastCheckedAt: checkedAt },
+  { resortId: "vivaldi", lat: 37.6457, lng: 127.6842, sourceName: "비발디파크 주소 기준", sourceUrl: "https://www.sonohotelsresorts.com/complex_vp", lastCheckedAt: checkedAt },
   { resortId: "elysian", lat: 37.8302, lng: 127.5891, sourceName: "엘리시안 강촌 주소 기준", sourceUrl: "https://www.elysian.co.kr/", lastCheckedAt: checkedAt },
   { resortId: "phoenix", lat: 37.5826, lng: 128.3227, sourceName: "휘닉스 스노우파크 주소 기준", sourceUrl: "https://phoenixhnr.co.kr/", lastCheckedAt: checkedAt },
   { resortId: "yongpyong", lat: 37.6453, lng: 128.6819, sourceName: "모나 용평 주소 기준", sourceUrl: "https://www.yongpyong.co.kr/", lastCheckedAt: checkedAt },
@@ -58,7 +58,7 @@ export const nearbyLodgings: NearbyLodging[] = [
   ...[
     ["konjiam", "곤지암리조트 객실", "https://www.konjiamresort.co.kr/"],
     ["jisan", "지산 포레스트 리조트 주변 숙박", "https://www.jisanresort.co.kr/"],
-    ["vivaldi", "소노벨 비발디파크", "https://www.sonohotelsresorts.com/vp/"],
+    ["vivaldi", "소노벨 비발디파크", "https://www.sonohotelsresorts.com/complex_vp"],
     ["elysian", "엘리시안 강촌 리조트 객실", "https://www.elysian.co.kr/"],
     ["phoenix", "휘닉스 평창 호텔&콘도", "https://phoenixhnr.co.kr/"],
     ["yongpyong", "모나 용평 호텔&콘도", "https://www.yongpyong.co.kr/"],

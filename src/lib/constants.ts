@@ -1,6 +1,7 @@
 import type { Priority, TimeSlot } from "@/lib/types";
 
 export const CURRENT_SEASON = "2025-2026";
+export const REFERENCE_PRICE_SEASON = "25/26 시즌";
 
 export const priorityLabels: Record<Priority, string> = {
   close: "가까움",

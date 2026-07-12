@@ -2,6 +2,7 @@ import { CheckCircle2, ExternalLink, MapPinned, ReceiptText, Sparkles } from "lu
 import { createTripAction } from "@/app/actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
+import { PriceContextBanner } from "@/components/price-context-banner";
 import { StatusBadge } from "@/components/status-badge";
 import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,10 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
           <Button variant="secondary">조건 다시 입력</Button>
         </a>
       </div>
+
+      <div className="mb-5"><PriceContextBanner /></div>
+
+      {recommendations.length ? <RecommendationComparison recommendations={recommendations.slice(0, 3)} /> : null}
 
       <section className="grid gap-4">
         {recommendations.length === 0 ? (
@@ -187,9 +192,8 @@ function CostLine({ item }: { item: CostItem }) {
       </div>
       {item.sourceName || item.lastCheckedAt ? (
         <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-muted-foreground">
-          <span>{confidenceLabels[item.confidence]}</span>
+          <StatusBadge tone={item.confidence === "confirmed" ? "good" : item.confidence === "unavailable" ? "warn" : "neutral"}>{confidenceLabels[item.confidence]}</StatusBadge>
           {item.sourceName ? <span>{item.sourceName}</span> : null}
-          {item.lastCheckedAt ? <span>{item.lastCheckedAt} 확인</span> : null}
           {item.sourceUrl ? (
             <AnalyticsLink
               href={item.sourceUrl}
@@ -206,6 +210,30 @@ function CostLine({ item }: { item: CostItem }) {
       ) : null}
     </div>
   );
+}
+
+function RecommendationComparison({ recommendations }: { recommendations: ReturnType<typeof getRecommendations> }) {
+  return (
+    <section className="mb-6 overflow-hidden rounded-2xl border bg-card" aria-labelledby="comparison-title">
+      <div className="border-b px-5 py-4"><h2 id="comparison-title" className="text-lg font-black">추천 3곳 한눈에 비교</h2><p className="mt-1 text-xs text-muted-foreground">같은 조건으로 계산한 이동·예산·렌탈 편의를 나란히 확인하세요.</p></div>
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[720px] text-left text-sm">
+          <thead className="bg-muted/60 text-xs text-muted-foreground"><tr><th className="px-5 py-3">비교 기준</th>{recommendations.map((item) => <th key={item.resort.id} className="px-4 py-3 text-foreground">{item.resort.name}</th>)}</tr></thead>
+          <tbody className="divide-y">
+            <ComparisonRow label="예상 이동" values={recommendations.map((item) => formatMinutes(item.travelMinutes))} />
+            <ComparisonRow label="예상 총액" values={recommendations.map((item) => `${formatCurrency(item.cost.min)}~${formatCurrency(item.cost.max)}`)} />
+            <ComparisonRow label="가격 신뢰도" values={recommendations.map((item) => confidenceLabels[item.cost.confidence])} />
+            <ComparisonRow label="렌탈 후보" values={recommendations.map((item) => `${item.rentalShops.length}곳`)} />
+            <ComparisonRow label="추천 핵심" values={recommendations.map((item) => item.reasons[0] ?? "조건 확인 필요")} />
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonRow({ label, values }: { label: string; values: string[] }) {
+  return <tr><th className="whitespace-nowrap px-5 py-3 font-bold text-muted-foreground">{label}</th>{values.map((value, index) => <td key={`${label}-${index}`} className="px-4 py-3 font-semibold">{value}</td>)}</tr>;
 }
 
 function RentalOptionLine({

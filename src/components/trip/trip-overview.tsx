@@ -1,5 +1,6 @@
 import { ExternalLink, MapPinned } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
+import { PriceContextBanner } from "@/components/price-context-banner";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -76,6 +77,7 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
         <CardTitle>비용·예약 링크</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
+        <PriceContextBanner compact />
         {cost ? (
           <>
             <div className="rounded-lg border bg-white/7 p-4">
@@ -158,9 +160,8 @@ function CostItemLine({ item }: { item: CostItem }) {
         <span className="font-semibold">{formatCurrency(item.representative ?? item.min)}</span>
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-muted-foreground">
-        <StatusBadge>{confidenceLabels[item.confidence]}</StatusBadge>
+        <StatusBadge tone={item.confidence === "confirmed" ? "good" : item.confidence === "unavailable" ? "warn" : "neutral"}>{confidenceLabels[item.confidence]}</StatusBadge>
         {item.sourceName ? <span>{item.sourceName}</span> : null}
-        {item.lastCheckedAt ? <span>{item.lastCheckedAt} 확인</span> : null}
         {item.sourceUrl ? (
           <AnalyticsLink
             href={item.sourceUrl}

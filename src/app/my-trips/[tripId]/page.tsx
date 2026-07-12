@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { Copy, ExternalLink, Trash2 } from "lucide-react";
-import { deleteTripAction, regenerateShareLinkAction } from "@/app/actions";
+import { Copy, CopyPlus, ExternalLink, Trash2 } from "lucide-react";
+import { deleteTripAction, duplicateTripAction, regenerateShareLinkAction } from "@/app/actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { ShareLinkBox } from "@/components/share-link-box";
@@ -52,6 +52,20 @@ export default async function MyTripDetailPage({
 
       <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
         <section className="space-y-5">
+          <Card>
+            <CardHeader>
+              <CardTitle>다시 계획하기</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">일정과 체크 항목을 복사하고 완료 상태만 초기화합니다.</p>
+              <form action={duplicateTripAction}>
+                <input type="hidden" name="tripId" value={trip.id} />
+                <Button variant="secondary" className="w-full" type="submit">
+                  <CopyPlus className="h-4 w-4" /> 이 트립 복제
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <div className="flex flex-wrap items-center gap-2">

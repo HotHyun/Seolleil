@@ -8,6 +8,7 @@ import { departureLocations, getRentalShopsForResort, getResort } from "@/data/r
 import { estimateTripCost } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
+import { canEditOwnedTrip } from "@/lib/trip-access";
 import { parseTripInput } from "@/lib/trip-input";
 import {
   createTask,
@@ -33,7 +34,10 @@ async function findEditableTrip(formData: FormData) {
   }
 
   if (tripId) {
-    return getTripById(tripId);
+    const session = await getSession();
+    if (!session?.user?.id) return null;
+    const trip = await getTripById(tripId);
+    return trip && canEditOwnedTrip(session.user.id, trip.userId) ? trip : null;
   }
 
   return null;
@@ -367,6 +371,27 @@ export async function updateTaskMemoAction(formData: FormData) {
   revalidateTripAccess(formData);
 }
 
+export async function updateTaskDetailsAction(formData: FormData) {
+  const taskId = String(formData.get("taskId") ?? "");
+  const title = String(formData.get("title") ?? "").trim();
+  const memo = String(formData.get("memo") ?? "").trim();
+  const dueDateValue = String(formData.get("dueDate") ?? "");
+  const trip = await findEditableTrip(formData);
+  if (!trip || trip.status === "archived" || trip.status === "deleted") {
+    throw new Error("수정할 수 없는 트립입니다.");
+  }
+  const task = trip.tasks.find((item) => item.id === taskId);
+  if (!task) throw new Error("체크리스트 항목을 찾을 수 없습니다.");
+  if (!task.isDefault && !title) throw new Error("체크 항목 이름을 입력해 주세요.");
+  await updateTask(task.id, {
+    title: task.isDefault ? task.title : title,
+    memo,
+    dueDate: dueDateValue ? new Date(`${dueDateValue}T00:00:00`) : null
+  });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_details_updated", properties: { custom: !task.isDefault } });
+  revalidateTripAccess(formData);
+}
+
 export async function addTaskAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const title = String(formData.get("title") ?? "").trim();
@@ -379,14 +404,17 @@ export async function addTaskAction(formData: FormData) {
   }
 
   const maxSortOrder = Math.max(...trip.tasks.map((task) => task.sortOrder), 999);
+  const dueDateValue = String(formData.get("dueDate") ?? "");
   await createTask({
       tripId: trip.id,
       title,
       category: "custom",
       isDefault: false,
       status: "needs_check",
-      sortOrder: maxSortOrder + 10
+      sortOrder: maxSortOrder + 10,
+      dueDate: dueDateValue ? new Date(`${dueDateValue}T00:00:00`) : null
   });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_added" });
   revalidateTripAccess(formData);
 }
 
@@ -398,8 +426,62 @@ export async function deleteTaskAction(formData: FormData) {
     throw new Error("수정할 수 없는 트립입니다.");
   }
   const task = trip.tasks.find((item) => item.id === taskId && !item.isDefault);
-  if (task) await deleteTask(task.id);
+  if (task) {
+    await deleteTask(task.id);
+    await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_deleted" });
+  }
   revalidateTripAccess(formData);
+}
+
+export async function duplicateTripAction(formData: FormData) {
+  const session = await getSession();
+  if (!session?.user?.id) redirect("/login?callbackUrl=/my-trips");
+  const source = await findEditableTrip(formData);
+  if (!source) throw new Error("복제할 수 없는 트립입니다.");
+
+  const editToken = createToken();
+  const shareToken = createToken();
+  const duplicate = await createTrip({
+    userId: session.user.id,
+    editTokenHash: hashToken(editToken),
+    shareTokenHash: hashToken(shareToken),
+    resortId: source.resortId,
+    resortNameSnapshot: source.resortNameSnapshot,
+    selectedRecommendation: source.selectedRecommendation,
+    season: source.season,
+    visitDate: source.visitDate,
+    departureLocation: source.departureLocation,
+    peopleCount: source.peopleCount,
+    skillLevel: source.skillLevel,
+    rideType: source.rideType,
+    transportType: source.transportType,
+    tripDuration: source.tripDuration,
+    ownsEquipment: source.ownsEquipment,
+    ownsClothing: source.ownsClothing,
+    needRental: source.needRental,
+    needClothing: source.needClothing,
+    budgetMin: source.budgetMin,
+    budgetMax: source.budgetMax,
+    lodgingCostInput: source.lodgingCostInput,
+    liftTicketTimeSlot: source.liftTicketTimeSlot,
+    selectedRentalShopId: source.selectedRentalShopId,
+    selectedRentalOptionId: source.selectedRentalOptionId,
+    status: "planning",
+    archivedAt: null,
+    expiresAt: source.expiresAt,
+    tasks: source.tasks.map((task) => ({
+      category: task.category,
+      title: task.title,
+      status: task.status === "not_needed" ? "not_needed" : "needs_check",
+      memo: task.memo,
+      isDefault: task.isDefault,
+      sortOrder: task.sortOrder,
+      dueDate: task.dueDate,
+      externalUrl: task.externalUrl
+    }))
+  });
+  await recordAnalyticsEvent({ tripId: duplicate.id, eventName: "trip_duplicated", properties: { sourceTripId: source.id } });
+  redirect(`/my-trips/${duplicate.id}?share=${shareToken}`);
 }
 
 export async function deleteTripAction(formData: FormData) {

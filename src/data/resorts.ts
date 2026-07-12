@@ -62,12 +62,12 @@ export const resorts: SkiResort[] = [
     name: "비발디파크 스키월드",
     region: "강원 홍천",
     address: "강원도 홍천군 서면 한치골길 262",
-    officialUrl: "https://www.sonohotelsresorts.com/vp/",
-    slopeStatusUrl: "https://www.sonohotelsresorts.com/vp/",
-    liftTicketUrl: "https://www.sonohotelsresorts.com/vp/",
-    rentalUrl: "https://www.sonohotelsresorts.com/vp/",
-    shuttleUrl: "https://www.sonohotelsresorts.com/vp/",
-    lodgingUrl: "https://www.sonohotelsresorts.com/vp/",
+    officialUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    slopeStatusUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    liftTicketUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    rentalUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    shuttleUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    lodgingUrl: "https://www.sonohotelsresorts.com/complex_vp",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC",
       kakao: "https://map.kakao.com/link/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC"

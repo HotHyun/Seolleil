@@ -14,6 +14,10 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 
+declare global {
+  interface Window { umami?: { track: (eventName: string, eventData?: Record<string, unknown>) => void } }
+}
+
 export function CreateTripSubmit({
   isAuthenticated,
   label = "이 스키장으로 트립 만들기",
@@ -34,13 +38,14 @@ export function CreateTripSubmit({
 
   if (isAuthenticated) {
     return (
-      <Button type="submit" className={className}>
+      <Button type="submit" className={className} onClick={() => window.umami?.track("trip_create_submit", { authenticated: true })}>
         {label}
       </Button>
     );
   }
 
   function submitAnonymousTrip() {
+    window.umami?.track("trip_create_submit", { authenticated: false });
     wrapperRef.current?.closest("form")?.requestSubmit();
   }
 

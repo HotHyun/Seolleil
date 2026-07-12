@@ -1,6 +1,5 @@
 type AppwriteConfig = {
   endpoint: string;
-  oauthEndpoint: string;
   projectId: string;
   apiKey: string;
   databaseId: string;
@@ -30,15 +29,9 @@ export function getAppwriteConfig(): AppwriteConfig {
   if (!endpoint) {
     throw new Error("Missing required Appwrite environment variable: APPWRITE_ENDPOINT");
   }
-  const oauthEndpoint = (
-    process.env.APPWRITE_OAUTH_ENDPOINT ??
-    process.env.NEXT_PUBLIC_APPWRITE_OAUTH_ENDPOINT ??
-    endpoint
-  ).replace(/\/$/, "");
 
   return {
     endpoint,
-    oauthEndpoint,
     projectId: requiredEnv("APPWRITE_PROJECT_ID"),
     apiKey: requiredEnv("APPWRITE_API_KEY"),
     databaseId: requiredEnv("APPWRITE_DATABASE_ID"),

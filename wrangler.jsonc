@@ -11,9 +11,7 @@
   "vars": {
     "NEXT_PUBLIC_SITE_URL": "https://ski.hothyun.com",
     "NEXT_PUBLIC_APPWRITE_ENDPOINT": "https://appwrite.hothyun.com/v1",
-    "NEXT_PUBLIC_APPWRITE_OAUTH_ENDPOINT": "https://appwrite-auth.hothyun.com/v1",
     "APPWRITE_ENDPOINT": "https://appwrite.hothyun.com/v1",
-    "APPWRITE_OAUTH_ENDPOINT": "https://appwrite-auth.hothyun.com/v1",
     "APPWRITE_PROJECT_ID": "6a51f3aa001a21fd4dbb",
     "APPWRITE_DATABASE_ID": "korean_ski",
     "APPWRITE_MIGRATIONS_COLLECTION_ID": "schema_migrations",

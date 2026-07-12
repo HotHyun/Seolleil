@@ -215,8 +215,8 @@ function CostLine({ item }: { item: CostItem }) {
 function RecommendationComparison({ recommendations }: { recommendations: ReturnType<typeof getRecommendations> }) {
   return (
     <section className="mb-6 overflow-hidden rounded-2xl border bg-card" aria-labelledby="comparison-title">
-      <div className="border-b px-5 py-4"><h2 id="comparison-title" className="text-lg font-black">추천 3곳 한눈에 비교</h2><p className="mt-1 text-xs text-muted-foreground">같은 조건으로 계산한 이동·예산·렌탈 편의를 나란히 확인하세요.</p></div>
-      <div className="overflow-x-auto">
+      <div className="border-b px-5 py-4"><h2 id="comparison-title" className="text-lg font-black">추천 3곳 한눈에 비교</h2><p className="mt-1 text-xs text-muted-foreground">같은 조건으로 계산한 이동·예산·렌탈 편의를 나란히 확인하세요.</p><p className="mt-2 text-xs font-bold text-primary md:hidden">표를 좌우로 밀어 3곳을 비교하세요 →</p></div>
+      <div className="overscroll-x-contain overflow-x-auto">
         <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="bg-muted/60 text-xs text-muted-foreground"><tr><th className="px-5 py-3">비교 기준</th>{recommendations.map((item) => <th key={item.resort.id} className="px-4 py-3 text-foreground">{item.resort.name}</th>)}</tr></thead>
           <tbody className="divide-y">

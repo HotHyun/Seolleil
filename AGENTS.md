@@ -165,6 +165,15 @@ pnpm test
 
 Playwright currently builds and starts the standalone app on port `3211` by default. Run E2E only when explicitly needed or when a compatible already-running server is available.
 
+### Deployment-Based UI Verification
+
+- Agents run in the OCI environment and should not start `pnpm dev` or another local development server for routine UI verification.
+- Code completion does not authorize deployment. Deploy only after the user explicitly instructs the agent to deploy.
+- After an explicitly authorized deployment, run browser or Playwright checks against the deployed URL only when the user asks for verification.
+- When deployment verification is requested, the agent should perform the checks directly instead of asking the user to run them. Check the requested desktop/mobile layouts, relevant themes and interactions, console errors, failed requests, and horizontal overflow as applicable.
+- Clearly distinguish code-level validation completed before deployment from browser validation performed against the deployed environment.
+- A request to verify a deployed site does not authorize additional code changes or redeployment. Report findings first unless the user also asks to fix and redeploy.
+
 Before first E2E run on a new machine:
 
 ```bash

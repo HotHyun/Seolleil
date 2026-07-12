@@ -2,9 +2,9 @@
 
 ## Direction
 
-Korean Ski supports both light mode and dark mode.
+Korean Ski supports both light mode and dark mode. Pretendard Variable is served locally and used across the whole product so Korean typography remains balanced at every weight and breakpoint.
 
-The product should feel like a modern travel planning tool, not a marketing landing page. Light mode keeps the original white/charcoal/lime direction. Dark mode uses dense ski-trip dashboard styling with dark surfaces, compact information cards, sharp contrast, and a warm action color.
+The product connects an anticipatory ski-travel landing experience to a practical planning tool. Its visual idea is **Blue Run**: deep midnight slopes, vivid cobalt wayfinding, and a lift-safety lime accent. Operational screens stay compact and calm.
 
 ## Core Principles
 
@@ -13,7 +13,7 @@ The product should feel like a modern travel planning tool, not a marketing land
 - Theme switching is controlled by the top-header toggle and persisted in `localStorage`.
 - Keep the original product flow: home, plan form, recommendations, trip detail, share page.
 - Prioritize dense but readable trip information.
-- Avoid decorative-only UI. Every visible block should help planning, comparing, booking, or checking status.
+- Landing decoration may build travel anticipation, but it must not delay or obscure the primary planning action.
 - Mobile remains first-class. Desktop can expand into two-column comparison layouts.
 
 ## Color Tokens
@@ -21,9 +21,9 @@ The product should feel like a modern travel planning tool, not a marketing land
 Use CSS variables from `src/app/globals.css`.
 
 - Light background: near-white.
-- Light primary/action: lime.
-- Dark background: deep charcoal violet.
-- Dark primary/action: orange.
+- Primary/action in both themes: vivid cobalt blue.
+- Dark background: deep midnight blue.
+- Lime accent: reserved for excitement, completion, and high-contrast landing CTA moments.
 - Surface, border, muted, primary, and ring colors must come from CSS variables in `globals.css`.
 
 Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, `muted`, `card`, and `border` tokens so both themes work.
@@ -47,7 +47,7 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 ### Cards
 
 - Use `Card` for repeated items, framed tools, recommendation cards, and side panels.
-- Current default card style is `glass-panel`.
+- Current default card style is an opaque, softly elevated `glass-panel`. Blur is reserved for navigation and overlays.
 - Avoid cards inside cards unless the nested card is a true repeated item.
 
 ## Components
@@ -57,7 +57,7 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 - Primary buttons use `primary` fill.
 - Secondary buttons use translucent dark surface with border.
 - Ghost buttons should be reserved for low-emphasis actions.
-- Buttons use `rounded-lg`, bold text, and visible focus rings.
+- Buttons use `rounded-xl`, bold text, a minimum 44px touch target, and visible focus rings.
 
 ### Inputs
 
@@ -87,6 +87,16 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
   - checklist tracking
   - optional login for trip recovery
 - The first viewport should not feel empty on desktop.
+- Use one short orchestrated hero entrance and subtle preview drift rather than scroll-jacking.
+- The first viewport includes a direct plan CTA, resort browsing CTA, and low-friction trust cues.
+- Respect `prefers-reduced-motion`; motion is enhancement, never required to understand the page.
+
+## Typography
+
+- Pretendard Variable is the sole product typeface and is served locally.
+- Korean display copy uses heavy weights with restrained negative tracking; body copy uses medium or semibold weights.
+- Avoid English-only eyebrow labels when a clear Korean label is available.
+- Body copy is at least 16px on mobile with 1.5 or greater line height.
 
 ### Plan Form
 

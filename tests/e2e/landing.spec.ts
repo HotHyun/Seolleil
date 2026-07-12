@@ -9,6 +9,8 @@ test.describe("landing page", () => {
     await expect(page.getByRole("link", { name: /내 스키 여행 시작하기/ })).toBeVisible();
     await expect(page.getByRole("link", { name: /스키장 둘러보기/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: /출발에 가까운 네 단계/ })).toBeVisible();
+    await expect(page.getByLabel("Korean Ski 트립 플래너 미리보기")).toBeVisible();
+    await expect(page.getByRole("link", { name: "본문으로 바로가기" })).toHaveAttribute("href", "#main-content");
     await expectClickablePrimaryNav(page);
     await expectNoEmptyMain(page);
     await expectNoHorizontalOverflow(page);
@@ -21,6 +23,7 @@ test.describe("landing page", () => {
     await expect(page.getByRole("heading", { name: /설원으로/ })).toBeVisible();
     await expect(page.getByText("로그인 없이 시작")).toBeVisible();
     await expect(page.getByRole("link", { name: /내 스키 여행 시작하기/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /코리안 스키/ })).toBeVisible();
     await expectClickablePrimaryNav(page);
     await expectNoHorizontalOverflow(page);
   });

@@ -27,8 +27,8 @@ export function CinematicHero({ activeResortCount = 0 }: { activeResortCount?: n
       <div className="snow-drift snow-drift-one" aria-hidden="true" />
       <div className="snow-drift snow-drift-two" aria-hidden="true" />
 
-      <div className="page-shell relative z-10 grid min-h-[calc(100svh-4rem)] items-center gap-10 py-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(340px,.65fr)] lg:py-20">
-        <div className="max-w-3xl">
+      <div className="page-shell relative z-10 flex min-h-[calc(100svh-4rem)] items-center py-16 lg:py-20">
+        <div className="min-w-0 max-w-3xl xl:max-w-[650px]">
           <div className="hero-reveal inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-2 text-sm font-bold text-white/90 backdrop-blur-xl">
             <Sparkles className="h-4 w-4 text-[#b8f23d]" />
             이번 겨울, 계획부터 설레게
@@ -56,9 +56,10 @@ export function CinematicHero({ activeResortCount = 0 }: { activeResortCount?: n
           </div>
         </div>
 
-        <div className="hero-reveal hero-delay-3 relative hidden lg:block" aria-label="Korean Ski 트립 플래너 미리보기">
-          <div className="absolute -inset-10 rounded-full bg-[#326bff]/25 blur-3xl" />
-          <div className="hero-preview relative rotate-[2deg] rounded-[2rem] border border-white/15 bg-[#0c1b35]/85 p-4 shadow-[0_40px_100px_rgba(0,0,0,.48)] backdrop-blur-2xl">
+        <div className="absolute right-0 top-1/2 hidden w-[410px] -translate-y-1/2 xl:block" aria-label="Korean Ski 트립 플래너 미리보기">
+          <div className="hero-reveal hero-delay-3 relative">
+            <div className="absolute -inset-10 rounded-full bg-[#326bff]/25 blur-3xl" />
+            <div className="hero-preview relative rotate-[2deg] rounded-[2rem] border border-white/15 bg-[#0c1b35]/85 p-4 shadow-[0_40px_100px_rgba(0,0,0,.48)] backdrop-blur-2xl">
             <div className="flex items-center justify-between px-2 pb-4 pt-1">
               <div>
                 <p className="text-xs font-bold text-white/45">나의 첫 스키 트립</p>
@@ -69,7 +70,7 @@ export function CinematicHero({ activeResortCount = 0 }: { activeResortCount?: n
             <div className="rounded-2xl bg-white p-5 text-[#0a1730]">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <span className="rounded-full bg-[#eaf0ff] px-2.5 py-1 text-xs font-extrabold text-[#326bff]">BEST MATCH</span>
+                  <span className="rounded-full bg-[#eaf0ff] px-2.5 py-1 text-xs font-extrabold text-[#326bff]">가장 잘 맞아요</span>
                   <h2 className="mt-3 text-2xl font-black">휘닉스 스노우파크</h2>
                   <p className="mt-1 text-sm font-semibold text-slate-500">초보 슬로프 · 셔틀 · 숙박 편의</p>
                 </div>
@@ -84,10 +85,11 @@ export function CinematicHero({ activeResortCount = 0 }: { activeResortCount?: n
                 <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10"><div className="h-full w-[43%] rounded-full bg-[#b8f23d]" /></div>
               </div>
             </div>
-          </div>
-          <div className="hero-float absolute -bottom-8 -left-12 flex items-center gap-3 rounded-2xl border border-white/15 bg-[#326bff] p-4 shadow-2xl">
-            <ClipboardCheck className="h-6 w-6" />
-            <div><p className="text-xs font-bold text-white/65">현재 운영</p><p className="font-black">스키장 {activeResortCount}곳</p></div>
+            </div>
+            <div className="hero-float absolute -bottom-8 -left-12 flex items-center gap-3 rounded-2xl border border-white/15 bg-[#326bff] p-4 shadow-2xl">
+              <ClipboardCheck className="h-6 w-6" />
+              <div><p className="text-xs font-bold text-white/65">현재 운영</p><p className="font-black">스키장 {activeResortCount}곳</p></div>
+            </div>
           </div>
         </div>
       </div>

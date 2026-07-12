@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
   --background: 216 45% 98%;
   --foreground: 220 60% 11%;
   --card: 0 0% 100%;
@@ -21,6 +22,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: 220 57% 8%;
   --foreground: 0 0% 96%;
   --card: 219 46% 13%;
@@ -38,6 +40,27 @@
 
 * {
   border-color: hsl(var(--border));
+}
+
+.skip-link {
+  position: fixed;
+  left: 1rem;
+  top: 0.75rem;
+  z-index: 100;
+  transform: translateY(-160%);
+  border-radius: 0.75rem;
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 900;
+  transition: transform 180ms ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
 }
 
 body {

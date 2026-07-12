@@ -13,7 +13,7 @@ const journey = [
 export default function HomePage() {
   const activeCount = resorts.filter((resort) => resort.operationStatus === "operating").length;
   return (
-    <main className="overflow-hidden bg-background">
+    <main id="main-content" className="overflow-hidden bg-background" tabIndex={-1}>
       <CinematicHero activeResortCount={activeCount} />
       <section className="relative py-24 sm:py-32">
         <div className="page-shell">
@@ -36,7 +36,7 @@ export default function HomePage() {
       <section className="page-shell pb-24 sm:pb-32">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#326bff] px-6 py-14 text-white shadow-[0_30px_80px_rgba(50,107,255,.25)] sm:px-12 sm:py-20">
           <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full border-[48px] border-white/10" aria-hidden="true" />
-          <div className="relative max-w-3xl"><p className="text-sm font-black text-[#d9ff83]">READY FOR THE FIRST RUN?</p><h2 className="mt-4 text-balance text-4xl font-black leading-[1.05] tracking-[-.04em] sm:text-6xl">이번 겨울의 첫 트립을<br />지금 만들어 보세요.</h2><p className="mt-5 max-w-xl font-medium leading-7 text-white/75">3분이면 추천과 예산이 완성됩니다. 로그인은 나중에 해도 괜찮아요.</p><AnalyticsLink href="/plan" eventName="home_final_cta_click" className="group mt-8 inline-flex min-h-13 items-center gap-2 rounded-xl bg-[#b8f23d] px-6 py-3.5 font-black text-[#071225] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">내 트립 만들기 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" /></AnalyticsLink></div>
+          <div className="relative max-w-3xl"><p className="text-sm font-black text-[#d9ff83]">첫 활강을 준비할까요?</p><h2 className="mt-4 text-balance text-4xl font-black leading-[1.05] tracking-[-.04em] sm:text-6xl">이번 겨울의 첫 트립을<br />지금 만들어 보세요.</h2><p className="mt-5 max-w-xl font-medium leading-7 text-white/75">3분이면 추천과 예산이 완성됩니다. 로그인은 나중에 해도 괜찮아요.</p><AnalyticsLink href="/plan" eventName="home_final_cta_click" className="group mt-8 inline-flex min-h-13 items-center gap-2 rounded-xl bg-[#b8f23d] px-6 py-3.5 font-black text-[#071225] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">내 트립 만들기 <ArrowRight aria-hidden="true" className="h-5 w-5 transition-transform group-hover:translate-x-1" /></AnalyticsLink></div>
         </div>
       </section>
     </main>

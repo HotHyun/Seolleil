@@ -46,13 +46,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {umamiId && umamiScript ? (
           <Script defer src={umamiScript} data-website-id={umamiId} strategy="afterInteractive" />
         ) : null}
+        <a href="#main-content" className="skip-link">본문으로 바로가기</a>
         <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur-xl">
           <div className="page-shell flex h-16 items-center justify-between gap-3">
-            <a href="/" className="flex min-w-0 items-center gap-2.5 font-black tracking-[-.02em] text-foreground">
+            <a href="/" className="flex min-w-0 items-center gap-2 font-black tracking-[-.02em] text-foreground sm:gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
                 <MountainSnow className="h-5 w-5" />
               </span>
-              <span className="hidden xs:inline sm:inline">코리안 스키</span>
+              <span className="text-[11px] sm:text-sm">코리안 스키</span>
             </a>
             <nav className="flex shrink-0 items-center gap-2 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">
               <a href="/resorts" className="rounded-md px-2 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">

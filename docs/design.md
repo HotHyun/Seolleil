@@ -36,6 +36,8 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 - Left: Korean Ski brand.
 - Right: primary navigation and auth state.
 - No desktop sidebar.
+- Keep the Korean brand name visible on mobile; do not reduce the home link to an unexplained icon.
+- Provide a keyboard-visible skip link targeting the main content.
 
 ### Page Shell
 
@@ -89,6 +91,7 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 - The first viewport should not feel empty on desktop.
 - Use one short orchestrated hero entrance and subtle preview drift rather than scroll-jacking.
 - The first viewport includes a direct plan CTA, resort browsing CTA, and low-friction trust cues.
+- At 1280px and wider, keep the planner preview explicitly positioned on the right so it cannot be displaced by fluid display typography.
 - Respect `prefers-reduced-motion`; motion is enhancement, never required to understand the page.
 
 ## Typography
@@ -97,6 +100,7 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 - Korean display copy uses heavy weights with restrained negative tracking; body copy uses medium or semibold weights.
 - Avoid English-only eyebrow labels when a clear Korean label is available.
 - Body copy is at least 16px on mobile with 1.5 or greater line height.
+- Prefer Korean labels and eyebrow copy throughout the Korean product experience.
 
 ### Plan Form
 

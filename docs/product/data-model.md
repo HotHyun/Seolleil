@@ -1,323 +1,36 @@
-# 기획 단계 데이터 모델
+# 데이터 모델
 
-구현 과정에서 필드명은 바뀔 수 있다. 이 문서는 제품 기획 기준의 데이터 구조를 정리한다.
+## 저장 위치
 
-## 데이터 저장 경계
+- `src/data`: 스키장, 이동, 25/26 가격과 출처 등 재배포 가능한 정적 기준 데이터.
+- Appwrite Auth: 계정, OAuth/email-password 인증, 이메일 인증 상태와 세션.
+- Appwrite Teams: 트립별 계정 멤버십과 `viewer`/`editor` 역할.
+- Appwrite Databases: `trips`, `trip_tasks`, `trip_share_links`, `analytics_events`, `schema_migrations`.
 
-### Static 코드 데이터
+실제 attribute와 index는 `scripts/appwrite/migrations`가 기준이며 `pnpm appwrite:schema`으로 적용한다.
 
-- 스키장 기본 정보.
-- 시즌별 가격 규칙.
-- 셔틀/버스 가격.
-- 성수기 기간.
-- 공휴일/특수일 규칙.
+## 핵심 관계
 
-### PostgreSQL 저장 데이터
-
-- 사용자 계정.
-- 사용자가 생성한 트립.
-- 트립 체크리스트.
-- editToken/shareToken 해시.
-- 사용자가 선택한 추천 결과 스냅샷.
-- 외부 링크 클릭 등 제품 핵심 이벤트.
-
-## 추천 결과 저장 정책
-
-- 추천 후보 전체를 저장하지 않는다.
-- 사용자가 선택한 추천 결과의 스냅샷만 트립에 저장한다.
-- 가격/스키장 static 데이터가 나중에 바뀌더라도 사용자가 선택한 당시의 핵심 맥락을 보존한다.
-
-## 트립 생성 전 임시 저장 정책
-
-- MVP에서는 트립 생성 전 임시 입력값을 서버에 저장하지 않는다.
-- 사용자가 스키장을 선택하고 트립을 생성하는 시점부터 DB에 저장한다.
-
-## User
-
-```ts
-type User = {
-  id: string;
-  email?: string;
-  name?: string;
-  emailVerified?: string;
-  image?: string;
-};
+```text
+Appwrite user 1 ── * trip (owner userId, nullable for anonymous)
+trip 1 ── * trip_task
+trip 1 ── * trip_share_link
+trip 0..1 ── 1 Appwrite team ── * membership
+trip 1 ── * analytics_event
 ```
 
-인증 관련 `Account`, `Session`, `VerificationToken`, `Authenticator` 모델은 Auth.js Prisma Adapter 표준 모델을 사용한다.
+## Trips
 
-## Account Link Policy
+트립은 리조트/시즌/방문일/인원/교통/장비 조건, 가격 계산 입력, 상태와 선택 결과 snapshot을 가진다. 익명 트립은 `userId=null`이고 `editTokenHash`로 관리한다. 계정 트립은 소유자 `userId`를 가진다. `teamId`는 첫 계정 초대 시 연결한다.
 
-- 트립은 `userId` 없이 생성될 수 있다.
-- 로그인 사용자가 트립을 생성하면 `userId`를 저장한다.
-- 비로그인 트립은 edit link로 접근한 뒤 로그인하면 계정에 연결할 수 있다.
-- 하나의 트립은 한 명의 소유 사용자에게 연결한다.
-- 공유 링크 접근자는 트립 소유자가 아니며 읽기 권한만 가진다.
+## Tasks
 
-## Ski Resort
+트립별 기본/커스텀 항목, category, title, status, memo, 정렬 순서와 외부 링크를 저장한다. 마감일은 사용자 모델에서 사용하지 않는다. 상태는 `not_needed`, `needs_check`, `planned`, `reserved`, `paid`, `prepared`다.
 
-```ts
-type SkiResort = {
-  id: string;
-  name: string;
-  region: string;
-  address: string;
-  officialUrl: string;
-  slopeStatusUrl: string;
-  liftTicketUrl: string;
-  rentalUrl?: string;
-  shuttleUrl?: string;
-  lodgingUrl?: string;
-  mapLinks: {
-    naver?: string;
-    kakao?: string;
-  };
-  bookingLinks: BookingLink[];
-  nightSkiAvailable: boolean;
-  beginnerScore: number;
-  familyScore: number;
-  accessScore: number;
-  priceLevel: number;
-  tags: string[];
-  operationStatus:
-    | "operating"
-    | "season_pending"
-    | "temporarily_closed"
-    | "closed"
-    | "unknown";
-};
-```
+## Share Links
 
-## Booking Link
+각 문서는 `tripId`, SHA-256 `tokenHash`, `read|edit` permission, 생성자와 폐기 시각을 가진다. 여러 링크가 공존하며 트립 변경과 새 링크 생성은 기존 링크를 무효화하지 않는다. 폐기는 해당 링크 하나에만 적용된다. 원문 token은 생성 응답/URL 외에 저장하거나 다시 노출하지 않는다.
 
-```ts
-type BookingLink = {
-  id: string;
-  resortId: string;
-  type:
-    | "official"
-    | "official_booking"
-    | "naver_booking"
-    | "travel_agency"
-    | "package";
-  label: string;
-  url: string;
-  memo?: string;
-  lastCheckedAt: string;
-};
-```
+## Events
 
-## Rental Shop
-
-```ts
-type RentalShop = {
-  id: string;
-  resortId: string;
-  name: string;
-  url?: string;
-  mapLinks?: {
-    naver?: string;
-    kakao?: string;
-  };
-  equipmentRentalAvailable: boolean;
-  clothingRentalAvailable: boolean;
-  pickupAvailable?: boolean;
-  deliveryAvailable?: boolean;
-  recommendationTags?: string[];
-  sourceUrl?: string;
-  lastCheckedAt: string;
-};
-```
-
-## Rental Price Rule
-
-```ts
-type RentalPriceRule = {
-  id: string;
-  rentalShopId?: string;
-  resortId: string;
-  providerType: "resort_official" | "external_shop";
-  season: string;
-  itemType:
-    | "equipment"
-    | "clothing"
-    | "equipment_clothing_package"
-    | "helmet"
-    | "goggles"
-    | "protective_gear";
-  rideType?: "ski" | "snowboard" | "all";
-  ageGroup?: "adult" | "child" | "all";
-  label: string;
-  validFrom: string;
-  validTo: string;
-  dayType:
-    | "weekday"
-    | "friday"
-    | "weekend"
-    | "holiday"
-    | "peak"
-    | "all";
-  representativePrice?: number;
-  priceMin?: number;
-  priceMax?: number;
-  sourceType:
-    | "official_site"
-    | "official_booking"
-    | "naver_booking"
-    | "smartstore"
-    | "travel_agency"
-    | "phone";
-  sourceUrl?: string;
-  confidence:
-    | "confirmed"
-    | "estimated"
-    | "phone_confirmed"
-    | "unavailable";
-  lastCheckedAt: string;
-  memo?: string;
-};
-```
-
-## Trip
-
-```ts
-type Trip = {
-  id: string;
-  userId?: string;
-  editToken: string;
-  shareToken: string;
-  resortId: string;
-  season: string;
-  date: string;
-  departureLocation: string;
-  peopleCount: number;
-  skillLevel: "first_time" | "beginner" | "intermediate" | "advanced";
-  rideType: "ski" | "snowboard";
-  transportType: "car" | "shuttle" | "bus";
-  needRental: boolean;
-  needClothing: boolean;
-  lodgingCostInput?: number;
-  budgetMin?: number;
-  budgetMax?: number;
-  liftTicketTimeSlot: string;
-  status: "planning" | "ready" | "completed" | "archived";
-  createdAt: string;
-  updatedAt: string;
-  expiresAt?: string;
-};
-```
-
-## Trip Task
-
-```ts
-type TripTask = {
-  id: string;
-  tripId: string;
-  category:
-    | "lift_ticket"
-    | "equipment_rental"
-    | "clothing_rental"
-    | "transport"
-    | "lodging"
-    | "operation_status"
-    | "gear"
-    | "safety"
-    | "custom";
-  isDefault: boolean;
-  title: string;
-  status:
-    | "not_needed"
-    | "needs_check"
-    | "planned"
-    | "reserved"
-    | "paid"
-    | "prepared";
-  externalUrl?: string;
-  dueDate?: string;
-  memo?: string;
-  sortOrder: number;
-};
-```
-
-## Price Rule
-
-```ts
-type PriceRule = {
-  resortId: string;
-  season: string;
-  itemType:
-    | "lift_ticket"
-    | "equipment_rental"
-    | "clothing_rental"
-    | "equipment_clothing_package"
-    | "shuttle_bus";
-  label: string;
-  validFrom: string;
-  validTo: string;
-  dayType:
-    | "weekday"
-    | "friday"
-    | "weekend"
-    | "holiday"
-    | "peak"
-    | "all";
-  timeSlot?: "2h" | "3h" | "4h" | "6h" | "night" | "full_day" | "all";
-  adultPrice?: number;
-  childPrice?: number;
-  priceMin?: number;
-  priceMax?: number;
-  sourceType:
-    | "official_site"
-    | "official_booking"
-    | "naver_booking"
-    | "smartstore"
-    | "travel_agency"
-    | "phone";
-  sourceUrl?: string;
-  confidence:
-    | "confirmed"
-    | "estimated"
-    | "phone_confirmed"
-    | "unavailable";
-  lastCheckedAt: string;
-  verifiedByHuman: boolean;
-  memo?: string;
-};
-```
-
-## Transport Estimate
-
-```ts
-type TransportEstimate = {
-  tripId: string;
-  transportType: "car" | "shuttle" | "bus";
-  origin: string;
-  destinationResortId: string;
-  distanceKm?: number;
-  fuelEfficiencyKmPerL?: number;
-  fuelPricePerL?: number;
-  tollEstimate?: number;
-  parkingFee?: number;
-  shuttlePrice?: number;
-  busPrice?: number;
-  totalEstimate: number;
-};
-```
-
-## Analytics Event
-
-```ts
-type AnalyticsEvent = {
-  id: string;
-  tripId?: string;
-  eventName:
-    | "trip_created"
-    | "resort_selected"
-    | "task_status_changed"
-    | "trip_deleted"
-    | "external_link_clicked"
-    | "share_page_viewed";
-  properties?: Record<string, unknown>;
-  createdAt: string;
-};
-```
+`tripId`, event name, 비민감 properties와 생성 시각만 저장한다. 개인 정보, 세션 secret, edit/share raw token, 오류 stack은 금지한다. 오류 예외와 stack은 Workers 로그 또는 향후 전용 관측 도구에 보낸다.

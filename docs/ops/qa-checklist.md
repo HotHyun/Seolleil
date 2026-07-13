@@ -1,68 +1,26 @@
-# QA 체크리스트
+# 배포 후 QA 체크리스트
 
-배포 후 수동 점검용 체크리스트다.
-
-원격 자동 점검:
+사용자가 배포 후 검증을 요청한 경우에만 실행한다.
 
 ```bash
-E2E_BASE_URL=https://ski.hothyun.com pnpm test:e2e:remote
+pnpm test:e2e:production
 ```
 
-이 명령은 배포된 앱을 대상으로 실행하며 로컬 `pnpm build`를 수행하지 않는다.
+## 자동 회귀
 
-## 비로그인 플로우
+- `/api/health`, 홈, 계획, 스키장, 로그인 공개 경로.
+- 모바일 가로 overflow와 Ski Map 가시성.
+- 고립된 익명 트립 생성과 정리.
+- read 링크 발급 후 커스텀 항목 변경에도 링크가 유지됨.
+- read 링크에 편집 컨트롤이 노출되지 않음.
 
-- 홈에서 `스키 트립 만들기` 진입.
-- 조건 입력 후 추천 결과 표시.
-- 추천 카드에서 트립 생성.
-- 편집 링크 안내 배너 표시.
-- 체크리스트 상태 변경 가능.
-- 읽기 전용 공유 링크 재발급 가능.
+## 변경 영역 실사용 점검
 
-자동화: `tests/e2e/landing.spec.ts`, `tests/e2e/recommendations.spec.ts`, `tests/e2e/core-flow.spec.ts`
+- Desktop/mobile, light/dark theme, keyboard focus와 터치 target.
+- 브라우저 console error, failed request, 느린 응답과 중복 submit.
+- 체크리스트 저장 뒤 details/scroll/dialog 상태 유지와 Sonner 성공 피드백.
+- 오류 시 원인에 맞는 한국어 안내, 다음 행동, incident ID와 retry 가능 여부.
+- 공유: private default, read/edit 링크, 개별 폐기, 멤버 초대/권한 변경/제거.
+- 폐기/잘못된 token은 404 또는 권한 거부되고 내부 정보가 노출되지 않음.
 
-## 로그인 플로우
-
-- Google 로그인 가능.
-- 내 스키 트립 목록 진입 가능.
-- 로그인 상태에서 만든 트립이 내 목록에 표시.
-- 비로그인 트립에서 로그인 후 내 트립에 저장 가능.
-- 로그아웃 가능.
-
-자동화: `tests/e2e/landing.spec.ts`에서 로그인 진입점까지 확인한다. Google OAuth 실제 왕복은 배포 후 수동 점검한다.
-
-## 트립 상세
-
-- 방문 날짜, 인원, 교통수단, 숙박비, 리프트 시간권, 렌탈 옵션 수정 가능.
-- 수정 후 비용 스냅샷 재계산.
-- 트립 상태 변경 가능.
-- 체크리스트 항목별 외부 링크 동작.
-- 가격 출처 링크 동작.
-
-## 공유 링크
-
-- 공유 링크는 로그인 없이 조회 가능.
-- 체크리스트 상태는 보이지만 수정 불가.
-- `not_needed` 항목은 노출되지 않음.
-- edit link, 사용자 정보, 개인 메모, 삭제/재발급 버튼이 보이지 않음.
-
-자동화: `tests/e2e/core-flow.spec.ts`
-
-## 스키장/추천
-
-- 스키장 디렉토리에서 상세 진입 가능.
-- 스키장 상세에서 공식 링크, 운영현황, 리프트권, 렌탈, 지도 링크 동작.
-- 추천 결과 없음 상태가 깨지지 않음.
-- 렌탈 옵션 없음 상태가 깨지지 않음.
-
-자동화: `tests/e2e/recommendations.spec.ts`, `tests/e2e/mobile-layout.spec.ts`, `tests/e2e/accessibility.spec.ts`
-
-## 모바일
-
-- 헤더 메뉴가 모바일에서 보임.
-- 추천 카드의 비용/렌탈 비교 영역이 가로 스크롤 없이 표시.
-- 트립 수정 폼이 1열로 표시.
-- 체크리스트 상태 변경과 메모 저장 버튼이 터치 가능.
-- 공유 페이지 카드가 화면 폭을 넘지 않음.
-
-자동화: `tests/e2e/mobile-layout.spec.ts`, `tests/e2e/accessibility.spec.ts`
+이메일 도착과 Google OAuth 왕복은 사용자가 직접 검증한다. 자동 테스트가 만든 트립은 성공/실패와 관계없이 삭제하고, 남은 데이터가 있으면 명시적으로 보고한다.

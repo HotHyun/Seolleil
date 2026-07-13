@@ -1,6 +1,7 @@
 import { appwriteSessionFetch } from "@/lib/session";
 
 type Team = { $id: string };
+export type TripMembership = { $id: string; userId: string; userName: string; userEmail: string; confirm: boolean; roles: string[]; joined: string };
 
 export async function createTripTeam(sessionSecret: string, name: string) {
   return appwriteSessionFetch<Team>("/teams", sessionSecret, { method: "POST", body: JSON.stringify({ teamId: "unique()", name, roles: ["viewer", "editor"] }) });
@@ -22,8 +23,21 @@ export async function listUserTeams(sessionSecret: string) {
 }
 
 export async function getTripTeamPermission(sessionSecret: string, teamId: string, userId: string) {
-  const result = await appwriteSessionFetch<{ memberships: Array<{ userId: string; confirm: boolean; roles: string[] }> }>(`/teams/${encodeURIComponent(teamId)}/memberships`, sessionSecret);
-  const membership = result.memberships.find(item => item.userId === userId && item.confirm);
+  const result = await listTripMemberships(sessionSecret, teamId);
+  const membership = result.find(item => item.userId === userId && item.confirm);
   if (!membership) return null;
   return membership.roles.includes("editor") || membership.roles.includes("owner") ? "edit" : "read";
+}
+
+export async function listTripMemberships(sessionSecret: string, teamId: string) {
+  const result = await appwriteSessionFetch<{ memberships: TripMembership[] }>(`/teams/${encodeURIComponent(teamId)}/memberships`, sessionSecret);
+  return result.memberships;
+}
+
+export async function updateTripMembership(sessionSecret: string, teamId: string, membershipId: string, permission: "read" | "edit") {
+  return appwriteSessionFetch(`/teams/${encodeURIComponent(teamId)}/memberships/${encodeURIComponent(membershipId)}`, sessionSecret, { method: "PATCH", body: JSON.stringify({ roles: [permission === "edit" ? "editor" : "viewer"] }) });
+}
+
+export async function removeTripMembership(sessionSecret: string, teamId: string, membershipId: string) {
+  return appwriteSessionFetch(`/teams/${encodeURIComponent(teamId)}/memberships/${encodeURIComponent(membershipId)}`, sessionSecret, { method: "DELETE" });
 }

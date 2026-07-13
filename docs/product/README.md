@@ -14,6 +14,7 @@
 - `seasonal-price-sources.md`: 25/26 시즌 가격 데이터 출처와 26/27 교체 체크리스트.
 - `recommendation.md`: 룰 기반 추천 전략.
 - `technical-plan.md`: 기술 스택, 배포, 운영 방향.
+- `error-handling.md`: 오류 코드, 사용자 복구 UX, 관측성 연결 규칙.
 - `share-security.md`: 선택적 로그인, 편집 링크, 공유 링크 보안 정책.
 - `analytics.md`: 성과 지표, 이벤트 수집, Umami/Appwrite 운영 정책.
 - `ui-design.md`: UI 스타일링, 컴포넌트, 레이아웃 방향.

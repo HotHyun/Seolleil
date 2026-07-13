@@ -11,8 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
 import { getSession, getSessionSecret } from "@/lib/session";
-import { getTripTeamPermission } from "@/lib/trip-collaboration";
-import { getTripById } from "@/lib/trip-store";
+import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
+import { getTripById, listTripShareLinks } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -44,6 +44,9 @@ export default async function MyTripDetailPage({
   const collaborationPermission = !isOwner && trip.teamId && sessionSecret ? await getTripTeamPermission(sessionSecret, trip.teamId, session.user.id) : null;
   if (!isOwner && !collaborationPermission) notFound();
   const canEdit = isOwner || collaborationPermission === "edit";
+  const [shareLinks, members] = isOwner
+    ? await Promise.all([listTripShareLinks(trip.id), trip.teamId && sessionSecret ? listTripMemberships(sessionSecret, trip.teamId) : Promise.resolve([])])
+    : [[], []];
 
   const resort = getResort(trip.resortId);
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
@@ -58,7 +61,7 @@ export default async function MyTripDetailPage({
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
                   <CardTitle className="mt-3 truncate text-2xl font-black sm:text-3xl">{trip.resortNameSnapshot} 트립</CardTitle>
                 </div>
-                {isOwner ? <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} /> : <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge>}
+                {isOwner ? <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} members={members} /> : <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge>}
               </div>
             </CardHeader>
             <CardContent>

@@ -1,0 +1,50 @@
+name: Production regression
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_url:
+        description: Deployed URL to verify
+        required: true
+        default: https://ski.hothyun.com
+        type: string
+      allow_test_writes:
+        description: Create and clean up an isolated anonymous test trip
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-regression
+  cancel-in-progress: false
+
+jobs:
+  playwright:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      E2E_BASE_URL: ${{ inputs.base_url }}
+      E2E_ALLOW_PRODUCTION_WRITES: ${{ inputs.allow_test_writes && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec playwright test tests/e2e/production-regression.spec.ts
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-playwright-report
+          path: |
+            playwright-report
+            test-results
+          retention-days: 14

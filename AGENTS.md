@@ -1,128 +1,38 @@
 # AGENTS.md
 
-## Project Summary
+## Product
 
-Korean Ski is a mobile-first web app for planning Korean ski trips. It provides:
+Korean Ski is a mobile-first Korean web app for discovering resorts, comparing static seasonal prices, creating ski trips, and coordinating checklists. Anonymous trip creation remains supported. Accounts add a personal trip list and member invitations.
 
-- Korean ski resort directory.
-- Rule-based resort recommendations.
-- Date-aware static seasonal pricing.
-- Trip itinerary and checklist tracking.
-- Optional login and a personal trip list.
-- Edit links for private trip management.
-- Read-only share links for itinerary, checklist, and reservation status.
+MVP excludes payment, booking fulfillment, live crawling, instructor matching, and live rental inventory.
 
-The MVP intentionally does not include in-app payment, real-time crawling, instructor matching, or live rental inventory.
+## Current Stack
 
-## Stack
+- Next.js App Router, React, TypeScript, Tailwind CSS, local shadcn-style components.
+- Appwrite Databases, Auth, and Teams on self-hosted OCI infrastructure.
+- Cloudflare Workers deployment through OpenNext.
+- Umami for product analytics; Appwrite events for server-side product events.
+- Vitest and Playwright.
 
-- Next.js App Router.
-- React.
-- TypeScript.
-- PostgreSQL.
-- Prisma.
-- Tailwind CSS.
-- shadcn-style local UI components.
-- lucide-react icons.
-- Vitest for unit/integration tests.
-- Playwright for E2E tests.
-- Docker Compose for deployment.
-- Coolify on OCI Free Tier Ampere.
+There is no application Prisma/PostgreSQL runtime, PgAdmin workflow, Auth.js, or Coolify app deployment. Historical files must not be treated as current architecture.
 
-## Source Layout
+## Source And Product Rules
 
-- `src/app`: Next.js routes and pages.
-- `src/components`: shared UI and analytics components.
-- `src/data`: static resort, pricing, travel, and MVP dataset data.
-- `src/lib`: core business logic such as recommendation, pricing, checklist, tokens, trip input parsing.
-- `prisma`: schema and migrations.
-- `tests/unit`: isolated business logic tests.
-- `tests/integration`: feature-level flow tests without a browser.
-- `tests/e2e`: Playwright browser tests.
-- `docs/product`: living product planning documents.
-- `docs/design.md`: UI design system and visual rules.
-- `docs/testing.md`: test strategy and commands.
-- `docker-compose.yml`: production/Coolify compose file.
-- `docker-compose.test.yml`: local test PostgreSQL.
-
-## Product Planning Rule
-
-Planning decisions must be recorded in `docs/product`.
-
-When product scope, recommendation logic, pricing policy, share behavior, checklist behavior, analytics, or deployment assumptions change:
-
-1. Update the relevant document in `docs/product`.
-2. If no suitable document exists, create one there.
-3. Keep the implementation aligned with the updated document.
-
-Current key product docs:
-
-- `docs/product/mvp.md`
-- `docs/product/decisions.md`
-- `docs/product/recommendation.md`
-- `docs/product/pricing.md`
-- `docs/product/checklist.md`
-- `docs/product/trip-flow.md`
-- `docs/product/share-security.md`
-- `docs/product/data-model.md`
-- `docs/product/resort-dataset.md`
-- `docs/product/analytics.md`
-- `docs/product/ui-design.md`
-- `docs/product/technical-plan.md`
-
-## Data Policy
-
-- MVP resort and pricing data are static code data.
-- Seasonal price updates should be made by editing code data and redeploying.
-- Do not add automatic crawling for MVP.
-- Official operation/slope status should be linked out, not scraped.
-- Price accuracy matters: when adding real seasonal data, preserve source URLs or notes near the data or in product docs.
+- `src/app`: routes and server actions; `src/components`: UI; `src/lib`: business and infrastructure logic; `src/data`: static resort/pricing data.
+- Product decisions belong in `docs/product`. Update the relevant document with behavior changes.
+- Seasonal data is edited in code and redeployed; do not crawl. Preserve price sources and link to official operation status.
+- Follow `docs/design.md`: mobile-first, Pretendard, dark-mode aware, dense and scannable operational screens, one sticky header, accessible shadcn-style controls, no nested-card clutter.
 
 ## Auth And Sharing
 
-- MVP has optional login.
-- Initial auth provider is Google OAuth via Auth.js and the Prisma Adapter.
-- Anonymous trip creation must remain possible.
-- Logged-in users can access their trips from a personal trip list.
-- Anonymous trips can be attached to a user account from the edit link flow.
-- Trips are stored in PostgreSQL.
-- Private edit access uses edit tokens.
-- Public sharing uses read-only share links.
-- Store token hashes, not raw tokens.
-- Shared pages should expose only itinerary, checklist, and reservation/preparation state.
+- Appwrite Auth supports Google OAuth and verified email/password accounts.
+- Email/password users must verify email before authenticated product features are unlocked.
+- Trips start private. Anonymous owners use a high-entropy edit capability URL; raw tokens are never stored.
+- Owners may create multiple persistent `read` or `edit` share links. A trip/checklist change does not rotate them. Links can be revoked individually.
+- Account owners may invite Appwrite users through Teams and change/remove their access. Email delivery is Appwrite's responsibility.
+- Shared responses must not expose account data, internal events, token hashes, or raw tokens other than the capability in the current URL.
 
-## Deployment Notes
-
-Production target:
-
-- App: `https://ski.hothyun.com`
-- PgAdmin: `https://ski-admin.hothyun.com`
-- Host: OCI Free Tier Ampere, ARM architecture.
-- Runtime: Coolify with Docker Compose.
-
-Important compose behavior:
-
-- `docker-compose.yml` uses `expose`, not host `ports`, so Coolify can route traffic.
-- App listens internally on port `3000`.
-- PostgreSQL service name is `postgres`.
-- App runs Prisma migration deploy before starting.
-- PgAdmin is included for MVP DB inspection.
-
-Required production environment variables:
-
-```txt
-POSTGRES_USER
-POSTGRES_PASSWORD
-POSTGRES_DB
-PGADMIN_DEFAULT_EMAIL
-PGADMIN_DEFAULT_PASSWORD
-NEXT_PUBLIC_UMAMI_WEBSITE_ID
-NEXT_PUBLIC_UMAMI_SCRIPT_URL
-```
-
-Umami variables may be empty until analytics is ready.
-
-## Development Commands
+## Commands
 
 Use `pnpm`.
 
@@ -130,93 +40,29 @@ Use `pnpm`.
 pnpm install
 pnpm typecheck
 pnpm test
+pnpm data:validate
+pnpm appwrite:schema
+pnpm cf:deploy
 ```
 
-Useful scripts:
+- Routine validation is `pnpm typecheck` and `pnpm test`.
+- Do not run `pnpm build` routinely. Do not start `pnpm dev` for OCI-agent UI verification.
+- `pnpm appwrite:schema` changes Appwrite schema and requires the configured admin API key.
+- `pnpm cf:deploy` deploys the application and requires explicit user authorization.
 
-- `pnpm dev`: run local Next dev server.
-- `pnpm build`: generate Prisma client and build Next. Do not run this as a routine validation step unless the user asks for build/deploy verification.
-- `pnpm typecheck`: TypeScript check.
-- `pnpm test`: all Vitest tests.
-- `pnpm test:unit`: unit tests only.
-- `pnpm test:integration`: integration tests only.
-- `pnpm test:e2e`: Playwright E2E.
-- `pnpm test:all`: typecheck, Vitest, and Playwright. Avoid this for routine checks because Playwright currently runs a production build.
-- `pnpm db:generate`: Prisma generate.
-- `pnpm db:migrate`: local Prisma migration.
-- `pnpm db:deploy`: deploy migrations.
+## Tests And Deployment Verification
 
-## Test Policy
+- Add the narrowest useful unit, integration, or E2E test for meaningful changes.
+- Local E2E builds the standalone app; only run when explicitly needed.
+- Production regression: `pnpm test:e2e:production`. It targets `https://ski.hothyun.com`, creates one isolated anonymous trip, and deletes it in cleanup.
+- Deployment and verification are separate approvals. Never deploy unless the user explicitly says to deploy.
+- After an authorized deployment, only run production Playwright when the user asks to test/verify the deployment.
+- When requested, run the production regression suite, then targeted desktop/mobile checks for the changed areas. Inspect console errors, failed requests, overflow, themes, loading/error states, and critical interactions. Clean up generated test data and report evidence and gaps.
+- Do not infer permission to fix or redeploy from a verification-only request.
 
-Every meaningful behavior change should include the narrowest useful test.
+## Coding And Git
 
-Use these defaults:
-
-- Core pure logic: unit test in `tests/unit`.
-- Multi-step feature behavior without browser: integration test in `tests/integration`.
-- User-visible routing/forms/responsive behavior: E2E test in `tests/e2e`.
-
-Routine validation:
-
-```bash
-pnpm typecheck
-pnpm test
-```
-
-Playwright currently builds and starts the standalone app on port `3211` by default. Run E2E only when explicitly needed or when a compatible already-running server is available.
-
-### Deployment-Based UI Verification
-
-- Agents run in the OCI environment and should not start `pnpm dev` or another local development server for routine UI verification.
-- Code completion does not authorize deployment. Deploy only after the user explicitly instructs the agent to deploy.
-- After an explicitly authorized deployment, run browser or Playwright checks against the deployed URL only when the user asks for verification.
-- When deployment verification is requested, the agent should perform the checks directly instead of asking the user to run them. Check the requested desktop/mobile layouts, relevant themes and interactions, console errors, failed requests, and horizontal overflow as applicable.
-- Clearly distinguish code-level validation completed before deployment from browser validation performed against the deployed environment.
-- A request to verify a deployed site does not authorize additional code changes or redeployment. Report findings first unless the user also asks to fix and redeploy.
-
-Before first E2E run on a new machine:
-
-```bash
-pnpm exec playwright install chromium
-pnpm exec playwright install-deps chromium
-```
-
-For DB-backed test flows:
-
-```bash
-docker compose -f docker-compose.test.yml up -d
-DATABASE_URL="postgresql://korean_ski:korean_ski_test@localhost:55432/korean_ski_test?schema=public" pnpm db:deploy
-```
-
-## UI Guidelines
-
-- Mobile-first.
-- Use the design system in `docs/design.md`.
-- Keep one sticky top header; do not add a persistent sidebar for MVP.
-- Dark mode is the default visual direction.
-- The home page is also the landing page and should communicate the product value immediately.
-- Avoid empty first screens on desktop.
-- Keep operational screens dense, scannable, and practical.
-- Prefer real controls over explanatory text.
-- Use lucide icons for buttons/actions where appropriate.
-- Keep cards for repeated items or framed tools; avoid nested cards.
-- Check desktop and mobile layouts for text overflow.
-
-## Coding Guidelines
-
-- Keep changes scoped to the requested behavior.
-- Prefer existing local patterns over introducing new abstractions.
-- Keep business logic in `src/lib` when possible.
-- Keep static datasets in `src/data`.
-- Use typed constants and structured data instead of ad hoc strings.
-- Avoid unrelated formatting churn.
-- Do not commit generated artifacts such as `.next`, `playwright-report`, or `test-results`.
-
-## Git Workflow
-
-- Do not overwrite user changes.
-- Check `git status --short` before committing.
-- Commit focused changes with clear messages.
-- Push to `origin/main` when the user asks to publish or when deployment fixes are complete.
-- Do not deploy unless the user explicitly asks for deployment. Finishing a code change is not deployment approval.
-- After completing a work item, commit and push the completed code changes, but leave deployment for a separate explicit user instruction.
+- Keep changes scoped, typed, and aligned with existing patterns. Avoid unrelated formatting churn.
+- User-facing action failures use the typed error catalog/wrapper in `src/lib/app-error.ts` and actionable Sonner feedback. Never expose infrastructure details or secrets.
+- Check `git status --short`; preserve user changes; never commit `.next`, `playwright-report`, or `test-results`.
+- Commit focused completed work and push it to `origin/main`. Deployment still requires a separate explicit instruction.

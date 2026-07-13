@@ -2,17 +2,17 @@
 
 import { useState } from "react";
 import { AlertCircle, ChevronDown, ExternalLink, Plus, Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import {
   addTaskAction,
   deleteTaskAction,
-  updateTaskDetailsAction,
-  updateTaskStatusAction
+  updateTaskDetailsSafeAction,
+  updateTaskStatusSafeAction
 } from "@/app/actions";
 import { StatusSelect } from "@/components/trip/status-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { isTaskComplete } from "@/lib/checklist";
+import { showActionResult } from "@/components/action-result-toast";
 
 declare global {
   interface Window { umami?: { track: (eventName: string, eventData?: Record<string, unknown>) => void } }
@@ -112,7 +112,7 @@ export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task
               <div key={task.id} className="p-3 sm:p-4">
                 <div className="flex items-center gap-3">
                   <div className="min-w-0 flex-1 truncate font-semibold">{task.title}</div>
-                <form action={async (formData) => { try { const result = await updateTaskStatusAction(formData); if (result) { const status = String(formData.get("status")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, status } : item)); toast.success(result.message); } } catch { toast.error("체크 상태를 저장하지 못했어요."); } }} onSubmit={() => window.umami?.track("checklist_status_change")}>
+                <form action={async (formData) => { const result = await updateTaskStatusSafeAction(formData); showActionResult(result); if (result.ok) { const status = String(formData.get("status")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, status } : item)); } }} onSubmit={() => window.umami?.track("checklist_status_change")}>
                   <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
                   <input type="hidden" name="background" value="1" />
                   <input type="hidden" name="taskId" value={task.id} />
@@ -123,7 +123,7 @@ export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task
                   <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
                   </summary>
-                  <form action={async (formData) => { try { const result = await updateTaskDetailsAction(formData); if (result) { const title = String(formData.get("title")); const memo = String(formData.get("memo")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, title, memo } : item)); toast.success(result.message); } } catch { toast.error("체크 항목을 저장하지 못했어요."); } }} onSubmit={() => window.umami?.track("checklist_details_update")} className="mt-2 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+                  <form action={async (formData) => { const result = await updateTaskDetailsSafeAction(formData); showActionResult(result); if (result.ok) { const title = String(formData.get("title")); const memo = String(formData.get("memo")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, title, memo } : item)); } }} onSubmit={() => window.umami?.track("checklist_details_update")} className="mt-2 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
                   <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
                   <input type="hidden" name="background" value="1" />
                   <input type="hidden" name="taskId" value={task.id} />

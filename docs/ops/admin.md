@@ -1,53 +1,12 @@
-# 운영 대시보드
+# 운영 확인
 
-MVP 운영 확인은 두 경로를 사용한다.
+별도 제품 관리자 대시보드를 확장하지 않는다.
 
-- `/admin`: 제품 운영 지표를 빠르게 확인하는 내부 대시보드.
-- PgAdmin: 원시 데이터 확인과 SQL 분석.
+- Umami: 페이지뷰, 유입, 퍼널, CTA, 트립 생성·체크리스트 사용률.
+- Appwrite Console: trips/tasks/share links/Teams membership과 서버 제품 이벤트.
+- Cloudflare Workers Logs: 구조화 오류 code, incident ID, 발생 action과 infrastructure 상태.
+- `/admin/data-quality`: 배포 전 static 가격·링크·리조트 데이터 품질 점검.
 
-## 접근 권한
+운영자가 원문 edit/share token, session secret, API key를 조회하거나 이벤트로 저장하는 흐름은 만들지 않는다. 사용자 오류 문의는 incident ID로 Workers 로그를 찾는다.
 
-`/admin`은 Google 로그인 후 `ADMIN_EMAILS` 환경변수에 포함된 이메일만 접근할 수 있다.
-
-예:
-
-```txt
-ADMIN_EMAILS=owner@example.com,operator@example.com
-```
-
-## 현재 제공 지표
-
-- 전체 트립 수.
-- 최근 30일 트립 생성 수.
-- 최근 30일 체크리스트 상태 변경 수.
-- 최근 30일 외부 링크 클릭 수.
-- 최근 30일 공유 링크 조회 수.
-- 많이 선택된 스키장.
-- 최근 30일 이벤트 Top.
-- 최근 트립과 준비 진행률.
-
-## 데이터 품질 화면
-
-`/admin/data-quality`에서 static 데이터 품질을 확인한다.
-
-제공 정보:
-
-- 배포를 막는 데이터 오류.
-- 운영상 보강해야 하는 경고.
-- confirmed 가격 비율.
-- estimated 가격 목록.
-- 리조트별 리프트/렌탈 가격 수.
-- 리조트별 외부 렌탈샵 수.
-- 누락된 리프트 시간권.
-- 26/27 시즌 교체 대상 수.
-
-## PgAdmin과 역할 분리
-
-`/admin`은 빠른 제품 운영 판단용이다.
-
-PgAdmin은 아래 상황에서 사용한다.
-
-- 특정 사용자/트립 디버깅.
-- 원시 이벤트 확인.
-- SQL로 기간/조건을 세밀하게 바꿔 분석.
-- 데이터 마이그레이션 전후 확인.
+향후 Sentry를 연결할 때는 `src/lib/app-error.ts`의 reporter 경계를 사용하고, Appwrite/Umami를 예외 추적 저장소로 대체하지 않는다.

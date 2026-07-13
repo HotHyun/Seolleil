@@ -14,9 +14,9 @@ MVP에서는 Umami와 Appwrite 이벤트를 함께 사용한다.
 ### Umami
 
 - self-host로 운영한다.
-- Coolify에서 별도 서비스로 배포한다.
+- 앱과 독립된 self-hosted 서비스로 운영한다.
 - Korean Ski 앱에는 Umami tracking script를 삽입한다.
-- Umami DB는 앱 DB와 분리된 별도 PostgreSQL DB로 운영하는 것을 기본으로 한다.
+- Umami 저장소와 Appwrite 제품 데이터는 운영·백업 경계를 분리한다.
 
 ### Appwrite 이벤트 컬렉션
 
@@ -50,7 +50,9 @@ MVP에서는 Umami와 Appwrite 이벤트를 함께 사용한다.
 - `trip_details_updated`
 - `trip_status_changed`
 - `trip_attached_to_account`
-- `share_link_regenerated`
+- `share_link_created`
+- `share_link_revoked`
+- `trip_member_invited`
 - `task_status_changed`
 - `trip_deleted`
 - `external_link_click`

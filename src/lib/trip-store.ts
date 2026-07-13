@@ -108,7 +108,7 @@ type EventDocument = {
 };
 
 type ShareLinkDocument = { tripId: string; tokenHash: string; permission: "read" | "edit"; createdBy?: string | null; revokedAt?: string | null };
-export type TripShareLinkRecord = { id: string; tripId: string; permission: "read" | "edit"; revokedAt: Date | null };
+export type TripShareLinkRecord = { id: string; tripId: string; permission: "read" | "edit"; createdAt: Date; revokedAt: Date | null };
 
 type DocumentList<T> = {
   total: number;
@@ -306,12 +306,27 @@ export async function getShareLinkByTokenHash(tokenHash: string) {
   const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tokenHash", [tokenHash]), appwriteQuery("limit", 1)]);
   const link = result.documents[0];
   if (!link || link.revokedAt) return null;
-  return { id: link.$id, tripId: link.tripId, permission: link.permission, revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord;
+  return { id: link.$id, tripId: link.tripId, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord;
 }
 
 export async function createTripShareLink(input: { tripId: string; tokenHash: string; permission: "read" | "edit"; createdBy?: string | null }) {
   const { collections } = getAppwriteConfig();
   return appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks), { method: "POST", body: JSON.stringify({ documentId: "unique()", data: { ...input, revokedAt: null } }) });
+}
+
+export async function listTripShareLinks(tripId: string) {
+  const { collections } = getAppwriteConfig();
+  const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tripId", [tripId]), appwriteQuery("limit", 100)]);
+  return result.documents
+    .map(link => ({ id: link.$id, tripId: link.tripId, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord))
+    .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
+}
+
+export async function revokeTripShareLink(id: string, tripId: string) {
+  const { collections } = getAppwriteConfig();
+  const link = await appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks, id));
+  if (link.tripId !== tripId) throw new Error("Share link does not belong to trip");
+  await appwriteFetch(documentPath(collections.tripShareLinks, id), { method: "PATCH", body: JSON.stringify({ data: { revokedAt: new Date().toISOString() } }) });
 }
 
 export async function revokeTripShareLinks(tripId: string) {

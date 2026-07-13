@@ -7,12 +7,14 @@ import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
+import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
 import { getTripByEditTokenHash, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 import { hashToken } from "@/lib/tokens";
+import { getRentalOptionsForResort } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   robots: {
@@ -37,6 +39,7 @@ export default async function TripEditPage({
   const shareLinks = await listTripShareLinks(trip.id);
 
   const resort = getResort(trip.resortId);
+  const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
@@ -120,7 +123,7 @@ export default async function TripEditPage({
           </Card>
           ) : <div className="flex items-center gap-2 rounded-xl bg-primary/10 p-3 text-sm font-semibold text-primary"><CheckCircle2 className="h-4 w-4" /> 내 트립에 저장되어 있어요.</div>}
           <TaskList tasks={trip.tasks} editToken={editToken} />
-          <TripCostDisclosure trip={trip} />
+          <TripBudgetWorkspace trip={trip} editToken={editToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} />
       </div>
     </main>
   );

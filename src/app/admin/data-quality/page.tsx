@@ -4,6 +4,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStaticDataReport } from "@/lib/data-validation";
+import { resorts } from "@/data/resorts";
 
 export const metadata: Metadata = {
   title: "데이터 품질 | Korean Ski",
@@ -21,6 +22,8 @@ export default async function AdminDataQualityPage() {
     report.resorts.reduce((sum, resort) => sum + resort.confirmedLiftRuleCount + resort.confirmedRentalRuleCount, 0);
   const totalRules = report.priceRuleCount + report.rentalPriceRuleCount;
   const confirmedRate = totalRules ? Math.round((confirmedTotal / totalRules) * 100) : 0;
+  const shuttleCoverage = resorts.filter(resort => resort.shuttleUrl).length;
+  const lodgingCoverage = resorts.filter(resort => resort.lodgingUrl).length;
 
   return (
     <main className="page-shell py-8">
@@ -35,12 +38,14 @@ export default async function AdminDataQualityPage() {
         </Link>
       </div>
 
-      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+      <section className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
         <Metric label="오류" value={report.issueCount} tone={report.issueCount ? "warn" : "good"} />
         <Metric label="경고" value={report.warningCount} />
         <Metric label="confirmed 비율" value={`${confirmedRate}%`} />
         <Metric label="estimated" value={report.estimatedPriceCount} />
         <Metric label="26/27 교체 대상" value={report.replacementTargetCount} />
+        <Metric label="셔틀 링크" value={`${shuttleCoverage}/${resorts.length}`} />
+        <Metric label="숙소 링크" value={`${lodgingCoverage}/${resorts.length}`} tone={lodgingCoverage < resorts.length ? "warn" : "good"} />
       </section>
 
       <Card className="mt-6">

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { buildDefaultTasks, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
-import { estimateTripCost } from "@/lib/pricing";
+import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
 import { canEditOwnedTrip, canMutateWithSharePermission } from "@/lib/trip-access";
@@ -31,6 +31,9 @@ import { getSessionSecret } from "@/lib/session";
 import { createTripTeam, getTripTeamPermission, inviteTripMember, removeTripMembership, updateTripMembership } from "@/lib/trip-collaboration";
 import { actionFailure, actionSuccess, AppError } from "@/lib/app-error";
 import type { TripInput } from "@/lib/types";
+import { parseTripBudget, type TripExpenseCategory } from "@/lib/trip-budget";
+
+const expenseCategories = new Set<TripExpenseCategory>(["meal", "fuel", "toll", "parking", "transport", "lodging", "other"]);
 
 async function findEditableTrip(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
@@ -133,6 +136,10 @@ export async function createTripAction(formData: FormData) {
       budgetMin: input.budgetMin ?? null,
       budgetMax: input.budgetMax ?? null,
       lodgingCostInput: input.lodgingCostInput ?? null,
+      lodgingName: null,
+      lodgingUrl: null,
+      splitCount: input.peopleCount,
+      budgetData: { overrides: input.lodgingCostInput ? { lodging: input.lodgingCostInput } : {}, extras: [] },
       liftTicketTimeSlot: input.liftTicketTimeSlot,
       selectedRentalOptionId: selectedRentalOptionId ?? null,
       selectedRentalShopId: selectedRentalOptionId
@@ -227,6 +234,10 @@ export async function createDirectTripAction(formData: FormData) {
       budgetMin: input.budgetMin ?? null,
       budgetMax: input.budgetMax ?? null,
       lodgingCostInput: input.lodgingCostInput ?? null,
+      lodgingName: null,
+      lodgingUrl: null,
+      splitCount: input.peopleCount,
+      budgetData: { overrides: input.lodgingCostInput ? { lodging: input.lodgingCostInput } : {}, extras: [] },
       liftTicketTimeSlot: input.liftTicketTimeSlot,
       selectedRentalOptionId: null,
       selectedRentalShopId: null,
@@ -352,6 +363,84 @@ export async function updateTripDetailsSafeAction(formData: FormData) {
     const result = await updateTripDetailsAction(formData);
     return actionSuccess(result?.message ?? "트립 정보를 저장했어요.");
   } catch (error) { return actionFailure(error, { action: "updateTripDetails" }); }
+}
+
+export async function updateTripBudgetSafeAction(formData: FormData) {
+  try {
+    const trip = await findEditableTrip(formData);
+    if (!trip || trip.status === "archived" || trip.status === "deleted") {
+      throw new AppError("FORBIDDEN", "이 트립의 비용을 수정할 수 없습니다.");
+    }
+    const splitCount = Math.max(1, Math.min(100, Number(formData.get("splitCount") ?? trip.peopleCount) || 1));
+    const lodgingName = String(formData.get("lodgingName") ?? "").trim().slice(0, 120);
+    const lodgingUrlValue = String(formData.get("lodgingUrl") ?? "").trim();
+    if (lodgingUrlValue && !/^https:\/\//i.test(lodgingUrlValue)) {
+      throw new AppError("INVALID_INPUT", "숙소 링크는 https://로 시작하는 주소를 입력해 주세요.");
+    }
+    const rawExtras = JSON.parse(String(formData.get("extras") ?? "[]")) as Array<Record<string, unknown>>;
+    const extras = rawExtras.slice(0, 30).map((item, index) => {
+      const title = String(item.title ?? "").trim().slice(0, 60);
+      const amount = Math.round(Number(item.amount));
+      const category = String(item.category ?? "other") as TripExpenseCategory;
+      if (!title || !Number.isFinite(amount) || amount < 0 || amount > 100_000_000 || !expenseCategories.has(category)) {
+        throw new AppError("INVALID_INPUT", `${index + 1}번째 추가 비용을 확인해 주세요.`);
+      }
+      return { id: String(item.id || crypto.randomUUID()), title, amount, category, memo: String(item.memo ?? "").trim().slice(0, 200) };
+    });
+    const overrideKeys = ["lift_ticket", "rental", "transport", "lodging"] as const;
+    const overrides = Object.fromEntries(overrideKeys.flatMap(key => {
+      const raw = String(formData.get(`${key}Override`) ?? "").trim();
+      if (!raw) return [];
+      const amount = Math.round(Number(raw));
+      if (!Number.isFinite(amount) || amount < 0 || amount > 100_000_000) throw new AppError("INVALID_INPUT", "확정 비용을 확인해 주세요.");
+      return [[key, amount]];
+    }));
+    const budgetData = parseTripBudget({ overrides, extras });
+    const liftTicketTimeSlot = String(formData.get("liftTicketTimeSlot") ?? trip.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"];
+    const transportType = String(formData.get("transportType") ?? trip.transportType) as TripInput["transportType"];
+    const rentalValue = String(formData.get("selectedRentalOptionId") ?? trip.selectedRentalOptionId ?? "skip");
+    const selectedRentalOptionId = rentalValue === "skip" ? null : rentalValue;
+    if (!["2h", "3h", "4h", "6h", "night", "full_day"].includes(liftTicketTimeSlot) || !["car", "shuttle", "bus"].includes(transportType)) {
+      throw new AppError("INVALID_INPUT", "리프트권 또는 교통 선택을 확인해 주세요.");
+    }
+    const resort = getResort(trip.resortId);
+    const selectedRentalShopId = selectedRentalOptionId
+      ? getRentalShopsForResort(trip.resortId).find(shop => getRentalOptionsForResort(trip.resortId).find(group => group.shop.id === shop.id)?.options.some(option => option.id === selectedRentalOptionId))?.id ?? null
+      : null;
+    if (selectedRentalOptionId && !selectedRentalShopId) throw new AppError("INVALID_INPUT", "선택한 렌탈 상품을 찾을 수 없습니다.");
+    const input: TripInput = { visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount, tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment, ownsClothing: trip.ownsClothing, transportType, priorities: ["rental"], liftTicketTimeSlot, lodgingCostInput: budgetData.overrides.lodging };
+    const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined) : null;
+    await updateTrip(trip.id, {
+      lodgingName: lodgingName || null,
+      lodgingUrl: lodgingUrlValue || null,
+      lodgingCostInput: budgetData.overrides.lodging ?? null,
+      splitCount,
+      budgetData,
+      liftTicketTimeSlot,
+      transportType,
+      selectedRentalOptionId,
+      selectedRentalShopId,
+      selectedRecommendation: cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object" ? { ...trip.selectedRecommendation, cost } : trip.selectedRecommendation
+    });
+    const lodgingTask = trip.tasks.find(task => task.category === "lodging" && task.isDefault);
+    if (lodgingTask && (lodgingName || budgetData.overrides.lodging !== undefined) && lodgingTask.status === "needs_check") {
+      await updateTask(lodgingTask.id, { status: "planned" });
+    }
+    const decisionTasks = trip.tasks.filter(task => task.isDefault && task.status === "needs_check" && (
+      (task.category === "lift_ticket" && task.title.includes("확인")) ||
+      (task.category === "equipment_rental" && task.title.includes("선택") && selectedRentalOptionId) ||
+      (task.category === "transport" && task.title.includes("이동 수단"))
+    ));
+    await Promise.all(decisionTasks.map(task => updateTask(task.id, {
+      status: "planned",
+      externalUrl: externalUrlForTask({ resortId: trip.resortId, selectedRentalOptionId, category: task.category, title: task.title }) ?? task.externalUrl
+    })));
+    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_budget_updated", properties: { splitCount, extraCount: extras.length, hasLodging: Boolean(lodgingName) } });
+    revalidateTripAccess(formData);
+    return actionSuccess("비용과 정산 정보를 저장했어요.");
+  } catch (error) {
+    return actionFailure(error, { action: "updateTripBudget" });
+  }
 }
 
 export async function updateTripStatusAction(formData: FormData) {
@@ -556,6 +645,10 @@ export async function duplicateTripAction(formData: FormData) {
     budgetMin: source.budgetMin,
     budgetMax: source.budgetMax,
     lodgingCostInput: source.lodgingCostInput,
+    lodgingName: source.lodgingName,
+    lodgingUrl: source.lodgingUrl,
+    splitCount: source.splitCount,
+    budgetData: source.budgetData,
     liftTicketTimeSlot: source.liftTicketTimeSlot,
     selectedRentalShopId: source.selectedRentalShopId,
     selectedRentalOptionId: source.selectedRentalOptionId,

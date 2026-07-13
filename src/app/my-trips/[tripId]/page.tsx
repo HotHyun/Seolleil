@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
+import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripCompanions } from "@/components/trip/trip-companions";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,7 @@ import { getResort } from "@/data/resorts";
 import { getSession, getSessionSecret } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
 import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
+import { getRentalOptionsForResort } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -51,6 +53,7 @@ export default async function MyTripDetailPage({
   ]);
 
   const resort = getResort(trip.resortId);
+  const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
@@ -105,7 +108,7 @@ export default async function MyTripDetailPage({
           </Card>
           <ProgressSummary tasks={trip.tasks} />
           {canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} /> : null}
-          <TripCostDisclosure trip={trip} />
+          {canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />}
       </div>
     </main>
   );

@@ -4,9 +4,13 @@ import { CalendarDays, MapPin, Users } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
+import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
+import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
 import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
+import { getResort } from "@/data/resorts";
+import { getRentalOptionsForResort } from "@/lib/pricing";
 
 export const metadata: Metadata = {
   robots: {
@@ -20,6 +24,8 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
   const tokenHash = hashToken(shareToken);
   const [trip, link] = await Promise.all([getTripByShareTokenHash(tokenHash), getShareLinkByTokenHash(tokenHash)]);
   if (!trip) notFound();
+  const resort = getResort(trip.resortId);
+  const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
 
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
 
@@ -44,7 +50,7 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
           </Card>
           <ProgressSummary tasks={trip.tasks} />
         </aside>
-        {link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} /> : <Card>
+        <div className="space-y-5">{link?.permission === "edit" ? <><TaskList tasks={trip.tasks} shareToken={shareToken} /><TripBudgetWorkspace trip={trip} shareToken={shareToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /></> : <><Card>
           <CardHeader>
             <CardTitle>예약·준비 상태</CardTitle>
           </CardHeader>
@@ -60,7 +66,7 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
               ))}
             </div>
           </CardContent>
-        </Card>}
+        </Card><TripCostDisclosure trip={trip} /></>}</div>
       </div>
     </main>
   );

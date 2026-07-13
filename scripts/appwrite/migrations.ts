@@ -3,6 +3,7 @@ import { createDocument, ensureCollection, hasDocument, string } from "./client"
 import { migration202607110001InitialSchema } from "./migrations/202607110001_initial_schema";
 import { migration202607130001TripSharing } from "./migrations/202607130001_trip_sharing";
 import { migration202607130002TripIdentity } from "./migrations/202607130002_trip_identity";
+import { migration202607130003TripBudget } from "./migrations/202607130003_trip_budget";
 
 export type Migration = {
   id: string;
@@ -13,7 +14,8 @@ export type Migration = {
 export const migrations: Migration[] = [
   migration202607110001InitialSchema,
   migration202607130001TripSharing,
-  migration202607130002TripIdentity
+  migration202607130002TripIdentity,
+  migration202607130003TripBudget
 ];
 
 export async function ensureMigrationsCollection(cfg: Config) {

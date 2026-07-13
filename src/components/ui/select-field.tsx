@@ -10,16 +10,20 @@ export type SelectOption = {
 export function SelectField({
   name,
   defaultValue,
+  value,
+  onValueChange,
   options,
   placeholder = "선택"
 }: {
-  name: string;
-  defaultValue: string;
+  name?: string;
+  defaultValue?: string;
+  value?: string;
+  onValueChange?: (value: string) => void;
   options: SelectOption[];
   placeholder?: string;
 }) {
   return (
-    <Select name={name} defaultValue={defaultValue}>
+    <Select name={name} defaultValue={defaultValue} value={value} onValueChange={onValueChange}>
       <SelectTrigger>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>

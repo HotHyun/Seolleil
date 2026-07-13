@@ -1,5 +1,6 @@
 import { appwriteFetch, appwriteQuery, documentPath, getAppwriteConfig, type AppwriteDocument } from "@/lib/appwrite";
 import type { RideType, SkillLevel, TransportType, TripDuration } from "@/lib/types";
+import { EMPTY_TRIP_BUDGET, parseTripBudget, type TripBudgetState } from "@/lib/trip-budget";
 
 export type TripStatus = "planning" | "ready" | "completed" | "archived" | "deleted";
 export type TripTaskStatus = "not_needed" | "needs_check" | "planned" | "reserved" | "paid" | "prepared";
@@ -45,6 +46,10 @@ export type TripRecord = {
   budgetMin: number | null;
   budgetMax: number | null;
   lodgingCostInput: number | null;
+  lodgingName: string | null;
+  lodgingUrl: string | null;
+  splitCount: number;
+  budgetData: TripBudgetState;
   liftTicketTimeSlot: string;
   selectedRentalShopId: string | null;
   selectedRentalOptionId: string | null;
@@ -85,6 +90,10 @@ type TripDocument = {
   budgetMin?: number | null;
   budgetMax?: number | null;
   lodgingCostInput?: number | null;
+  lodgingName?: string | null;
+  lodgingUrl?: string | null;
+  splitCount?: number;
+  budgetData?: string | null;
   liftTicketTimeSlot: string;
   selectedRentalShopId?: string | null;
   selectedRentalOptionId?: string | null;
@@ -157,6 +166,14 @@ function mapTask(document: AppwriteDocument<TaskDocument>): TripTaskRecord {
   };
 }
 
+function mapBudget(document: TripDocument) {
+  const budget = parseTripBudget(decodeJson(document.budgetData) ?? EMPTY_TRIP_BUDGET);
+  if (budget.overrides.lodging === undefined && document.lodgingCostInput != null) {
+    return { ...budget, overrides: { ...budget.overrides, lodging: document.lodgingCostInput } };
+  }
+  return budget;
+}
+
 function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord[] = []): TripRecord {
   return {
     id: document.$id,
@@ -184,6 +201,10 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     budgetMin: document.budgetMin ?? null,
     budgetMax: document.budgetMax ?? null,
     lodgingCostInput: document.lodgingCostInput ?? null,
+    lodgingName: document.lodgingName ?? null,
+    lodgingUrl: document.lodgingUrl ?? null,
+    splitCount: document.splitCount ?? document.peopleCount,
+    budgetData: mapBudget(document),
     liftTicketTimeSlot: document.liftTicketTimeSlot,
     selectedRentalShopId: document.selectedRentalShopId ?? null,
     selectedRentalOptionId: document.selectedRentalOptionId ?? null,
@@ -264,6 +285,10 @@ function serializeTrip(input: Omit<TripRecord, "id" | "createdAt" | "updatedAt" 
     budgetMin: input.budgetMin,
     budgetMax: input.budgetMax,
     lodgingCostInput: input.lodgingCostInput,
+    lodgingName: input.lodgingName,
+    lodgingUrl: input.lodgingUrl,
+    splitCount: input.splitCount,
+    budgetData: encodeJson(input.budgetData),
     liftTicketTimeSlot: input.liftTicketTimeSlot,
     selectedRentalShopId: input.selectedRentalShopId,
     selectedRentalOptionId: input.selectedRentalOptionId,
@@ -396,7 +421,7 @@ function serializePartialTrip(data: Partial<Omit<TripRecord, "id" | "createdAt" 
   const serialized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) {
     if (value instanceof Date) serialized[key] = value.toISOString();
-    else if (key === "selectedRecommendation") serialized[key] = encodeJson(value);
+    else if (key === "selectedRecommendation" || key === "budgetData") serialized[key] = encodeJson(value);
     else serialized[key] = value;
   }
   return serialized;

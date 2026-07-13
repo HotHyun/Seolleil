@@ -75,6 +75,11 @@ function redirectToTripWithNotice(formData: FormData, notice: string) {
   redirect(`${path}?notice=${encodeURIComponent(notice)}`);
 }
 
+function finishTripMutation(formData: FormData, notice: string) {
+  if (String(formData.get("background") ?? "") === "1") return { ok: true as const, message: notice };
+  redirectToTripWithNotice(formData, notice);
+}
+
 export async function createTripAction(formData: FormData) {
   const session = await getSession();
   const input = parseTripInput(formData);
@@ -380,7 +385,7 @@ export async function updateTaskStatusAction(formData: FormData) {
   await updateTask(taskId, { status: status as never });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_status_changed", properties: { taskId, status } });
 
-  redirectToTripWithNotice(formData, "체크 상태를 변경했어요.");
+  return finishTripMutation(formData, "체크 상태를 변경했어요.");
 }
 
 export async function updateTaskMemoAction(formData: FormData) {
@@ -414,7 +419,7 @@ export async function updateTaskDetailsAction(formData: FormData) {
     memo
   });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_details_updated", properties: { custom: !task.isDefault } });
-  redirectToTripWithNotice(formData, "체크 항목을 저장했어요.");
+  return finishTripMutation(formData, "체크 항목을 저장했어요.");
 }
 
 export async function addTaskAction(formData: FormData) {

@@ -54,6 +54,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
   const [selectedNearbyId, setSelectedNearbyId] = useState<string | null>(null);
   const [shouldFocusSelectedNearby, setShouldFocusSelectedNearby] = useState(false);
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const mapSectionRef = useRef<HTMLDivElement | null>(null);
   const kakaoMapRef = useRef<KakaoMap | null>(null);
   const markersRef = useRef<KakaoMarker[]>([]);
   const selectedNearbyOverlayRef = useRef<KakaoCustomOverlay | null>(null);
@@ -197,12 +198,15 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
             onSelect={(id) => {
               setSelectedId(id);
               selectNearby(null, false);
+              if (window.matchMedia("(max-width: 1023px)").matches) {
+                window.requestAnimationFrame(() => mapSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+              }
             }}
           />
         )}
       </aside>
 
-      <div className="relative order-1 min-w-0 w-full lg:order-2 lg:min-h-[calc(100vh-4rem)]">
+      <div ref={mapSectionRef} className="relative order-1 min-w-0 w-full scroll-mt-16 lg:order-2 lg:min-h-[calc(100vh-4rem)]">
         <div data-testid="ski-map-viewport" className="relative h-[460px] w-full sm:h-[540px] lg:absolute lg:inset-0 lg:h-auto">
           {kakaoKey ? (
             <div ref={mapRef} className="absolute inset-0 bg-muted" />

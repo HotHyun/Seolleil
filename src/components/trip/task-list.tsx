@@ -9,6 +9,7 @@ import {
   updateTaskStatusSafeAction
 } from "@/app/actions";
 import { StatusSelect } from "@/components/trip/status-select";
+import { announceTaskStatusChange } from "@/components/trip/task-status-events";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -58,6 +59,11 @@ export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task
   const needsAttention = activeTasks
     .filter((task) => !isTaskComplete(task.category, task.status))
     .slice(0, 3);
+
+  function updateVisibleTaskStatus(taskId: string, status: string) {
+    setVisibleTasks(current => current.map(item => item.id === taskId ? { ...item, status } : item));
+    announceTaskStatusChange({ taskId, status });
+  }
 
   return (
     <div className="space-y-5">
@@ -117,11 +123,11 @@ export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task
               <div key={task.id} className="p-3 sm:p-4">
                 <div className="flex items-center gap-3">
                   <div className="min-w-0 flex-1 truncate font-semibold">{task.title}</div>
-                <form action={async (formData) => { const result = await updateTaskStatusSafeAction(formData); showActionResult(result); if (result.ok) { const status = String(formData.get("status")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, status } : item)); } }} onSubmit={() => window.umami?.track("checklist_status_change")}>
+                <form action={async (formData) => { const result = await updateTaskStatusSafeAction(formData); showActionResult(result); if (!result.ok) router.refresh(); }} onSubmit={() => window.umami?.track("checklist_status_change")}>
                   <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
                   <input type="hidden" name="background" value="1" />
                   <input type="hidden" name="taskId" value={task.id} />
-                  <StatusSelect name="status" defaultValue={task.status} />
+                  <StatusSelect name="status" defaultValue={task.status} onStatusChange={(status) => updateVisibleTaskStatus(task.id, status)} />
                 </form>
                 </div>
                 <details className="group mt-2">

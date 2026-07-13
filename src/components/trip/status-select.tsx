@@ -12,15 +12,19 @@ const statusOptions = [
   ["prepared", "준비 완료"]
 ];
 
-export function StatusSelect({ name, defaultValue }: { name: string; defaultValue: string }) {
+export function StatusSelect({ name, defaultValue, onStatusChange }: { name: string; defaultValue: string; onStatusChange?: (status: string) => void }) {
   const rootRef = React.useRef<HTMLDivElement>(null);
+  const [value, setValue] = React.useState(defaultValue);
+  React.useEffect(() => setValue(defaultValue), [defaultValue]);
 
   return (
     <div ref={rootRef}>
       <Select
         name={name}
-        defaultValue={defaultValue}
-        onValueChange={() => {
+        value={value}
+        onValueChange={(status) => {
+          setValue(status);
+          onStatusChange?.(status);
           window.requestAnimationFrame(() => {
             rootRef.current?.closest("form")?.requestSubmit();
           });

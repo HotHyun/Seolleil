@@ -25,6 +25,7 @@ export async function getSession(): Promise<AppSession | null> {
 
   try {
     const account = await accountFetch<AppwriteAccount>("/account", sessionSecret);
+    if (!isAccountEligibleForProduct(account)) return null;
     return {
       user: {
         id: account.$id,
@@ -36,6 +37,10 @@ export async function getSession(): Promise<AppSession | null> {
   } catch {
     return null;
   }
+}
+
+export function isAccountEligibleForProduct(account: { emailVerification?: boolean }) {
+  return account.emailVerification === true;
 }
 
 export async function createEmailAccount(email: string, password: string, name: string) {

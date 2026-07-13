@@ -27,6 +27,8 @@
 
 - 비밀번호는 앱 DB에 저장하지 않고 Appwrite Auth가 Argon2로 처리한다.
 - 가입 후 verification 메일을 발송하고 `/verify-email`에서 `userId`와 일회용 `secret`으로 인증한다.
+- Appwrite 세션이 존재하더라도 `emailVerification !== true`이면 제품에서는 비로그인으로 취급해 내 트립·초대·협업 권한을 부여하지 않는다.
+- 가입 직후에는 인증 단계와 재전송 동작을 제공하는 브릿지 화면으로 이동한다.
 - 인증/초대 URL은 Appwrite Console에 등록된 HTTPS 플랫폼 도메인만 사용한다.
 - 세션 secret은 Secure, HttpOnly, SameSite=Lax 쿠키에만 저장한다.
 - 오류 문구는 계정 존재 여부를 과도하게 노출하지 않는다.

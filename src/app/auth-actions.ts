@@ -73,6 +73,21 @@ export async function verifyEmailAction(formData: FormData) {
   redirect(`${callbackUrl}${callbackUrl.includes("?") ? "&" : "?"}notice=${encodeURIComponent("이메일 인증이 완료됐어요.")}`);
 }
 
+export async function resendEmailVerificationAction(formData: FormData) {
+  const callbackUrl = safeCallback(formData.get("callbackUrl"));
+  const sessionSecret = await getSessionSecret();
+  if (!sessionSecret) redirect(`/login?notice=${encodeURIComponent("다시 로그인하면 인증 메일을 재전송할 수 있어요.")}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  try {
+    const account = await getAccountFromSession(sessionSecret);
+    if (account.emailVerification) redirect(callbackUrl);
+    const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+    await createEmailVerification(sessionSecret, `${origin}/verify-email?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  } catch {
+    redirect(`/verify-email/sent?error=${encodeURIComponent("인증 메일을 다시 보내지 못했습니다. 잠시 후 다시 시도해 주세요.")}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  }
+  redirect(`/verify-email/sent?resent=1&callbackUrl=${encodeURIComponent(callbackUrl)}`);
+}
+
 export async function acceptTripInvitationAction(formData: FormData) {
   const teamId = String(formData.get("teamId") ?? "");
   const membershipId = String(formData.get("membershipId") ?? "");

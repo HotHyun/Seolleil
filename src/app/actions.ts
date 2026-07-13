@@ -8,36 +8,50 @@ import { departureLocations, getRentalShopsForResort, getResort } from "@/data/r
 import { estimateTripCost } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
-import { canEditOwnedTrip } from "@/lib/trip-access";
+import { canEditOwnedTrip, canMutateWithSharePermission } from "@/lib/trip-access";
 import { parseTripInput } from "@/lib/trip-input";
 import {
   createTask,
   createTrip,
+  createTripShareLink,
   deleteTask,
   deleteTrip,
   getTripByEditTokenHash,
   getTripById,
+  getShareLinkByTokenHash,
   recordAnalyticsEvent,
   updateDefaultTasksForTrip,
   updateTask,
   updateTrip
 } from "@/lib/trip-store";
 import { getSession } from "@/lib/session";
+import { getSessionSecret } from "@/lib/session";
+import { createTripTeam, getTripTeamPermission, inviteTripMember } from "@/lib/trip-collaboration";
 import type { TripInput } from "@/lib/types";
 
 async function findEditableTrip(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
+  const shareToken = String(formData.get("shareToken") ?? "");
   const tripId = String(formData.get("tripId") ?? "");
 
   if (editToken) {
     return getTripByEditTokenHash(hashToken(editToken));
   }
 
+  if (shareToken) {
+    const link = await getShareLinkByTokenHash(hashToken(shareToken));
+    return link && canMutateWithSharePermission(link.permission) ? getTripById(link.tripId) : null;
+  }
+
   if (tripId) {
     const session = await getSession();
     if (!session?.user?.id) return null;
     const trip = await getTripById(tripId);
-    return trip && canEditOwnedTrip(session.user.id, trip.userId) ? trip : null;
+    if (!trip) return null;
+    if (canEditOwnedTrip(session.user.id, trip.userId)) return trip;
+    const secret = await getSessionSecret();
+    if (secret && trip.teamId && await getTripTeamPermission(secret, trip.teamId, session.user.id) === "edit") return trip;
+    return null;
   }
 
   return null;
@@ -46,14 +60,17 @@ async function findEditableTrip(formData: FormData) {
 function revalidateTripAccess(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const tripId = String(formData.get("tripId") ?? "");
+  const shareToken = String(formData.get("shareToken") ?? "");
   if (editToken) revalidatePath(`/trips/${editToken}`);
   if (tripId) revalidatePath(`/my-trips/${tripId}`);
+  if (shareToken) revalidatePath(`/share/${shareToken}`);
 }
 
 function redirectToTripWithNotice(formData: FormData, notice: string) {
   const editToken = String(formData.get("editToken") ?? "");
   const tripId = String(formData.get("tripId") ?? "");
-  const path = editToken ? `/trips/${editToken}` : `/my-trips/${tripId}`;
+  const shareToken = String(formData.get("shareToken") ?? "");
+  const path = editToken ? `/trips/${editToken}` : shareToken ? `/share/${shareToken}` : `/my-trips/${tripId}`;
   revalidateTripAccess(formData);
   redirect(`${path}?notice=${encodeURIComponent(notice)}`);
 }
@@ -79,6 +96,7 @@ export async function createTripAction(formData: FormData) {
 
   const trip = await createTrip({
       userId: session?.user?.id ?? null,
+      teamId: null,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -141,7 +159,7 @@ export async function createTripAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}&notice=${encodeURIComponent("트립을 만들었어요.")}`);
+  redirect(`/trips/${editToken}?created=${trip.id}&notice=${encodeURIComponent("비공개 트립을 만들었어요.")}`);
 }
 
 export async function createDirectTripAction(formData: FormData) {
@@ -166,6 +184,7 @@ export async function createDirectTripAction(formData: FormData) {
 
   const trip = await createTrip({
       userId: session?.user?.id ?? null,
+      teamId: null,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -229,7 +248,7 @@ export async function createDirectTripAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}&notice=${encodeURIComponent("트립을 만들었어요.")}`);
+  redirect(`/trips/${editToken}?created=${trip.id}&notice=${encodeURIComponent("비공개 트립을 만들었어요.")}`);
 }
 
 export async function updateTripDetailsAction(formData: FormData) {
@@ -448,6 +467,7 @@ export async function duplicateTripAction(formData: FormData) {
   const shareToken = createToken();
   const duplicate = await createTrip({
     userId: session.user.id,
+    teamId: null,
     editTokenHash: hashToken(editToken),
     shareTokenHash: hashToken(shareToken),
     resortId: source.resortId,
@@ -486,7 +506,7 @@ export async function duplicateTripAction(formData: FormData) {
     }))
   });
   await recordAnalyticsEvent({ tripId: duplicate.id, eventName: "trip_duplicated", properties: { sourceTripId: source.id } });
-  redirect(`/my-trips/${duplicate.id}?share=${shareToken}&notice=${encodeURIComponent("트립을 복제했어요.")}`);
+  redirect(`/my-trips/${duplicate.id}?notice=${encodeURIComponent("비공개 트립으로 복제했어요.")}`);
 }
 
 export async function deleteTripAction(formData: FormData) {
@@ -507,12 +527,35 @@ export async function regenerateShareLinkAction(formData: FormData) {
     throw new Error("공유 링크를 재발급할 수 없는 트립입니다.");
   }
 
+  const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
   const shareToken = createToken();
-  await updateTrip(trip.id, { shareTokenHash: hashToken(shareToken) });
-  await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_regenerated" });
+  const session = await getSession();
+  await createTripShareLink({ tripId: trip.id, tokenHash: hashToken(shareToken), permission, createdBy: session?.user?.id ?? null });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_created", properties: { permission } });
 
   const tripId = String(formData.get("tripId") ?? "");
-  redirect(editToken ? `/trips/${editToken}?share=${shareToken}&notice=${encodeURIComponent("새 공유 링크를 만들었어요.")}` : `/my-trips/${tripId}?share=${shareToken}&notice=${encodeURIComponent("새 공유 링크를 만들었어요.")}`);
+  redirect(editToken ? `/trips/${editToken}?share=${shareToken}&sharePermission=${permission}&notice=${encodeURIComponent("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.")}` : `/my-trips/${tripId}?share=${shareToken}&sharePermission=${permission}&notice=${encodeURIComponent("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.")}`);
+}
+
+export async function inviteTripMemberAction(formData: FormData) {
+  const trip = await findEditableTrip(formData);
+  const session = await getSession();
+  const sessionSecret = await getSessionSecret();
+  if (!trip || !session?.user?.id || trip.userId !== session.user.id || !sessionSecret) throw new Error("트립 소유자만 초대할 수 있습니다.");
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
+  if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error("올바른 이메일을 입력해 주세요.");
+  let teamId = trip.teamId;
+  if (!teamId) {
+    const team = await createTripTeam(sessionSecret, `${trip.resortNameSnapshot} 트립`);
+    teamId = team.$id;
+    await updateTrip(trip.id, { teamId });
+  }
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  await inviteTripMember({ sessionSecret, teamId, email, permission, acceptUrl: `${origin}/invite/accept?tripId=${encodeURIComponent(trip.id)}` });
+  await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_member_invited", properties: { permission } });
+  const tripId = String(formData.get("tripId") ?? trip.id);
+  redirect(`/my-trips/${tripId}?notice=${encodeURIComponent("초대 메일을 보냈어요.")}`);
 }
 
 export async function recordExternalLinkClickAction(formData: FormData) {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canEditOwnedTrip } from "@/lib/trip-access";
+import { canEditOwnedTrip, canMutateWithSharePermission } from "@/lib/trip-access";
 import { createToken, hashToken } from "@/lib/tokens";
 
 describe("trip access security", () => {
@@ -8,6 +8,12 @@ describe("trip access security", () => {
     expect(canEditOwnedTrip("user-a", "user-b")).toBe(false);
     expect(canEditOwnedTrip(undefined, "user-a")).toBe(false);
     expect(canEditOwnedTrip("user-a", null)).toBe(false);
+  });
+
+  it("allows mutations only through edit-capability share links", () => {
+    expect(canMutateWithSharePermission("edit")).toBe(true);
+    expect(canMutateWithSharePermission("read")).toBe(false);
+    expect(canMutateWithSharePermission(null)).toBe(false);
   });
 
   it("creates distinct edit/share tokens and stores stable hashes", () => {

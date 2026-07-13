@@ -8,6 +8,7 @@ export type AppSession = {
     id: string;
     name?: string | null;
     email?: string | null;
+    emailVerified?: boolean;
   };
 };
 
@@ -15,6 +16,7 @@ type AppwriteAccount = {
   $id: string;
   name?: string;
   email?: string;
+  emailVerification?: boolean;
 };
 
 export async function getSession(): Promise<AppSession | null> {
@@ -27,12 +29,57 @@ export async function getSession(): Promise<AppSession | null> {
       user: {
         id: account.$id,
         name: account.name ?? null,
-        email: account.email ?? null
+        email: account.email ?? null,
+        emailVerified: account.emailVerification ?? false
       }
     };
   } catch {
     return null;
   }
+}
+
+export async function createEmailAccount(email: string, password: string, name: string) {
+  return accountFetch<AppwriteAccount>("/account", undefined, {
+    method: "POST",
+    body: JSON.stringify({ userId: "unique()", email, password, name })
+  });
+}
+
+export async function createEmailPasswordSession(email: string, password: string) {
+  const config = getAppwriteConfig();
+  const response = await fetch(`${config.endpoint}/account/sessions/email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-Appwrite-Project": config.projectId },
+    body: JSON.stringify({ email, password }),
+    cache: "no-store"
+  });
+  if (!response.ok) throw new Error(`Appwrite email session failed (${response.status})`);
+  const session = await response.json() as { secret?: string; expire: string };
+  const cookie = response.headers.get("set-cookie") ?? "";
+  const match = cookie.match(new RegExp(`${sessionCookieName()}=([^;]+)`));
+  const secret = session.secret || match?.[1];
+  if (!secret) throw new Error("Appwrite did not return a session secret.");
+  return { secret: decodeURIComponent(secret), expire: session.expire };
+}
+
+export async function createEmailVerification(sessionSecret: string, url: string) {
+  return accountFetch<void>("/account/verification", sessionSecret, { method: "POST", body: JSON.stringify({ url }) });
+}
+
+export async function getAccountFromSession(sessionSecret: string) {
+  return accountFetch<AppwriteAccount>("/account", sessionSecret);
+}
+
+export async function confirmEmailVerification(userId: string, secret: string) {
+  return accountFetch<void>("/account/verification", undefined, { method: "PUT", body: JSON.stringify({ userId, secret }) });
+}
+
+export async function createPasswordRecovery(email: string, url: string) {
+  return accountFetch<void>("/account/recovery", undefined, { method: "POST", body: JSON.stringify({ email, url }) });
+}
+
+export async function confirmPasswordRecovery(userId: string, secret: string, password: string) {
+  return accountFetch<void>("/account/recovery", undefined, { method: "PUT", body: JSON.stringify({ userId, secret, password }) });
 }
 
 export function getOAuthUrl(provider: "google", success: string, failure: string) {
@@ -75,6 +122,10 @@ async function accountFetch<T>(path: string, sessionSecret?: string, init: Reque
 
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
+}
+
+export async function appwriteSessionFetch<T>(path: string, sessionSecret: string, init: RequestInit = {}) {
+  return accountFetch<T>(path, sessionSecret, init);
 }
 
 async function accountAdminFetch<T>(path: string, init: RequestInit = {}) {

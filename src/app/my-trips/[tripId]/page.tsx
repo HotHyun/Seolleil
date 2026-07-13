@@ -10,7 +10,8 @@ import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
-import { getSession } from "@/lib/session";
+import { getSession, getSessionSecret } from "@/lib/session";
+import { getTripTeamPermission } from "@/lib/trip-collaboration";
 import { getTripById } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
@@ -34,9 +35,15 @@ export default async function MyTripDetailPage({
   const { tripId } = await params;
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
+  const sharePermission = (Array.isArray(query.sharePermission) ? query.sharePermission[0] : query.sharePermission) === "edit" ? "edit" : "read";
   const trip = await getTripById(tripId);
 
-  if (!trip || trip.userId !== session.user.id) notFound();
+  if (!trip) notFound();
+  const isOwner = trip.userId === session.user.id;
+  const sessionSecret = await getSessionSecret();
+  const collaborationPermission = !isOwner && trip.teamId && sessionSecret ? await getTripTeamPermission(sessionSecret, trip.teamId, session.user.id) : null;
+  if (!isOwner && !collaborationPermission) notFound();
+  const canEdit = isOwner || collaborationPermission === "edit";
 
   const resort = getResort(trip.resortId);
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
@@ -51,7 +58,7 @@ export default async function MyTripDetailPage({
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
                   <CardTitle className="mt-3 truncate text-2xl font-black sm:text-3xl">{trip.resortNameSnapshot} 트립</CardTitle>
                 </div>
-                <TripManagementMenu trip={trip} shareUrl={shareUrl} />
+                {isOwner ? <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} /> : <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge>}
               </div>
             </CardHeader>
             <CardContent>
@@ -89,7 +96,7 @@ export default async function MyTripDetailPage({
             </CardContent>
           </Card>
           <ProgressSummary tasks={trip.tasks} />
-          <TaskList tasks={trip.tasks} tripId={trip.id} />
+          {canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} /> : null}
           <TripCostDisclosure trip={trip} />
       </div>
     </main>

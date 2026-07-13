@@ -4,7 +4,7 @@ import { Copy } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
-export function ShareLinkBox({ sharePath }: { sharePath?: string }) {
+export function ShareLinkBox({ sharePath, permission = "read" }: { sharePath?: string; permission?: "read" | "edit" }) {
   const shareUrl =
     typeof window !== "undefined" && sharePath
       ? `${window.location.origin}${sharePath}`
@@ -31,7 +31,7 @@ export function ShareLinkBox({ sharePath }: { sharePath?: string }) {
           }
         }}
       >
-        <Copy className="h-4 w-4" /> 읽기 링크 복사
+        <Copy className="h-4 w-4" /> {permission === "edit" ? "편집 링크 복사" : "읽기 링크 복사"}
       </Button>
     </div>
   );

@@ -4,8 +4,9 @@ import { CalendarDays, CheckCircle2, MapPin, Plus } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSession } from "@/lib/session";
-import { getTripsByUserId, type TripRecord } from "@/lib/trip-store";
+import { getSession, getSessionSecret } from "@/lib/session";
+import { listUserTeams } from "@/lib/trip-collaboration";
+import { getTripsByTeamIds, getTripsByUserId, type TripRecord } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   title: "내 트립 | Korean Ski",
@@ -19,7 +20,10 @@ export default async function MyTripsPage() {
   const session = await getSession();
   if (!session?.user?.id) redirect("/login?callbackUrl=/my-trips");
 
-  const trips = await getTripsByUserId(session.user.id);
+  const sessionSecret = await getSessionSecret();
+  const [owned, teams] = await Promise.all([getTripsByUserId(session.user.id), sessionSecret ? listUserTeams(sessionSecret) : { teams: [] }]);
+  const shared = await getTripsByTeamIds(teams.teams.map(team => team.$id));
+  const trips = [...new Map([...owned, ...shared].map(trip => [trip.id, trip])).values()];
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const upcomingTrips = trips.filter((trip) => trip.visitDate >= today);

@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import { CalendarDays, MapPin, Users } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
+import { TaskList } from "@/components/trip/task-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
-import { getTripByShareTokenHash, recordAnalyticsEvent } from "@/lib/trip-store";
+import { getShareLinkByTokenHash, getTripByShareTokenHash, recordAnalyticsEvent } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   robots: {
@@ -16,7 +17,8 @@ export const metadata: Metadata = {
 
 export default async function SharePage({ params }: { params: Promise<{ shareToken: string }> }) {
   const { shareToken } = await params;
-  const trip = await getTripByShareTokenHash(hashToken(shareToken));
+  const tokenHash = hashToken(shareToken);
+  const [trip, link] = await Promise.all([getTripByShareTokenHash(tokenHash), getShareLinkByTokenHash(tokenHash)]);
   if (!trip) notFound();
 
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
@@ -24,7 +26,7 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
   return (
     <main className="page-shell py-8">
       <div className="mb-6">
-        <StatusBadge tone="good">읽기 전용 공유</StatusBadge>
+        <StatusBadge tone="good">{link?.permission === "edit" ? "함께 편집" : "보기 전용"}</StatusBadge>
         <h1 className="mt-3 text-3xl font-black md:text-5xl">{trip.resortNameSnapshot} 트립</h1>
       </div>
       <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
@@ -41,7 +43,7 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
           </Card>
           <ProgressSummary tasks={trip.tasks} />
         </aside>
-        <Card>
+        {link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} /> : <Card>
           <CardHeader>
             <CardTitle>예약·준비 상태</CardTitle>
           </CardHeader>
@@ -57,7 +59,7 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
               ))}
             </div>
           </CardContent>
-        </Card>
+        </Card>}
       </div>
     </main>
   );

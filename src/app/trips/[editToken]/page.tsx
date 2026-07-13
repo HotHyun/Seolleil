@@ -31,6 +31,7 @@ export default async function TripEditPage({
   const { editToken } = await params;
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
+  const sharePermission = (Array.isArray(query.sharePermission) ? query.sharePermission[0] : query.sharePermission) === "edit" ? "edit" : "read";
   const trip = await getTripByEditTokenHash(hashToken(editToken));
   if (!trip) notFound();
 
@@ -57,7 +58,7 @@ export default async function TripEditPage({
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
                   <CardTitle className="mt-3 truncate text-2xl font-black sm:text-3xl">{trip.resortNameSnapshot} 트립</CardTitle>
                 </div>
-                <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} />
+                <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} sharePermission={sharePermission} />
               </div>
             </CardHeader>
             <CardContent>

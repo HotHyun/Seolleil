@@ -1,6 +1,7 @@
 import type { Config } from "./client";
 import { createDocument, ensureCollection, hasDocument, string } from "./client";
 import { migration202607110001InitialSchema } from "./migrations/202607110001_initial_schema";
+import { migration202607130001TripSharing } from "./migrations/202607130001_trip_sharing";
 
 export type Migration = {
   id: string;
@@ -9,7 +10,8 @@ export type Migration = {
 };
 
 export const migrations: Migration[] = [
-  migration202607110001InitialSchema
+  migration202607110001InitialSchema,
+  migration202607130001TripSharing
 ];
 
 export async function ensureMigrationsCollection(cfg: Config) {

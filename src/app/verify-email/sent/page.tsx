@@ -1,0 +1,2 @@
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+export default function VerificationSentPage() { return <main className="page-shell grid min-h-[70vh] place-items-center py-10"><Card className="w-full max-w-md"><CardHeader><CardTitle>인증 메일을 확인해 주세요</CardTitle></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">입력한 이메일로 인증 링크를 보냈습니다. 메일의 링크을 열어 인증을 완료하면 트립 협업 기능을 사용할 수 있습니다.</p></CardContent></Card></main>; }

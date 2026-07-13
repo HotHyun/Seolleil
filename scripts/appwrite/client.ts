@@ -8,6 +8,7 @@ export type Config = {
     trips: string;
     tripTasks: string;
     analyticsEvents: string;
+    tripShareLinks: string;
   };
 };
 
@@ -56,7 +57,8 @@ export function getConfig(): Config {
       migrations: process.env.APPWRITE_MIGRATIONS_COLLECTION_ID ?? "schema_migrations",
       trips: process.env.APPWRITE_TRIPS_COLLECTION_ID ?? "trips",
       tripTasks: process.env.APPWRITE_TRIP_TASKS_COLLECTION_ID ?? "trip_tasks",
-      analyticsEvents: process.env.APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID ?? "analytics_events"
+      analyticsEvents: process.env.APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID ?? "analytics_events",
+      tripShareLinks: process.env.APPWRITE_TRIP_SHARE_LINKS_COLLECTION_ID ?? "trip_share_links"
     }
   };
 }

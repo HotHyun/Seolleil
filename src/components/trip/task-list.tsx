@@ -38,7 +38,7 @@ const categoryLabels: Record<string, string> = {
   custom: "커스텀"
 };
 
-export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToken?: string; tripId?: string }) {
+export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task[]; editToken?: string; tripId?: string; shareToken?: string }) {
   const groups = tasks.reduce<Record<string, Task[]>>((acc, task) => {
     const label = categoryLabels[task.category] ?? task.category;
     acc[label] = acc[label] ?? [];
@@ -110,7 +110,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
                 <div className="flex items-center gap-3">
                   <div className="min-w-0 flex-1 truncate font-semibold">{task.title}</div>
                 <form action={updateTaskStatusAction} onSubmit={() => window.umami?.track("checklist_status_change")}>
-                  <AccessFields editToken={editToken} tripId={tripId} />
+                  <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
                   <input type="hidden" name="taskId" value={task.id} />
                   <StatusSelect name="status" defaultValue={task.status} />
                 </form>
@@ -120,7 +120,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
                     {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
                   </summary>
                   <form action={updateTaskDetailsAction} onSubmit={() => window.umami?.track("checklist_details_update")} className="mt-2 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-                  <AccessFields editToken={editToken} tripId={tripId} />
+                  <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
                   <input type="hidden" name="taskId" value={task.id} />
                   {!task.isDefault ? <Input name="title" defaultValue={task.title} aria-label="체크 항목 이름" /> : <input type="hidden" name="title" value={task.title} />}
                   <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모…" aria-label={`${task.title} 메모`} />
@@ -128,7 +128,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
                     항목 저장
                   </Button>
                   </form>
-                  {!task.isDefault ? <form action={deleteTaskAction} className="mt-2"><AccessFields editToken={editToken} tripId={tripId} /><input type="hidden" name="taskId" value={task.id} /><Button variant="ghost" type="submit" className="text-destructive"><Trash2 className="h-4 w-4" /> 항목 삭제</Button></form> : null}
+                  {!task.isDefault ? <form action={deleteTaskAction} className="mt-2"><AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} /><input type="hidden" name="taskId" value={task.id} /><Button variant="ghost" type="submit" className="text-destructive"><Trash2 className="h-4 w-4" /> 항목 삭제</Button></form> : null}
                 </details>
               </div>
             ))}
@@ -136,7 +136,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
         </details>
       ))}
       <form action={addTaskAction} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_auto]">
-        <AccessFields editToken={editToken} tripId={tripId} />
+        <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
         <Input name="title" placeholder="직접 체크 항목 추가…" aria-label="새 체크 항목 이름" />
         <Button type="submit" className="shrink-0">
           <Plus className="h-4 w-4" /> 항목 추가
@@ -146,11 +146,12 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
   );
 }
 
-function AccessFields({ editToken, tripId }: { editToken?: string; tripId?: string }) {
+function AccessFields({ editToken, tripId, shareToken }: { editToken?: string; tripId?: string; shareToken?: string }) {
   return (
     <>
       {editToken ? <input type="hidden" name="editToken" value={editToken} /> : null}
       {tripId ? <input type="hidden" name="tripId" value={tripId} /> : null}
+      {shareToken ? <input type="hidden" name="shareToken" value={shareToken} /> : null}
     </>
   );
 }

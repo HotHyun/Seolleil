@@ -24,6 +24,7 @@ export type TripRecord = {
   userId: string | null;
   editTokenHash: string;
   shareTokenHash: string;
+  teamId: string | null;
   resortId: string;
   resortNameSnapshot: string;
   selectedRecommendation: unknown;
@@ -61,6 +62,7 @@ type TripDocument = {
   userId?: string | null;
   editTokenHash: string;
   shareTokenHash: string;
+  teamId?: string | null;
   resortId: string;
   resortNameSnapshot: string;
   selectedRecommendation?: string | null;
@@ -104,6 +106,9 @@ type EventDocument = {
   eventName: string;
   properties?: string | null;
 };
+
+type ShareLinkDocument = { tripId: string; tokenHash: string; permission: "read" | "edit"; createdBy?: string | null; revokedAt?: string | null };
+export type TripShareLinkRecord = { id: string; tripId: string; permission: "read" | "edit"; revokedAt: Date | null };
 
 type DocumentList<T> = {
   total: number;
@@ -154,6 +159,7 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     userId: document.userId ?? null,
     editTokenHash: document.editTokenHash,
     shareTokenHash: document.shareTokenHash,
+    teamId: document.teamId ?? null,
     resortId: document.resortId,
     resortNameSnapshot: document.resortNameSnapshot,
     selectedRecommendation: decodeJson(document.selectedRecommendation),
@@ -231,6 +237,7 @@ function serializeTrip(input: Omit<TripRecord, "id" | "createdAt" | "updatedAt" 
     userId: input.userId,
     editTokenHash: input.editTokenHash,
     shareTokenHash: input.shareTokenHash,
+    teamId: input.teamId,
     resortId: input.resortId,
     resortNameSnapshot: input.resortNameSnapshot,
     selectedRecommendation: encodeJson(input.selectedRecommendation),
@@ -283,6 +290,8 @@ export async function getTripByEditTokenHash(editTokenHash: string) {
 }
 
 export async function getTripByShareTokenHash(shareTokenHash: string) {
+  const link = await getShareLinkByTokenHash(shareTokenHash);
+  if (link) return getTripById(link.tripId);
   const { collections } = getAppwriteConfig();
   const result = await listDocuments<TripDocument>(collections.trips, [
     appwriteQuery("equal", "shareTokenHash", [shareTokenHash]),
@@ -290,6 +299,25 @@ export async function getTripByShareTokenHash(shareTokenHash: string) {
   ]);
   const document = result.documents[0];
   return document ? mapTrip(document, await getTripTasks(document.$id)) : null;
+}
+
+export async function getShareLinkByTokenHash(tokenHash: string) {
+  const { collections } = getAppwriteConfig();
+  const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tokenHash", [tokenHash]), appwriteQuery("limit", 1)]);
+  const link = result.documents[0];
+  if (!link || link.revokedAt) return null;
+  return { id: link.$id, tripId: link.tripId, permission: link.permission, revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord;
+}
+
+export async function createTripShareLink(input: { tripId: string; tokenHash: string; permission: "read" | "edit"; createdBy?: string | null }) {
+  const { collections } = getAppwriteConfig();
+  return appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks), { method: "POST", body: JSON.stringify({ documentId: "unique()", data: { ...input, revokedAt: null } }) });
+}
+
+export async function revokeTripShareLinks(tripId: string) {
+  const { collections } = getAppwriteConfig();
+  const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tripId", [tripId]), appwriteQuery("limit", 100)]);
+  await Promise.all(result.documents.filter(link => !link.revokedAt).map(link => appwriteFetch(documentPath(collections.tripShareLinks, link.$id), { method: "PATCH", body: JSON.stringify({ data: { revokedAt: new Date().toISOString() } }) })));
 }
 
 export async function getTripById(id: string) {
@@ -313,6 +341,13 @@ export async function getTripsByUserId(userId: string) {
   ]);
   const trips = await Promise.all(result.documents.map(async (document) => mapTrip(document, await getTripTasks(document.$id))));
   return trips;
+}
+
+export async function getTripsByTeamIds(teamIds: string[]) {
+  if (!teamIds.length) return [];
+  const { collections } = getAppwriteConfig();
+  const result = await listDocuments<TripDocument>(collections.trips, [appwriteQuery("equal", "teamId", teamIds), appwriteQuery("notEqual", "status", ["deleted"]), appwriteQuery("limit", 100)]);
+  return Promise.all(result.documents.map(async document => mapTrip(document, await getTripTasks(document.$id))));
 }
 
 export async function updateTrip(id: string, data: Partial<Omit<TripRecord, "id" | "createdAt" | "updatedAt" | "tasks">>) {

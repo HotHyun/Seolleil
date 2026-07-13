@@ -28,7 +28,8 @@ Cloudflare Pages/Workers/Next.js client and server logic
 
 ## Appwrite 역할
 
-- Auth: Google OAuth provider와 사용자 세션.
+- Auth: Google OAuth, 이메일·비밀번호, 이메일 인증과 사용자 세션.
+- Teams: 트립별 이메일 초대와 viewer/editor 역할.
 - Databases: 트립, 체크리스트, 이벤트 collection.
 - Permissions: 사용자 소유 트립, 익명 edit token 접근, read-only share link 정책.
 - Storage: 향후 사용자 파일이나 운영 첨부물이 필요할 때 사용.
@@ -68,6 +69,11 @@ Cloudflare Pages/Workers/Next.js client and server logic
 - created timestamp.
 - 개인정보와 edit/share raw token은 저장하지 않는다.
 
+### `trip_share_links`
+
+- `tripId`, SHA-256 `tokenHash`, `read|edit` 권한, 생성자, 폐기 시각을 저장한다.
+- 여러 링크를 유지하므로 새 링크 발급이나 트립 변경이 기존 링크를 무효화하지 않는다.
+
 ## Auth 전환 설계
 
 - Auth.js Google OAuth는 Appwrite Auth Google OAuth로 대체했다.
@@ -77,6 +83,8 @@ Cloudflare Pages/Workers/Next.js client and server logic
 - 익명 사용자는 트립을 만들 수 있어야 한다.
 - 익명 트립은 edit link로 접근한 뒤 로그인 계정에 attach할 수 있어야 한다.
 - logged-in user trip list는 Appwrite user id 기준으로 조회한다.
+- 이메일 가입은 Appwrite Account API와 verification URL을 사용한다.
+- 계정 초대는 Appwrite Teams membership invite와 내장 메일 전송을 사용한다.
 - Auth.js용 Prisma 모델인 `User`, `Account`, `Session`, `VerificationToken`,
   `Authenticator`는 Appwrite Auth 전환 완료 후 제거한다.
 

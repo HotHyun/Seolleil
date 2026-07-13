@@ -18,5 +18,6 @@
     "APPWRITE_TRIPS_COLLECTION_ID": "trips",
     "APPWRITE_TRIP_TASKS_COLLECTION_ID": "trip_tasks",
     "APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID": "analytics_events",
+    "APPWRITE_TRIP_SHARE_LINKS_COLLECTION_ID": "trip_share_links",
   },
 }

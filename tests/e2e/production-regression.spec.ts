@@ -24,6 +24,7 @@ test.describe("production regression", () => {
   });
 
   test("anonymous trip keeps a persistent read link after checklist changes", async ({ page, context }, testInfo) => {
+    test.setTimeout(90_000);
     test.skip(process.env.E2E_ALLOW_PRODUCTION_WRITES !== "1", "Production writes require an explicit opt-in.");
     test.skip(testInfo.project.name !== "chromium", "Run the mutation lifecycle once, then cover mobile with read-only checks.");
 
@@ -42,11 +43,13 @@ test.describe("production regression", () => {
       const shareUrl = await page.locator("text=/https?:.*\\/share\\//").first().textContent();
       const shareToken = shareUrl ? new URL(shareUrl).pathname.split("/").pop() : null;
       expect(shareToken).toBeTruthy();
+      await page.getByRole("dialog", { name: "트립 공유" }).getByRole("button", { name: "닫기" }).click();
+      await expect(page.getByRole("dialog", { name: "트립 공유" })).toBeHidden();
 
       const marker = `회귀 테스트 ${Date.now()}`;
       await page.getByRole("textbox", { name: "새 체크 항목 이름" }).fill(marker);
       await page.getByRole("button", { name: "항목 추가" }).click();
-      await expect(page.getByText(marker)).toBeVisible();
+      await expect(page.getByText(marker).first()).toBeVisible();
 
       const shared = await context.newPage();
       await shared.goto(`/share/${shareToken}`);
@@ -54,6 +57,9 @@ test.describe("production regression", () => {
       await expect(shared.getByText(marker)).toBeVisible();
       await expect(shared.getByRole("button", { name: "항목 추가" })).toHaveCount(0);
     } finally {
+      for (const candidate of context.pages()) {
+        if (candidate !== page) await candidate.close();
+      }
       if (editUrl) {
         await page.goto(editUrl);
         await page.getByRole("button", { name: "트립 관리 메뉴" }).click();

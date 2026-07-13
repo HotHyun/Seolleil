@@ -49,6 +49,27 @@ test.describe("production regression", () => {
       await expect(page.getByRole("heading", { name: tripName })).toBeVisible();
       await expect(page.getByText(tripMemo)).toBeVisible();
 
+      const budget = page.getByTestId("trip-budget-workspace");
+      await expect(budget.getByRole("heading", { name: "비용 확정과 1/N 정산" })).toBeVisible();
+      await budget.getByRole("combobox", { name: "리프트권" }).click();
+      await page.getByRole("option", { name: "6시간권" }).click();
+      await budget.getByRole("combobox", { name: "교통" }).click();
+      await page.getByRole("option", { name: "자차" }).click();
+      await budget.getByLabel("숙소 이름").fill("Playwright 테스트 숙소");
+      await budget.getByLabel("실제 숙박비").fill("240000");
+      await budget.getByLabel("예약/숙소 링크").fill("https://example.com/test-lodging");
+      await budget.getByRole("button", { name: "추가", exact: true }).click();
+      await budget.getByLabel("비용 이름").fill("테스트 식비");
+      await budget.getByLabel("금액").fill("60000");
+      await budget.getByLabel("몇 명이 나눌까요?").fill("4");
+      await budget.getByRole("button", { name: "비용과 정산 저장" }).click();
+      await expect(page.getByText("비용과 정산 정보를 저장했어요.")).toBeVisible();
+      await page.reload();
+      await expect(page.getByTestId("trip-budget-workspace").getByLabel("숙소 이름")).toHaveValue("Playwright 테스트 숙소");
+      await expect(page.getByTestId("trip-budget-workspace").getByLabel("실제 숙박비")).toHaveValue("240000");
+      await expect(page.getByTestId("trip-budget-workspace").getByLabel("비용 이름")).toHaveValue("테스트 식비");
+      await expect(page.getByTestId("trip-budget-workspace").getByLabel("몇 명이 나눌까요?")).toHaveValue("4");
+
       await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
       await page.getByRole("menuitem", { name: "공유 관리" }).click();
       await page.getByRole("button", { name: /새 링크/ }).click();

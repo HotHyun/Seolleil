@@ -12,6 +12,7 @@ export function SelectField({
   defaultValue,
   value,
   onValueChange,
+  ariaLabel,
   options,
   placeholder = "선택"
 }: {
@@ -19,12 +20,13 @@ export function SelectField({
   defaultValue?: string;
   value?: string;
   onValueChange?: (value: string) => void;
+  ariaLabel?: string;
   options: SelectOption[];
   placeholder?: string;
 }) {
   return (
     <Select name={name} defaultValue={defaultValue} value={value} onValueChange={onValueChange}>
-      <SelectTrigger>
+      <SelectTrigger aria-label={ariaLabel}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

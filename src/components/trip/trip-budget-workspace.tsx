@@ -49,7 +49,7 @@ export function TripBudgetWorkspace({ trip, editToken, shareToken, canEdit = tru
   const addExpense = () => setBudget(current => ({ ...current, extras: [...current.extras, { id: crypto.randomUUID(), category: "meal", title: "", amount: 0 }] }));
 
   return (
-    <Card className="overflow-hidden border-primary/20">
+    <Card className="overflow-hidden border-primary/20" data-testid="trip-budget-workspace">
       <CardHeader className="bg-gradient-to-br from-primary/15 via-card to-card">
         <div className="flex items-start justify-between gap-3">
           <div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Trip budget</p><CardTitle className="mt-2">비용 확정과 1/N 정산</CardTitle><p className="mt-2 text-sm text-muted-foreground">추천 가격을 출발점으로 쓰고, 실제 결제 금액은 직접 덮어쓸 수 있어요.</p></div>
@@ -64,9 +64,9 @@ export function TripBudgetWorkspace({ trip, editToken, shareToken, canEdit = tru
           <section>
             <h3 className="mb-3 font-black">이번 여행의 선택</h3>
             <div className="grid gap-3 sm:grid-cols-3">
-              <div className="space-y-2"><label className="text-sm font-semibold">리프트권</label><SelectField name="liftTicketTimeSlot" defaultValue={trip.liftTicketTimeSlot} options={[{value:"2h",label:"2시간권"},{value:"3h",label:"3시간권"},{value:"4h",label:"4시간권"},{value:"6h",label:"6시간권"},{value:"night",label:"야간권"},{value:"full_day",label:"종일권"}]} /></div>
-              <div className="space-y-2"><label className="text-sm font-semibold">교통</label><SelectField name="transportType" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"셔틀"},{value:"bus",label:"버스"}]} /></div>
-              <div className="space-y-2"><label className="text-sm font-semibold">렌탈샵·상품</label><SelectField name="selectedRentalOptionId" defaultValue={trip.selectedRentalOptionId ?? "skip"} options={[{value:"skip",label:"렌탈하지 않음 / 나중에"}, ...(rentalOptions ?? [])]} /></div>
+              <div className="space-y-2"><label className="text-sm font-semibold">리프트권</label><SelectField name="liftTicketTimeSlot" ariaLabel="리프트권" defaultValue={trip.liftTicketTimeSlot} options={[{value:"2h",label:"2시간권"},{value:"3h",label:"3시간권"},{value:"4h",label:"4시간권"},{value:"6h",label:"6시간권"},{value:"night",label:"야간권"},{value:"full_day",label:"종일권"}]} /></div>
+              <div className="space-y-2"><label className="text-sm font-semibold">교통</label><SelectField name="transportType" ariaLabel="교통" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"셔틀"},{value:"bus",label:"버스"}]} /></div>
+              <div className="space-y-2"><label className="text-sm font-semibold">렌탈샵·상품</label><SelectField name="selectedRentalOptionId" ariaLabel="렌탈샵·상품" defaultValue={trip.selectedRentalOptionId ?? "skip"} options={[{value:"skip",label:"렌탈하지 않음 / 나중에"}, ...(rentalOptions ?? [])]} /></div>
             </div>
           </section>
 

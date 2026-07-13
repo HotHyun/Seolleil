@@ -40,13 +40,15 @@ test.describe("production regression", () => {
       await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
       await page.getByRole("menuitem", { name: "공유 관리" }).click();
       await page.getByRole("button", { name: /새 링크/ }).click();
-      const shareUrl = await page.locator("text=/https?:.*\\/share\\//").first().textContent();
+      const latestShareUrl = page.locator("text=/https?:.*\\/share\\//").first();
+      const shareUrl = await latestShareUrl.textContent();
       const readToken = shareUrl ? new URL(shareUrl).pathname.split("/").pop() : null;
       expect(readToken).toBeTruthy();
       await page.getByRole("combobox", { name: "새 링크 권한" }).click();
       await page.getByRole("option", { name: "편집 가능" }).click();
       await page.getByRole("button", { name: /새 링크/ }).click();
-      const editUrlText = await page.locator("text=/https?:.*\\/share\\//").first().textContent();
+      await expect(latestShareUrl).not.toHaveText(shareUrl ?? "");
+      const editUrlText = await latestShareUrl.textContent();
       const editToken = editUrlText ? new URL(editUrlText).pathname.split("/").pop() : null;
       expect(editToken).toBeTruthy();
       expect(editToken).not.toBe(readToken);

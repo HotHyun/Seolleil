@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AlertCircle, ChevronDown, ExternalLink, Plus, Trash2 } from "lucide-react";
 import {
   addTaskSafeAction,
@@ -46,6 +46,7 @@ export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task
   const router = useRouter();
   const addTaskFormRef = useRef<HTMLFormElement>(null);
   const [visibleTasks, setVisibleTasks] = useState(tasks);
+  useEffect(() => setVisibleTasks(tasks), [tasks]);
   const groups = visibleTasks.reduce<Record<string, Task[]>>((acc, task) => {
     const label = categoryLabels[task.category] ?? task.category;
     acc[label] = acc[label] ?? [];

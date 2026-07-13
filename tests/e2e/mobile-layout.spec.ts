@@ -36,4 +36,20 @@ test.describe("mobile layout", () => {
     await expectNoEmptyMain(page);
     await expectNoHorizontalOverflow(page);
   });
+
+  test("ski map keeps the mobile map visible above its compact selection sheet", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/resorts");
+
+    const map = page.getByTestId("ski-map-viewport");
+    const selection = page.getByTestId("ski-map-selection");
+    await expect(map).toBeVisible();
+    await expect(selection).toBeVisible();
+
+    const [mapBox, selectionBox] = await Promise.all([map.boundingBox(), selection.boundingBox()]);
+    expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(460);
+    const overlap = Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0));
+    expect(overlap).toBeLessThanOrEqual(42);
+    await expectNoHorizontalOverflow(page);
+  });
 });

@@ -202,23 +202,25 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
         )}
       </aside>
 
-      <div className="relative order-1 min-h-[620px] min-w-0 w-full lg:order-2 lg:min-h-[calc(100vh-4rem)]">
-        {kakaoKey ? (
-          <div ref={mapRef} className="absolute inset-0 bg-muted" />
-        ) : (
-          <FallbackMap
-            rows={rows}
-            nearbyItems={showNearby ? nearbyItems : []}
-            selectedId={selected?.resort.id}
-            selectedNearbyId={selectedNearbyId}
-            onSelect={setSelectedId}
-            onNearbySelect={(id) => selectNearby(id, false)}
-          />
-        )}
+      <div className="relative order-1 min-w-0 w-full lg:order-2 lg:min-h-[calc(100vh-4rem)]">
+        <div data-testid="ski-map-viewport" className="relative h-[460px] w-full sm:h-[540px] lg:absolute lg:inset-0 lg:h-auto">
+          {kakaoKey ? (
+            <div ref={mapRef} className="absolute inset-0 bg-muted" />
+          ) : (
+            <FallbackMap
+              rows={rows}
+              nearbyItems={showNearby ? nearbyItems : []}
+              selectedId={selected?.resort.id}
+              selectedNearbyId={selectedNearbyId}
+              onSelect={setSelectedId}
+              onNearbySelect={(id) => selectNearby(id, false)}
+            />
+          )}
+        </div>
 
         {selected ? (
-          <div className="absolute bottom-4 left-4 right-4 z-20 lg:left-auto lg:w-[390px]">
-            <div className="rounded-xl border bg-card p-4 shadow-2xl shadow-black/25">
+          <div data-testid="ski-map-selection" className="relative z-20 mx-3 -mt-10 mb-4 lg:absolute lg:bottom-4 lg:left-auto lg:right-4 lg:mx-0 lg:mb-0 lg:mt-0 lg:w-[390px]">
+            <div className="rounded-2xl border bg-card p-3 shadow-2xl shadow-black/25 sm:p-4">
               {selectedNearby && showNearby ? (
                 <NearbySelectedCard item={selectedNearby} />
               ) : (
@@ -473,26 +475,26 @@ function SelectedResortCard({
 }) {
   return (
     <>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5 sm:gap-2">
         <StatusBadge tone={resort.operationStatus === "operating" ? "good" : "warn"}>{statusLabel(resort.operationStatus)}</StatusBadge>
         {resort.nightSkiAvailable ? <StatusBadge>야간</StatusBadge> : null}
-        {resort.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}
+        {resort.tags.slice(0, 3).map((tag) => <span key={tag} className="hidden sm:inline-flex"><StatusBadge>{tag}</StatusBadge></span>)}
       </div>
-      <h2 className="mt-3 text-xl font-black">{resort.name}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{resort.address}</p>
-      <div className="mt-4 grid grid-cols-4 gap-2 text-center">
+      <h2 className="mt-2 text-lg font-black sm:mt-3 sm:text-xl">{resort.name}</h2>
+      <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{resort.address}</p>
+      <div className="mt-3 grid grid-cols-4 gap-1.5 text-center sm:mt-4 sm:gap-2">
         <MapStat icon={<Snowflake />} label="초보" value={`${resort.beginnerScore}`} />
         <MapStat icon={<MapPin />} label="접근" value={`${resort.accessScore}`} />
         <MapStat icon={<Shirt />} label="렌탈" value={`${summary.rentalCount}`} />
         <MapStat icon={<Hotel />} label="숙박" value={`${summary.lodgingCount}`} />
       </div>
-      <div className="mt-4 grid gap-2 sm:grid-cols-3">
+      <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-4 sm:gap-2">
         <Link href={`/plan?resortId=${resort.id}`}>
-          <Button className="w-full">트립 만들기</Button>
+          <Button className="h-10 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">트립 만들기</Button>
         </Link>
-        <Button variant="secondary" className="w-full" onClick={onOpenNearby}>주변 보기</Button>
+        <Button variant="secondary" className="h-10 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm" onClick={onOpenNearby}>주변 보기</Button>
         <Link href={`/resorts/${resort.id}`} className="flex-1">
-          <Button variant="secondary" className="w-full">상세</Button>
+          <Button variant="secondary" className="h-10 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">상세</Button>
         </Link>
       </div>
     </>
@@ -506,11 +508,11 @@ function NearbySelectedCard({ item }: { item: NearbyMapItem }) {
         {item.type === "rental" ? <Shirt className="h-4 w-4" /> : <Hotel className="h-4 w-4" />}
         {item.type === "rental" ? "렌탈샵" : "숙박"}
       </div>
-      <h2 className="mt-2 text-xl font-black">{item.name}</h2>
+      <h2 className="mt-2 text-lg font-black sm:text-xl">{item.name}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{item.meta}</p>
       {item.href ? (
         <AnalyticsLink href={item.href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: `map_${item.type}`, resortId: item.resortId }}>
-          <Button className="mt-4 w-full">
+          <Button className="mt-3 w-full sm:mt-4">
             지도/예약 확인 <ExternalLink className="h-4 w-4" />
           </Button>
         </AnalyticsLink>
@@ -521,8 +523,8 @@ function NearbySelectedCard({ item }: { item: NearbyMapItem }) {
 
 function MapStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-muted p-2">
-      <div className="mx-auto mb-1 w-fit text-muted-foreground [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
+    <div className="rounded-lg bg-muted p-1.5 sm:p-2">
+      <div className="mx-auto mb-1 hidden w-fit text-muted-foreground sm:block [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
       <div className="text-[11px] font-bold text-muted-foreground">{label}</div>
       <div className="text-sm font-black">{value}</div>
     </div>

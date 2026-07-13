@@ -49,6 +49,7 @@ test.describe("production regression", () => {
       await expect(page.getByRole("heading", { name: tripName })).toBeVisible();
       await expect(page.getByText(tripMemo)).toBeVisible();
 
+      await page.getByRole("link", { name: /비용·정산/ }).first().click();
       const budget = page.getByTestId("trip-budget-workspace");
       await expect(budget.getByRole("heading", { name: "비용 확정과 1/N 정산" })).toBeVisible();
       await budget.getByRole("combobox", { name: "리프트권" }).click();
@@ -92,6 +93,7 @@ test.describe("production regression", () => {
       const editable = await context.newPage();
       await editable.goto(`/share/${editToken}`);
       await expect(editable.getByText("함께 편집")).toBeVisible();
+      await editable.getByRole("link", { name: /준비 체크리스트/ }).first().click();
       await editable.getByRole("textbox", { name: "새 체크 항목 이름" }).fill(marker);
       await editable.getByRole("button", { name: "항목 추가" }).click();
       await expect(editable.getByText(marker).first()).toBeVisible();
@@ -101,6 +103,7 @@ test.describe("production regression", () => {
       await expect(readonly.getByText("보기 전용")).toBeVisible();
       await expect(readonly.getByRole("heading", { name: tripName })).toBeVisible();
       await expect(readonly.getByText(tripMemo)).toHaveCount(0);
+      await readonly.getByRole("link", { name: /준비 체크리스트/ }).first().click();
       await expect(readonly.getByText(marker)).toBeVisible();
       await expect(readonly.getByRole("button", { name: "항목 추가" })).toHaveCount(0);
 

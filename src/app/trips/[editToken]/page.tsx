@@ -6,9 +6,9 @@ import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
-import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
+import { getTripWorkspaceView, TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
@@ -34,6 +34,7 @@ export default async function TripEditPage({
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
   const sharePermission = (Array.isArray(query.sharePermission) ? query.sharePermission[0] : query.sharePermission) === "edit" ? "edit" : "read";
+  const activeView = getTripWorkspaceView(query.view);
   const trip = await getTripByEditTokenHash(hashToken(editToken));
   if (!trip) notFound();
   const shareLinks = await listTripShareLinks(trip.id);
@@ -101,8 +102,7 @@ export default async function TripEditPage({
               </div>
             </CardContent>
           </Card>
-          <ProgressSummary tasks={trip.tasks} />
-          {!trip.userId ? (
+          {activeView === "overview" && !trip.userId ? (
           <Card>
             <CardHeader>
               <CardTitle>이 트립을 잃어버리지 마세요</CardTitle>
@@ -121,12 +121,22 @@ export default async function TripEditPage({
                 </>
             </CardContent>
           </Card>
-          ) : <div className="flex items-center gap-2 rounded-xl bg-primary/10 p-3 text-sm font-semibold text-primary"><CheckCircle2 className="h-4 w-4" /> 내 트립에 저장되어 있어요.</div>}
-          <TaskList tasks={trip.tasks} editToken={editToken} />
-          <TripBudgetWorkspace trip={trip} editToken={editToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} />
+          ) : activeView === "overview" ? <div className="flex items-center gap-2 rounded-xl bg-primary/10 p-3 text-sm font-semibold text-primary"><CheckCircle2 className="h-4 w-4" /> 내 트립에 저장되어 있어요.</div> : null}
+          <div className="grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
+            <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks} />
+            <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
+              {activeView === "overview" ? <div className="space-y-4"><ProgressSummary tasks={trip.tasks} /><WorkspaceIntro /></div> : null}
+              {activeView === "checklist" ? <TaskList tasks={trip.tasks} editToken={editToken} /> : null}
+              {activeView === "budget" ? <TripBudgetWorkspace trip={trip} editToken={editToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : null}
+            </section>
+          </div>
       </div>
     </main>
   );
+}
+
+function WorkspaceIntro() {
+  return <Card><CardHeader><CardTitle>여행 준비 현황</CardTitle></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">체크리스트와 비용을 각각의 메뉴에서 관리할 수 있어요. 준비할 일과 실제 비용을 한 단계씩 확정해 보세요.</p></CardContent></Card>;
 }
 
 function Info({ label, value }: { label: string; value: string }) {

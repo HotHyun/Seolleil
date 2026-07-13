@@ -9,6 +9,7 @@ import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripCompanions } from "@/components/trip/trip-companions";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
+import { getTripWorkspaceView, TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
@@ -39,6 +40,7 @@ export default async function MyTripDetailPage({
   const query = await searchParams;
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
   const sharePermission = (Array.isArray(query.sharePermission) ? query.sharePermission[0] : query.sharePermission) === "edit" ? "edit" : "read";
+  const activeView = getTripWorkspaceView(query.view);
   const trip = await getTripById(tripId);
 
   if (!trip) notFound();
@@ -106,12 +108,21 @@ export default async function MyTripDetailPage({
               </div>
             </CardContent>
           </Card>
-          <ProgressSummary tasks={trip.tasks} />
-          {canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} /> : null}
-          {canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />}
+          <div className="grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
+            <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks} />
+            <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
+              {activeView === "overview" ? <div className="space-y-4"><ProgressSummary tasks={trip.tasks} /><WorkspaceIntro title="여행 준비 현황" description="체크리스트와 비용을 각각의 메뉴에서 관리할 수 있어요. 먼저 확인이 필요한 준비부터 정리해 보세요." /></div> : null}
+              {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
+              {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
+            </section>
+          </div>
       </div>
     </main>
   );
+}
+
+function WorkspaceIntro({ title, description }: { title: string; description: string }) {
+  return <Card><CardHeader><CardTitle>{title}</CardTitle></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">{description}</p></CardContent></Card>;
 }
 
 function Info({ label, value }: { label: string; value: string }) {

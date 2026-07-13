@@ -8,7 +8,7 @@ The product connects an anticipatory ski-travel landing experience to a practica
 
 ## Core Principles
 
-- Use one top header. Do not use a persistent sidebar for the MVP.
+- Use one top header. Do not use a persistent app-wide sidebar. A trip detail may use a local workspace sidebar to separate overview, checklist, and budget.
 - Light mode and dark mode must both be supported.
 - Theme switching is controlled by the top-header toggle and persisted in `localStorage`.
 - Keep the original product flow: home, plan form, recommendations, trip detail, share page.
@@ -116,7 +116,9 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 
 ### Trip Detail
 
-- Keep checklist and progress visible.
+- Separate overview, checklist, and cost/settlement into local workspace views.
+- On desktop use a sticky local sidebar; on mobile use horizontally scrollable top tabs with at least 44px touch targets.
+- Keep the current trip identity card visible while switching workspace views.
 - Edit link warning should remain clear.
 - Logged-in trip detail should say the trip is saved to "내 트립".
 

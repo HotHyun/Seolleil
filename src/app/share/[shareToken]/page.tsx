@@ -6,6 +6,7 @@ import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
+import { getTripWorkspaceView, TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
 import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
@@ -19,8 +20,10 @@ export const metadata: Metadata = {
   }
 };
 
-export default async function SharePage({ params }: { params: Promise<{ shareToken: string }> }) {
+export default async function SharePage({ params, searchParams }: { params: Promise<{ shareToken: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { shareToken } = await params;
+  const query = await searchParams;
+  const activeView = getTripWorkspaceView(query.view);
   const tokenHash = hashToken(shareToken);
   const [trip, link] = await Promise.all([getTripByShareTokenHash(tokenHash), getShareLinkByTokenHash(tokenHash)]);
   if (!trip) notFound();
@@ -36,21 +39,26 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
         <h1 className="mt-3 text-3xl font-black md:text-5xl">{getTripDisplayName(trip)}</h1>
         <p className="mt-2 font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
       </div>
-      <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
-        <aside className="space-y-5">
-          <Card>
-            <CardHeader>
-              <CardTitle>일정</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <ShareInfo icon={<CalendarDays />} label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
-              <ShareInfo icon={<Users />} label="인원" value={`${trip.peopleCount}명`} />
-              <ShareInfo icon={<MapPin />} label="교통" value={trip.transportType} />
-            </CardContent>
-          </Card>
-          <ProgressSummary tasks={trip.tasks} />
-        </aside>
-        <div className="space-y-5">{link?.permission === "edit" ? <><TaskList tasks={trip.tasks} shareToken={shareToken} /><TripBudgetWorkspace trip={trip} shareToken={shareToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /></> : <><Card>
+      <div className="grid min-w-0 gap-5 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
+        <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks} />
+        <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
+          {activeView === "overview" ? (
+            <div className="grid gap-5 lg:grid-cols-[320px_1fr]">
+              <aside className="space-y-5">
+                <Card>
+                  <CardHeader><CardTitle>일정</CardTitle></CardHeader>
+                  <CardContent className="space-y-3 text-sm">
+                    <ShareInfo icon={<CalendarDays />} label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
+                    <ShareInfo icon={<Users />} label="인원" value={`${trip.peopleCount}명`} />
+                    <ShareInfo icon={<MapPin />} label="교통" value={trip.transportType} />
+                  </CardContent>
+                </Card>
+                <ProgressSummary tasks={trip.tasks} />
+              </aside>
+              <Card><CardHeader><CardTitle>함께 준비하는 트립</CardTitle></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">준비 상태와 비용은 왼쪽 메뉴에서 나누어 확인할 수 있어요.</p></CardContent></Card>
+            </div>
+          ) : null}
+          {activeView === "checklist" ? (link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} /> : <Card>
           <CardHeader>
             <CardTitle>예약·준비 상태</CardTitle>
           </CardHeader>
@@ -66,7 +74,9 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
               ))}
             </div>
           </CardContent>
-        </Card><TripCostDisclosure trip={trip} /></>}</div>
+          </Card>) : null}
+          {activeView === "budget" ? (link?.permission === "edit" ? <TripBudgetWorkspace trip={trip} shareToken={shareToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
+        </section>
       </div>
     </main>
   );

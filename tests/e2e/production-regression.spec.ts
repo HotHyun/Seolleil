@@ -30,7 +30,7 @@ test.describe("production regression", () => {
 
     let editUrl: string | undefined;
     try {
-      await page.goto(planQuery);
+      await page.goto(planQuery, { waitUntil: "networkidle" });
       await page.getByRole("button", { name: /이 스키장으로 트립 만들기/ }).first().click();
       await page.getByRole("button", { name: "링크 저장하고 비로그인으로 계속" }).click();
       await expect(page).toHaveURL(/\/trips\/[^?]+/);

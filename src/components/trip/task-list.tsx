@@ -93,15 +93,18 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
         )}
       </section>
       {Object.entries(groups).map(([label, group]) => (
-        <section key={label} className="glass-panel rounded-xl">
-          <div className="flex items-center justify-between border-b px-4 py-3">
+        <details key={label} className="group glass-panel rounded-xl">
+          <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
             <div className="font-black">{label}</div>
-            <div className="text-xs font-semibold text-muted-foreground">
-              {group.filter((task) => task.status !== "not_needed" && isTaskComplete(task.category, task.status)).length}/
-              {group.filter((task) => task.status !== "not_needed").length}
+            <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
+              <span>
+                {group.filter((task) => task.status !== "not_needed" && isTaskComplete(task.category, task.status)).length}/
+                {group.filter((task) => task.status !== "not_needed").length}
+              </span>
+              <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
             </div>
-          </div>
-          <div className="divide-y">
+          </summary>
+          <div className="divide-y border-t">
             {group.map((task) => (
               <div key={task.id} className="p-3 sm:p-4">
                 <div className="flex items-center gap-3">
@@ -130,7 +133,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
               </div>
             ))}
           </div>
-        </section>
+        </details>
       ))}
       <form action={addTaskAction} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_auto]">
         <AccessFields editToken={editToken} tripId={tripId} />

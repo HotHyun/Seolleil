@@ -51,11 +51,6 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
                 <div key={task.id} className="flex items-center justify-between gap-3 py-3">
                   <div>
                     <div className="font-semibold">{task.title}</div>
-                    {task.dueDate ? (
-                      <div className="text-xs text-muted-foreground">
-                        마감: {new Intl.DateTimeFormat("ko-KR").format(task.dueDate)}
-                      </div>
-                    ) : null}
                   </div>
                   <StatusBadge>{statusLabel(task.status)}</StatusBadge>
                 </div>

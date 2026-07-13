@@ -65,13 +65,6 @@ function task(
   return { category, title, status, dueOffsetDays, sortOrder };
 }
 
-export function dueDateFromVisit(visitDate: string, offsetDays?: number) {
-  if (typeof offsetDays !== "number") return undefined;
-  const date = new Date(`${visitDate}T00:00:00`);
-  date.setDate(date.getDate() + offsetDays);
-  return date;
-}
-
 export function isTaskComplete(category: string, status: string) {
   if (status === "not_needed") return false;
   if (["lift_ticket", "equipment_rental", "clothing_rental", "transport", "lodging"].includes(category)) {

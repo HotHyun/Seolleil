@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import localFont from "next/font/local";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { AuthNav } from "@/components/auth/auth-nav";
+import { Toaster, ToastFromUrl } from "@/components/ui/sonner";
 import { getSession } from "@/lib/session";
 import "@/app/globals.css";
 
@@ -67,6 +69,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </header>
         {children}
+        <Suspense><ToastFromUrl /></Suspense>
+        <Toaster />
       </body>
     </html>
   );

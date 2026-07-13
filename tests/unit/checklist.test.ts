@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildDefaultTasks, dueDateFromVisit, externalUrlForTask, isTaskComplete } from "@/lib/checklist";
+import { buildDefaultTasks, externalUrlForTask, isTaskComplete } from "@/lib/checklist";
 import { tripInput } from "../fixtures/trip-input";
 
 describe("checklist", () => {
@@ -25,10 +25,6 @@ describe("checklist", () => {
 
     expect(tasks.find((task) => task.title === "셔틀/버스 예약")?.status).toBe("planned");
     expect(tasks.find((task) => task.title === "자차 경로/주차 확인")?.status).toBe("not_needed");
-  });
-
-  it("calculates due dates from visit date offsets", () => {
-    expect(dueDateFromVisit("2027-01-10", -3)?.toISOString().slice(0, 10)).toBe("2027-01-07");
   });
 
   it("uses category-specific completion rules", () => {

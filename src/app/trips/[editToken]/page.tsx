@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { CheckCircle2, Copy, ExternalLink, ShieldAlert, Trash2 } from "lucide-react";
-import { attachTripToAccountAction, deleteTripAction, regenerateShareLinkAction } from "@/app/actions";
+import { CheckCircle2, ExternalLink, ShieldAlert } from "lucide-react";
 import { signInWithGoogleAction } from "@/app/auth-actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
-import { ShareLinkBox } from "@/components/share-link-box";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
-import { TripEditForm } from "@/components/trip/trip-edit-form";
-import { TripCostAndBooking } from "@/components/trip/trip-overview";
+import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
+import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
@@ -40,26 +38,27 @@ export default async function TripEditPage({
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
-    <main className="page-shell py-8">
-      <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-amber-950">
+    <main className="page-shell py-4 sm:py-8">
+      <div className="mx-auto max-w-5xl space-y-4">
+      <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-950 sm:p-4">
         <div className="flex gap-3">
           <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
             <div className="font-black">이 편집 링크를 가진 사람은 트립을 수정할 수 있습니다.</div>
-              <p className="mt-1 text-sm">공유할 때는 읽기 전용 공유 링크를 사용하세요. 생성 직후에만 공유 토큰이 표시됩니다.</p>
+              <p className="mt-1 text-sm">이 링크는 나만 보관하고, 동행자에게는 관리 메뉴의 읽기 전용 공유 링크를 보내세요.</p>
           </div>
         </div>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
-        <section className="space-y-5">
           <Card>
             <CardHeader>
-              <div className="flex flex-wrap items-center gap-2">
-                <StatusBadge tone="good">{trip.season}</StatusBadge>
-                <StatusBadge>{trip.status}</StatusBadge>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
+                  <CardTitle className="mt-3 truncate text-2xl font-black sm:text-3xl">{trip.resortNameSnapshot} 트립</CardTitle>
+                </div>
+                <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} />
               </div>
-              <CardTitle className="text-3xl font-black">{trip.resortNameSnapshot} 트립</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 md:grid-cols-3">
@@ -95,33 +94,13 @@ export default async function TripEditPage({
               </div>
             </CardContent>
           </Card>
-
-          <TripCostAndBooking trip={trip} />
-
-          <TaskList tasks={trip.tasks} editToken={editToken} />
-        </section>
-
-        <aside className="space-y-5">
           <ProgressSummary tasks={trip.tasks} />
+          {!trip.userId ? (
           <Card>
             <CardHeader>
-              <CardTitle>트립 수정</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TripEditForm trip={trip} editToken={editToken} />
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>내 트립</CardTitle>
+              <CardTitle>이 트립을 잃어버리지 마세요</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {trip.userId ? (
-                <div className="flex items-start gap-2 rounded-md bg-primary/10 p-3 text-sm text-primary">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
-                  <span>이 트립은 내 트립 목록에 저장되어 있습니다.</span>
-                </div>
-              ) : (
                 <>
                   <p className="text-sm text-muted-foreground">
                     로그인하면 이 링크를 따로 저장하지 않아도 내 트립 목록에서 다시 열 수 있습니다.
@@ -133,43 +112,11 @@ export default async function TripEditPage({
                     </Button>
                   </form>
                 </>
-              )}
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>공유</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {shareUrl ? (
-                <ShareLinkBox sharePath={shareUrl} />
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  보안상 원문 공유 토큰은 DB에 저장하지 않습니다. 필요하면 새 읽기 전용 공유 링크를 재발급하세요.
-                </p>
-              )}
-              <form action={regenerateShareLinkAction}>
-                <input type="hidden" name="editToken" value={editToken} />
-                <Button variant="secondary" className="w-full" type="submit">
-                  <Copy className="h-4 w-4" /> 읽기 링크 재발급
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>삭제</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form action={deleteTripAction}>
-                <input type="hidden" name="editToken" value={editToken} />
-                <Button variant="danger" className="w-full" type="submit">
-                  <Trash2 className="h-4 w-4" /> 트립 삭제
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </aside>
+          ) : <div className="flex items-center gap-2 rounded-xl bg-primary/10 p-3 text-sm font-semibold text-primary"><CheckCircle2 className="h-4 w-4" /> 내 트립에 저장되어 있어요.</div>}
+          <TaskList tasks={trip.tasks} editToken={editToken} />
+          <TripCostDisclosure trip={trip} />
       </div>
     </main>
   );

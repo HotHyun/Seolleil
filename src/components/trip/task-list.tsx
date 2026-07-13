@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, CalendarClock, ExternalLink, Plus, Trash2 } from "lucide-react";
+import { AlertCircle, ChevronDown, ExternalLink, Plus, Trash2 } from "lucide-react";
 import {
   addTaskAction,
   deleteTaskAction,
@@ -22,7 +22,6 @@ type Task = {
   title: string;
   status: string;
   memo: string | null;
-  dueDate: Date | null;
   externalUrl: string | null;
   isDefault: boolean;
 };
@@ -50,7 +49,6 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
   const completedTasks = activeTasks.filter((task) => isTaskComplete(task.category, task.status));
   const needsAttention = activeTasks
     .filter((task) => !isTaskComplete(task.category, task.status))
-    .sort((a, b) => dueTime(a) - dueTime(b))
     .slice(0, 3);
 
   return (
@@ -58,7 +56,7 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
       <section className="glass-panel rounded-xl p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <div className="text-sm font-semibold text-muted-foreground">오늘 확인할 것</div>
+            <div className="text-sm font-semibold text-muted-foreground">이번 트립 준비</div>
             <div className="mt-1 text-2xl font-black">
               {completedTasks.length}/{activeTasks.length} 완료
             </div>
@@ -86,12 +84,6 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
                       </a>
                     ) : null}
                   </div>
-                  {task.dueDate ? (
-                    <div className="mt-0.5 inline-flex items-center gap-1 text-xs text-muted-foreground">
-                      <CalendarClock className="h-3 w-3" />
-                      {new Intl.DateTimeFormat("ko-KR").format(new Date(task.dueDate))}
-                    </div>
-                  ) : null}
                 </div>
               </div>
             ))}
@@ -111,58 +103,44 @@ export function TaskList({ tasks, editToken, tripId }: { tasks: Task[]; editToke
           </div>
           <div className="divide-y">
             {group.map((task) => (
-              <div key={task.id} className="grid gap-3 p-4 xl:grid-cols-[minmax(150px,1fr)_150px_minmax(0,2fr)_auto] xl:items-center">
-                <div>
-                  <div className="font-semibold">{task.title}</div>
-                  {task.dueDate ? (
-                    <div className="mt-1 text-xs text-muted-foreground">
-                      마감: {new Intl.DateTimeFormat("ko-KR").format(new Date(task.dueDate))}
-                    </div>
-                  ) : null}
-                </div>
+              <div key={task.id} className="p-3 sm:p-4">
+                <div className="flex items-center gap-3">
+                  <div className="min-w-0 flex-1 truncate font-semibold">{task.title}</div>
                 <form action={updateTaskStatusAction} onSubmit={() => window.umami?.track("checklist_status_change")}>
                   <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
                   <StatusSelect name="status" defaultValue={task.status} />
                 </form>
-                <form action={updateTaskDetailsAction} onSubmit={() => window.umami?.track("checklist_details_update")} className="grid gap-2 sm:grid-cols-[1fr_1fr_150px_auto]">
+                </div>
+                <details className="group mt-2">
+                  <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                    {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+                  </summary>
+                  <form action={updateTaskDetailsAction} onSubmit={() => window.umami?.track("checklist_details_update")} className="mt-2 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
                   <AccessFields editToken={editToken} tripId={tripId} />
                   <input type="hidden" name="taskId" value={task.id} />
                   {!task.isDefault ? <Input name="title" defaultValue={task.title} aria-label="체크 항목 이름" /> : <input type="hidden" name="title" value={task.title} />}
                   <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모…" aria-label={`${task.title} 메모`} />
-                  <Input name="dueDate" type="date" defaultValue={task.dueDate ? new Date(task.dueDate).toISOString().slice(0, 10) : ""} aria-label={`${task.title} 마감일`} />
                   <Button variant="secondary" className="h-11 shrink-0" type="submit">
                     항목 저장
                   </Button>
-                </form>
-                {!task.isDefault ? (
-                  <form action={deleteTaskAction}>
-                    <AccessFields editToken={editToken} tripId={tripId} />
-                    <input type="hidden" name="taskId" value={task.id} />
-                    <Button variant="ghost" type="submit" aria-label="삭제">
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
                   </form>
-                ) : null}
+                  {!task.isDefault ? <form action={deleteTaskAction} className="mt-2"><AccessFields editToken={editToken} tripId={tripId} /><input type="hidden" name="taskId" value={task.id} /><Button variant="ghost" type="submit" className="text-destructive"><Trash2 className="h-4 w-4" /> 항목 삭제</Button></form> : null}
+                </details>
               </div>
             ))}
           </div>
         </section>
       ))}
-      <form action={addTaskAction} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_170px_auto]">
+      <form action={addTaskAction} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_auto]">
         <AccessFields editToken={editToken} tripId={tripId} />
         <Input name="title" placeholder="직접 체크 항목 추가…" aria-label="새 체크 항목 이름" />
-        <Input name="dueDate" type="date" aria-label="새 체크 항목 마감일" />
         <Button type="submit" className="shrink-0">
           <Plus className="h-4 w-4" /> 항목 추가
         </Button>
       </form>
     </div>
   );
-}
-
-function dueTime(task: Task) {
-  return task.dueDate ? new Date(task.dueDate).getTime() : Number.MAX_SAFE_INTEGER;
 }
 
 function AccessFields({ editToken, tripId }: { editToken?: string; tripId?: string }) {

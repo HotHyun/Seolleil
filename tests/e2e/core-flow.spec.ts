@@ -23,7 +23,9 @@ test.describe("core trip flow", () => {
     await expect(page).toHaveURL(/\/trips\/[^?]+\?created=.*share=/);
     await expect(page.getByText("이 편집 링크를 가진 사람은 트립을 수정할 수 있습니다.")).toBeVisible();
     await expect(page.getByRole("heading", { name: /트립$/ }).first()).toBeVisible();
-    await expect(page.getByText("리프트권 확인").first()).toBeVisible();
+    await expect(page.getByText("트립을 만들었어요.")).toBeVisible();
+    await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
+    await page.getByRole("menuitem", { name: "공유 관리" }).click();
     await expect(page.getByRole("button", { name: "읽기 링크 복사" })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 

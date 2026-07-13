@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { buildDefaultTasks, dueDateFromVisit, externalUrlForTask } from "@/lib/checklist";
+import { buildDefaultTasks, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
 import { estimateTripCost } from "@/lib/pricing";
@@ -48,6 +48,14 @@ function revalidateTripAccess(formData: FormData) {
   const tripId = String(formData.get("tripId") ?? "");
   if (editToken) revalidatePath(`/trips/${editToken}`);
   if (tripId) revalidatePath(`/my-trips/${tripId}`);
+}
+
+function redirectToTripWithNotice(formData: FormData, notice: string) {
+  const editToken = String(formData.get("editToken") ?? "");
+  const tripId = String(formData.get("tripId") ?? "");
+  const path = editToken ? `/trips/${editToken}` : `/my-trips/${tripId}`;
+  revalidateTripAccess(formData);
+  redirect(`${path}?notice=${encodeURIComponent(notice)}`);
 }
 
 export async function createTripAction(formData: FormData) {
@@ -120,7 +128,7 @@ export async function createTripAction(formData: FormData) {
             category: task.category,
             title: task.title
           }) ?? null,
-          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays) ?? null
+          dueDate: null
         }))
   });
   await recordAnalyticsEvent({
@@ -133,7 +141,7 @@ export async function createTripAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}`);
+  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}&notice=${encodeURIComponent("트립을 만들었어요.")}`);
 }
 
 export async function createDirectTripAction(formData: FormData) {
@@ -206,7 +214,7 @@ export async function createDirectTripAction(formData: FormData) {
             category: task.category,
             title: task.title
           }) ?? null,
-          dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays) ?? null
+          dueDate: null
         }))
   });
   await recordAnalyticsEvent({
@@ -221,7 +229,7 @@ export async function createDirectTripAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}`);
+  redirect(`/trips/${editToken}?created=${trip.id}&share=${shareToken}&notice=${encodeURIComponent("트립을 만들었어요.")}`);
 }
 
 export async function updateTripDetailsAction(formData: FormData) {
@@ -294,12 +302,11 @@ export async function updateTripDetailsAction(formData: FormData) {
         selectedRentalOptionId,
         category: task.category,
         title: task.title
-      }),
-      dueDate: dueDateFromVisit(input.visitDate, task.dueOffsetDays)
+      })
     }))
   );
 
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "트립 정보를 저장했어요.");
 }
 
 export async function updateTripStatusAction(formData: FormData) {
@@ -310,7 +317,7 @@ export async function updateTripStatusAction(formData: FormData) {
   }
   await updateTrip(trip.id, { status: status as never });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_status_changed", properties: { status } });
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "트립 상태를 변경했어요.");
 }
 
 export async function attachTripToAccountAction(formData: FormData) {
@@ -335,6 +342,7 @@ export async function attachTripToAccountAction(formData: FormData) {
 
   revalidatePath(`/trips/${editToken}`);
   revalidatePath("/my-trips");
+  redirect(`/trips/${editToken}?notice=${encodeURIComponent("내 트립에 저장했어요.")}`);
 }
 
 export async function updateTaskStatusAction(formData: FormData) {
@@ -353,7 +361,7 @@ export async function updateTaskStatusAction(formData: FormData) {
   await updateTask(taskId, { status: status as never });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_status_changed", properties: { taskId, status } });
 
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "체크 상태를 변경했어요.");
 }
 
 export async function updateTaskMemoAction(formData: FormData) {
@@ -368,14 +376,13 @@ export async function updateTaskMemoAction(formData: FormData) {
   const task = trip.tasks.find((item) => item.id === taskId);
   if (!task) throw new Error("체크리스트 항목을 찾을 수 없습니다.");
   await updateTask(taskId, { memo });
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "메모를 저장했어요.");
 }
 
 export async function updateTaskDetailsAction(formData: FormData) {
   const taskId = String(formData.get("taskId") ?? "");
   const title = String(formData.get("title") ?? "").trim();
   const memo = String(formData.get("memo") ?? "").trim();
-  const dueDateValue = String(formData.get("dueDate") ?? "");
   const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
@@ -385,11 +392,10 @@ export async function updateTaskDetailsAction(formData: FormData) {
   if (!task.isDefault && !title) throw new Error("체크 항목 이름을 입력해 주세요.");
   await updateTask(task.id, {
     title: task.isDefault ? task.title : title,
-    memo,
-    dueDate: dueDateValue ? new Date(`${dueDateValue}T00:00:00`) : null
+    memo
   });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_details_updated", properties: { custom: !task.isDefault } });
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "체크 항목을 저장했어요.");
 }
 
 export async function addTaskAction(formData: FormData) {
@@ -404,7 +410,6 @@ export async function addTaskAction(formData: FormData) {
   }
 
   const maxSortOrder = Math.max(...trip.tasks.map((task) => task.sortOrder), 999);
-  const dueDateValue = String(formData.get("dueDate") ?? "");
   await createTask({
       tripId: trip.id,
       title,
@@ -412,10 +417,10 @@ export async function addTaskAction(formData: FormData) {
       isDefault: false,
       status: "needs_check",
       sortOrder: maxSortOrder + 10,
-      dueDate: dueDateValue ? new Date(`${dueDateValue}T00:00:00`) : null
+      dueDate: null
   });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_added" });
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "체크 항목을 추가했어요.");
 }
 
 export async function deleteTaskAction(formData: FormData) {
@@ -430,7 +435,7 @@ export async function deleteTaskAction(formData: FormData) {
     await deleteTask(task.id);
     await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_deleted" });
   }
-  revalidateTripAccess(formData);
+  redirectToTripWithNotice(formData, "체크 항목을 삭제했어요.");
 }
 
 export async function duplicateTripAction(formData: FormData) {
@@ -476,12 +481,12 @@ export async function duplicateTripAction(formData: FormData) {
       memo: task.memo,
       isDefault: task.isDefault,
       sortOrder: task.sortOrder,
-      dueDate: task.dueDate,
+      dueDate: null,
       externalUrl: task.externalUrl
     }))
   });
   await recordAnalyticsEvent({ tripId: duplicate.id, eventName: "trip_duplicated", properties: { sourceTripId: source.id } });
-  redirect(`/my-trips/${duplicate.id}?share=${shareToken}`);
+  redirect(`/my-trips/${duplicate.id}?share=${shareToken}&notice=${encodeURIComponent("트립을 복제했어요.")}`);
 }
 
 export async function deleteTripAction(formData: FormData) {
@@ -492,7 +497,7 @@ export async function deleteTripAction(formData: FormData) {
   if (!trip) throw new Error("트립을 찾을 수 없습니다.");
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_deleted" });
   await deleteTrip(trip.id);
-  redirect(editToken ? "/" : "/my-trips");
+  redirect(`${editToken ? "/" : "/my-trips"}?notice=${encodeURIComponent("트립을 삭제했어요.")}`);
 }
 
 export async function regenerateShareLinkAction(formData: FormData) {
@@ -507,7 +512,7 @@ export async function regenerateShareLinkAction(formData: FormData) {
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_regenerated" });
 
   const tripId = String(formData.get("tripId") ?? "");
-  redirect(editToken ? `/trips/${editToken}?share=${shareToken}` : `/my-trips/${tripId}?share=${shareToken}`);
+  redirect(editToken ? `/trips/${editToken}?share=${shareToken}&notice=${encodeURIComponent("새 공유 링크를 만들었어요.")}` : `/my-trips/${tripId}?share=${shareToken}&notice=${encodeURIComponent("새 공유 링크를 만들었어요.")}`);
 }
 
 export async function recordExternalLinkClickAction(formData: FormData) {

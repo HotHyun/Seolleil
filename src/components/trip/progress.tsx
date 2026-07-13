@@ -11,17 +11,17 @@ export function ProgressSummary({ tasks }: { tasks: Task[] }) {
   const percent = relevant.length ? Math.round((completed.length / relevant.length) * 100) : 0;
 
   return (
-    <div className="glass-panel rounded-xl p-5 text-white">
-      <div className="flex items-end justify-between">
-        <div>
-          <div className="text-sm font-semibold text-zinc-300">준비 진행률</div>
-          <div className="mt-1 text-4xl font-black text-primary">{percent}%</div>
+    <div className="glass-panel rounded-xl p-4 text-foreground">
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-baseline gap-2">
+          <div className="text-sm font-semibold text-muted-foreground">준비 진행률</div>
+          <div className="text-2xl font-black text-primary">{percent}%</div>
         </div>
-        <div className="text-right text-sm text-zinc-300">
+        <div className="text-right text-sm font-semibold text-muted-foreground">
           {completed.length}/{relevant.length} 완료
         </div>
       </div>
-      <div className="mt-4 h-2 rounded-full bg-zinc-800">
+      <div className="mt-3 h-2 rounded-full bg-muted">
         <div className="h-2 rounded-full bg-primary" style={{ width: `${percent}%` }} />
       </div>
     </div>

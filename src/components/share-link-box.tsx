@@ -1,6 +1,7 @@
 "use client";
 
 import { Copy } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 export function ShareLinkBox({ sharePath }: { sharePath?: string }) {
@@ -19,10 +20,15 @@ export function ShareLinkBox({ sharePath }: { sharePath?: string }) {
         className="w-full"
         type="button"
         disabled={!shareUrl}
-        onClick={() => {
+        onClick={async () => {
           if (!shareUrl) return;
-          navigator.clipboard?.writeText(shareUrl);
-          window.umami?.track("share_link_copy");
+          try {
+            await navigator.clipboard.writeText(shareUrl);
+            window.umami?.track("share_link_copy");
+            toast.success("공유 링크를 복사했어요.");
+          } catch {
+            toast.error("링크를 복사하지 못했어요. 다시 시도해 주세요.");
+          }
         }}
       >
         <Copy className="h-4 w-4" /> 읽기 링크 복사

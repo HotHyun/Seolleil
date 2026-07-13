@@ -338,7 +338,7 @@ function serializePartialTrip(data: Partial<Omit<TripRecord, "id" | "createdAt" 
 
 export async function updateDefaultTasksForTrip(
   tripId: string,
-  tasks: Array<{ category: string; title: string; externalUrl?: string; dueDate?: Date }>
+  tasks: Array<{ category: string; title: string; externalUrl?: string }>
 ) {
   const existing = await getTripTasks(tripId);
   await Promise.all(
@@ -347,7 +347,7 @@ export async function updateDefaultTasksForTrip(
       if (!match) return Promise.resolve();
       return updateTask(match.id, {
         externalUrl: task.externalUrl ?? null,
-        dueDate: task.dueDate ?? null
+        dueDate: null
       });
     })
   );

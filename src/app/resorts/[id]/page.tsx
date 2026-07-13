@@ -74,17 +74,6 @@ export default async function ResortDetailPage({ params }: PageProps) {
 
           <Card>
             <CardHeader>
-              <CardTitle>방문 전 확인</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3 md:grid-cols-3">
-              <Score label="초보" value={resort.beginnerScore} />
-              <Score label="접근" value={resort.accessScore} />
-              <Score label="렌탈" value={resort.rentalConvenienceScore} />
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
               <CardTitle>리프트권 가격 출처</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -183,28 +172,9 @@ export default async function ResortDetailPage({ params }: PageProps) {
               <ExternalButton href={resort.mapLinks.naver} label="네이버 지도" type="naver_map" resortId={resort.id} icon={<MapPinned className="h-4 w-4" />} />
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>초보자 메모</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm text-muted-foreground">
-              <p>방문 전 공식 운영현황과 렌탈 예약 가능 여부를 먼저 확인하세요.</p>
-              <p>처음 방문이면 리프트권, 장비 렌탈, 의류 렌탈, 장갑, 고글, 보호대를 분리해서 체크하는 편이 안전합니다.</p>
-              <p>가격은 25/26 시즌 출처 기반이며, 26/27 시즌 오픈 후 재검증이 필요합니다.</p>
-            </CardContent>
-          </Card>
         </aside>
       </div>
     </main>
-  );
-}
-
-function Score({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-md bg-muted p-3">
-      <div className="text-xs font-semibold text-muted-foreground">{label}</div>
-      <div className="mt-1 text-2xl font-black">{value}</div>
-    </div>
   );
 }
 

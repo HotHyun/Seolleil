@@ -25,6 +25,8 @@ export type TripRecord = {
   editTokenHash: string;
   shareTokenHash: string;
   teamId: string | null;
+  tripName: string | null;
+  tripMemo: string | null;
   resortId: string;
   resortNameSnapshot: string;
   selectedRecommendation: unknown;
@@ -63,6 +65,8 @@ type TripDocument = {
   editTokenHash: string;
   shareTokenHash: string;
   teamId?: string | null;
+  tripName?: string | null;
+  tripMemo?: string | null;
   resortId: string;
   resortNameSnapshot: string;
   selectedRecommendation?: string | null;
@@ -160,6 +164,8 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     editTokenHash: document.editTokenHash,
     shareTokenHash: document.shareTokenHash,
     teamId: document.teamId ?? null,
+    tripName: document.tripName ?? null,
+    tripMemo: document.tripMemo ?? null,
     resortId: document.resortId,
     resortNameSnapshot: document.resortNameSnapshot,
     selectedRecommendation: decodeJson(document.selectedRecommendation),
@@ -238,6 +244,8 @@ function serializeTrip(input: Omit<TripRecord, "id" | "createdAt" | "updatedAt" 
     editTokenHash: input.editTokenHash,
     shareTokenHash: input.shareTokenHash,
     teamId: input.teamId,
+    tripName: input.tripName,
+    tripMemo: input.tripMemo,
     resortId: input.resortId,
     resortNameSnapshot: input.resortNameSnapshot,
     selectedRecommendation: encodeJson(input.selectedRecommendation),
@@ -263,6 +271,10 @@ function serializeTrip(input: Omit<TripRecord, "id" | "createdAt" | "updatedAt" 
     archivedAt: toIsoDate(input.archivedAt),
     expiresAt: toIsoDate(input.expiresAt)
   };
+}
+
+export function getTripDisplayName(trip: Pick<TripRecord, "tripName" | "resortNameSnapshot">) {
+  return trip.tripName?.trim() || `${trip.resortNameSnapshot} 트립`;
 }
 
 function serializeTask(input: Omit<TripTaskRecord, "id" | "createdAt" | "updatedAt">): TaskDocument {

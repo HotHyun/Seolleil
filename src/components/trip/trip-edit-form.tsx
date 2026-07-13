@@ -3,16 +3,18 @@
 import { useRouter } from "next/navigation";
 import { updateTripDetailsSafeAction, updateTripStatusSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
-import { Button } from "@/components/ui/button";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { Field, Input } from "@/components/ui/field";
+import { Field, Input, Textarea } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { formatCurrency } from "@/lib/utils";
 
 type TripEditFormData = {
   id: string;
+  tripName: string | null;
+  tripMemo: string | null;
   resortId: string;
+  resortNameSnapshot: string;
   visitDate: Date;
   peopleCount: number;
   transportType: string;
@@ -41,6 +43,12 @@ export function TripEditForm({
     <div className="grid gap-4">
       <form action={async data => { const result = await updateTripDetailsSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); }} className="space-y-4">
         {accessField}
+        <Field label="트립 이름">
+          <Input name="tripName" maxLength={80} required defaultValue={trip.tripName?.trim() || `${trip.resortNameSnapshot} 트립`} placeholder="예: 대학 동기 새해 스키 여행" />
+        </Field>
+        <Field label="트립 메모">
+          <Textarea name="tripMemo" maxLength={1000} defaultValue={trip.tripMemo ?? ""} placeholder="누구와 어떤 여행을 가는지, 모임에서 기억할 내용을 적어두세요." />
+        </Field>
         <div className="grid gap-3 md:grid-cols-2">
           <Field label="방문 날짜">
             <Input name="visitDate" type="date" defaultValue={trip.visitDate.toISOString().slice(0, 10)} />

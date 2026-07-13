@@ -37,6 +37,18 @@ test.describe("production regression", () => {
       editUrl = page.url().split("?")[0];
       await expect(page.getByText("비공개 트립을 만들었어요.")).toBeVisible();
 
+      const tripName = `친구들과 스키 ${Date.now()}`;
+      const tripMemo = "토요일 아침에 모여 함께 출발";
+      await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
+      await page.getByRole("menuitem", { name: "트립 수정" }).click();
+      await page.getByRole("textbox", { name: "트립 이름" }).fill(tripName);
+      await page.getByRole("textbox", { name: "트립 메모" }).fill(tripMemo);
+      await page.getByRole("button", { name: "트립 정보 저장하고 비용 재계산" }).click();
+      await expect(page.getByText("트립 정보를 저장했어요.")).toBeVisible();
+      await page.getByRole("dialog", { name: "트립 수정" }).getByRole("button", { name: "닫기" }).click();
+      await expect(page.getByRole("heading", { name: tripName })).toBeVisible();
+      await expect(page.getByText(tripMemo)).toBeVisible();
+
       await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
       await page.getByRole("menuitem", { name: "공유 관리" }).click();
       await page.getByRole("button", { name: /새 링크/ }).click();
@@ -66,6 +78,8 @@ test.describe("production regression", () => {
       const readonly = await context.newPage();
       await readonly.goto(`/share/${readToken}`);
       await expect(readonly.getByText("보기 전용")).toBeVisible();
+      await expect(readonly.getByRole("heading", { name: tripName })).toBeVisible();
+      await expect(readonly.getByText(tripMemo)).toHaveCount(0);
       await expect(readonly.getByText(marker)).toBeVisible();
       await expect(readonly.getByRole("button", { name: "항목 추가" })).toHaveCount(0);
 

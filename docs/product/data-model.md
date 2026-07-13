@@ -21,7 +21,7 @@ trip 1 ── * analytics_event
 
 ## Trips
 
-트립은 리조트/시즌/방문일/인원/교통/장비 조건, 가격 계산 입력, 상태와 선택 결과 snapshot을 가진다. 익명 트립은 `userId=null`이고 `editTokenHash`로 관리한다. 계정 트립은 소유자 `userId`를 가진다. `teamId`는 첫 계정 초대 시 연결한다.
+트립은 사용자 지정 `tripName`, 팀 내부용 `tripMemo`, 리조트/시즌/방문일/인원/교통/장비 조건, 가격 계산 입력, 상태와 선택 결과 snapshot을 가진다. 기존 레코드처럼 이름이 없으면 `리조트명 트립`으로 표시한다. 익명 트립은 `userId=null`이고 `editTokenHash`로 관리한다. 계정 트립은 소유자 `userId`를 가진다. `teamId`는 첫 계정 초대 시 연결한다.
 
 ## Tasks
 

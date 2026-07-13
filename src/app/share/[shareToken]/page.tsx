@@ -6,7 +6,7 @@ import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
-import { getShareLinkByTokenHash, getTripByShareTokenHash, recordAnalyticsEvent } from "@/lib/trip-store";
+import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   robots: {
@@ -27,7 +27,8 @@ export default async function SharePage({ params }: { params: Promise<{ shareTok
     <main className="page-shell py-8">
       <div className="mb-6">
         <StatusBadge tone="good">{link?.permission === "edit" ? "함께 편집" : "보기 전용"}</StatusBadge>
-        <h1 className="mt-3 text-3xl font-black md:text-5xl">{trip.resortNameSnapshot} 트립</h1>
+        <h1 className="mt-3 text-3xl font-black md:text-5xl">{getTripDisplayName(trip)}</h1>
+        <p className="mt-2 font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
       </div>
       <div className="grid gap-5 lg:grid-cols-[360px_1fr]">
         <aside className="space-y-5">

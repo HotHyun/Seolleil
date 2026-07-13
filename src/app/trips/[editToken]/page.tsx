@@ -11,7 +11,7 @@ import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
-import { getTripByEditTokenHash, listTripShareLinks } from "@/lib/trip-store";
+import { getTripByEditTokenHash, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 import { hashToken } from "@/lib/tokens";
 
 export const metadata: Metadata = {
@@ -57,12 +57,14 @@ export default async function TripEditPage({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
-                  <CardTitle className="mt-3 truncate text-2xl font-black sm:text-3xl">{trip.resortNameSnapshot} 트립</CardTitle>
+                  <CardTitle className="mt-3 text-2xl font-black sm:text-3xl">{getTripDisplayName(trip)}</CardTitle>
+                  <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
                 <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} />
               </div>
             </CardHeader>
             <CardContent>
+              {trip.tripMemo ? <p className="mb-4 whitespace-pre-wrap rounded-xl bg-muted p-4 text-sm leading-6 text-muted-foreground">{trip.tripMemo}</p> : null}
               <div className="grid gap-3 md:grid-cols-3">
                 <Info label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
                 <Info label="인원" value={`${trip.peopleCount}명`} />

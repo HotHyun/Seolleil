@@ -6,13 +6,14 @@ import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
+import { TripCompanions } from "@/components/trip/trip-companions";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
 import { getSession, getSessionSecret } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
-import { getTripById, listTripShareLinks } from "@/lib/trip-store";
+import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -44,9 +45,10 @@ export default async function MyTripDetailPage({
   const collaborationPermission = !isOwner && trip.teamId && sessionSecret ? await getTripTeamPermission(sessionSecret, trip.teamId, session.user.id) : null;
   if (!isOwner && !collaborationPermission) notFound();
   const canEdit = isOwner || collaborationPermission === "edit";
-  const [shareLinks, members] = isOwner
-    ? await Promise.all([listTripShareLinks(trip.id), trip.teamId && sessionSecret ? listTripMemberships(sessionSecret, trip.teamId) : Promise.resolve([])])
-    : [[], []];
+  const [shareLinks, members] = await Promise.all([
+    isOwner ? listTripShareLinks(trip.id) : Promise.resolve([]),
+    trip.teamId && sessionSecret ? listTripMemberships(sessionSecret, trip.teamId) : Promise.resolve([])
+  ]);
 
   const resort = getResort(trip.resortId);
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
@@ -59,12 +61,15 @@ export default async function MyTripDetailPage({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
-                  <CardTitle className="mt-3 truncate text-2xl font-black sm:text-3xl">{trip.resortNameSnapshot} 트립</CardTitle>
+                  <CardTitle className="mt-3 text-2xl font-black sm:text-3xl">{getTripDisplayName(trip)}</CardTitle>
+                  <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
                 {isOwner ? <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} members={members} /> : <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge>}
               </div>
             </CardHeader>
             <CardContent>
+              {trip.tripMemo ? <p className="mb-4 whitespace-pre-wrap rounded-xl bg-muted p-4 text-sm leading-6 text-muted-foreground">{trip.tripMemo}</p> : null}
+              <div className="mb-4"><TripCompanions members={members} currentUserId={session.user.id} /></div>
               <div className="grid gap-3 md:grid-cols-3">
                 <Info label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
                 <Info label="인원" value={`${trip.peopleCount}명`} />

@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { CalendarDays, CheckCircle2, MapPin, Plus } from "lucide-react";
+import { CalendarDays, CheckCircle2, MapPin, Plus, Share2 } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
+import { TripCompanions } from "@/components/trip/trip-companions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSession, getSessionSecret } from "@/lib/session";
-import { listUserTeams } from "@/lib/trip-collaboration";
-import { getTripsByTeamIds, getTripsByUserId, type TripRecord } from "@/lib/trip-store";
+import { listTripMemberships, listUserTeams, type TripMembership } from "@/lib/trip-collaboration";
+import { getTripDisplayName, getTripsByTeamIds, getTripsByUserId, type TripRecord } from "@/lib/trip-store";
 
 export const metadata: Metadata = {
   title: "내 트립 | Korean Ski",
@@ -22,12 +23,26 @@ export default async function MyTripsPage() {
 
   const sessionSecret = await getSessionSecret();
   const [owned, teams] = await Promise.all([getTripsByUserId(session.user.id), sessionSecret ? listUserTeams(sessionSecret) : { teams: [] }]);
-  const shared = await getTripsByTeamIds(teams.teams.map(team => team.$id));
-  const trips = [...new Map([...owned, ...shared].map(trip => [trip.id, trip])).values()];
+  const teamIds = teams.teams.map(team => team.$id);
+  const teamTrips = await getTripsByTeamIds(teamIds);
+  const shared = teamTrips.filter(trip => trip.userId !== session.user.id);
+  const relevantTeamIds = [...new Set(teamTrips.flatMap(trip => trip.teamId ? [trip.teamId] : []))];
+  const memberships = sessionSecret
+    ? await Promise.all(relevantTeamIds.map(async teamId => [teamId, await listTripMemberships(sessionSecret, teamId)] as const))
+    : [];
+  const membersByTeam = new Map<string, TripMembership[]>(memberships);
+  const itemsFor = (trips: TripRecord[], sharedWithMe: boolean): TripDashboardItem[] => trips.map(trip => {
+    const members = trip.teamId ? membersByTeam.get(trip.teamId) ?? [] : [];
+    const currentMembership = members.find(member => member.userId === session.user.id && member.confirm);
+    return { trip, members, sharedWithMe, currentUserId: session.user.id, permission: sharedWithMe && currentMembership?.roles.includes("editor") ? "edit" : "read" };
+  });
+  const ownedItems = itemsFor(owned, false);
+  const sharedItems = itemsFor(shared, true).sort((left, right) => left.trip.visitDate.getTime() - right.trip.visitDate.getTime());
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const upcomingTrips = trips.filter((trip) => trip.visitDate >= today);
-  const pastTrips = trips.filter((trip) => trip.visitDate < today).reverse();
+  const upcomingTrips = ownedItems.filter(({ trip }) => trip.visitDate >= today);
+  const pastTrips = ownedItems.filter(({ trip }) => trip.visitDate < today).reverse();
+  const totalTrips = ownedItems.length + sharedItems.length;
 
   return (
     <main className="page-shell py-8">
@@ -44,13 +59,15 @@ export default async function MyTripsPage() {
         </a>
       </div>
 
-      {trips.length ? (
+      {totalTrips ? (
         <div className="space-y-8">
-          <section className="grid gap-3 md:grid-cols-3">
-            <SummaryCard label="전체 트립" value={`${trips.length}개`} />
-            <SummaryCard label="다가오는 트립" value={`${upcomingTrips.length}개`} />
-            <SummaryCard label="지난 트립" value={`${pastTrips.length}개`} />
+          <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <SummaryCard label="전체 트립" value={`${totalTrips}개`} />
+            <SummaryCard label="내 다가오는 트립" value={`${upcomingTrips.length}개`} />
+            <SummaryCard label="내 지난 트립" value={`${pastTrips.length}개`} />
+            <SummaryCard label="공유된 트립" value={`${sharedItems.length}개`} />
           </section>
+          <TripSection title="공유된 트립" eyebrow="초대받은 여행" trips={sharedItems} emptyText="초대받은 트립이 없습니다." />
           <TripSection title="다가오는 트립" trips={upcomingTrips} emptyText="예정된 트립이 없습니다." />
           <TripSection title="지난 트립" trips={pastTrips} emptyText="지난 트립이 없습니다." />
         </div>
@@ -85,22 +102,24 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
 function TripSection({
   title,
   trips,
-  emptyText
+  emptyText,
+  eyebrow
 }: {
   title: string;
-  trips: TripRecord[];
+  trips: TripDashboardItem[];
   emptyText: string;
+  eyebrow?: string;
 }) {
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-xl font-black">{title}</h2>
+        <div>{eyebrow ? <p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-primary">{eyebrow}</p> : null}<h2 className="text-xl font-black">{title}</h2></div>
         <span className="text-sm font-semibold text-muted-foreground">{trips.length}개</span>
       </div>
       {trips.length ? (
         <div className="grid gap-4 md:grid-cols-2">
-          {trips.map((trip) => (
-            <TripCard key={trip.id} trip={trip} />
+          {trips.map((item) => (
+            <TripCard key={item.trip.id} item={item} />
           ))}
         </div>
       ) : (
@@ -112,7 +131,10 @@ function TripSection({
   );
 }
 
-function TripCard({ trip }: { trip: TripRecord }) {
+type TripDashboardItem = { trip: TripRecord; members: TripMembership[]; sharedWithMe: boolean; currentUserId: string; permission: "read" | "edit" };
+
+function TripCard({ item }: { item: TripDashboardItem }) {
+  const { trip, members, sharedWithMe, currentUserId, permission } = item;
   const activeTasks = trip.tasks.filter((task) => task.status !== "not_needed");
   const doneTasks = activeTasks.filter((task) => ["reserved", "paid", "prepared"].includes(task.status));
   const progress = activeTasks.length ? Math.round((doneTasks.length / activeTasks.length) * 100) : 100;
@@ -123,12 +145,15 @@ function TripCard({ trip }: { trip: TripRecord }) {
       <Card className="h-full transition hover:border-zinc-400 hover:shadow-sm">
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-sm font-semibold text-primary">{trip.season}</div>
+            <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold text-primary">{trip.season}</span>{sharedWithMe ? <StatusBadge tone="good"><Share2 className="mr-1 h-3 w-3" />공유됨 · {permission === "edit" ? "편집" : "보기"}</StatusBadge> : null}</div>
             <StatusBadge tone={trip.status === "completed" ? "good" : "neutral"}>{statusLabel}</StatusBadge>
           </div>
-          <CardTitle>{trip.resortNameSnapshot} 트립</CardTitle>
+          <CardTitle>{getTripDisplayName(trip)}</CardTitle>
+          <p className="text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
         </CardHeader>
         <CardContent className="space-y-4">
+          {trip.tripMemo ? <p className="line-clamp-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">{trip.tripMemo}</p> : null}
+          <TripCompanions members={members} currentUserId={currentUserId} />
           <div className="grid gap-2 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2">
               <CalendarDays className="h-4 w-4" />

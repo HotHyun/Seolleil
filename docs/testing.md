@@ -24,6 +24,7 @@ Do not use a local development server for OCI-agent UI verification. When `E2E_B
 - health response and critical public routes;
 - mobile overflow and ski-map visibility;
 - an opt-in anonymous trip lifecycle;
+- custom trip-name and memo persistence with public-link memo privacy;
 - persistent read-link validity after a checklist mutation;
 - read-only capability boundaries;
 - edit-link mutation, individual link revocation, and continued validity of unrelated links;

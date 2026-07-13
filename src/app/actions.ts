@@ -18,6 +18,7 @@ import {
   deleteTrip,
   getTripByEditTokenHash,
   getTripById,
+  getTripDisplayName,
   getShareLinkByTokenHash,
   revokeTripShareLink,
   recordAnalyticsEvent,
@@ -104,6 +105,8 @@ export async function createTripAction(formData: FormData) {
   const trip = await createTrip({
       userId: session?.user?.id ?? null,
       teamId: null,
+      tripName: `${recommendation.resort.name} 트립`,
+      tripMemo: null,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -192,6 +195,8 @@ export async function createDirectTripAction(formData: FormData) {
   const trip = await createTrip({
       userId: session?.user?.id ?? null,
       teamId: null,
+      tripName: `${resort.name} 트립`,
+      tripMemo: null,
       editTokenHash: hashToken(editToken),
       shareTokenHash: hashToken(shareToken),
       resortId,
@@ -266,6 +271,10 @@ export async function updateTripDetailsAction(formData: FormData) {
 
   const current = await getTripById(accessTrip.id);
   if (!current) throw new Error("트립을 찾을 수 없습니다.");
+  const tripName = String(formData.get("tripName") ?? current.tripName ?? `${current.resortNameSnapshot} 트립`).trim();
+  const tripMemo = String(formData.get("tripMemo") ?? current.tripMemo ?? "").trim();
+  if (!tripName || tripName.length > 80) throw new AppError("INVALID_INPUT", "트립 이름은 1~80자로 입력해 주세요.");
+  if (tripMemo.length > 1000) throw new AppError("INVALID_INPUT", "트립 메모는 1,000자 이내로 입력해 주세요.");
 
   const input: TripInput = {
     visitDate: String(formData.get("visitDate") ?? current.visitDate.toISOString().slice(0, 10)),
@@ -293,6 +302,8 @@ export async function updateTripDetailsAction(formData: FormData) {
   const visitDate = new Date(`${input.visitDate}T00:00:00`);
 
   await updateTrip(current.id, {
+      tripName,
+      tripMemo: tripMemo || null,
       selectedRecommendation: {
         score: recommendation.score,
         reasons: recommendation.reasons,
@@ -523,6 +534,8 @@ export async function duplicateTripAction(formData: FormData) {
   const duplicate = await createTrip({
     userId: session.user.id,
     teamId: null,
+    tripName: `${source.tripName?.trim() || `${source.resortNameSnapshot} 트립`} 복사본`,
+    tripMemo: source.tripMemo,
     editTokenHash: hashToken(editToken),
     shareTokenHash: hashToken(shareToken),
     resortId: source.resortId,
@@ -615,7 +628,7 @@ export async function inviteTripMemberAction(formData: FormData) {
   if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error("올바른 이메일을 입력해 주세요.");
   let teamId = trip.teamId;
   if (!teamId) {
-    const team = await createTripTeam(sessionSecret, `${trip.resortNameSnapshot} 트립`);
+    const team = await createTripTeam(sessionSecret, getTripDisplayName(trip));
     teamId = team.$id;
     await updateTrip(trip.id, { teamId });
   }
@@ -637,7 +650,7 @@ export async function inviteTripMemberSafeAction(formData: FormData) {
     if (!/^\S+@\S+\.\S+$/.test(email)) throw new AppError("INVALID_INPUT", "올바른 이메일을 입력해 주세요.");
     let teamId = trip.teamId;
     if (!teamId) {
-      const team = await createTripTeam(sessionSecret, `${trip.resortNameSnapshot} 트립`);
+      const team = await createTripTeam(sessionSecret, getTripDisplayName(trip));
       teamId = team.$id;
       await updateTrip(trip.id, { teamId });
     }

@@ -23,7 +23,7 @@ test.describe("production regression", () => {
     expect(Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0))).toBeLessThanOrEqual(42);
   });
 
-  test("anonymous trip keeps a persistent read link after checklist changes", async ({ page, context }, testInfo) => {
+  test("anonymous trip enforces persistent read, edit, and revoked link permissions", async ({ page, context }, testInfo) => {
     test.setTimeout(90_000);
     test.skip(process.env.E2E_ALLOW_PRODUCTION_WRITES !== "1", "Production writes require an explicit opt-in.");
     test.skip(testInfo.project.name !== "chromium", "Run the mutation lifecycle once, then cover mobile with read-only checks.");
@@ -41,21 +41,40 @@ test.describe("production regression", () => {
       await page.getByRole("menuitem", { name: "공유 관리" }).click();
       await page.getByRole("button", { name: /새 링크/ }).click();
       const shareUrl = await page.locator("text=/https?:.*\\/share\\//").first().textContent();
-      const shareToken = shareUrl ? new URL(shareUrl).pathname.split("/").pop() : null;
-      expect(shareToken).toBeTruthy();
+      const readToken = shareUrl ? new URL(shareUrl).pathname.split("/").pop() : null;
+      expect(readToken).toBeTruthy();
+      await page.getByRole("combobox", { name: "새 링크 권한" }).click();
+      await page.getByRole("option", { name: "편집 가능" }).click();
+      await page.getByRole("button", { name: /새 링크/ }).click();
+      const editUrlText = await page.locator("text=/https?:.*\\/share\\//").first().textContent();
+      const editToken = editUrlText ? new URL(editUrlText).pathname.split("/").pop() : null;
+      expect(editToken).toBeTruthy();
+      expect(editToken).not.toBe(readToken);
       await page.getByRole("dialog", { name: "트립 공유" }).getByRole("button", { name: "닫기" }).click();
       await expect(page.getByRole("dialog", { name: "트립 공유" })).toBeHidden();
 
       const marker = `회귀 테스트 ${Date.now()}`;
-      await page.getByRole("textbox", { name: "새 체크 항목 이름" }).fill(marker);
-      await page.getByRole("button", { name: "항목 추가" }).click();
-      await expect(page.getByText(marker).first()).toBeVisible();
+      const editable = await context.newPage();
+      await editable.goto(`/share/${editToken}`);
+      await expect(editable.getByText("함께 편집")).toBeVisible();
+      await editable.getByRole("textbox", { name: "새 체크 항목 이름" }).fill(marker);
+      await editable.getByRole("button", { name: "항목 추가" }).click();
+      await expect(editable.getByText(marker).first()).toBeVisible();
 
-      const shared = await context.newPage();
-      await shared.goto(`/share/${shareToken}`);
-      await expect(shared.getByText("보기 전용")).toBeVisible();
-      await expect(shared.getByText(marker)).toBeVisible();
-      await expect(shared.getByRole("button", { name: "항목 추가" })).toHaveCount(0);
+      const readonly = await context.newPage();
+      await readonly.goto(`/share/${readToken}`);
+      await expect(readonly.getByText("보기 전용")).toBeVisible();
+      await expect(readonly.getByText(marker)).toBeVisible();
+      await expect(readonly.getByRole("button", { name: "항목 추가" })).toHaveCount(0);
+
+      await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
+      await page.getByRole("menuitem", { name: "공유 관리" }).click();
+      await page.getByRole("button", { name: "보기 링크 비활성화" }).click();
+      await expect(page.getByText("공유 링크를 비활성화했어요.")).toBeVisible();
+      await readonly.goto(`/share/${readToken}`);
+      await expect(readonly.getByRole("heading", { name: "페이지를 찾을 수 없습니다." })).toBeVisible();
+      await editable.reload();
+      await expect(editable.getByText("함께 편집")).toBeVisible();
     } finally {
       for (const candidate of context.pages()) {
         if (candidate !== page) await candidate.close();

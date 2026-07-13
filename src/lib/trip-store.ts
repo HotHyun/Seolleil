@@ -325,8 +325,12 @@ export async function listTripShareLinks(tripId: string) {
 export async function revokeTripShareLink(id: string, tripId: string) {
   const { collections } = getAppwriteConfig();
   const link = await appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks, id));
-  if (link.tripId !== tripId) throw new Error("Share link does not belong to trip");
+  assertShareLinkBelongsToTrip(link.tripId, tripId);
   await appwriteFetch(documentPath(collections.tripShareLinks, id), { method: "PATCH", body: JSON.stringify({ data: { revokedAt: new Date().toISOString() } }) });
+}
+
+export function assertShareLinkBelongsToTrip(linkTripId: string, requestedTripId: string) {
+  if (linkTripId !== requestedTripId) throw new Error("Share link does not belong to trip");
 }
 
 export async function revokeTripShareLinks(tripId: string) {

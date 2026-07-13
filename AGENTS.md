@@ -12,6 +12,7 @@ MVP excludes payment, booking fulfillment, live crawling, instructor matching, a
 - Appwrite Databases, Auth, and Teams on self-hosted OCI infrastructure.
 - Cloudflare Workers deployment through OpenNext.
 - Umami for product analytics; Appwrite events for server-side product events.
+- Optional Sentry for browser/server exceptions and release source maps; structured Workers Logs remain the baseline.
 - Vitest and Playwright.
 
 There is no application Prisma/PostgreSQL runtime, PgAdmin workflow, Auth.js, or Coolify app deployment. Historical files must not be treated as current architecture.

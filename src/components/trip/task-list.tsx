@@ -1,18 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AlertCircle, ChevronDown, ExternalLink, Plus, Trash2 } from "lucide-react";
 import {
-  addTaskAction,
-  deleteTaskAction,
+  addTaskSafeAction,
+  deleteTaskSafeAction,
   updateTaskDetailsSafeAction,
   updateTaskStatusSafeAction
 } from "@/app/actions";
 import { StatusSelect } from "@/components/trip/status-select";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { isTaskComplete } from "@/lib/checklist";
 import { showActionResult } from "@/components/action-result-toast";
+import { useRouter } from "next/navigation";
 
 declare global {
   interface Window { umami?: { track: (eventName: string, eventData?: Record<string, unknown>) => void } }
@@ -41,6 +43,8 @@ const categoryLabels: Record<string, string> = {
 };
 
 export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task[]; editToken?: string; tripId?: string; shareToken?: string }) {
+  const router = useRouter();
+  const addTaskFormRef = useRef<HTMLFormElement>(null);
   const [visibleTasks, setVisibleTasks] = useState(tasks);
   const groups = visibleTasks.reduce<Record<string, Task[]>>((acc, task) => {
     const label = categoryLabels[task.category] ?? task.category;
@@ -129,23 +133,23 @@ export function TaskList({ tasks, editToken, tripId, shareToken }: { tasks: Task
                   <input type="hidden" name="taskId" value={task.id} />
                   {!task.isDefault ? <Input name="title" defaultValue={task.title} aria-label="체크 항목 이름" /> : <input type="hidden" name="title" value={task.title} />}
                   <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모…" aria-label={`${task.title} 메모`} />
-                  <Button variant="secondary" className="h-11 shrink-0" type="submit">
+                  <SubmitButton variant="secondary" className="h-11 shrink-0" pendingText="저장 중…">
                     항목 저장
-                  </Button>
+                  </SubmitButton>
                   </form>
-                  {!task.isDefault ? <form action={deleteTaskAction} className="mt-2"><AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} /><input type="hidden" name="taskId" value={task.id} /><Button variant="ghost" type="submit" className="text-destructive"><Trash2 className="h-4 w-4" /> 항목 삭제</Button></form> : null}
+                  {!task.isDefault ? <form action={async data => { const result = await deleteTaskSafeAction(data); showActionResult(result); if (result.ok) { setVisibleTasks(current => current.filter(item => item.id !== task.id)); router.refresh(); } }} className="mt-2"><AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} /><input type="hidden" name="taskId" value={task.id} /><SubmitButton variant="ghost" className="text-destructive" pendingText="삭제 중…"><Trash2 className="h-4 w-4" /> 항목 삭제</SubmitButton></form> : null}
                 </details>
               </div>
             ))}
           </div>
         </details>
       ))}
-      <form action={addTaskAction} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_auto]">
+      <form ref={addTaskFormRef} action={async data => { const result = await addTaskSafeAction(data); showActionResult(result); if (result.ok) { addTaskFormRef.current?.reset(); router.refresh(); } }} onSubmit={() => window.umami?.track("checklist_item_add")} className="glass-panel grid gap-2 rounded-xl p-4 sm:grid-cols-[1fr_auto]">
         <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
         <Input name="title" placeholder="직접 체크 항목 추가…" aria-label="새 체크 항목 이름" />
-        <Button type="submit" className="shrink-0">
+        <SubmitButton className="shrink-0" pendingText="추가 중…">
           <Plus className="h-4 w-4" /> 항목 추가
-        </Button>
+        </SubmitButton>
       </form>
     </div>
   );

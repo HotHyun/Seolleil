@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { signInWithEmailAction, signInWithGoogleAction, signUpWithEmailAction } from "@/app/auth-actions";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/field";
 import { getSession } from "@/lib/session";
@@ -39,9 +40,9 @@ export default async function LoginPage({
           {notice ? <p className="rounded-md bg-primary/10 p-3 text-sm font-semibold text-primary">{notice}</p> : null}
           <form action={signInWithGoogleAction}>
             <input type="hidden" name="callbackUrl" value={callbackUrl} />
-            <Button type="submit" className="w-full">
+            <SubmitButton type="submit" className="w-full" pendingText="Google로 이동 중…">
               Google로 계속하기
-            </Button>
+            </SubmitButton>
           </form>
           <div className="flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />또는<span className="h-px flex-1 bg-border" /></div>
           <form action={mode === "signup" ? signUpWithEmailAction : signInWithEmailAction} className="space-y-3">
@@ -49,7 +50,7 @@ export default async function LoginPage({
             {mode === "signup" ? <Input name="name" autoComplete="name" placeholder="이름" aria-label="이름" required /> : null}
             <Input name="email" type="email" autoComplete="email" placeholder="이메일" aria-label="이메일" required />
             <Input name="password" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} minLength={8} placeholder="비밀번호 (8자 이상)" aria-label="비밀번호" required />
-            <Button type="submit" variant="secondary" className="w-full">{mode === "signup" ? "이메일로 가입하기" : "이메일로 로그인"}</Button>
+            <SubmitButton type="submit" variant="secondary" className="w-full" pendingText={mode === "signup" ? "가입 처리 중…" : "로그인 중…"}>{mode === "signup" ? "이메일로 가입하기" : "이메일로 로그인"}</SubmitButton>
           </form>
           <a className="block text-center text-sm font-semibold text-primary" href={`/login?mode=${mode === "signup" ? "login" : "signup"}&callbackUrl=${encodeURIComponent(callbackUrl)}`}>
             {mode === "signup" ? "이미 계정이 있나요? 로그인" : "처음이신가요? 이메일로 가입"}

@@ -23,9 +23,11 @@ export function ToastFromUrl() {
   useEffect(() => {
     const url = new URL(window.location.href);
     const notice = url.searchParams.get("notice");
-    if (!notice) return;
-    toast.success(notice);
-    url.searchParams.delete("notice");
+    const error = url.searchParams.get("error");
+    if (!notice && !error) return;
+    if (notice) toast.success(notice);
+    if (error) toast.error(error);
+    url.searchParams.delete("notice"); url.searchParams.delete("error");
     window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
   }, [pathname, searchParams]);
   return null;

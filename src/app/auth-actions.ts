@@ -5,6 +5,7 @@ import { cookies, headers } from "next/headers";
 import { confirmEmailVerification, confirmPasswordRecovery, createEmailAccount, createEmailPasswordSession, createEmailVerification, createPasswordRecovery, deleteCurrentSession, getAccountFromSession, getOAuthUrl, getSessionSecret, LEGACY_SESSION_COOKIE, sessionCookieName } from "@/lib/session";
 import { acceptTripInvitation } from "@/lib/trip-collaboration";
 import { getSession } from "@/lib/session";
+import { reportAppError } from "@/lib/app-error";
 
 function safeCallback(value: FormDataEntryValue | null) {
   const callback = String(value ?? "/my-trips");
@@ -37,7 +38,8 @@ export async function signUpWithEmailAction(formData: FormData) {
     await setSessionCookie(session.secret, session.expire);
     const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     await createEmailVerification(session.secret, `${origin}/verify-email?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-  } catch {
+  } catch (error) {
+    reportAppError(error, { action: "signUpWithEmail" });
     redirect(`/login?mode=signup&error=${encodeURIComponent("가입할 수 없습니다. 이미 사용 중인 이메일인지 확인해 주세요.")}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
   redirect(`/verify-email/sent?callbackUrl=${encodeURIComponent(callbackUrl)}`);
@@ -57,7 +59,8 @@ export async function signInWithEmailAction(formData: FormData) {
       const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
       await createEmailVerification(session.secret, `${origin}/verify-email?callbackUrl=${encodeURIComponent(callbackUrl)}`);
     }
-  } catch {
+  } catch (error) {
+    reportAppError(error, { action: "signInWithEmail" });
     redirect(`/login?error=${encodeURIComponent("이메일 또는 비밀번호를 확인해 주세요.")}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
   if (needsVerification) redirect(`/verify-email/sent?callbackUrl=${encodeURIComponent(callbackUrl)}`);
@@ -69,7 +72,7 @@ export async function verifyEmailAction(formData: FormData) {
   const secret = String(formData.get("secret") ?? "");
   const callbackUrl = safeCallback(formData.get("callbackUrl"));
   if (!userId || !secret) redirect(`/login?error=${encodeURIComponent("유효하지 않은 인증 링크입니다.")}`);
-  try { await confirmEmailVerification(userId, secret); } catch { redirect(`/login?error=${encodeURIComponent("인증 링크가 만료되었거나 이미 사용되었습니다.")}`); }
+  try { await confirmEmailVerification(userId, secret); } catch (error) { reportAppError(error, { action: "verifyEmail" }); redirect(`/login?error=${encodeURIComponent("인증 링크가 만료되었거나 이미 사용되었습니다.")}`); }
   redirect(`${callbackUrl}${callbackUrl.includes("?") ? "&" : "?"}notice=${encodeURIComponent("이메일 인증이 완료됐어요.")}`);
 }
 
@@ -82,7 +85,8 @@ export async function resendEmailVerificationAction(formData: FormData) {
     if (account.emailVerification) redirect(callbackUrl);
     const origin = (await headers()).get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
     await createEmailVerification(sessionSecret, `${origin}/verify-email?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-  } catch {
+  } catch (error) {
+    reportAppError(error, { action: "resendEmailVerification" });
     redirect(`/verify-email/sent?error=${encodeURIComponent("인증 메일을 다시 보내지 못했습니다. 잠시 후 다시 시도해 주세요.")}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
   }
   redirect(`/verify-email/sent?resent=1&callbackUrl=${encodeURIComponent(callbackUrl)}`);
@@ -102,7 +106,7 @@ export async function acceptTripInvitationAction(formData: FormData) {
   }
   if (session.user.id !== userId) redirect(`/invite/accept?error=${encodeURIComponent("초대받은 이메일 계정으로 로그인해 주세요.")}`);
   try { await acceptTripInvitation({ sessionSecret, teamId, membershipId, userId, secret }); }
-  catch { redirect(`/invite/accept?error=${encodeURIComponent("초대 링크가 만료되었거나 이미 처리되었습니다.")}`); }
+  catch (error) { reportAppError(error, { action: "acceptTripInvitation", tripId }); redirect(`/invite/accept?error=${encodeURIComponent("초대 링크가 만료되었거나 이미 처리되었습니다.")}`); }
   redirect(`/my-trips/${tripId}?notice=${encodeURIComponent("트립 초대를 수락했어요.")}`);
 }
 
@@ -119,7 +123,7 @@ export async function resetPasswordAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   if (password.length < 8) redirect(`/reset-password?error=${encodeURIComponent("비밀번호는 8자 이상이어야 합니다.")}`);
   try { await confirmPasswordRecovery(userId, secret, password); }
-  catch { redirect(`/reset-password?error=${encodeURIComponent("재설정 링크가 만료되었거나 유효하지 않습니다.")}`); }
+  catch (error) { reportAppError(error, { action: "resetPassword" }); redirect(`/reset-password?error=${encodeURIComponent("재설정 링크가 만료되었거나 유효하지 않습니다.")}`); }
   redirect(`/login?notice=${encodeURIComponent("새 비밀번호를 설정했어요.")}`);
 }
 

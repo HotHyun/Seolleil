@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { canEditOwnedTrip, canMutateWithSharePermission } from "@/lib/trip-access";
 import { createToken, hashToken } from "@/lib/tokens";
+import { assertShareLinkBelongsToTrip } from "@/lib/trip-store";
 
 describe("trip access security", () => {
   it("allows a trip id mutation only for its authenticated owner", () => {
@@ -25,5 +26,10 @@ describe("trip access security", () => {
     expect(hashToken(editToken)).toHaveLength(64);
     expect(hashToken(editToken)).toBe(hashToken(editToken));
     expect(hashToken(editToken)).not.toContain(editToken);
+  });
+
+  it("rejects revoking a link through a different trip", () => {
+    expect(() => assertShareLinkBelongsToTrip("trip-a", "trip-b")).toThrow("does not belong");
+    expect(() => assertShareLinkBelongsToTrip("trip-a", "trip-a")).not.toThrow();
   });
 });

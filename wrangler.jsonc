@@ -19,5 +19,7 @@
     "APPWRITE_TRIP_TASKS_COLLECTION_ID": "trip_tasks",
     "APPWRITE_ANALYTICS_EVENTS_COLLECTION_ID": "analytics_events",
     "APPWRITE_TRIP_SHARE_LINKS_COLLECTION_ID": "trip_share_links",
+    "SENTRY_ENVIRONMENT": "production",
+    "NEXT_PUBLIC_SENTRY_ENVIRONMENT": "production",
   },
 }

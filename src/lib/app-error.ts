@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/nextjs";
+
 export const errorCatalog = {
   AUTH_REQUIRED: { message: "로그인이 필요합니다. 로그인 후 다시 시도해 주세요.", retryable: false },
   EMAIL_NOT_VERIFIED: { message: "이메일 인증을 완료한 뒤 다시 시도해 주세요.", retryable: false },
@@ -59,6 +61,14 @@ export function reportAppError(error: unknown, context: ErrorContext, reporter: 
   const code = classifyError(error);
   const incidentId = crypto.randomUUID();
   void reporter.capture({ incidentId, code, context, error, timestamp: new Date().toISOString() });
+  if (process.env.NEXT_PUBLIC_SENTRY_DSN ?? process.env.SENTRY_DSN) {
+    Sentry.withScope(scope => {
+      scope.setTag("error.code", code);
+      scope.setTag("error.incident_id", incidentId);
+      scope.setContext("action", context);
+      Sentry.captureException(error instanceof Error ? error : new Error(String(error)));
+    });
+  }
   return { code, incidentId };
 }
 

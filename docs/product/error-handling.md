@@ -30,4 +30,16 @@
 
 ## 관측성 연결점
 
-기본 reporter는 구조화 JSON을 표준 오류 로그에 남긴다. Sentry를 도입할 때 `ErrorReporter.capture` 구현만 교체해 code, incidentId, action context를 tag/context로 보내고 원본 예외를 capture한다. 제품 이벤트 컬렉션에는 예외 stack을 저장하지 않는다.
+기본 reporter는 구조화 JSON을 Workers Logs에 남기고, DSN이 설정되면 같은 incident를 Sentry에도 전송한다. `error.code`, `error.incident_id`를 tag로, 비민감 action context를 context로 보낸다. 제품 이벤트 컬렉션에는 예외 stack을 저장하지 않는다.
+
+## Sentry 운영
+
+- `NEXT_PUBLIC_SENTRY_DSN`: 브라우저 오류 수집용 public DSN.
+- `SENTRY_DSN`: 서버/Worker 오류 수집용 DSN. 같은 프로젝트 DSN을 사용해도 된다.
+- `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`: build source map 업로드용. auth token은 Cloudflare secret/CI secret으로만 저장한다.
+- `SENTRY_ENVIRONMENT`, `NEXT_PUBLIC_SENTRY_ENVIRONMENT`: `production`, `preview` 같은 환경 구분.
+- DSN이 비어 있으면 SDK는 비활성화된다.
+- production trace sample은 5%, replay는 0%로 시작한다. 오류량과 무료 quota를 본 뒤 조정한다.
+- `sendDefaultPii=false`이며 beforeSend에서 사용자 이메일/IP, cookie, authorization, request body, query string, secret/token/password/key context를 제거한다.
+
+Sentry 프로젝트 생성 후 Cloudflare runtime에는 `SENTRY_DSN`을 secret으로 설정한다. `NEXT_PUBLIC_SENTRY_DSN`은 client bundle을 만드는 build 환경에도 있어야 하며 public DSN이므로 secret일 필요는 없다. `SENTRY_AUTH_TOKEN`은 source map을 업로드하는 OCI/CI build 환경의 secret으로 설정하고 Worker 변수로 노출할 필요가 없다. org/project/environment는 build 변수로 설정한다. 첫 배포 뒤 의도적으로 만든 비민감 테스트 오류 한 건으로 Issues와 source map을 확인하고 테스트 경로는 제거한다.

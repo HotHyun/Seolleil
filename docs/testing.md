@@ -26,6 +26,7 @@ Do not use a local development server for OCI-agent UI verification. When `E2E_B
 - an opt-in anonymous trip lifecycle;
 - persistent read-link validity after a checklist mutation;
 - read-only capability boundaries;
+- edit-link mutation, individual link revocation, and continued validity of unrelated links;
 - cleanup of the generated trip in `finally`.
 
 Run only after deployment is complete and the user explicitly asks for verification:

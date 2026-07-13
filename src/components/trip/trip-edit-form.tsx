@@ -1,5 +1,10 @@
-import { updateTripDetailsAction, updateTripStatusAction } from "@/app/actions";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { updateTripDetailsSafeAction, updateTripStatusSafeAction } from "@/app/actions";
+import { showActionResult } from "@/components/action-result-toast";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { getRentalOptionsForResort } from "@/lib/pricing";
@@ -24,6 +29,7 @@ export function TripEditForm({
   trip: TripEditFormData;
   editToken?: string;
 }) {
+  const router = useRouter();
   const rentalOptions = getRentalOptionsForResort(trip.resortId);
   const accessField = editToken ? (
     <input type="hidden" name="editToken" value={editToken} />
@@ -33,7 +39,7 @@ export function TripEditForm({
 
   return (
     <div className="grid gap-4">
-      <form action={updateTripDetailsAction} className="space-y-4">
+      <form action={async data => { const result = await updateTripDetailsSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); }} className="space-y-4">
         {accessField}
         <div className="grid gap-3 md:grid-cols-2">
           <Field label="방문 날짜">
@@ -91,12 +97,12 @@ export function TripEditForm({
             ]}
           />
         </div>
-        <Button type="submit" className="w-full">
+        <SubmitButton type="submit" className="w-full" pendingText="트립 저장 중…">
           트립 정보 저장하고 비용 재계산
-        </Button>
+        </SubmitButton>
       </form>
 
-      <form action={updateTripStatusAction} className="space-y-2">
+      <form action={async data => { const result = await updateTripStatusSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); }} className="space-y-2">
         {accessField}
         <div className="text-sm font-semibold">트립 상태</div>
         <div className="flex gap-2">
@@ -112,9 +118,9 @@ export function TripEditForm({
               ]}
             />
           </div>
-          <Button type="submit" variant="secondary" className="shrink-0">
+          <SubmitButton type="submit" variant="secondary" className="shrink-0" pendingText="변경 중…">
             변경
-          </Button>
+          </SubmitButton>
         </div>
       </form>
     </div>

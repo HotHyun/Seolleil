@@ -6,6 +6,7 @@ import { deleteTripAction, duplicateTripAction } from "@/app/actions";
 import { SharingManagement } from "@/components/trip/sharing-management";
 import { TripEditForm } from "@/components/trip/trip-edit-form";
 import { Button } from "@/components/ui/button";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { TripMembership } from "@/lib/trip-collaboration";
@@ -41,8 +42,8 @@ export function TripManagementMenu({ trip, editToken, shareUrl, sharePermission 
         <DialogContent className="bottom-0 top-auto max-h-[88svh] max-w-xl translate-y-0 overflow-y-auto rounded-b-none sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 sm:rounded-xl">
           {panel === "edit" ? <><DialogHeader><DialogTitle>트립 수정</DialogTitle><DialogDescription>현재 트립의 일정과 선택 옵션을 변경합니다.</DialogDescription></DialogHeader><TripEditForm trip={trip} editToken={editToken} /></> : null}
           {panel === "share" ? <><DialogHeader><DialogTitle>트립 공유</DialogTitle><DialogDescription>링크와 초대 사용자의 권한을 한곳에서 관리합니다.</DialogDescription></DialogHeader><SharingManagement tripId={trip.id} editToken={editToken} shareUrl={shareUrl} sharePermission={sharePermission} links={shareLinks} members={members} allowAccountInvites={!editToken} /></> : null}
-          {panel === "duplicate" ? <><DialogHeader><DialogTitle>이 트립을 복제할까요?</DialogTitle><DialogDescription>일정과 체크 항목을 복사하고 완료 상태는 다시 시작할 수 있게 초기화합니다.</DialogDescription></DialogHeader><form action={duplicateTripAction}>{accessField}<Button className="w-full" type="submit"><CopyPlus className="h-4 w-4" /> 트립 복제</Button></form></> : null}
-          {panel === "delete" ? <><DialogHeader><DialogTitle>트립을 삭제할까요?</DialogTitle><DialogDescription>삭제하면 편집 링크와 공유 링크로 다시 열 수 없습니다.</DialogDescription></DialogHeader><form action={deleteTripAction}>{accessField}<Button variant="danger" className="w-full" type="submit"><Trash2 className="h-4 w-4" /> 트립 삭제</Button></form></> : null}
+          {panel === "duplicate" ? <><DialogHeader><DialogTitle>이 트립을 복제할까요?</DialogTitle><DialogDescription>일정과 체크 항목을 복사하고 완료 상태는 다시 시작할 수 있게 초기화합니다.</DialogDescription></DialogHeader><form action={duplicateTripAction}>{accessField}<SubmitButton className="w-full" type="submit" pendingText="복제 중…"><CopyPlus className="h-4 w-4" /> 트립 복제</SubmitButton></form></> : null}
+          {panel === "delete" ? <><DialogHeader><DialogTitle>트립을 삭제할까요?</DialogTitle><DialogDescription>삭제하면 편집 링크와 공유 링크로 다시 열 수 없습니다.</DialogDescription></DialogHeader><form action={deleteTripAction}>{accessField}<SubmitButton variant="danger" className="w-full" type="submit" pendingText="삭제 중…"><Trash2 className="h-4 w-4" /> 트립 삭제</SubmitButton></form></> : null}
         </DialogContent>
       </Dialog>
     </>

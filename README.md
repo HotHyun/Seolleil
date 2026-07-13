@@ -26,6 +26,8 @@ pnpm appwrite:schema
 
 See `docs/product/appwrite-auth-sharing-setup.md` for Appwrite Console and environment setup. The schema runner uses migrations in `scripts/appwrite/migrations`.
 
+Sentry is optional and remains disabled until `NEXT_PUBLIC_SENTRY_DSN`/`SENTRY_DSN` are configured. Source-map upload additionally requires `SENTRY_ORG`, `SENTRY_PROJECT`, and secret `SENTRY_AUTH_TOKEN`; see `docs/product/error-handling.md`.
+
 ## Deploy And Verify
 
 ```bash

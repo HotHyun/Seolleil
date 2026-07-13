@@ -332,7 +332,15 @@ export async function updateTripDetailsAction(formData: FormData) {
     }))
   );
 
-  redirectToTripWithNotice(formData, "트립 정보를 저장했어요.");
+  return finishTripMutation(formData, "트립 정보를 저장했어요.");
+}
+
+export async function updateTripDetailsSafeAction(formData: FormData) {
+  try {
+    formData.set("background", "1");
+    const result = await updateTripDetailsAction(formData);
+    return actionSuccess(result?.message ?? "트립 정보를 저장했어요.");
+  } catch (error) { return actionFailure(error, { action: "updateTripDetails" }); }
 }
 
 export async function updateTripStatusAction(formData: FormData) {
@@ -343,7 +351,15 @@ export async function updateTripStatusAction(formData: FormData) {
   }
   await updateTrip(trip.id, { status: status as never });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_status_changed", properties: { status } });
-  redirectToTripWithNotice(formData, "트립 상태를 변경했어요.");
+  return finishTripMutation(formData, "트립 상태를 변경했어요.");
+}
+
+export async function updateTripStatusSafeAction(formData: FormData) {
+  try {
+    formData.set("background", "1");
+    const result = await updateTripStatusAction(formData);
+    return actionSuccess(result?.message ?? "트립 상태를 변경했어요.");
+  } catch (error) { return actionFailure(error, { action: "updateTripStatus" }); }
 }
 
 export async function attachTripToAccountAction(formData: FormData) {
@@ -460,7 +476,17 @@ export async function addTaskAction(formData: FormData) {
       dueDate: null
   });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_added" });
-  redirectToTripWithNotice(formData, "체크 항목을 추가했어요.");
+  return finishTripMutation(formData, "체크 항목을 추가했어요.");
+}
+
+export async function addTaskSafeAction(formData: FormData) {
+  try {
+    const title = String(formData.get("title") ?? "").trim();
+    if (!title) throw new AppError("INVALID_INPUT", "추가할 체크 항목 이름을 입력해 주세요.");
+    formData.set("background", "1");
+    const result = await addTaskAction(formData);
+    return actionSuccess(result?.message ?? "체크 항목을 추가했어요.");
+  } catch (error) { return actionFailure(error, { action: "addTask" }); }
 }
 
 export async function deleteTaskAction(formData: FormData) {
@@ -475,7 +501,15 @@ export async function deleteTaskAction(formData: FormData) {
     await deleteTask(task.id);
     await recordAnalyticsEvent({ tripId: trip.id, eventName: "task_deleted" });
   }
-  redirectToTripWithNotice(formData, "체크 항목을 삭제했어요.");
+  return finishTripMutation(formData, "체크 항목을 삭제했어요.");
+}
+
+export async function deleteTaskSafeAction(formData: FormData) {
+  try {
+    formData.set("background", "1");
+    const result = await deleteTaskAction(formData);
+    return actionSuccess(result?.message ?? "체크 항목을 삭제했어요.");
+  } catch (error) { return actionFailure(error, { action: "deleteTask", taskId: String(formData.get("taskId") ?? "") }); }
 }
 
 export async function duplicateTripAction(formData: FormData) {

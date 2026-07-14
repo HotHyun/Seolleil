@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import * as Sentry from "@sentry/nextjs";
 import Link from "next/link";
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function ErrorPage({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useLayoutEffect(() => {
+    try {
+      document.documentElement.classList.toggle("dark", localStorage.getItem("korean-ski-theme") === "dark");
+    } catch {}
+  }, []);
   useEffect(() => { console.error(error); Sentry.captureException(error); }, [error]);
   const reference = error.digest?.slice(0, 10);
   return (

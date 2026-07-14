@@ -6,19 +6,13 @@ import { CheckSquare2, LayoutDashboard, ReceiptText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isTaskComplete } from "@/lib/checklist";
 import { taskStatusChangedEvent, type TaskStatusChangedDetail } from "@/components/trip/task-status-events";
-
-export type TripWorkspaceView = "overview" | "checklist" | "budget";
+import type { TripWorkspaceView } from "@/lib/trip-workspace";
 
 const items = [
   { id: "overview", label: "트립 개요", description: "일정과 준비 현황", icon: LayoutDashboard },
   { id: "checklist", label: "준비 체크리스트", description: "예약과 준비 상태", icon: CheckSquare2 },
   { id: "budget", label: "비용·정산", description: "선택과 1/N 비용", icon: ReceiptText }
 ] as const;
-
-export function getTripWorkspaceView(value: string | string[] | undefined): TripWorkspaceView {
-  const candidate = Array.isArray(value) ? value[0] : value;
-  return candidate === "checklist" || candidate === "budget" ? candidate : "overview";
-}
 
 export function TripWorkspaceNav({ basePath, activeView, tasks }: { basePath: string; activeView: TripWorkspaceView; tasks: Array<{ id: string; category: string; status: string }> }) {
   const [visibleTasks, setVisibleTasks] = useState(tasks);

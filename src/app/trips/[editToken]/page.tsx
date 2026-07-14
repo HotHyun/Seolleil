@@ -13,7 +13,7 @@ import { getTripWorkspaceView } from "@/lib/trip-workspace";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
-import { getTripByEditTokenHash, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
+import { getTripByEditTokenHash, getTripDisplayName } from "@/lib/trip-store";
 import { hashToken } from "@/lib/tokens";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 
@@ -38,7 +38,6 @@ export default async function TripEditPage({
   const activeView = getTripWorkspaceView(query.view);
   const trip = await getTripByEditTokenHash(hashToken(editToken));
   if (!trip) notFound();
-  const shareLinks = await listTripShareLinks(trip.id);
 
   const resort = getResort(trip.resortId);
   const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
@@ -65,7 +64,7 @@ export default async function TripEditPage({
                   <CardTitle className="mt-3 text-2xl font-black sm:text-3xl">{getTripDisplayName(trip)}</CardTitle>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
-                <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} />
+                <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} sharePermission={sharePermission} canManageSharing={false} />
               </div>
             </CardHeader>
             <CardContent>

@@ -682,8 +682,7 @@ export async function deleteTripAction(formData: FormData) {
 }
 
 export async function regenerateShareLinkAction(formData: FormData) {
-  const editToken = String(formData.get("editToken") ?? "");
-  const trip = await findEditableTrip(formData);
+  const trip = await findShareManageableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("공유 링크를 재발급할 수 없는 트립입니다.");
   }
@@ -691,21 +690,21 @@ export async function regenerateShareLinkAction(formData: FormData) {
   const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
   const shareToken = createToken();
   const session = await getSession();
-  await createTripShareLink({ tripId: trip.id, tokenHash: hashToken(shareToken), permission, createdBy: session?.user?.id ?? null });
+  await createTripShareLink({ tripId: trip.id, tokenHash: hashToken(shareToken), tokenValue: shareToken, permission, createdBy: session?.user?.id ?? null });
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_created", properties: { permission } });
 
   const tripId = String(formData.get("tripId") ?? "");
-  redirect(editToken ? `/trips/${editToken}?share=${shareToken}&sharePermission=${permission}&notice=${encodeURIComponent("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.")}` : `/my-trips/${tripId}?share=${shareToken}&sharePermission=${permission}&notice=${encodeURIComponent("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.")}`);
+  redirect(`/my-trips/${tripId}?share=${shareToken}&sharePermission=${permission}&notice=${encodeURIComponent("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.")}`);
 }
 
 export async function createShareLinkSafeAction(formData: FormData) {
   try {
-    const trip = await findEditableTrip(formData);
+    const trip = await findShareManageableTrip(formData);
     if (!trip || trip.status === "archived" || trip.status === "deleted") throw new AppError("NOT_FOUND", "공유할 트립을 찾을 수 없습니다. 화면을 새로고침해 주세요.");
     const permission: "read" | "edit" = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
     const shareToken = createToken();
     const session = await getSession();
-    await createTripShareLink({ tripId: trip.id, tokenHash: hashToken(shareToken), permission, createdBy: session?.user?.id ?? null });
+    await createTripShareLink({ tripId: trip.id, tokenHash: hashToken(shareToken), tokenValue: shareToken, permission, createdBy: session?.user?.id ?? null });
     await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_created", properties: { permission } });
     return actionSuccess("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.", { sharePath: `/share/${shareToken}`, permission });
   } catch (error) { return actionFailure(error, { action: "createShareLink" }); }
@@ -764,10 +763,23 @@ async function findOwnedManagementTrip(formData: FormData) {
   return trip;
 }
 
+async function findShareManageableTrip(formData: FormData) {
+  const session = await getSession();
+  const tripId = String(formData.get("tripId") ?? "");
+  if (!session?.user?.id || !tripId) throw new AppError("AUTH_REQUIRED");
+  const trip = await getTripById(tripId);
+  if (!trip) throw new AppError("NOT_FOUND");
+  if (trip.userId === session.user.id) return trip;
+  const sessionSecret = await getSessionSecret();
+  if (!sessionSecret || !trip.teamId || !await getTripTeamPermission(sessionSecret, trip.teamId, session.user.id)) {
+    throw new AppError("FORBIDDEN", "초대된 사용자와 트립 소유자만 공유를 관리할 수 있습니다.");
+  }
+  return trip;
+}
+
 export async function revokeShareLinkAction(formData: FormData) {
   try {
-    const editToken = String(formData.get("editToken") ?? "");
-    const trip = editToken ? await getTripByEditTokenHash(hashToken(editToken)) : await findOwnedManagementTrip(formData);
+    const trip = await findShareManageableTrip(formData);
     if (!trip) throw new AppError("NOT_FOUND");
     const linkId = String(formData.get("linkId") ?? "");
     if (!linkId) throw new AppError("INVALID_INPUT");

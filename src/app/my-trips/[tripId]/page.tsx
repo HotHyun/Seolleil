@@ -51,7 +51,7 @@ export default async function MyTripDetailPage({
   if (!isOwner && !collaborationPermission) notFound();
   const canEdit = isOwner || collaborationPermission === "edit";
   const [shareLinks, members] = await Promise.all([
-    isOwner ? listTripShareLinks(trip.id) : Promise.resolve([]),
+    listTripShareLinks(trip.id),
     trip.teamId && sessionSecret ? listTripMemberships(sessionSecret, trip.teamId) : Promise.resolve([])
   ]);
 
@@ -70,7 +70,10 @@ export default async function MyTripDetailPage({
                   <CardTitle className="mt-3 text-2xl font-black sm:text-3xl">{getTripDisplayName(trip)}</CardTitle>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
-                {isOwner ? <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} members={members} /> : <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge>}
+                <div className="flex flex-wrap justify-end gap-2">
+                  {!isOwner ? <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge> : null}
+                  <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} members={members} canManageTrip={isOwner} canManageSharing allowAccountInvites={isOwner} />
+                </div>
               </div>
             </CardHeader>
             <CardContent>

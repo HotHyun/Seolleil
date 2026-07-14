@@ -120,8 +120,8 @@ type EventDocument = {
   properties?: string | null;
 };
 
-type ShareLinkDocument = { tripId: string; tokenHash: string; permission: "read" | "edit"; createdBy?: string | null; revokedAt?: string | null };
-export type TripShareLinkRecord = { id: string; tripId: string; permission: "read" | "edit"; createdAt: Date; revokedAt: Date | null };
+type ShareLinkDocument = { tripId: string; tokenHash: string; tokenValue?: string | null; permission: "read" | "edit"; createdBy?: string | null; revokedAt?: string | null };
+export type TripShareLinkRecord = { id: string; tripId: string; sharePath: string | null; permission: "read" | "edit"; createdAt: Date; revokedAt: Date | null };
 
 type DocumentList<T> = {
   total: number;
@@ -343,10 +343,10 @@ export async function getShareLinkByTokenHash(tokenHash: string) {
   const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tokenHash", [tokenHash]), appwriteQuery("limit", 1)]);
   const link = result.documents[0];
   if (!link || link.revokedAt) return null;
-  return { id: link.$id, tripId: link.tripId, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord;
+  return { id: link.$id, tripId: link.tripId, sharePath: null, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord;
 }
 
-export async function createTripShareLink(input: { tripId: string; tokenHash: string; permission: "read" | "edit"; createdBy?: string | null }) {
+export async function createTripShareLink(input: { tripId: string; tokenHash: string; tokenValue: string; permission: "read" | "edit"; createdBy?: string | null }) {
   const { collections } = getAppwriteConfig();
   return appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks), { method: "POST", body: JSON.stringify({ documentId: "unique()", data: { ...input, revokedAt: null } }) });
 }
@@ -355,7 +355,7 @@ export async function listTripShareLinks(tripId: string) {
   const { collections } = getAppwriteConfig();
   const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tripId", [tripId]), appwriteQuery("limit", 100)]);
   return result.documents
-    .map(link => ({ id: link.$id, tripId: link.tripId, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord))
+    .map(link => ({ id: link.$id, tripId: link.tripId, sharePath: link.tokenValue ? `/share/${link.tokenValue}` : null, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord))
     .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
 }
 

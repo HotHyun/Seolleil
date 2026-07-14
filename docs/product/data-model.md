@@ -29,7 +29,7 @@ trip 1 ── * analytics_event
 
 ## Share Links
 
-각 문서는 `tripId`, SHA-256 `tokenHash`, `read|edit` permission, 생성자와 폐기 시각을 가진다. 여러 링크가 공존하며 트립 변경과 새 링크 생성은 기존 링크를 무효화하지 않는다. 폐기는 해당 링크 하나에만 적용된다. 원문 token은 생성 응답/URL 외에 저장하거나 다시 노출하지 않는다.
+각 문서는 `tripId`, 조회용 SHA-256 `tokenHash`, 관리 화면 재복사용 `tokenValue`, `read|edit` permission, 생성자와 폐기 시각을 가진다. 여러 링크가 공존하며 트립 변경과 새 링크 생성은 기존 링크를 무효화하지 않는다. 폐기는 해당 링크 하나에만 적용된다. `tokenValue`는 소유자와 수락 완료된 계정 팀 멤버에게만 노출하며 이벤트·로그에는 기록하지 않는다. 이전 hash-only 문서는 주소를 복구하지 못한다.
 
 ## Events
 

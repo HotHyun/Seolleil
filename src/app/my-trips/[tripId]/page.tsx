@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { ExternalLink } from "lucide-react";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+import Link from "next/link";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
@@ -66,6 +67,7 @@ export default async function MyTripDetailPage({
   return (
     <main className="page-shell py-4 sm:py-8">
       <div className="mx-auto max-w-5xl space-y-4">
+          <Link href="/my-trips" className="inline-flex"><Button variant="ghost" className="-ml-2 h-10 px-2 text-muted-foreground"><ArrowLeft className="h-4 w-4" /> 내 트립으로 돌아가기</Button></Link>
           <Card>
             <CardHeader>
               <div className="flex items-start justify-between gap-3">

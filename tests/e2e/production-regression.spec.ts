@@ -21,6 +21,14 @@ test.describe("production regression", () => {
     const [mapBox, selectionBox] = await Promise.all([map.boundingBox(), selection.boundingBox()]);
     expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(460);
     expect(Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0))).toBeLessThanOrEqual(42);
+
+    await page.goto("/resorts/konjiam");
+    const detailMap = page.getByTestId("resort-detail-nearby-map");
+    const lodging = page.getByRole("button", { name: /곤지암리조트 객실 지도에서 보기/ });
+    await lodging.scrollIntoViewIfNeeded();
+    await lodging.click();
+    await expect.poll(async () => (await detailMap.boundingBox())?.y ?? 999).toBeLessThan(120);
+    await expect(detailMap.getByText("곤지암리조트 객실")).toBeVisible();
   });
 
   test("anonymous trip supports identity, decisions, checklist, and budget lifecycle", async ({ page, context }, testInfo) => {

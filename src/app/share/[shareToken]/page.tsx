@@ -7,6 +7,8 @@ import { TaskList } from "@/components/trip/task-list";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
+import { TripDashboard } from "@/components/trip/trip-dashboard";
+import { TripDecisionWorkspace } from "@/components/trip/trip-decision-workspace";
 import { getTripWorkspaceView } from "@/lib/trip-workspace";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
@@ -29,7 +31,8 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   const [trip, link] = await Promise.all([getTripByShareTokenHash(tokenHash), getShareLinkByTokenHash(tokenHash)]);
   if (!trip) notFound();
   const resort = getResort(trip.resortId);
-  const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
+  const rentalGroups = getRentalOptionsForResort(trip.resortId);
+  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
 
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
 
@@ -44,8 +47,9 @@ export default async function SharePage({ params, searchParams }: { params: Prom
         <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks} />
         <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
           {activeView === "overview" ? (
-            <div className="grid gap-5 lg:grid-cols-[320px_1fr]">
-              <aside className="space-y-5">
+            <div className="space-y-5">
+              <TripDashboard trip={trip} basePath={`/share/${shareToken}`} />
+              <aside className="grid gap-5 md:grid-cols-2">
                 <Card>
                   <CardHeader><CardTitle>일정</CardTitle></CardHeader>
                   <CardContent className="space-y-3 text-sm">
@@ -56,10 +60,10 @@ export default async function SharePage({ params, searchParams }: { params: Prom
                 </Card>
                 <ProgressSummary tasks={trip.tasks} />
               </aside>
-              <Card><CardHeader><CardTitle>함께 준비하는 트립</CardTitle></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">준비 상태와 비용은 왼쪽 메뉴에서 나누어 확인할 수 있어요.</p></CardContent></Card>
             </div>
           ) : null}
-          {activeView === "checklist" ? (link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} /> : <Card>
+          {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit={link?.permission === "edit"} /> : null}
+          {activeView === "checklist" ? (link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} basePath={`/share/${shareToken}`} /> : <Card>
           <CardHeader>
             <CardTitle>예약·준비 상태</CardTitle>
           </CardHeader>

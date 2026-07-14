@@ -8,6 +8,9 @@ import { TaskList } from "@/components/trip/task-list";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripCompanions } from "@/components/trip/trip-companions";
+import { TripDashboard } from "@/components/trip/trip-dashboard";
+import { TripDecisionWorkspace } from "@/components/trip/trip-decision-workspace";
+import { TripIdentityEditor } from "@/components/trip/trip-identity-editor";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { getTripWorkspaceView } from "@/lib/trip-workspace";
@@ -56,7 +59,8 @@ export default async function MyTripDetailPage({
   ]);
 
   const resort = getResort(trip.resortId);
-  const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
+  const rentalGroups = getRentalOptionsForResort(trip.resortId);
+  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
@@ -67,7 +71,7 @@ export default async function MyTripDetailPage({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
-                  <CardTitle className="mt-3 text-2xl font-black sm:text-3xl">{getTripDisplayName(trip)}</CardTitle>
+                  <div className="mt-3"><TripIdentityEditor tripId={trip.id} name={getTripDisplayName(trip)} memo={trip.tripMemo} canEdit={canEdit} /></div>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
                 <div className="flex flex-wrap justify-end gap-2">
@@ -77,7 +81,6 @@ export default async function MyTripDetailPage({
               </div>
             </CardHeader>
             <CardContent>
-              {trip.tripMemo ? <p className="mb-4 whitespace-pre-wrap rounded-xl bg-muted p-4 text-sm leading-6 text-muted-foreground">{trip.tripMemo}</p> : null}
               <div className="mb-4"><TripCompanions members={members} currentUserId={session.user.id} /></div>
               <div className="grid gap-3 md:grid-cols-3">
                 <Info label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
@@ -115,8 +118,9 @@ export default async function MyTripDetailPage({
           <div className="grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
             <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks} />
             <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
-              {activeView === "overview" ? <div className="space-y-4"><ProgressSummary tasks={trip.tasks} /><WorkspaceIntro title="여행 준비 현황" description="체크리스트와 비용을 각각의 메뉴에서 관리할 수 있어요. 먼저 확인이 필요한 준비부터 정리해 보세요." /></div> : null}
-              {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
+              {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
+              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
+              {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
               {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
             </section>
           </div>

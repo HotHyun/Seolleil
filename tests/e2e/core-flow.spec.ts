@@ -13,7 +13,7 @@ test.describe("core trip flow", () => {
     await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없습니다." })).toBeVisible();
   });
 
-  test("creates a private trip and issues a persistent read link", async ({ page, context }) => {
+  test("creates a private trip and opens the decision workspace", async ({ page }) => {
     let editUrl: string | undefined;
     try {
       await page.goto(planQuery);
@@ -25,19 +25,11 @@ test.describe("core trip flow", () => {
       expect(new URL(page.url()).searchParams.get("share")).toBeNull();
       await expect(page.getByText("이 편집 링크를 가진 사람은 트립을 수정할 수 있습니다.")).toBeVisible();
       await expect(page.getByText("비공개 트립을 만들었어요.")).toBeVisible();
-      await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
-      await page.getByRole("menuitem", { name: "공유 관리" }).click();
-      await expect(page.getByText("활성 공유 링크가 없습니다.")).toBeVisible();
-      await page.getByRole("button", { name: /새 링크/ }).click();
-      const shareUrl = await page.locator("text=/https?:.*\\/share\\//").first().textContent();
-      const shareToken = shareUrl ? new URL(shareUrl).pathname.split("/").pop() : null;
-      expect(shareToken).toBeTruthy();
-      const sharePage = await context.newPage();
-      await sharePage.goto(`/share/${shareToken}`);
-      await expect(sharePage.getByText("보기 전용")).toBeVisible();
-      await expect(sharePage.getByRole("heading", { name: "예약·준비 상태" })).toBeVisible();
-      await expect(sharePage.getByRole("button", { name: "트립 삭제" })).toHaveCount(0);
-      await expectNoHorizontalOverflow(sharePage);
+      await expect(page.getByText("이번 여행, 지금 정해진 것")).toBeVisible();
+      await page.getByRole("link", { name: /선택·예약/ }).first().click();
+      await expect(page.getByTestId("trip-decision-workspace")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
+      await expectNoHorizontalOverflow(page);
     } finally {
       if (editUrl) {
         await page.goto(editUrl);

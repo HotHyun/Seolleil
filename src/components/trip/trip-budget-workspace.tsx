@@ -107,7 +107,7 @@ export function TripBudgetWorkspace({ trip, editToken, shareToken, canEdit = tru
             <div className="flex items-end justify-between gap-3"><div><p className="text-xs font-bold opacity-70">현재 여행 총액</p><p className="mt-1 text-3xl font-black tabular-nums">{formatCurrency(totals.total)}</p></div><div className="text-right"><p className="text-xs font-bold opacity-70">1인당</p><p className="mt-1 text-xl font-black text-primary">{formatCurrency(totals.perPerson)}</p></div></div>
             <div className="mt-4 flex items-center gap-3 border-t border-background/20 pt-4"><Users className="h-4 w-4" /><label htmlFor="splitCount" className="text-sm font-bold">몇 명이 나눌까요?</label><Input id="splitCount" name="splitCount" type="number" min={1} max={100} value={splitCount} onChange={event => setSplitCount(Number(event.target.value))} className="ml-auto w-20 border-background/30 bg-background/10 text-background" /></div>
           </div>
-          {canEdit ? <SubmitButton className="w-full" pendingText="비용 저장 중…">비용과 정산 저장</SubmitButton> : null}
+          {canEdit ? <SubmitButton className="w-full" pendingText="저장 중…">저장하기</SubmitButton> : null}
         </form>
       </CardContent>
     </Card>

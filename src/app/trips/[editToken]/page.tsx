@@ -8,6 +8,9 @@ import { ProgressSummary } from "@/components/trip/progress";
 import { TaskList } from "@/components/trip/task-list";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
+import { TripDashboard } from "@/components/trip/trip-dashboard";
+import { TripDecisionWorkspace } from "@/components/trip/trip-decision-workspace";
+import { TripIdentityEditor } from "@/components/trip/trip-identity-editor";
 import { TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { getTripWorkspaceView } from "@/lib/trip-workspace";
 import { Button } from "@/components/ui/button";
@@ -40,7 +43,8 @@ export default async function TripEditPage({
   if (!trip) notFound();
 
   const resort = getResort(trip.resortId);
-  const rentalOptions = getRentalOptionsForResort(trip.resortId).flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
+  const rentalGroups = getRentalOptionsForResort(trip.resortId);
+  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
@@ -61,14 +65,13 @@ export default async function TripEditPage({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
-                  <CardTitle className="mt-3 text-2xl font-black sm:text-3xl">{getTripDisplayName(trip)}</CardTitle>
+                  <div className="mt-3"><TripIdentityEditor tripId={trip.id} editToken={editToken} name={getTripDisplayName(trip)} memo={trip.tripMemo} canEdit /></div>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
                 <TripManagementMenu trip={trip} editToken={editToken} shareUrl={shareUrl} sharePermission={sharePermission} canManageSharing={false} />
               </div>
             </CardHeader>
             <CardContent>
-              {trip.tripMemo ? <p className="mb-4 whitespace-pre-wrap rounded-xl bg-muted p-4 text-sm leading-6 text-muted-foreground">{trip.tripMemo}</p> : null}
               <div className="grid gap-3 md:grid-cols-3">
                 <Info label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
                 <Info label="인원" value={`${trip.peopleCount}명`} />
@@ -125,8 +128,9 @@ export default async function TripEditPage({
           <div className="grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
             <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks} />
             <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
-              {activeView === "overview" ? <div className="space-y-4"><ProgressSummary tasks={trip.tasks} /><WorkspaceIntro /></div> : null}
-              {activeView === "checklist" ? <TaskList tasks={trip.tasks} editToken={editToken} /> : null}
+              {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/trips/${editToken}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
+              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} editToken={editToken} /> : null}
+              {activeView === "checklist" ? <TaskList tasks={trip.tasks} editToken={editToken} basePath={`/trips/${editToken}`} /> : null}
               {activeView === "budget" ? <TripBudgetWorkspace trip={trip} editToken={editToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : null}
             </section>
           </div>

@@ -303,7 +303,7 @@ export async function updateTripDetailsAction(formData: FormData) {
     liftTicketTimeSlot: String(formData.get("liftTicketTimeSlot") ?? current.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"],
     lodgingCostInput: Number(formData.get("lodgingCostInput") ?? current.lodgingCostInput ?? 0) || undefined
   };
-  const selectedRentalOptionValue = String(formData.get("selectedRentalOptionId") ?? "");
+  const selectedRentalOptionValue = String(formData.get("selectedRentalOptionId") ?? current.selectedRentalOptionId ?? "");
   const selectedRentalOptionId =
     selectedRentalOptionValue && selectedRentalOptionValue !== "skip"
       ? selectedRentalOptionValue
@@ -441,6 +441,63 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
   } catch (error) {
     return actionFailure(error, { action: "updateTripBudget" });
   }
+}
+
+export async function updateTripDecisionSafeAction(formData: FormData) {
+  try {
+    const trip = await findEditableTrip(formData);
+    if (!trip || trip.status === "archived" || trip.status === "deleted") throw new AppError("FORBIDDEN", "이 트립의 선택을 수정할 수 없습니다.");
+    const decision = String(formData.get("decision") ?? "");
+    const patch: Parameters<typeof updateTrip>[1] = {};
+    let taskCategory = "";
+    if (decision === "rental") {
+      const optionId = String(formData.get("selectedRentalOptionId") ?? "");
+      const option = optionId ? getRentalOptionsForResort(trip.resortId).flatMap(group => group.options.map(item => ({ item, shop: group.shop }))).find(entry => entry.item.id === optionId) : null;
+      if (!option) throw new AppError("INVALID_INPUT", "선택한 렌탈 상품을 찾을 수 없습니다.");
+      patch.selectedRentalOptionId = option.item.id;
+      patch.selectedRentalShopId = option.shop.id;
+      taskCategory = "equipment_rental";
+    } else if (decision === "lift") {
+      const value = String(formData.get("liftTicketTimeSlot") ?? "");
+      if (!["2h", "3h", "4h", "6h", "night", "full_day"].includes(value)) throw new AppError("INVALID_INPUT", "리프트권을 다시 선택해 주세요.");
+      patch.liftTicketTimeSlot = value;
+      taskCategory = "lift_ticket";
+    } else if (decision === "transport") {
+      const value = String(formData.get("transportType") ?? "");
+      if (!["car", "shuttle", "bus"].includes(value)) throw new AppError("INVALID_INPUT", "교통수단을 다시 선택해 주세요.");
+      patch.transportType = value as TripInput["transportType"];
+      taskCategory = "transport";
+    } else if (decision === "lodging") {
+      const lodgingName = String(formData.get("lodgingName") ?? "").trim().slice(0, 120);
+      const lodgingUrl = String(formData.get("lodgingUrl") ?? "").trim();
+      if (!lodgingName) throw new AppError("INVALID_INPUT", "예약하거나 검토 중인 숙소 이름을 입력해 주세요.");
+      if (lodgingUrl && !/^https:\/\//i.test(lodgingUrl)) throw new AppError("INVALID_INPUT", "숙소 링크는 https://로 시작해야 합니다.");
+      patch.lodgingName = lodgingName;
+      patch.lodgingUrl = lodgingUrl || null;
+      taskCategory = "lodging";
+    } else {
+      throw new AppError("INVALID_INPUT", "저장할 선택 항목을 확인해 주세요.");
+    }
+    if (decision !== "lodging") {
+      const resort = getResort(trip.resortId);
+      const selectedRentalOptionId = patch.selectedRentalOptionId === undefined ? trip.selectedRentalOptionId : patch.selectedRentalOptionId;
+      const input: TripInput = {
+        visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount,
+        tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment,
+        ownsClothing: trip.ownsClothing, transportType: patch.transportType ?? trip.transportType, priorities: ["rental"],
+        liftTicketTimeSlot: (patch.liftTicketTimeSlot ?? trip.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"],
+        lodgingCostInput: trip.budgetData.overrides.lodging
+      };
+      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined) : null;
+      if (cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object") patch.selectedRecommendation = { ...trip.selectedRecommendation, cost };
+    }
+    await updateTrip(trip.id, patch);
+    const task = trip.tasks.find(item => item.isDefault && item.category === taskCategory && item.status === "needs_check");
+    if (task) await updateTask(task.id, { status: "planned" });
+    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_decision_updated", properties: { decision } });
+    revalidateTripAccess(formData);
+    return actionSuccess("선택을 트립에 저장했어요.");
+  } catch (error) { return actionFailure(error, { action: "updateTripDecision" }); }
 }
 
 export async function updateTripStatusAction(formData: FormData) {

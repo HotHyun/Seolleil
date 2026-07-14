@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CheckSquare2, LayoutDashboard, ReceiptText } from "lucide-react";
+import { CheckSquare2, Compass, LayoutDashboard, ReceiptText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isTaskComplete } from "@/lib/checklist";
 import { taskStatusChangedEvent, type TaskStatusChangedDetail } from "@/components/trip/task-status-events";
@@ -10,6 +10,7 @@ import type { TripWorkspaceView } from "@/lib/trip-workspace";
 
 const items = [
   { id: "overview", label: "트립 개요", description: "일정과 준비 현황", icon: LayoutDashboard },
+  { id: "decisions", label: "선택·예약", description: "렌탈·리프트·이동·숙소", icon: Compass },
   { id: "checklist", label: "준비 체크리스트", description: "예약과 준비 상태", icon: CheckSquare2 },
   { id: "budget", label: "비용·정산", description: "선택과 1/N 비용", icon: ReceiptText }
 ] as const;

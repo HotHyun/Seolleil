@@ -243,6 +243,14 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["25/26이용확인", "장비의류", "강습"], sourceUrl: "https://pandarank.net/contents/695b442dde98049214e605c0", lastCheckedAt: checkedAt
   },
   {
+    id: "o2-snow-world", resortId: "o2", name: "스노월드 스키샵",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%ED%83%9C%EB%B0%B1%EC%8B%9C%20%EC%98%A4%ED%88%AC%EB%A1%9C%20149" },
+    equipmentRentalAvailable: false, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 태백시 오투로 149", phone: "010-9158-2494", dataStatus: "listed_25_26",
+    serviceNote: "오투리조트 인근 의류 렌탈 이용 기록과 주소·연락처 확인. 공개된 최신 이용 가격은 24/25 시즌 상·하의 각 10,000원으로, 25/26 영업과 최종 가격은 방문 전 문의 필요.",
+    recommendationTags: ["리조트인근", "의류", "시즌재확인"], sourceUrl: "https://bli-ss.tistory.com/497", lastCheckedAt: checkedAt
+  },
+  {
     id: "vivaldi-jamesboard", resortId: "vivaldi", name: "제임스보드", url: "https://www.jamesboardski.co.kr/",
     mapLinks: { naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EC%A0%9C%EC%9E%84%EC%8A%A4%EB%B3%B4%EB%93%9C" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,

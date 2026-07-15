@@ -123,6 +123,18 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "oakvalley-snb")).toBe(false);
   });
 
+  it("keeps O2 external clothing rental separate from confirmed 25/26 pricing", () => {
+    const shops = getRentalShopsForResort("o2");
+    const snowWorld = shops.find((shop) => shop.id === "o2-snow-world");
+
+    expect(snowWorld?.address).toContain("오투로 149");
+    expect(snowWorld?.clothingRentalAvailable).toBe(true);
+    expect(snowWorld?.equipmentRentalAvailable).toBe(false);
+    expect(snowWorld?.serviceNote).toContain("24/25");
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "o2-snow-world")).toBe(false);
+    expect(shops.some((shop) => shop.id === "o2-official-rental")).toBe(true);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

@@ -70,6 +70,16 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "muju-skiworld")).toBe(false);
   });
 
+  it("keeps the researched Vivaldi rental directory and verified prices separated", () => {
+    const shops = getRentalShopsForResort("vivaldi");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(7);
+    expect(shops.some((shop) => shop.id === "vivaldi-jamesboard" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "vivaldi-tomato" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "vivaldi-jamesboard")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "vivaldi-tomato")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

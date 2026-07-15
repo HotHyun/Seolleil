@@ -139,6 +139,44 @@ export const verifiedRentalShops2526: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
+    id: "vivaldi-jamesboard", resortId: "vivaldi", name: "제임스보드", url: "https://www.jamesboardski.co.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EC%A0%9C%EC%9E%84%EC%8A%A4%EB%B3%B4%EB%93%9C" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "verified_25_26", serviceNote: "장비 25,000원부터, 의류 15,000원부터, 보호구와 리프트 결합 가격 및 무료 픽업 확인.",
+    recommendationTags: ["가격확인", "무료픽업", "리프트패키지"], sourceUrl: "https://www.jamesboardski.co.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "vivaldi-tomato", resortId: "vivaldi", name: "토마토 렌탈샵", url: "https://v-tomato.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%99%8D%EC%B2%9C%EA%B5%B0%20%EC%84%9C%EB%A9%B4%20%ED%95%9C%EC%B9%98%EA%B3%A8%EA%B8%B8%20602" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 홍천군 서면 한치골길 602", phone: "033-433-4933", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류·리프트권·강습과 자체 예약 경로 확인. 25/26 최종 단품 가격은 문의 필요.",
+    recommendationTags: ["리조트인근", "자체예약", "리프트권"], sourceUrl: "https://v-tomato.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "vivaldi-smile", resortId: "vivaldi", name: "스마일 렌탈샵", url: "https://smileskis.imweb.me/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%99%8D%EC%B2%9C%EA%B5%B0%20%EC%84%9C%EB%A9%B4%20%ED%95%9C%EC%B9%98%EA%B3%A8%EA%B8%B8%201023" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 홍천군 서면 한치골길 1023 1층", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류·리프트 패키지와 예약 경로 확인. 공개된 25/26 최종 단품 가격은 재확인 필요.",
+    recommendationTags: ["패키지", "업체사이트", "리프트권"], sourceUrl: "https://smileskis.imweb.me/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "vivaldi-jjijjippong", resortId: "vivaldi", name: "찌찌뽕 렌탈샵", url: "https://pf.kakao.com/_iUmcxd",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%99%8D%EC%B2%9C%EA%B5%B0%20%EC%84%9C%EB%A9%B4%20%ED%95%9C%EC%84%9C%EB%A1%9C%202177" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 홍천군 서면 한서로 2177 1층", phone: "0507-1407-9227", dataStatus: "listed_25_26", distanceMinutes: 5,
+    serviceNote: "공식 상담 채널, 리조트 약 5분 거리와 24시간 영업 확인. 상세 가격과 리프트 판매는 문의 필요.",
+    recommendationTags: ["24시간", "리조트5분", "카카오문의"], sourceUrl: "https://pf.kakao.com/_iUmcxd", lastCheckedAt: checkedAt
+  },
+  {
+    id: "vivaldi-boardyoon", resortId: "vivaldi", name: "보드윤", url: "https://www.11st.co.kr/products/8960622834",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EB%B3%B4%EB%93%9C%EC%9C%A4%20%EB%A0%8C%ED%83%88%EC%83%B5" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "25/26 리프트 포함 렌탈 패키지 판매 이력 확인. 현재 판매 종료로 최종 가격과 예약 경로 재확인 필요.",
+    recommendationTags: ["25/26상품", "리프트패키지", "재확인필요"], sourceUrl: "https://www.11st.co.kr/products/8960622834", lastCheckedAt: checkedAt
+  },
+  {
     id: "phoenix-torres",
     resortId: "phoenix",
     name: "토레스 렌탈샵",

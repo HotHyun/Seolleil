@@ -24,11 +24,11 @@ test.describe("production regression", () => {
 
     await page.goto("/resorts/konjiam");
     const detailMap = page.getByTestId("resort-detail-nearby-map");
-    const lodging = page.getByRole("button", { name: /곤지암리조트 객실 지도에서 보기/ });
+    const lodging = page.getByRole("button", { name: "곤지암리조트 EW 빌리지 지도에서 보기" });
     await lodging.scrollIntoViewIfNeeded();
     await lodging.click();
     await expect.poll(async () => (await detailMap.boundingBox())?.y ?? 999).toBeLessThan(120);
-    await expect(detailMap.getByText("곤지암리조트 객실")).toBeVisible();
+    await expect(detailMap.getByText("곤지암리조트 EW 빌리지")).toBeVisible();
 
     await page.goto("/resorts/phoenix");
     const phoenixMap = page.getByTestId("resort-detail-nearby-map");

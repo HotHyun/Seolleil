@@ -8,9 +8,10 @@ describe("static data validation", () => {
   it("separates verified High1 data from listing-only candidates", () => {
     const shops = getRentalShopsForResort("high1");
     expect(shops.some((shop) => shop.id === "high1-myski" && shop.pickupAvailable)).toBe(true);
-    expect(shops.filter((shop) => shop.dataStatus === "verified_25_26").length).toBeGreaterThanOrEqual(3);
+    expect(shops.filter((shop) => shop.dataStatus === "verified_25_26").length).toBeGreaterThanOrEqual(4);
     expect(rentalPriceRules.some((rule) => rule.id === "high1-myski-lift-peak-7h" && rule.representativePrice === 53000)).toBe(true);
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-repo4u")).toBe(false);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-four-season" && rule.representativePrice === 12000)).toBe(true);
     expect(getNearbyLodgingsForResort("high1")).toHaveLength(5);
   });
 

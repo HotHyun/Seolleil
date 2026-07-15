@@ -464,6 +464,17 @@ const rentalSeedOverrides: Record<string, RentalSeed> = {
     packagePrice: 27000,
     maxExtra: 10000
   },
+  "high1-four-season": {
+    shopId: "high1-four-season",
+    sourceType: "official_booking",
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "25/26 NOL 판매 페이지의 주중·주말 공통 장비와 의류 옵션 가격 기준.",
+    equipment: 12000,
+    clothing: 12000,
+    packagePrice: 24000,
+    maxExtra: 10000
+  },
   "high1-official-rental": {
     shopId: "high1-official-rental",
     sourceType: "official_booking",

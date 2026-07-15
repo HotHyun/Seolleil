@@ -70,6 +70,16 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "muju-skiworld")).toBe(false);
   });
 
+  it("keeps the researched Alpensia rental directory and verified prices separated", () => {
+    const shops = getRentalShopsForResort("alpensia");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(9);
+    expect(shops.some((shop) => shop.id === "alpensia-ski911" && shop.dataStatus === "verified_25_26" && shop.pickupAvailable)).toBe(true);
+    expect(shops.some((shop) => shop.id === "alpensia-kind-ski" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "alpensia-ski911")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "alpensia-kind-ski")).toBe(false);
+  });
+
   it("keeps the researched Vivaldi rental directory and verified prices separated", () => {
     const shops = getRentalShopsForResort("vivaldi");
 

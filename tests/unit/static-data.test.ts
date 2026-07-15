@@ -60,6 +60,16 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "yongpyong-tatata")).toBe(false);
   });
 
+  it("keeps the researched Muju rental directory and verified prices separated", () => {
+    const shops = getRentalShopsForResort("muju");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(9);
+    expect(shops.some((shop) => shop.id === "muju-snowpark" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "muju-skiworld" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "muju-snowpark")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "muju-skiworld")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

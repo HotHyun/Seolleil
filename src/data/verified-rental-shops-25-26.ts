@@ -278,5 +278,60 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["25/26확인", "리프트패키지", "장비의류"],
     sourceUrl: "https://leisure-web.yanolja.com/leisure/10296790",
     lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-snowpark", resortId: "muju", name: "스노우파크", url: "https://www.mujusp.com/bbs/_a_price.php",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A01%EB%A1%9C%2060" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "전북특별자치도 무주군 설천면 만선1로 60", phone: "063-322-2355 / 010-4445-2355", dataStatus: "verified_25_26",
+    serviceNote: "25/26 일반·특수 장비, 프리미엄 의류, 보호구 및 리프트 할인 가격표 확인.",
+    recommendationTags: ["25/26확인", "특수장비", "보호구"], sourceUrl: "https://www.mujusp.com/bbs/_a_price.php", lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-hyundai", resortId: "muju", name: "현대스키샵", url: "https://leisure-web.yanolja.com/leisure/10290570",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A0%EB%A1%9C%2022" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "전북특별자치도 무주군 설천면 만선로 22", phone: "063-322-1664", dataStatus: "verified_25_26",
+    serviceNote: "25/26 고급·신상 장비와 의류, 숏스키·인라인·해머데크 및 리프트 패키지 가격 확인.",
+    recommendationTags: ["25/26확인", "특수장비", "리프트패키지"], sourceUrl: "https://leisure-web.yanolja.com/leisure/10290570", lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-skilife", resortId: "muju", name: "스키라이프", url: "https://skilife.co.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A0%EB%A1%9C%2036-2" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "전북특별자치도 무주군 설천면 만선로 36-2", phone: "063-322-2111 / 010-8820-3140", dataStatus: "verified_25_26",
+    serviceNote: "장비·의류 각 15,000원, 장비+의류+헬멧+고글 40,000원과 당일 리프트 할인 확인.",
+    recommendationTags: ["가격확인", "풀세트", "리프트할인"], sourceUrl: "https://skilife.co.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-skiworld", resortId: "muju", name: "무주스키월드", url: "https://www.mujuskiworld.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A0%EB%A1%9C%2082" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "전북특별자치도 무주군 설천면 만선로 82", phone: "063-322-2007", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류·리프트권·강습·숙박 할인과 평일 픽업 확인. 25/26 최종 단품가는 견적 확인 필요.",
+    recommendationTags: ["픽업", "리프트권", "숙박연결"], sourceUrl: "https://www.mujuskiworld.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-mentor", resortId: "muju", name: "멘토 렌탈샵", url: "https://www.mentorski.com/page/page161",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A0%EB%A1%9C%2038" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "전북특별자치도 무주군 설천면 만선로 38", phone: "063-324-7922 / 010-7173-7922", dataStatus: "listed_25_26",
+    serviceNote: "장비·신상 의류, 리프트 할인, 강습·숙박·견적 경로 확인. 최근 시즌 상세 가격은 재확인 필요.",
+    recommendationTags: ["리프트할인", "강습", "숙박연결"], sourceUrl: "https://www.mentorski.com/page/page161", lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-silkroad", resortId: "muju", name: "실크로드 스키샵", url: "https://mujusilk.com/main/pc_index.html",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A0%EB%A1%9C%2057" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "전북특별자치도 무주군 설천면 만선로 57", dataStatus: "listed_25_26",
+    serviceNote: "25/26 영업 공지와 장비·의류·리프트·가족호텔 예약 연결 확인. 최신 단품가는 문의 필요.",
+    recommendationTags: ["25/26영업확인", "리프트권", "숙박연결"], sourceUrl: "https://mujusilk.com/board/index.html?id=notice&no=39", lastCheckedAt: checkedAt
+  },
+  {
+    id: "muju-noritur", resortId: "muju", name: "노리터 스키샵", url: "https://noritur.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EB%AC%B4%EC%A3%BC%20%EB%85%B8%EB%A6%AC%ED%84%B0%20%EC%8A%A4%ED%82%A4%EC%83%B5" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "무주리조트 입구 장비·의류·리프트권 및 레저·숙박 연결 업체 경로 확인. 25/26 상세 가격은 재확인 필요.",
+    recommendationTags: ["리조트입구", "리프트권", "숙박연결"], sourceUrl: "https://noritur.kr/", lastCheckedAt: checkedAt
   }
 ];

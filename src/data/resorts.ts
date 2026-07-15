@@ -636,10 +636,13 @@ export const rentalShops: RentalShop[] = [
     clothingRentalAvailable: true,
     pickupAvailable: true,
     deliveryAvailable: false,
+    liftTicketSalesAvailable: true,
+    dataStatus: "verified_25_26",
+    serviceNote: "25/26 고급 장비·의류 15,000원부터, 바이저헬멧과 평일 학생 픽업 확인.",
     distanceMinutes: 8,
     recommendationTags: ["외부샵", "가격표확인", "픽업"],
     sourceUrl: "https://www.100am.co.kr/",
-    lastCheckedAt: checkedAt
+    lastCheckedAt: "2026-07-15"
   },
   {
     id: "konjiam-official-rental",

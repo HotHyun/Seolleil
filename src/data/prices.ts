@@ -411,6 +411,9 @@ const rentalSeedOverrides: Record<string, RentalSeed> = {
   "yongpyong-point-ski": { shopId: "yongpyong-point-ski", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 일반 장비와 일반 장비+의류 1타임 가격 기준.", equipment: 15000, clothing: 20000, packagePrice: 35000, maxExtra: 10000 },
   "alpensia-point-ski": { shopId: "alpensia-point-ski", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 일반장비 단품 및 일반장비+일반의류 1타임 가격 기준.", equipment: 15000, clothing: 20000, packagePrice: 35000, maxExtra: 10000 },
   "muju-arirang": { shopId: "muju-arirang", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 고급장비·고급의류 단품 가격 기준.", equipment: 15000, clothing: 15000, packagePrice: 30000, maxExtra: 15000 },
+  "muju-snowpark": { shopId: "muju-snowpark", sourceType: "official_site", confidence: "confirmed", verifiedByHuman: true, verificationNote: "업체 25/26 가격표의 일반 장비·프리미엄 의류 가격 기준.", equipment: 20000, clothing: 20000, packagePrice: 40000, maxExtra: 10000 },
+  "muju-hyundai": { shopId: "muju-hyundai", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 고급 장비·고급 의류와 결합 가격 기준.", equipment: 20000, clothing: 20000, packagePrice: 40000, maxExtra: 20000 },
+  "muju-skilife": { shopId: "muju-skilife", sourceType: "official_site", confidence: "confirmed", verifiedByHuman: true, verificationNote: "업체 현재 공개 페이지의 주중/주말 장비·의류 및 풀세트 가격 기준.", equipment: 15000, clothing: 15000, packagePrice: 40000, maxExtra: 10000 },
   "jisan-boong": {
     shopId: "jisan-boong",
     sourceType: "official_site",
@@ -524,12 +527,12 @@ const rentalSeedOverrides: Record<string, RentalSeed> = {
   "muju-baegam": {
     shopId: "muju-baegam",
     sourceType: "official_site",
-    confidence: "estimated",
-    verifiedByHuman: false,
-    verificationNote: "백암스키샵 가격표/견적 페이지 기반. 시간권별 실제 가격 재확인 필요.",
-    equipment: 20000,
-    clothing: 20000,
-    packagePrice: 40000,
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "업체 25/26 페이지의 고급 장비·의류 시작가 기준.",
+    equipment: 15000,
+    clothing: 15000,
+    packagePrice: 30000,
     maxExtra: 10000
   },
   "konjiam-goodgear": {

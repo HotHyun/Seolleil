@@ -90,6 +90,16 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "vivaldi-tomato")).toBe(false);
   });
 
+  it("keeps the researched Eden Valley rental directory and verified prices separated", () => {
+    const shops = getRentalShopsForResort("edenvalley");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(3);
+    expect(shops.some((shop) => shop.id === "edenvalley-modooski" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "edenvalley-jjeombbang" && shop.dataStatus === "listed_25_26" && shop.pickupAvailable)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "edenvalley-modooski")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "edenvalley-superman")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

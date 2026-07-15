@@ -727,8 +727,12 @@ export const rentalShops: RentalShop[] = [
     clothingRentalAvailable: true,
     pickupAvailable: true,
     deliveryAvailable: false,
+    liftTicketSalesAvailable: true,
+    address: "경상남도 양산시 어실로 440",
+    phone: "010-2142-2385",
     distanceMinutes: 8,
-    recommendationTags: ["외부샵", "가격표확인"],
+    recommendationTags: ["25/26확인", "리프트패키지", "무료보호구"],
+    serviceNote: "25/26 장비·의류 가격과 리프트 패키지, 2026 시즌 고글·보호대 무료 쿠폰 확인.",
     sourceUrl: "https://www.gwski.co.kr/theme/basic/page.php?gr_id=01&num=03",
     lastCheckedAt: checkedAt
   },

@@ -426,5 +426,21 @@ export const verifiedRentalShops2526: RentalShop[] = [
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
     dataStatus: "listed_25_26", serviceNote: "무주리조트 입구 장비·의류·리프트권 및 레저·숙박 연결 업체 경로 확인. 25/26 상세 가격은 재확인 필요.",
     recommendationTags: ["리조트입구", "리프트권", "숙박연결"], sourceUrl: "https://noritur.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "edenvalley-jjeombbang", resortId: "edenvalley", name: "점빵스키", url: "https://map.naver.com/p/search/%EC%96%91%EC%82%B0%20%EC%A0%90%EB%B9%B5%EC%8A%A4%ED%82%A4",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84%20%EC%96%91%EC%82%B0%EC%8B%9C%20%EC%96%B4%EC%8B%A4%EB%A1%9C%20608" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "경상남도 양산시 어실로 608", phone: "055-363-6694 / 055-363-6695", dataStatus: "listed_25_26",
+    serviceNote: "에덴밸리 진입로 장비·의류 렌탈과 대중교통 이용객 픽업 안내를 최근 이용 정보에서 확인. 25/26 최종 가격은 문의 필요.",
+    recommendationTags: ["진입로", "대중교통픽업", "장비의류"], sourceUrl: "https://irenestory.tistory.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "edenvalley-superman", resortId: "edenvalley", name: "슈퍼맨 스키샵", url: "https://triptogo.world/product/%EA%B2%BD%EC%83%81%EB%8F%84-%EC%96%91%EC%82%B0%EC%8B%9C-%EC%97%90%EB%8D%B4%EB%B0%B8%EB%A6%AC-%EB%A6%AC%EC%A1%B0%ED%8A%B8-%EC%8A%88%ED%8D%BC%EB%A7%A8-%EC%8A%A4%ED%82%A4%EC%83%B5-%EB%A6%AC%ED%94%84%ED%8A%B8-%EC%9E%A5%EB%B9%84-%EB%A0%8C%ED%83%88%EA%B6%8C-wg116904/2068/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EC%83%81%EB%82%A8%EB%8F%84%20%EC%96%91%EC%82%B0%EC%8B%9C%20%EC%96%B4%EC%8B%A4%EB%A1%9C%20434" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경상남도 양산시 어실로 434", phone: "010-7182-5475", dataStatus: "listed_25_26",
+    serviceNote: "리프트·장비·의류 4·5·7시간 패키지와 강습 예약 경로 확인. 현재 상품이 품절 상태여서 영업과 최종 가격은 사전 문의 필요.",
+    recommendationTags: ["리프트패키지", "강습", "재확인필요"], sourceUrl: "https://triptogo.world/product/%EA%B2%BD%EC%83%81%EB%8F%84-%EC%96%91%EC%82%B0%EC%8B%9C-%EC%97%90%EB%8D%B4%EB%B0%B8%EB%A6%AC-%EB%A6%AC%EC%A1%B0%ED%8A%B8-%EC%8A%88%ED%8D%BC%EB%A7%A8-%EC%8A%A4%ED%82%A4%EC%83%B5-%EB%A6%AC%ED%94%84%ED%8A%B8-%EC%9E%A5%EB%B9%84-%EB%A0%8C%ED%83%88%EA%B6%8C-wg116904/2068/", lastCheckedAt: checkedAt
   }
 ];

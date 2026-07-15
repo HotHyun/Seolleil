@@ -1,13 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ChevronRight, ExternalLink, Hotel, MapPin, Search, Shirt, Snowflake } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, Hotel, MapPin, Search, Shirt } from "lucide-react";
 import Link from "next/link";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import {
-  getMapPosition,
   getNearbyMapItems,
   getNearbySummary,
   getResortMapRows,
@@ -20,6 +19,8 @@ type KakaoMap = {
   setCenter: (latlng: unknown) => void;
   setLevel: (level: number) => void;
 };
+
+type KakaoSearchResult = { x: string; y: string };
 
 type KakaoMarker = {
   setMap: (map: KakaoMap | null) => void;
@@ -40,6 +41,11 @@ declare global {
         event: {
           addListener: (target: KakaoMarker, type: string, handler: () => void) => void;
         };
+        services: {
+          Status: { OK: string };
+          Geocoder: new () => { addressSearch: (address: string, callback: (results: KakaoSearchResult[], status: string) => void) => void };
+          Places: new () => { keywordSearch: (query: string, callback: (results: KakaoSearchResult[], status: string) => void) => void };
+        };
         load: (callback: () => void) => void;
       };
     };
@@ -52,7 +58,9 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
   const [query, setQuery] = useState("");
   const [showNearby, setShowNearby] = useState(false);
   const [selectedNearbyId, setSelectedNearbyId] = useState<string | null>(null);
+  const [nearbyFilter, setNearbyFilter] = useState<"all" | "rental" | "lodging" | "pickup" | "priced">("all");
   const [shouldFocusSelectedNearby, setShouldFocusSelectedNearby] = useState(false);
+  const [nearbyPoints, setNearbyPoints] = useState<Record<string, { lat: number; lng: number }>>({});
   const mapRef = useRef<HTMLDivElement | null>(null);
   const mapSectionRef = useRef<HTMLDivElement | null>(null);
   const kakaoMapRef = useRef<KakaoMap | null>(null);
@@ -65,12 +73,18 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     [rentalShops, selected]
   );
   const selectedNearby = nearbyItems.find((item) => item.id === selectedNearbyId) ?? null;
+  const filteredNearbyItems = nearbyItems.filter((item) => nearbyFilter === "all" || item.type === nearbyFilter || (nearbyFilter === "pickup" && item.pickupAvailable) || (nearbyFilter === "priced" && item.dataStatus === "verified_25_26"));
   const kakaoKey = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
   const filteredRows = rows.filter(({ resort }) => {
     const term = query.trim().toLowerCase();
     if (!term) return true;
     return `${resort.name} ${resort.region} ${resort.tags.join(" ")}`.toLowerCase().includes(term);
   });
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("resortId");
+    if (requested && rows.some((row) => row.resort.id === requested)) setSelectedId(requested);
+  }, [rows]);
 
   useEffect(() => {
     if (!kakaoKey || !mapRef.current || !rows.length) return;
@@ -100,12 +114,31 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     }
 
     const script = document.createElement("script");
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false`;
+    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoKey}&autoload=false&libraries=services`;
     script.async = true;
     script.dataset.kakaoMap = "true";
     script.addEventListener("load", () => window.kakao?.maps.load(initializeMap), { once: true });
     document.head.appendChild(script);
-  }, [kakaoKey, rows, showNearby, nearbyItems, selected?.point]);
+  }, [kakaoKey, rows, showNearby, nearbyItems, nearbyPoints, selected?.point]);
+
+  useEffect(() => {
+    if (!showNearby || !selected || !window.kakao?.maps.services) return;
+    let cancelled = false;
+    const geocoder = new window.kakao.maps.services.Geocoder();
+    const places = new window.kakao.maps.services.Places();
+    const resolve = (item: NearbyMapItem) => new Promise<[string, { lat: number; lng: number }] | null>((done) => {
+      const callback = (results: KakaoSearchResult[], status: string) => {
+        if (status !== window.kakao?.maps.services.Status.OK || !results[0]) return done(null);
+        done([item.id, { lat: Number(results[0].y), lng: Number(results[0].x) }]);
+      };
+      if (item.address) geocoder.addressSearch(item.address, callback);
+      else places.keywordSearch(`${selected.resort.name} ${item.name}`, callback);
+    });
+    Promise.all(nearbyItems.map(resolve)).then((entries) => {
+      if (!cancelled) setNearbyPoints(Object.fromEntries(entries.filter((entry): entry is [string, { lat: number; lng: number }] => Boolean(entry))));
+    });
+    return () => { cancelled = true; };
+  }, [nearbyItems, selected, showNearby]);
 
   useEffect(() => {
     if (!selected?.point || !kakaoMapRef.current || !window.kakao?.maps) return;
@@ -119,7 +152,9 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
 
     if (!selectedNearby || !kakaoMapRef.current || !window.kakao?.maps) return;
 
-    const position = new window.kakao.maps.LatLng(selectedNearby.lat, selectedNearby.lng);
+    const point = nearbyPoints[selectedNearby.id];
+    if (!point) return;
+    const position = new window.kakao.maps.LatLng(point.lat, point.lng);
     if (shouldFocusSelectedNearby) {
       kakaoMapRef.current.setCenter(position);
       kakaoMapRef.current.setLevel(4);
@@ -130,7 +165,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
       yAnchor: 1.45,
       content: createSelectedNearbyOverlay(selectedNearby)
     });
-  }, [selectedNearby, shouldFocusSelectedNearby]);
+  }, [nearbyPoints, selectedNearby, shouldFocusSelectedNearby]);
 
   function drawKakaoMarkers(map: KakaoMap) {
     if (!window.kakao?.maps) return;
@@ -158,9 +193,11 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     if (!showNearby) return;
     nearbyItems.forEach((item) => {
       if (!window.kakao?.maps) return;
+      const point = nearbyPoints[item.id];
+      if (!point) return;
       const marker = new window.kakao.maps.Marker({
         map,
-        position: new window.kakao.maps.LatLng(item.lat, item.lng),
+        position: new window.kakao.maps.LatLng(point.lat, point.lng),
         title: item.name
       });
       window.kakao.maps.event.addListener(marker, "click", () => selectNearby(item.id, false));
@@ -187,7 +224,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     <section className="grid min-h-[calc(100vh-4rem)] bg-background lg:grid-cols-[380px_1fr]">
       <aside className="order-2 z-20 flex min-w-0 w-full flex-col border-t bg-card shadow-xl lg:sticky lg:top-16 lg:order-1 lg:max-h-[calc(100vh-4rem)] lg:border-r lg:border-t-0">
         {showNearby && selected ? (
-          <NearbySidebar resort={selected.resort} items={nearbyItems} selectedId={selectedNearbyId} onBack={closeNearby} onSelect={(id) => selectNearby(id, true)} />
+          <NearbySidebar resort={selected.resort} items={filteredNearbyItems} selectedId={selectedNearbyId} filter={nearbyFilter} onFilter={setNearbyFilter} onBack={closeNearby} onSelect={(id) => selectNearby(id, true)} />
         ) : (
           <ResortSidebar
             rows={filteredRows}
@@ -211,14 +248,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
           {kakaoKey ? (
             <div ref={mapRef} className="absolute inset-0 bg-muted" />
           ) : (
-            <FallbackMap
-              rows={rows}
-              nearbyItems={showNearby ? nearbyItems : []}
-              selectedId={selected?.resort.id}
-              selectedNearbyId={selectedNearbyId}
-              onSelect={setSelectedId}
-              onNearbySelect={(id) => selectNearby(id, false)}
-            />
+            <MapUnavailable resort={selected?.resort} />
           )}
         </div>
 
@@ -311,12 +341,16 @@ function NearbySidebar({
   resort,
   items,
   selectedId,
+  filter,
+  onFilter,
   onBack,
   onSelect
 }: {
   resort: SkiResort;
   items: NearbyMapItem[];
   selectedId: string | null;
+  filter: "all" | "rental" | "lodging" | "pickup" | "priced";
+  onFilter: (filter: "all" | "rental" | "lodging" | "pickup" | "priced") => void;
   onBack: () => void;
   onSelect: (id: string) => void;
 }) {
@@ -329,6 +363,7 @@ function NearbySidebar({
         <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Nearby</p>
         <h1 className="mt-2 text-2xl font-black">{resort.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">주변 렌탈샵과 숙박 후보</p>
+        <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">{([ ["all", "전체"], ["rental", "렌탈"], ["lodging", "숙박"], ["pickup", "픽업"], ["priced", "가격 확인"] ] as const).map(([value, label]) => <button key={value} type="button" onClick={() => onFilter(value)} className={cn("min-h-9 shrink-0 rounded-full border px-3 text-xs font-bold", filter === value ? "border-primary bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}>{label}</button>)}</div>
       </div>
       <div className="flex-1 overflow-y-auto p-3">
         <div className="grid gap-2">
@@ -349,6 +384,7 @@ function NearbySidebar({
                 <div className="min-w-0">
                   <div className="truncate font-black">{item.name}</div>
                   <div className="mt-1 text-xs text-muted-foreground">{item.meta}</div>
+                  <div className="mt-2 flex flex-wrap gap-1">{item.pickupAvailable ? <StatusBadge>픽업</StatusBadge> : null}{item.clothingRentalAvailable ? <StatusBadge>의류</StatusBadge> : null}{item.liftTicketSalesAvailable ? <StatusBadge>리프트권</StatusBadge> : null}{item.dataStatus === "verified_25_26" ? <StatusBadge tone="good">가격 확인</StatusBadge> : null}</div>
                 </div>
               </div>
             </button>
@@ -356,72 +392,6 @@ function NearbySidebar({
         </div>
       </div>
     </>
-  );
-}
-
-function FallbackMap({
-  rows,
-  nearbyItems,
-  selectedId,
-  selectedNearbyId,
-  onSelect,
-  onNearbySelect
-}: {
-  rows: ReturnType<typeof getResortMapRows>;
-  nearbyItems: NearbyMapItem[];
-  selectedId?: string;
-  selectedNearbyId: string | null;
-  onSelect: (id: string) => void;
-  onNearbySelect: (id: string) => void;
-}) {
-  return (
-    <div className="absolute inset-0 overflow-hidden bg-zinc-950 text-white">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_16%,rgba(255,122,26,0.18),transparent_30rem),linear-gradient(145deg,rgba(255,255,255,0.08),transparent_42%)]" />
-      <div className="absolute inset-x-16 bottom-10 top-10 rounded-[45%] border border-white/10 bg-white/[0.04]" />
-      <div className="absolute inset-x-24 bottom-20 top-20 rounded-[42%] border border-white/10" />
-      {rows.map(({ resort, point }) => {
-        if (!point) return null;
-        const isSelected = resort.id === selectedId;
-        return (
-          <button
-            key={resort.id}
-            type="button"
-            className={cn(
-              "absolute z-10 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 shadow-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-              isSelected ? "border-white bg-primary" : "border-white/60 bg-white/40 hover:bg-white"
-            )}
-            style={getMapPosition(point)}
-            onClick={() => onSelect(resort.id)}
-            aria-label={`${resort.name} 선택`}
-          />
-        );
-      })}
-      {nearbyItems.map((item) => {
-        const isSelected = item.id === selectedNearbyId;
-        return (
-          <div key={item.id} className="absolute z-20 -translate-x-1/2 -translate-y-1/2" style={getMapPosition(item)}>
-            {isSelected ? (
-              <div className="pointer-events-none absolute left-1/2 top-1/2 h-10 w-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-primary/60 bg-primary/15 shadow-[0_0_28px_hsl(var(--primary)/0.55)]" />
-            ) : null}
-            <button
-              type="button"
-              className={cn(
-                "relative rounded-full border-2 shadow-lg transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                item.type === "rental" ? "bg-primary" : "bg-white",
-                isSelected ? "h-5 w-5 -translate-y-2 border-white shadow-2xl" : "h-3.5 w-3.5 border-zinc-950"
-              )}
-              onClick={() => onNearbySelect(item.id)}
-              aria-label={`${item.name} 선택`}
-            />
-            {isSelected ? (
-              <div className="pointer-events-none absolute left-1/2 top-6 w-max max-w-44 -translate-x-1/2 rounded-lg border border-white/15 bg-zinc-950/90 px-2.5 py-1.5 text-center text-[11px] font-black text-white shadow-xl">
-                {item.name}
-              </div>
-            ) : null}
-          </div>
-        );
-      })}
-    </div>
   );
 }
 
@@ -486,11 +456,13 @@ function SelectedResortCard({
       </div>
       <h2 className="mt-2 text-lg font-black sm:mt-3 sm:text-xl">{resort.name}</h2>
       <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{resort.address}</p>
-      <div className="mt-3 grid grid-cols-4 gap-1.5 text-center sm:mt-4 sm:gap-2">
-        <MapStat icon={<Snowflake />} label="초보" value={`${resort.beginnerScore}`} />
-        <MapStat icon={<MapPin />} label="접근" value={`${resort.accessScore}`} />
-        <MapStat icon={<Shirt />} label="렌탈" value={`${summary.rentalCount}`} />
-        <MapStat icon={<Hotel />} label="숙박" value={`${summary.lodgingCount}`} />
+      <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4">
+        {resort.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}
+        {resort.nightSkiAvailable ? <StatusBadge>야간 운영</StatusBadge> : null}
+      </div>
+      <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:mt-4">
+        <MapStat icon={<Shirt />} label="렌탈 후보" value={`${summary.rentalCount}곳`} />
+        <MapStat icon={<Hotel />} label="숙박 후보" value={`${summary.lodgingCount}곳`} />
       </div>
       <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-4 sm:gap-2">
         <Link href={`/plan?resortId=${resort.id}`}>
@@ -514,6 +486,7 @@ function NearbySelectedCard({ item }: { item: NearbyMapItem }) {
       </div>
       <h2 className="mt-2 text-lg font-black sm:text-xl">{item.name}</h2>
       <p className="mt-1 text-sm text-muted-foreground">{item.meta}</p>
+      {item.tags?.length ? <div className="mt-3 flex flex-wrap gap-1.5">{item.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}</div> : null}
       {item.href ? (
         <AnalyticsLink href={item.href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: `map_${item.type}`, resortId: item.resortId }}>
           <Button className="mt-3 w-full sm:mt-4">
@@ -525,12 +498,23 @@ function NearbySelectedCard({ item }: { item: NearbyMapItem }) {
   );
 }
 
+function MapUnavailable({ resort }: { resort?: SkiResort }) {
+  return <div className="absolute inset-0 flex items-center justify-center bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.14),transparent_48%),linear-gradient(145deg,hsl(var(--muted)),hsl(var(--background)))] p-6">
+    <div className="max-w-md rounded-2xl border bg-card p-6 text-center shadow-xl">
+      <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/12 text-primary"><MapPin className="h-6 w-6" /></span>
+      <h2 className="mt-4 text-xl font-black">실제 지도 연결을 준비하고 있어요</h2>
+      <p className="mt-2 text-sm leading-6 text-muted-foreground">임의 위치를 지도처럼 보여주지 않습니다. 현재는 정확한 외부 지도에서 위치를 확인해 주세요.</p>
+      {resort?.mapLinks.kakao ? <AnalyticsLink href={resort.mapLinks.kakao} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "kakao_map_fallback", resortId: resort.id }}><Button className="mt-5 w-full">카카오맵에서 정확히 보기 <ExternalLink className="h-4 w-4" /></Button></AnalyticsLink> : null}
+    </div>
+  </div>;
+}
+
 function MapStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="rounded-lg bg-muted p-1.5 sm:p-2">
       <div className="mx-auto mb-1 hidden w-fit text-muted-foreground sm:block [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
       <div className="text-[11px] font-bold text-muted-foreground">{label}</div>
-      <div className="text-sm font-black">{value}</div>
+      <div className="mt-1 text-base font-black">{value}</div>
     </div>
   );
 }

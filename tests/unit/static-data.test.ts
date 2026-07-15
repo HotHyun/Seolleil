@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { rentalPriceRules } from "@/data/prices";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
+import { getResortStory } from "@/data/resort-content";
 import { getRentalShopsForResort, rentalShops, resorts } from "@/data/resorts";
 import { getStaticDataReport, validateStaticData } from "@/lib/data-validation";
 
@@ -177,5 +178,14 @@ describe("static data validation", () => {
     expect(report.resorts.every((resort) => resort.externalRentalShopCount >= 1)).toBe(true);
     expect(report.resorts.every((resort) => resort.missingTimeSlots.length === 0)).toBe(true);
     expect(report.estimatedPriceCount).toBeGreaterThan(0);
+  });
+
+  it("provides decision-oriented detail stories without exposing internal scores", () => {
+    for (const resort of resorts) {
+      const story = getResortStory(resort);
+      expect(story.headline.length).toBeGreaterThan(8);
+      expect(story.bestFor).toHaveLength(3);
+      expect(story.summary).not.toMatch(/\d+점/);
+    }
   });
 });

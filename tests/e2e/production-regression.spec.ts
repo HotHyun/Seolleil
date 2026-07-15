@@ -23,21 +23,12 @@ test.describe("production regression", () => {
     expect(Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0))).toBeLessThanOrEqual(42);
 
     await page.goto("/resorts/konjiam");
-    const detailMap = page.getByTestId("resort-detail-nearby-map");
-    const lodging = page.getByRole("button", { name: "곤지암리조트 EW 빌리지 지도에서 보기" });
-    await lodging.scrollIntoViewIfNeeded();
-    await lodging.click();
-    await expect.poll(async () => (await detailMap.boundingBox())?.y ?? 999).toBeLessThan(120);
-    await expect(detailMap.getByText("곤지암리조트 EW 빌리지")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "퇴근 후에도 닿는 수도권 스키" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /곤지암리조트으로 트립 만들기/ })).toBeVisible();
 
     await page.goto("/resorts/phoenix");
-    const phoenixMap = page.getByTestId("resort-detail-nearby-map");
-    await expect(page.getByRole("button", { name: "스노우랩 휘닉스파크점 지도에서 보기" })).toBeVisible();
-    const phoenixRental = page.getByRole("button", { name: "꾹이네 렌탈샵 지도에서 보기" });
-    await phoenixRental.scrollIntoViewIfNeeded();
-    await phoenixRental.click();
-    await expect.poll(async () => (await phoenixMap.boundingBox())?.y ?? 999).toBeLessThan(120);
-    await expect(phoenixMap.getByText("꾹이네 렌탈샵")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
+    await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();
     await expectNoHorizontalOverflow(page);
   });
 

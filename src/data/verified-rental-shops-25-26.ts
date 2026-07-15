@@ -210,6 +210,59 @@ export const verifiedRentalShops2526: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
+    id: "yongpyong-white-sports", resortId: "yongpyong", name: "화이트스포츠", url: "https://white-sports.co.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%8C%80%EA%B4%80%EB%A0%B9%EB%A9%B4%20%EC%98%AC%EB%A6%BC%ED%94%BD%EB%A1%9C%2032" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 평창군 대관령면 올림픽로 32", phone: "010-5244-3130 / 010-9971-3130", dataStatus: "verified_25_26",
+    serviceNote: "일반·고급 장비, 특수 스키, 의류·보호구와 리프트 할인 취급. 일반 장비·의류 1타임 각 15,000원 확인.",
+    recommendationTags: ["25/26확인", "특수장비", "리프트할인"], sourceUrl: "https://white-sports.co.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-tatata", resortId: "yongpyong", name: "타타타 렌탈샵", url: "https://everyeunday17859.imweb.me/23",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%8C%80%EA%B4%80%EB%A0%B9%EB%A9%B4%20%EC%88%98%ED%95%98%EB%A6%AC%20156-1" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 평창군 대관령면 수하리 156-1", phone: "010-4994-5060 / 010-5050-1079", dataStatus: "listed_25_26",
+    serviceNote: "25/26 용평·알펜시아 장비 렌탈 예약과 리프트 할인 상담, 24시간 영업 확인. 단품 최종가는 문의 필요.",
+    recommendationTags: ["25/26영업확인", "24시간", "리프트할인"], sourceUrl: "https://everyeunday17859.imweb.me/23", lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-ski-zone", resortId: "yongpyong", name: "용평스키존", url: "https://skypremium.creatorlink.net/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%9A%A9%ED%8F%89%EC%8A%A4%ED%82%A4%EC%A1%B4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    phone: "033-335-5114 / 010-5375-0216", dataStatus: "listed_25_26", distanceMinutes: 5,
+    serviceNote: "일반·최상급 장비와 최고급 의류, 리프트 할인·숙박 예약 대행 확인. 25/26 최종 가격은 문의 필요.",
+    recommendationTags: ["리조트5분", "상급장비", "숙박연결"], sourceUrl: "https://skypremium.creatorlink.net/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-skinet", resortId: "yongpyong", name: "용평스키넷", url: "https://www.ypski.net/service/rental.html",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%9A%A9%ED%8F%89%EC%8A%A4%ED%82%A4%EB%84%B7" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "스키·보드·의류 렌탈 서비스 페이지 확인. 현재 25/26 상세 가격과 부가 서비스는 재확인 필요.",
+    recommendationTags: ["업체사이트", "장비", "의류"], sourceUrl: "https://www.ypski.net/service/rental.html", lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-korea-leisure", resortId: "yongpyong", name: "코리아레저스쿨", url: "https://koreals.co.kr/newpage/newpage.php?f_id=sub3_1",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%9A%A9%ED%8F%89%20%EC%BD%94%EB%A6%AC%EC%95%84%EB%A0%88%EC%A0%80%EC%8A%A4%EC%BF%A8" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "장비·브랜드 의류와 용평 리프트 할인 요금표 확인. 게시 가격의 시즌 표기가 없어 계산에서는 제외.",
+    recommendationTags: ["가격표확인", "브랜드의류", "리프트할인"], sourceUrl: "https://koreals.co.kr/newpage/newpage.php?f_id=sub3_1", lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-rainbow", resortId: "yongpyong", name: "레인보우 렌탈샵", url: "https://rainbowskishop.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%8C%80%EA%B4%80%EB%A0%B9%EB%A9%B4%20%EC%98%AC%EB%A6%BC%ED%94%BD%EB%A1%9C%20246" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 평창군 대관령면 올림픽로 246", phone: "033-335-5001 / 010-8138-5900", dataStatus: "listed_25_26", distanceMinutes: 5,
+    serviceNote: "25/26 용평 야간 결합 상품과 24시간 영업 확인. 장비·의류 단품 최종가는 재확인 필요.",
+    recommendationTags: ["25/26상품", "24시간", "리조트5분"], sourceUrl: "https://leisure-web.yanolja.com/leisure/10299968", lastCheckedAt: checkedAt
+  },
+  {
+    id: "yongpyong-point-ski", resortId: "yongpyong", name: "포인트스키", url: "https://leisure-web.yanolja.com/leisure/10279706",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%9A%A9%ED%8F%89%20%EC%95%8C%ED%8E%9C%EC%8B%9C%EC%95%84%20%ED%8F%AC%EC%9D%B8%ED%8A%B8%EC%8A%A4%ED%82%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "verified_25_26", serviceNote: "용평·알펜시아권 25/26 일반 장비와 장비+의류 단품·결합 가격 확인.",
+    recommendationTags: ["25/26확인", "장비", "의류"], sourceUrl: "https://leisure-web.yanolja.com/leisure/10279706", lastCheckedAt: checkedAt
+  },
+  {
     id: "muju-arirang",
     resortId: "muju",
     name: "아리랑스키",

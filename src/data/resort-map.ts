@@ -62,7 +62,6 @@ export const nearbyLodgings: NearbyLodging[] = [
     ["elysian", "엘리시안 강촌 리조트 객실", "https://www.elysian.co.kr/"],
     ["phoenix", "휘닉스 평창 호텔&콘도", "https://phoenixhnr.co.kr/"],
     ["yongpyong", "모나 용평 호텔&콘도", "https://www.yongpyong.co.kr/"],
-    ["high1", "하이원리조트 호텔&콘도", "https://www.high1.com/"],
     ["wellihilli", "웰리힐리파크 객실", "https://www.wellihillipark.com/"],
     ["oakvalley", "오크밸리 리조트 객실", "https://www.oakvalley.co.kr/"],
     ["alpensia", "알펜시아 호텔&콘도", "https://www.alpensia.com/"],
@@ -78,6 +77,23 @@ export const nearbyLodgings: NearbyLodging[] = [
     sourceUrl: url,
     distanceMinutes: 0,
     lastCheckedAt: checkedAt
+  })),
+  ...[
+    ["high1-grand-hotel", "하이원 그랜드호텔", "resort_hotel"],
+    ["high1-palace-hotel", "하이원 팰리스호텔", "resort_hotel"],
+    ["high1-mountain-condo", "하이원 마운틴콘도", "condo"],
+    ["high1-hill-condo", "하이원 힐콘도", "condo"],
+    ["high1-valley-condo", "하이원 밸리콘도", "condo"]
+  ].map(([id, name, category]) => ({
+    id,
+    resortId: "high1",
+    name,
+    category: category as NearbyLodging["category"],
+    url: "https://www.high1.com/",
+    mapLinks: { naver: `https://map.naver.com/p/search/${encodeURIComponent(name)}` },
+    distanceMinutes: 0,
+    sourceUrl: "https://www.high1.com/",
+    lastCheckedAt: "2026-07-15"
   }))
 ];
 

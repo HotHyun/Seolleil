@@ -90,6 +90,11 @@ export type RentalShop = {
   clothingRentalAvailable: boolean;
   pickupAvailable?: boolean;
   deliveryAvailable?: boolean;
+  liftTicketSalesAvailable?: boolean;
+  address?: string;
+  phone?: string;
+  dataStatus?: "verified_25_26" | "listed_25_26" | "historical_needs_recheck";
+  serviceNote?: string;
   distanceMinutes?: number;
   recommendationTags?: string[];
   sourceUrl?: string;
@@ -97,7 +102,7 @@ export type RentalShop = {
 };
 
 export type DayType = "weekday" | "friday" | "weekend" | "holiday" | "peak" | "all";
-export type TimeSlot = "2h" | "3h" | "4h" | "6h" | "night" | "full_day" | "all";
+export type TimeSlot = "2h" | "3h" | "4h" | "5h" | "6h" | "7h" | "night" | "full_day" | "all";
 
 export type PriceRule = {
   id: string;
@@ -136,7 +141,9 @@ export type RentalPriceRule = {
     | "equipment_clothing_package"
     | "helmet"
     | "goggles"
-    | "protective_gear";
+    | "protective_gear"
+    | "lift_ticket";
+  timeSlot?: TimeSlot;
   rideType?: RideType | "all";
   ageGroup?: "adult" | "child" | "all";
   label: string;

@@ -1,7 +1,19 @@
 import { describe, expect, it } from "vitest";
+import { rentalPriceRules } from "@/data/prices";
+import { getNearbyLodgingsForResort } from "@/data/resort-map";
+import { getRentalShopsForResort } from "@/data/resorts";
 import { getStaticDataReport, validateStaticData } from "@/lib/data-validation";
 
 describe("static data validation", () => {
+  it("separates verified High1 data from listing-only candidates", () => {
+    const shops = getRentalShopsForResort("high1");
+    expect(shops.some((shop) => shop.id === "high1-myski" && shop.pickupAvailable)).toBe(true);
+    expect(shops.filter((shop) => shop.dataStatus === "verified_25_26").length).toBeGreaterThanOrEqual(3);
+    expect(rentalPriceRules.some((rule) => rule.id === "high1-myski-lift-peak-7h" && rule.representativePrice === 53000)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-repo4u")).toBe(false);
+    expect(getNearbyLodgingsForResort("high1")).toHaveLength(5);
+  });
+
   it("keeps resort, price, rental, and departure data internally consistent", () => {
     expect(validateStaticData().filter((issue) => issue.severity === "error")).toEqual([]);
   });

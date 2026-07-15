@@ -18,7 +18,9 @@ export const timeSlotLabels: Record<TimeSlot, string> = {
   "2h": "2시간권",
   "3h": "3시간권",
   "4h": "4시간권",
+  "5h": "5시간권",
   "6h": "6시간권",
+  "7h": "7시간권",
   night: "야간권",
   full_day: "종일권",
   all: "전체"

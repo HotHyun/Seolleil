@@ -130,17 +130,19 @@ const liftSeeds: LiftSeed[] = [
   {
     resortId: "high1",
     resortName: "하이원리조트",
-    sourceName: "코스트코 하이원 25/26 3시간권 및 정상가 정리",
-    sourceUrl: "https://www.costco.co.kr/Gift-Cards-Tickets/Tickets/Entertainment-Lifestyle/High-1-Resort-Ski-Lift-3-Hours-Ticket-Adult/p/691157",
-    sourceType: "travel_agency",
+    sourceName: "하이원스키샵1호점 25/26 하이원 정상요금표",
+    sourceUrl: "https://www.hi-one.kr/sub/sub04_04.php",
+    sourceType: "official_site",
     verifiedByHuman: true,
-    verificationNote: "코스트코 3시간권 판매가와 공개 정상가 정리 자료 병행.",
-    memo: "코스트코 3시간권 43,900원 판매, 정상가 정리 자료의 3시간 62,000원/7시간 82,000원/종일 104,000원 기반.",
+    verificationNote: "25/26 외부 렌탈샵 가격표에 병기된 하이원 스키장 정상요금. 공식 사이트 원문은 재확인 필요.",
+    memo: "정상가: 3시간 62,000/50,000원, 4시간 68,000/56,000원, 5시간 74,000/62,000원, 7시간 82,000/70,000원, 종일 104,000/92,000원.",
     slots: {
       "2h": { adult: 50000, min: 43900, max: 58000, confidence: "estimated" },
       "3h": { adult: 62000, child: 50000, min: 43900, max: 62000, confidence: "confirmed" },
-      "4h": { adult: 70000, min: 62000, max: 76000, confidence: "estimated" },
-      "6h": { adult: 82000, child: 70000, confidence: "confirmed" },
+      "4h": { adult: 68000, child: 56000, confidence: "confirmed" },
+      "5h": { adult: 74000, child: 62000, confidence: "confirmed" },
+      "6h": { adult: 82000, child: 70000, confidence: "estimated" },
+      "7h": { adult: 82000, child: 70000, confidence: "confirmed" },
       night: { adult: 62000, child: 50000, confidence: "estimated" },
       full_day: { adult: 104000, child: 92000, confidence: "confirmed" }
     }
@@ -443,13 +445,35 @@ const rentalSeedOverrides: Record<string, RentalSeed> = {
   "high1-ski-no1": {
     shopId: "high1-ski-no1",
     sourceType: "official_site",
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "25/26 장비·의류 가격표 텍스트 기준. 대표가는 3/4시간 일반 장비와 성인 고급 의류 조합.",
+    equipment: 12000,
+    clothing: 22000,
+    packagePrice: 34000,
+    maxExtra: 10000
+  },
+  "high1-myski": {
+    shopId: "high1-myski",
+    sourceType: "official_site",
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "업체 25/26 페이지의 장비·의류·리프트 할인표와 픽업 안내 기준.",
+    equipment: 12000,
+    clothing: 15000,
+    packagePrice: 27000,
+    maxExtra: 10000
+  },
+  "high1-official-rental": {
+    shopId: "high1-official-rental",
+    sourceType: "official_booking",
     confidence: "estimated",
     verifiedByHuman: false,
-    verificationNote: "하이원스키샵1호점 의류/장비 이용가격 페이지 기반. 이미지 가격표 재확인 필요.",
-    equipment: 18000,
-    clothing: 20000,
-    packagePrice: 38000,
-    maxExtra: 12000
+    verificationNote: "25/26 외부샵 가격표에 병기된 스키장 내 정상 장비요금. 하이원 공식 원문 재확인 필요.",
+    equipment: 27000,
+    clothing: 0,
+    packagePrice: 27000,
+    maxExtra: 27000
   },
   "alpensia-waug-rental": {
     shopId: "alpensia-waug-rental",
@@ -558,6 +582,7 @@ function rentalSeedForShop(shopId: string): RentalSeed {
 }
 
 export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) => {
+  if (shop.dataStatus && shop.dataStatus !== "verified_25_26") return [];
   const seed = rentalSeedForShop(shop.id);
   const official = shop.id.endsWith("official-rental");
   const providerType: RentalPriceRule["providerType"] = official ? "resort_official" : "external_shop";
@@ -607,7 +632,7 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
     }
   ];
 
-  if (shop.clothingRentalAvailable) {
+  if (shop.clothingRentalAvailable && seed.clothing > 0) {
     rules.push({
       ...common,
       id: `${shop.id}-clothing`,
@@ -636,3 +661,27 @@ export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) =>
 
   return rules;
 });
+
+const high1DetailedRentalRules: RentalPriceRule[] = [
+  ...["high1-ski-no1", "high1-myski"].flatMap((shopId) => {
+    const shop = rentalShops.find((item) => item.id === shopId)!;
+    const base = { rentalShopId: shopId, resortId: "high1", providerType: "external_shop" as const, season: CURRENT_SEASON, validFrom: seasonStart, validTo: seasonEnd, dayType: "all" as const, sourceType: "official_site" as const, sourceName: shop.name, sourceUrl: shopId === "high1-ski-no1" ? "https://www.hi-one.kr/sub/sub04_02.php" : shop.sourceUrl, bookingUrl: shop.url, confidence: "confirmed" as const, lastCheckedAt: "2026-07-15", verifiedByHuman: true };
+    const clothing = shopId === "high1-ski-no1" ? 22000 : 15000;
+    return [
+      { ...base, id: `${shopId}-equipment-5h`, itemType: "equipment" as const, timeSlot: "5h" as const, rideType: "all" as const, ageGroup: "all" as const, label: "일반 스키·보드 장비 5/7시간", representativePrice: 17000, priceMin: 17000, priceMax: 17000, verificationNote: "업체 25/26 공개 가격표 확인.", memo: "5시간과 7시간 일반 장비 동일가." },
+      { ...base, id: `${shopId}-equipment-full-day`, itemType: "equipment" as const, timeSlot: "full_day" as const, rideType: "all" as const, ageGroup: "all" as const, label: "일반 스키·보드 장비 종일", representativePrice: 22000, priceMin: 22000, priceMax: 22000, verificationNote: "업체 25/26 공개 가격표 확인." },
+      { ...base, id: `${shopId}-clothing-grade`, itemType: "clothing" as const, rideType: "all" as const, ageGroup: "adult" as const, label: shopId === "high1-ski-no1" ? "성인 고급 의류" : "고급 의류", representativePrice: clothing, priceMin: clothing, priceMax: clothing, verificationNote: "업체 25/26 공개 가격표 확인." },
+      { ...base, id: `${shopId}-goggles`, itemType: "goggles" as const, rideType: "all" as const, ageGroup: "all" as const, label: "고글", representativePrice: 5000, priceMin: 5000, priceMax: 5000, verificationNote: "업체 25/26 공개 가격표 확인." },
+      { ...base, id: `${shopId}-helmet`, itemType: "helmet" as const, rideType: "all" as const, ageGroup: "all" as const, label: "일반 헬멧", representativePrice: 5000, priceMin: 5000, priceMax: 5000, verificationNote: "업체 25/26 공개 가격표 확인." },
+      { ...base, id: `${shopId}-visor-helmet`, itemType: "helmet" as const, rideType: "all" as const, ageGroup: "all" as const, label: "바이저 헬멧", representativePrice: 15000, priceMin: 15000, priceMax: 15000, verificationNote: "업체 25/26 공개 가격표 확인." },
+      { ...base, id: `${shopId}-protective-gear`, itemType: "protective_gear" as const, rideType: "all" as const, ageGroup: "all" as const, label: "보호대", representativePrice: 5000, priceMin: 5000, priceMax: 5000, verificationNote: "업체 25/26 공개 가격표 확인." }
+    ];
+  }),
+  ...(["3h", "4h", "5h", "7h", "full_day"] as const).flatMap((timeSlot, index) => {
+    const official = [62000, 68000, 74000, 82000, 104000][index];
+    const shopPrices = { "high1-ski-no1": [44000, 48000, 52000, 58000, 73000], "high1-myski": [40000, 44000, 48000, 53000, 68000] } as const;
+    return Object.entries(shopPrices).map(([shopId, prices]) => ({ rentalShopId: shopId, resortId: "high1", providerType: "external_shop" as const, season: CURRENT_SEASON, itemType: "lift_ticket" as const, timeSlot, rideType: "all" as const, ageGroup: "adult" as const, label: `성수기 리프트 ${timeSlot} 성인`, validFrom: "2025-12-20", validTo: "2026-02-22", dayType: "peak" as const, representativePrice: prices[index], priceMin: prices[index], priceMax: official, sourceType: "official_site" as const, sourceName: rentalShops.find((item) => item.id === shopId)?.name, sourceUrl: shopId === "high1-ski-no1" ? "https://www.hi-one.kr/sub/sub04_04.php" : "https://high1myski.com/", bookingUrl: rentalShops.find((item) => item.id === shopId)?.url, confidence: "confirmed" as const, lastCheckedAt: "2026-07-15", verifiedByHuman: true, verificationNote: "업체 25/26 성수기 공개 할인표의 성인 리프트 단독 구매가.", memo: `하이원 정상가 ${official.toLocaleString()}원 대비 업체 공개 할인 판매가.`, id: `${shopId}-lift-peak-${timeSlot}` }));
+  })
+];
+
+rentalPriceRules.push(...high1DetailedRentalRules);

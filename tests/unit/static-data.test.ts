@@ -40,6 +40,16 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "muju-arirang")).toBe(true);
   });
 
+  it("keeps the researched Konjiam rental directory and verified prices separated", () => {
+    const shops = getRentalShopsForResort("konjiam");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(10);
+    expect(shops.some((shop) => shop.id === "konjiam-skibucks" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "konjiam-coconut" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "konjiam-skibucks")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "konjiam-coconut")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

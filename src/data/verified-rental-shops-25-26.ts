@@ -24,6 +24,67 @@ export const verifiedRentalShops2526: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
+    id: "konjiam-skibucks", resortId: "konjiam", name: "스키벅스", url: "https://www.konjiamski.co.kr/15",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B3%A4%EC%A7%80%EC%95%94%20%EC%8A%A4%ED%82%A4%EB%B2%85%EC%8A%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "verified_25_26", serviceNote: "25/26 일반·프리미엄 장비, 의류, 특수 스키와 보호구 가격표 확인.",
+    recommendationTags: ["25/26확인", "특수장비", "보호구"], sourceUrl: "https://www.konjiamski.co.kr/15", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-ganjiboarder", resortId: "konjiam", name: "간지보더", url: "https://ganjiboarder.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B3%A4%EC%A7%80%EC%95%94%20%EA%B0%84%EC%A7%80%EB%B3%B4%EB%8D%94" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "verified_25_26", serviceNote: "25/26 장비 렌탈과 리프트 예매 대행·결합 가격 확인. 리조트 약 800m, 픽업 안내 확인.", distanceMinutes: 3,
+    recommendationTags: ["25/26확인", "리프트예매", "픽업"], sourceUrl: "https://ganjiboarder.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-coconut", resortId: "konjiam", name: "코코넛스키", url: "https://coconutski.co.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%20%EA%B4%91%EC%A3%BC%EC%8B%9C%20%EB%8F%84%EC%B2%99%EB%A9%B4%20%EB%8F%85%EA%B3%A0%EA%B0%9C%EA%B8%B8302%EB%B2%88%EA%B8%B8%202" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 광주시 도척면 독고개길302번길 2 1층", phone: "010-4332-3884", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류·헬멧·고글·보호대와 예약 운영 확인. 최종 가격은 예약 단계에서 확인 필요.", distanceMinutes: 1,
+    recommendationTags: ["25/26영업확인", "자체예약", "보호구"], sourceUrl: "https://coconutski.co.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-wski", resortId: "konjiam", name: "W스키", url: "https://w-ski.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%20%EA%B4%91%EC%A3%BC%EC%8B%9C%20%EB%8F%84%EC%B2%99%EB%A9%B4%20%EB%8F%84%EC%B2%99%EC%9C%97%EB%A1%9C%20166" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 광주시 도척면 도척윗로 166", phone: "031-763-2990 / 010-4108-0401", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류, 리프트권 할인과 강습 예약 경로 확인. 25/26 상세 가격은 재확인 필요.",
+    recommendationTags: ["영업경로확인", "리프트할인", "강습"], sourceUrl: "https://w-ski.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-youthski", resortId: "konjiam", name: "청춘스키", url: "https://www.xn--699am62b71bmvgcmk.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%20%EA%B4%91%EC%A3%BC%EC%8B%9C%20%EB%8F%84%EC%B2%99%EB%A9%B4%20%EB%8F%84%EC%B2%99%EC%9C%97%EB%A1%9C%20248" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 광주시 도척면 도척윗로 248", phone: "031-764-3938", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류 렌탈과 리프트권 연결 업체 운영 확인. 25/26 상세 가격은 재확인 필요.",
+    recommendationTags: ["업체사이트", "리조트인근", "리프트권"], sourceUrl: "https://www.xn--699am62b71bmvgcmk.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-iwon", resortId: "konjiam", name: "아이원 렌탈샵", url: "https://pf.kakao.com/_xoaJln",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%20%EA%B4%91%EC%A3%BC%EC%8B%9C%20%EB%8F%84%EC%B2%99%EB%A9%B4%20%EB%8F%84%EC%B2%99%EC%9C%97%EB%A1%9C%20102" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "경기도 광주시 도척면 도척윗로 102", phone: "0507-1381-3780", dataStatus: "listed_25_26",
+    serviceNote: "카카오 공식 채널과 24시간 영업·장비 렌탈 정보 확인. 상세 품목과 가격은 문의 필요.",
+    recommendationTags: ["카카오문의", "24시간", "장비의류"], sourceUrl: "https://pf.kakao.com/_xoaJln", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-vski", resortId: "konjiam", name: "V스키",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B2%BD%EA%B8%B0%20%EA%B4%91%EC%A3%BC%EC%8B%9C%20%EB%8F%84%EC%B2%99%EB%A9%B4%20%EB%8F%84%EC%B2%99%EC%9C%97%EB%A1%9C%20218" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 광주시 도척면 도척윗로 218", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류·보호구 및 할인 리프트권 판매 안내 확인. 독립 예약 사이트는 추가 확인 필요.",
+    recommendationTags: ["리프트권", "보호구", "주소확인"], sourceUrl: "https://kr.trip.com/moments/theme/poi-konjiam-resort-36584553-attraction-993137/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "konjiam-joy", resortId: "konjiam", name: "조이강습센터", url: "https://www.ski2.co.kr/page/page29",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B3%A4%EC%A7%80%EC%95%94%20%EC%A1%B0%EC%9D%B4%EA%B0%95%EC%8A%B5%EC%84%BC%ED%84%B0" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "25/26 강습 연계 장비·의류와 리프트 요금표 확인. 일반 렌탈 이용 가능 여부는 사전 문의 필요.",
+    recommendationTags: ["25/26확인", "강습연계", "의류"], sourceUrl: "https://www.ski2.co.kr/page/page29", lastCheckedAt: checkedAt
+  },
+  {
     id: "jisan-yg-leports",
     resortId: "jisan",
     name: "YG레포츠",

@@ -135,6 +135,19 @@ describe("static data validation", () => {
     expect(shops.some((shop) => shop.id === "o2-official-rental")).toBe(true);
   });
 
+  it("keeps the researched Welli Hilli rental directory out of unverified pricing", () => {
+    const shops = getRentalShopsForResort("wellihilli");
+    const ski911 = shops.find((shop) => shop.id === "wellihilli-ski911");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(8);
+    expect(ski911?.address).toContain("고원로 162");
+    expect(ski911?.pickupAvailable).toBe(true);
+    expect(shops.some((shop) => shop.id === "wellihilli-worldski" && shop.pickupAvailable)).toBe(true);
+    expect(shops.some((shop) => shop.id === "wellihilli-daegwallyeong-sports" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "wellihilli-daegwallyeong-sports")).toBe(false);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "wellihilli-rocky")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

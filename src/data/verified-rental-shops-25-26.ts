@@ -251,6 +251,62 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["리조트인근", "의류", "시즌재확인"], sourceUrl: "https://bli-ss.tistory.com/497", lastCheckedAt: checkedAt
   },
   {
+    id: "wellihilli-w-ski", resortId: "wellihilli", name: "W스키",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로 265" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 횡성군 둔내면 고원로 265", phone: "010-5333-7792", dataStatus: "listed_25_26", distanceMinutes: 3,
+    serviceNote: "리조트 약 3분 거리의 장비·의류·강습 운영 업체와 주소·연락처 확인. 25/26 최종 가격과 리프트권 취급은 문의 필요.",
+    recommendationTags: ["리조트3분", "장비의류", "강습"], sourceUrl: "https://m.albamon.com/jobs/detail-company/00L-5VFfnwwDdmu3XqJVTQ%3D%3D", lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-ski911", resortId: "wellihilli", name: "스키911",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로 162" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 횡성군 둔내면 고원로 162", phone: "033-344-9119", dataStatus: "listed_25_26", distanceMinutes: 5,
+    serviceNote: "25/26 시즌 이용 기록으로 장비·의류·보호구와 스키장 이동 지원 확인. 공개 최신 가격과 리프트권 취급은 문의 필요.",
+    recommendationTags: ["25/26이용확인", "픽업", "보호구"], sourceUrl: "https://www.tripinfo.co.kr/info.html?content_id=513482&content_type_id=28&navi=camp-gangwon", lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-dreamworld", resortId: "wellihilli", name: "드림월드프로샵",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로 397" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 횡성군 둔내면 고원로 397", phone: "0507-1428-2054 / 010-7979-8310", dataStatus: "listed_25_26", distanceMinutes: 3,
+    serviceNote: "리조트 입구 장비·의류 렌탈, 장비 수리·왁싱과 강습·숙박 연결 확인. 25/26 단품 가격은 문의 필요.",
+    recommendationTags: ["리조트입구", "수리왁싱", "숙박연결"], sourceUrl: "https://data.visitkorea.or.kr/page/514175", lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-rocky", resortId: "wellihilli", name: "록키스키", url: "http://www.rockyski.com",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로 389" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 횡성군 둔내면 고원로 389", phone: "033-342-8768 / 070-8690-8768", dataStatus: "listed_25_26",
+    serviceNote: "25/26 시즌 이용 기록으로 일반·상급·특수 장비, 의류·보호구와 리프트 할인 운영 확인. 공개 가격 범위는 시즌·등급 구분이 불명확해 문의 필요.",
+    recommendationTags: ["25/26이용확인", "특수장비", "리프트할인"], sourceUrl: "https://www.tripinfo.co.kr/info.html?content_id=513977&content_type_id=28", lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-worldski", resortId: "wellihilli", name: "월드스키",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로 112" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 횡성군 둔내면 고원로 112", phone: "0507-1472-4222", dataStatus: "listed_25_26", distanceMinutes: 5,
+    serviceNote: "25/26 시즌 이용 기록으로 장비·의류, 특수 장비, 강습·튜닝과 스키장 이동 지원 확인. 최신 단품 가격은 문의 필요.",
+    recommendationTags: ["25/26이용확인", "특수장비", "픽업"], sourceUrl: "https://www.tripinfo.co.kr/info.html?content_id=513359&content_type_id=28&navi=camp-gangwon", lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-friends", resortId: "wellihilli", name: "친구사이 렌탈샵",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로 390" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 횡성군 둔내면 고원로 390", phone: "033-344-7942", dataStatus: "listed_25_26",
+    serviceNote: "현재 업체 위치·연락처와 장비·의류 렌탈 업종 확인. 25/26 영업 일정, 품목과 최종 가격은 방문 전 문의 필요.",
+    recommendationTags: ["위치확인", "장비의류", "시즌재확인"], sourceUrl: "https://www.placeview.co.kr/id/MTU0NTQ3MjAg", lastCheckedAt: checkedAt
+  },
+  {
+    id: "wellihilli-baekya", resortId: "wellihilli", name: "백야 웰리힐리파크점",
+    mapLinks: { naver: "https://map.naver.com/p/search/강원특별자치도 횡성군 둔내면 고원로412번길 1-8" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 횡성군 둔내면 고원로412번길 1-8", phone: "033-345-4407", dataStatus: "listed_25_26",
+    serviceNote: "현재 업체 위치·연락처와 과거 렌탈 판매 경로 확인. 판매 페이지는 종료 상태여서 25/26 영업·품목·가격은 사전 문의 필요.",
+    recommendationTags: ["위치확인", "판매종료", "시즌재확인"], sourceUrl: "https://www.11st.co.kr/products/3187028235", lastCheckedAt: checkedAt
+  },
+  {
     id: "vivaldi-jamesboard", resortId: "vivaldi", name: "제임스보드", url: "https://www.jamesboardski.co.kr/",
     mapLinks: { naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EC%A0%9C%EC%9E%84%EC%8A%A4%EB%B3%B4%EB%93%9C" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,

@@ -100,6 +100,19 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "edenvalley-superman")).toBe(false);
   });
 
+  it("keeps the researched Elysian rental directory and resort identities correct", () => {
+    const shops = getRentalShopsForResort("elysian");
+    const worldSki = shops.find((shop) => shop.id === "elysian-worldski");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(8);
+    expect(worldSki?.address).toContain("춘천시");
+    expect(worldSki?.address).not.toContain("양산시");
+    expect(shops.some((shop) => shop.id === "elysian-vision" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "elysian-star" && shop.pickupAvailable)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "elysian-worldski")).toBe(false);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "elysian-vision")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

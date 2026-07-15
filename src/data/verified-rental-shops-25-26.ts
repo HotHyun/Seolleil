@@ -139,6 +139,52 @@ export const verifiedRentalShops2526: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
+    id: "elysian-star", resortId: "elysian", name: "스타렌탈샵", url: "https://www.gcstar.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%EC%B6%98%EC%B2%9C%EC%8B%9C%20%EB%82%A8%EC%82%B0%EB%A9%B4%20%EA%B0%95%EC%B4%8C%EB%A1%9C%2072" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 춘천시 남산면 강촌로 72 1층", phone: "010-5534-1245", dataStatus: "listed_25_26",
+    serviceNote: "25/26 야간·심야 리프트+장비 패키지와 의류·보호구, 2~4인 조건부 픽업 확인. 장비 단품 가격은 문의 필요.",
+    recommendationTags: ["25/26패키지", "조건부픽업", "보호구"], sourceUrl: "https://www.gcstar.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "elysian-vision", resortId: "elysian", name: "비젼 스키샵", url: "https://gcvision.co.kr/default/index.php",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%EC%B6%98%EC%B2%9C%EC%8B%9C%20%EB%82%A8%EC%82%B0%EB%A9%B4%20%EB%B6%81%ED%95%9C%EA%B0%95%EB%B3%80%EA%B8%B8%20906" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 춘천시 남산면 북한강변길 906 A동", phone: "033-263-3118 / 010-3647-3118", dataStatus: "listed_25_26",
+    serviceNote: "25/26 신상 스키·보드와 의류·특수 장비 입고 및 강습 운영 확인. 최신 단품 가격은 문의 필요.",
+    recommendationTags: ["25/26신상", "특수장비", "강습"], sourceUrl: "https://gcvision.co.kr/default/index.php", lastCheckedAt: checkedAt
+  },
+  {
+    id: "elysian-canada", resortId: "elysian", name: "캐나다스키", url: "https://xn--910bp7bvxxzsldqc.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%EC%B6%98%EC%B2%9C%EC%8B%9C%20%EB%82%A8%EC%82%B0%EB%A9%B4%20%EA%B0%95%EC%B4%8C%EB%A1%9C%2087" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 춘천시 남산면 강촌로 87 1층", phone: "010-9978-3333", dataStatus: "listed_25_26",
+    serviceNote: "2026년 예약 문의 운영과 장비·의류·리프트·강습·펜션 패키지 경로 확인. 공개 최신 가격은 문의 필요.",
+    recommendationTags: ["2026영업확인", "리프트권", "펜션패키지"], sourceUrl: "https://xn--910bp7bvxxzsldqc.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "elysian-mc-snow", resortId: "elysian", name: "MC스노우", url: "https://www.klook.com/ko/activity/143915-gangwon-elysian-gangchon-mc-snow-rental-shop/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%EC%B6%98%EC%B2%9C%EC%8B%9C%20%EB%82%A8%EC%82%B0%EB%A9%B4%20%EC%84%9C%EB%B0%B1%EA%B8%B8%20200" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 춘천시 남산면 서백길 200", dataStatus: "listed_25_26",
+    serviceNote: "굴봉산역 2번 출구 앞 장비 렌탈·강습 상품 경로 확인. 현재 예약 불가 상태로 영업과 최종 가격은 사전 확인 필요.",
+    recommendationTags: ["굴봉산역", "강습", "재확인필요"], sourceUrl: "https://www.klook.com/ko/activity/143915-gangwon-elysian-gangchon-mc-snow-rental-shop/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "elysian-winter-and-ski", resortId: "elysian", name: "겨울앤스키",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%97%98%EB%A6%AC%EC%8B%9C%EC%95%88%20%EA%B0%95%EC%B4%8C%20%EA%B2%A8%EC%9A%B8%EC%95%A4%EC%8A%A4%ED%82%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "25/26 시즌 인근 렌탈과 스키 강습 연계 운영을 확인. 공식 예약 URL·주소·최종 가격은 추가 확인 필요.",
+    recommendationTags: ["25/26영업확인", "강습연계", "문의필요"], sourceUrl: "https://www.ftimes.kr/news/articleView.html?idxno=35189", lastCheckedAt: checkedAt
+  },
+  {
+    id: "elysian-mobydic", resortId: "elysian", name: "모비딕스키", url: "https://www.waug.com/ko/activities/127677",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%97%98%EB%A6%AC%EC%8B%9C%EC%95%88%20%EA%B0%95%EC%B4%8C%20%EB%AA%A8%EB%B9%84%EB%94%95%EC%8A%A4%ED%82%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "25/26 장비·의류·리프트·강습 패키지 판매 경로 확인. 옵션별 최종 단품 가격과 주소는 예약 단계에서 확인 필요.",
+    recommendationTags: ["25/26상품", "리프트패키지", "강습"], sourceUrl: "https://www.waug.com/ko/activities/127677", lastCheckedAt: checkedAt
+  },
+  {
     id: "vivaldi-jamesboard", resortId: "vivaldi", name: "제임스보드", url: "https://www.jamesboardski.co.kr/",
     mapLinks: { naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EC%A0%9C%EC%9E%84%EC%8A%A4%EB%B3%B4%EB%93%9C" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,

@@ -81,7 +81,8 @@ test.describe("production regression", () => {
       await page.getByRole("link", { name: /선택·예약/ }).first().click();
       const decisions = page.getByTestId("trip-decision-workspace");
       await expect(decisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
-      await decisions.getByRole("button", { name: "이 상품 선택" }).first().click();
+      await expect(decisions.getByTestId(/trip-place-map/).first()).toBeVisible();
+      await decisions.getByRole("button", { name: "이 상품 저장" }).first().click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
       await decisions.locator("#lift").getByRole("combobox").click();
       await page.getByRole("option", { name: "6시간권" }).click();
@@ -90,9 +91,11 @@ test.describe("production regression", () => {
       await decisions.locator("#transport").getByRole("combobox").click();
       await page.getByRole("option", { name: "스키장 셔틀" }).click();
       await decisions.locator("#transport").getByRole("button", { name: "저장하기" }).click();
+      await decisions.getByRole("button", { name: /다른 숙소 직접 입력/ }).click();
       await decisions.getByLabel("숙소 이름").fill("Playwright 테스트 숙소");
       await decisions.getByLabel("예약·숙소 링크").fill("https://example.com/test-lodging");
-      await decisions.getByRole("button", { name: "숙소 저장하기" }).click();
+      await decisions.getByLabel("예상 숙박비 (전체)").fill("320000");
+      await decisions.getByRole("button", { name: "검토 중으로 저장" }).click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
 
       await page.getByRole("link", { name: /트립 개요/ }).first().click();

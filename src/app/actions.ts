@@ -457,6 +457,13 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       patch.selectedRentalOptionId = option.item.id;
       patch.selectedRentalShopId = option.shop.id;
       taskCategory = "equipment_rental";
+    } else if (decision === "rental_shop") {
+      const shopId = String(formData.get("selectedRentalShopId") ?? "");
+      const shop = getRentalShopsForResort(trip.resortId).find(item => item.id === shopId);
+      if (!shop) throw new AppError("INVALID_INPUT", "선택한 렌탈샵을 찾을 수 없습니다.");
+      patch.selectedRentalShopId = shop.id;
+      patch.selectedRentalOptionId = null;
+      taskCategory = "equipment_rental";
     } else if (decision === "lift") {
       const value = String(formData.get("liftTicketTimeSlot") ?? "");
       if (!["2h", "3h", "4h", "6h", "night", "full_day"].includes(value)) throw new AppError("INVALID_INPUT", "리프트권을 다시 선택해 주세요.");
@@ -472,13 +479,22 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       const lodgingUrl = String(formData.get("lodgingUrl") ?? "").trim();
       if (!lodgingName) throw new AppError("INVALID_INPUT", "예약하거나 검토 중인 숙소 이름을 입력해 주세요.");
       if (lodgingUrl && !/^https:\/\//i.test(lodgingUrl)) throw new AppError("INVALID_INPUT", "숙소 링크는 https://로 시작해야 합니다.");
+      const lodgingCostValue = String(formData.get("lodgingCostInput") ?? "").trim();
+      const lodgingCost = lodgingCostValue ? Math.round(Number(lodgingCostValue)) : null;
+      if (lodgingCost !== null && (!Number.isFinite(lodgingCost) || lodgingCost < 0 || lodgingCost > 100_000_000)) throw new AppError("INVALID_INPUT", "숙박비를 다시 확인해 주세요.");
+      const budget = parseTripBudget(trip.budgetData);
+      const overrides = { ...budget.overrides };
+      if (lodgingCost === null) delete overrides.lodging;
+      else overrides.lodging = lodgingCost;
       patch.lodgingName = lodgingName;
       patch.lodgingUrl = lodgingUrl || null;
+      patch.lodgingCostInput = lodgingCost;
+      patch.budgetData = { ...budget, overrides };
       taskCategory = "lodging";
     } else {
       throw new AppError("INVALID_INPUT", "저장할 선택 항목을 확인해 주세요.");
     }
-    if (decision !== "lodging") {
+    if (decision !== "lodging" && decision !== "rental_shop") {
       const resort = getResort(trip.resortId);
       const selectedRentalOptionId = patch.selectedRentalOptionId === undefined ? trip.selectedRentalOptionId : patch.selectedRentalOptionId;
       const input: TripInput = {

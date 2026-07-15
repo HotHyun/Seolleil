@@ -8,16 +8,16 @@ import { isTaskComplete } from "@/lib/checklist";
 import type { TripTaskRecord } from "@/lib/trip-store";
 import { formatCurrency } from "@/lib/utils";
 
-type Trip = { resortId: string; selectedRentalOptionId: string | null; liftTicketTimeSlot: string; transportType: string; lodgingName: string | null; lodgingUrl: string | null; tasks: TripTaskRecord[] };
+type Trip = { resortId: string; selectedRentalOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; lodgingName: string | null; lodgingUrl: string | null; tasks: TripTaskRecord[] };
 const liftLabels: Record<string, string> = { "2h": "2시간권", "3h": "3시간권", "4h": "4시간권", "6h": "6시간권", night: "야간권", full_day: "종일권" };
 const transportLabels: Record<string, string> = { car: "자차", shuttle: "스키장 셔틀", bus: "고속·시외버스" };
 
 export function TripDashboard({ trip, basePath }: { trip: Trip; basePath: string }) {
   const option = trip.selectedRentalOptionId ? rentalPriceRules.find(item => item.id === trip.selectedRentalOptionId) : null;
-  const shop = option ? getRentalShopsForResort(trip.resortId).find(item => item.id === option.rentalShopId) : null;
+  const shop = getRentalShopsForResort(trip.resortId).find(item => item.id === (trip.selectedRentalShopId ?? option?.rentalShopId));
   return <div className="space-y-4">
     <Card className="overflow-hidden border-primary/20"><CardHeader className="bg-gradient-to-r from-primary/15 via-card to-card"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Trip at a glance</p><CardTitle className="mt-2">이번 여행, 지금 정해진 것</CardTitle></div><Link href={`${basePath}?view=decisions`}><Button>선택·예약 이어가기</Button></Link></div></CardHeader><CardContent className="grid gap-3 p-4 sm:grid-cols-2 sm:p-6">
-      <DashboardItem icon={<Shirt />} label="렌탈" value={option ? `${shop?.name ?? option.sourceName} · ${option.label}` : "아직 정하지 않았어요"} detail={option?.representativePrice ? `1인 ${formatCurrency(option.representativePrice)}` : undefined} href={`${basePath}?view=decisions#rental`} ready={Boolean(option)} />
+      <DashboardItem icon={<Shirt />} label="렌탈" value={shop ? `${shop.name}${option ? ` · ${option.label}` : ""}` : "아직 정하지 않았어요"} detail={option?.representativePrice ? `1인 ${formatCurrency(option.representativePrice)}` : shop ? "업체 선택됨 · 가격 원문 확인 필요" : undefined} href={`${basePath}?view=decisions#rental`} ready={Boolean(shop)} />
       <DashboardItem icon={<Clock3 />} label="리프트권" value={liftLabels[trip.liftTicketTimeSlot] ?? trip.liftTicketTimeSlot} detail={taskState(trip.tasks, "lift_ticket")} href={`${basePath}?view=decisions#lift`} ready />
       <DashboardItem icon={<BusFront />} label="교통" value={transportLabels[trip.transportType] ?? trip.transportType} detail={taskState(trip.tasks, "transport")} href={`${basePath}?view=decisions#transport`} ready />
       <DashboardItem icon={<BedDouble />} label="숙소" value={trip.lodgingName ?? "아직 정하지 않았어요"} detail={taskState(trip.tasks, "lodging")} href={`${basePath}?view=decisions#lodging`} externalHref={trip.lodgingUrl ?? undefined} ready={Boolean(trip.lodgingName)} />

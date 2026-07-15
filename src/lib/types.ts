@@ -92,6 +92,11 @@ export type RentalShop = {
   deliveryAvailable?: boolean;
   liftTicketSalesAvailable?: boolean;
   address?: string;
+  latitude?: number;
+  longitude?: number;
+  kakaoPlaceId?: string;
+  locationSource?: "verified_coordinates" | "address_geocoding" | "place_search";
+  locationCheckedAt?: string;
   phone?: string;
   dataStatus?: "verified_25_26" | "listed_25_26" | "historical_needs_recheck";
   serviceNote?: string;

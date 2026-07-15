@@ -19,6 +19,7 @@ import { getResort } from "@/data/resorts";
 import { getTripByEditTokenHash, getTripDisplayName } from "@/lib/trip-store";
 import { hashToken } from "@/lib/tokens";
 import { getRentalOptionsForResort } from "@/lib/pricing";
+import { getNearbyLodgingsForResort } from "@/data/resort-map";
 
 export const metadata: Metadata = {
   robots: {
@@ -44,6 +45,7 @@ export default async function TripEditPage({
 
   const resort = getResort(trip.resortId);
   const rentalGroups = getRentalOptionsForResort(trip.resortId);
+  const lodgingOptions = getNearbyLodgingsForResort(trip.resortId);
   const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
@@ -129,7 +131,7 @@ export default async function TripEditPage({
             <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks} />
             <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/trips/${editToken}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
-              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} editToken={editToken} /> : null}
+              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} editToken={editToken} /> : null}
               {activeView === "checklist" ? <TaskList tasks={trip.tasks} editToken={editToken} basePath={`/trips/${editToken}`} /> : null}
               {activeView === "budget" ? <TripBudgetWorkspace trip={trip} editToken={editToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : null}
             </section>

@@ -15,6 +15,7 @@ import { hashToken } from "@/lib/tokens";
 import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
 import { getResort } from "@/data/resorts";
 import { getRentalOptionsForResort } from "@/lib/pricing";
+import { getNearbyLodgingsForResort } from "@/data/resort-map";
 
 export const metadata: Metadata = {
   robots: {
@@ -32,6 +33,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   if (!trip) notFound();
   const resort = getResort(trip.resortId);
   const rentalGroups = getRentalOptionsForResort(trip.resortId);
+  const lodgingOptions = getNearbyLodgingsForResort(trip.resortId);
   const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
 
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
@@ -62,7 +64,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
               </aside>
             </div>
           ) : null}
-          {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit={link?.permission === "edit"} /> : null}
+          {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit={link?.permission === "edit"} /> : null}
           {activeView === "checklist" ? (link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} basePath={`/share/${shareToken}`} /> : <Card>
           <CardHeader>
             <CardTitle>예약·준비 상태</CardTitle>

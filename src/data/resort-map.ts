@@ -25,6 +25,11 @@ export type NearbyLodging = {
     kakao?: string;
   };
   distanceMinutes?: number;
+  latitude?: number;
+  longitude?: number;
+  kakaoPlaceId?: string;
+  locationSource?: "verified_coordinates" | "address_geocoding" | "place_search";
+  locationCheckedAt?: string;
   sourceUrl?: string;
   lastCheckedAt: string;
 };
@@ -43,6 +48,9 @@ export type NearbyMapItem = {
   liftTicketSalesAvailable?: boolean;
   dataStatus?: RentalShop["dataStatus"];
   address?: string;
+  latitude?: number;
+  longitude?: number;
+  kakaoPlaceId?: string;
 };
 
 export const resortMapPoints: ResortMapPoint[] = [
@@ -177,7 +185,10 @@ export function getNearbyMapItems(resortId: string, rentalShops: RentalShop[]) {
         clothingRentalAvailable: shop.clothingRentalAvailable,
         liftTicketSalesAvailable: shop.liftTicketSalesAvailable,
         dataStatus: shop.dataStatus,
-        address: shop.address
+        address: shop.address,
+        latitude: shop.latitude,
+        longitude: shop.longitude,
+        kakaoPlaceId: shop.kakaoPlaceId
       };
     });
 
@@ -189,7 +200,10 @@ export function getNearbyMapItems(resortId: string, rentalShops: RentalShop[]) {
       name: lodging.name,
       meta: lodging.distanceMinutes === 0 ? "공식/리조트 숙박" : `약 ${lodging.distanceMinutes}분`,
       href: lodging.url ?? lodging.mapLinks?.naver,
-      siteUrl: lodging.url
+      siteUrl: lodging.url,
+      latitude: lodging.latitude,
+      longitude: lodging.longitude,
+      kakaoPlaceId: lodging.kakaoPlaceId
     };
   });
 

@@ -22,6 +22,7 @@ import { getSession, getSessionSecret } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
 import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 import { getRentalOptionsForResort } from "@/lib/pricing";
+import { getNearbyLodgingsForResort } from "@/data/resort-map";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -61,6 +62,7 @@ export default async function MyTripDetailPage({
 
   const resort = getResort(trip.resortId);
   const rentalGroups = getRentalOptionsForResort(trip.resortId);
+  const lodgingOptions = getNearbyLodgingsForResort(trip.resortId);
   const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
@@ -121,7 +123,7 @@ export default async function MyTripDetailPage({
             <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks} />
             <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
-              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
+              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
               {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
               {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
             </section>

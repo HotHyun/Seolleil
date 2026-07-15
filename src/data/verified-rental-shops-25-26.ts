@@ -105,6 +105,76 @@ export const verifiedRentalShops2526: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
+    id: "jisan-boss", resortId: "jisan", name: "보스렌탈샵", url: "https://bossrental.kr/jisan/_price.php",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 지산로 234" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 이천시 마장면 지산로 234", phone: "031-631-5520 / 010-4413-5520", dataStatus: "verified_25_26", distanceMinutes: 1,
+    serviceNote: "25/26 일반·고급·특수 장비, 의류·보호구와 시간대별 리프트 할인 가격 확인. 리조트 도보 이동 가능.",
+    recommendationTags: ["25/26확인", "리조트앞", "리프트할인"], sourceUrl: "https://bossrental.kr/jisan/_price.php", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-boardbox", resortId: "jisan", name: "보드박스", url: "https://boardbox.co.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 해월리 306-4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 이천시 마장면 해월리 306-4", phone: "031-637-7553 / 010-7143-1800", dataStatus: "listed_25_26",
+    serviceNote: "25/26 신상 의류와 장비·의류·리프트·보호구 결합 패키지 및 강습·숙박 연결 확인. 단품별 최종 가격은 문의 필요.",
+    recommendationTags: ["25/26상품", "리프트패키지", "숙박연결"], sourceUrl: "https://boardbox.co.kr/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-camp", resortId: "jisan", name: "지산캠프", url: "https://leisure-web.yanolja.com/leisure/10276970",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 지산로 257-7" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "경기도 이천시 마장면 지산로 257-7", dataStatus: "listed_25_26", distanceMinutes: 1,
+    serviceNote: "장비·의류 렌탈과 강습 패키지, 이용 하루 전 예약 조건의 무료 픽업 확인. 25/26 단품 최종가는 예약 단계에서 확인 필요.",
+    recommendationTags: ["리조트인근", "무료픽업", "강습패키지"], sourceUrl: "https://leisure-web.yanolja.com/leisure/10276970", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-rshop", resortId: "jisan", name: "샵알 지산점", url: "https://www.r-jisan.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 지산로 138" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "경기도 이천시 마장면 지산로 138", phone: "010-4836-8068 / 010-5725-8068", dataStatus: "listed_25_26",
+    serviceNote: "2024년 개설 사업자 사이트에서 장비·의류 렌탈, 자격 강사진과 별도 픽업 상담 확인. 25/26 가격과 리프트권 취급은 문의 필요.",
+    recommendationTags: ["업체사이트", "픽업", "자격강습"], sourceUrl: "https://www.r-jisan.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-youthski", resortId: "jisan", name: "청춘스키", url: "https://youthski.co.kr/",
+    mapLinks: { naver: "https://map.naver.com/p/search/지산리조트 청춘스키" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "현재 업체 사이트에서 장비·의류·리프트 패키지와 강습·셔틀 이용 경로 확인. 정확한 주소와 25/26 단품 최종가는 문의 필요.",
+    recommendationTags: ["리프트패키지", "셔틀", "강습"], sourceUrl: "https://youthski.co.kr/pages/package03", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-season-company", resortId: "jisan", name: "시즌컴퍼니", url: "https://seasoncompany.shop/",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 지산로 222" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "경기도 이천시 마장면 지산로 222", dataStatus: "listed_25_26",
+    serviceNote: "지산 프리미엄 스키·보드 렌탈과 강습 예약 사이트 확인. 25/26 상세 품목·가격과 리프트권 취급은 문의 필요.",
+    recommendationTags: ["프리미엄장비", "강습", "문의필요"], sourceUrl: "https://seasoncompany.shop/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-roky", resortId: "jisan", name: "로키스키 지산점", url: "https://rokyski.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/지산리조트 로키스키" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "listed_25_26", serviceNote: "현재 업체 사이트에서 장비·의류, 리프트권·강습·숙박 패키지 운영 확인. 주소와 25/26 단품 최종가는 문의 필요.",
+    recommendationTags: ["업체사이트", "리프트권", "숙박연결"], sourceUrl: "https://rokyski.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-snowman", resortId: "jisan", name: "눈사람 렌탈샵", url: "https://www.instagram.com/snowman_jisan_/",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 지산로 244" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "경기도 이천시 마장면 지산로 244", phone: "031-636-4030", dataStatus: "listed_25_26", distanceMinutes: 1,
+    serviceNote: "리조트 입구 장비·의류·특수 장비·보호구와 무료 픽업, 강습·엣징·왁싱 운영 확인. 25/26 최종 가격은 문의 필요.",
+    recommendationTags: ["리조트입구", "무료픽업", "특수장비"], sourceUrl: "https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=09024dc8-b980-4d4a-ba52-466f4d816171", lastCheckedAt: checkedAt
+  },
+  {
+    id: "jisan-snowland", resortId: "jisan", name: "스노우랜드", url: "https://snowland.co.kr/shop/",
+    mapLinks: { naver: "https://map.naver.com/p/search/경기도 이천시 마장면 지산로 148" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "경기도 이천시 마장면 지산로 148", phone: "031-637-2207 / 010-7486-0909", dataStatus: "listed_25_26",
+    serviceNote: "25/26 리프트+장비, 프리미엄 의류+장비와 올인원 할인 패키지 및 강습·숙박 연결 확인. 단품 가격은 문의 필요.",
+    recommendationTags: ["25/26상품", "리프트패키지", "숙박연결"], sourceUrl: "https://snowland.co.kr/shop/", lastCheckedAt: checkedAt
+  },
+  {
     id: "vivaldi-vision",
     resortId: "vivaldi",
     name: "비전렌탈샵",

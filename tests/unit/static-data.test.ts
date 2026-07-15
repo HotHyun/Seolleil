@@ -148,6 +148,17 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "wellihilli-rocky")).toBe(false);
   });
 
+  it("keeps the researched Jisan directory and confirmed 25/26 prices separated", () => {
+    const shops = getRentalShopsForResort("jisan");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(11);
+    expect(shops.some((shop) => shop.id === "jisan-boss" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "jisan-snowman" && shop.pickupAvailable)).toBe(true);
+    expect(shops.some((shop) => shop.id === "jisan-boardbox" && shop.dataStatus === "listed_25_26")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "jisan-boss" && rule.representativePrice === 10000)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "jisan-boardbox")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

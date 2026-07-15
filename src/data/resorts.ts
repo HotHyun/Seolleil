@@ -373,8 +373,12 @@ export const rentalShops: RentalShop[] = [
     clothingRentalAvailable: true,
     pickupAvailable: true,
     deliveryAvailable: false,
+    liftTicketSalesAvailable: true,
     distanceMinutes: 5,
-    recommendationTags: ["외부샵", "가격표확인", "픽업"],
+    address: "경기도 이천시 마장면 지산로 200",
+    dataStatus: "verified_25_26",
+    serviceNote: "25/26 장비·의류·보호구와 리프트 결합 가격 확인. 픽업 이용은 사전 문의 필요.",
+    recommendationTags: ["25/26확인", "리프트패키지", "픽업"],
     sourceUrl: "https://jisanboong.com/price",
     lastCheckedAt: checkedAt
   },

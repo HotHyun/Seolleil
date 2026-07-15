@@ -1,4 +1,5 @@
 import type { DepartureLocation, RentalShop, SkiResort } from "@/lib/types";
+import { verifiedRentalShops2526 } from "@/data/verified-rental-shops-25-26";
 
 const checkedAt = "2026-05-13";
 
@@ -39,7 +40,7 @@ export const resorts: SkiResort[] = [
     officialUrl: "https://www.jisanresort.co.kr/",
     slopeStatusUrl: "https://www.jisanresort.co.kr/",
     liftTicketUrl: "https://www.jisanresort.co.kr/",
-    rentalUrl: "https://www.jisanresort.co.kr/",
+    rentalUrl: "https://www.jisanresort.co.kr/m/ski/use/rental.asp",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%A7%80%EC%82%B0%ED%8F%AC%EB%A0%88%EC%8A%A4%ED%8A%B8%EB%A6%AC%EC%A1%B0%ED%8A%B8",
       kakao: "https://map.kakao.com/link/search/%EC%A7%80%EC%82%B0%ED%8F%AC%EB%A0%88%EC%8A%A4%ED%8A%B8%EB%A6%AC%EC%A1%B0%ED%8A%B8"
@@ -93,7 +94,7 @@ export const resorts: SkiResort[] = [
     officialUrl: "https://www.elysian.co.kr/",
     slopeStatusUrl: "https://www.elysian.co.kr/",
     liftTicketUrl: "https://www.elysian.co.kr/",
-    rentalUrl: "https://www.elysian.co.kr/",
+    rentalUrl: "https://www.elysian.co.kr/about-gangchon/ski",
     shuttleUrl: "https://www.elysian.co.kr/",
     lodgingUrl: "https://www.elysian.co.kr/",
     mapLinks: {
@@ -148,7 +149,7 @@ export const resorts: SkiResort[] = [
     officialUrl: "https://www.yongpyong.co.kr/",
     slopeStatusUrl: "https://www.yongpyong.co.kr/",
     liftTicketUrl: "https://www.yongpyong.co.kr/",
-    rentalUrl: "https://www.yongpyong.co.kr/",
+    rentalUrl: "https://yongpyong.co.kr/mobile/kor/skiNboard/charge/equipment.do",
     lodgingUrl: "https://www.yongpyong.co.kr/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EB%AA%A8%EB%82%98%EC%9A%A9%ED%8F%89",
@@ -359,6 +360,7 @@ export const resorts: SkiResort[] = [
 ];
 
 export const rentalShops: RentalShop[] = [
+  ...verifiedRentalShops2526,
   {
     id: "jisan-boong",
     resortId: "jisan",
@@ -700,10 +702,15 @@ export const rentalShops: RentalShop[] = [
       clothingRentalAvailable: true,
       pickupAvailable: false,
       deliveryAvailable: false,
+      liftTicketSalesAvailable: true,
+      dataStatus: (["jisan", "yongpyong"].includes(resort.id) ? "verified_25_26" : "listed_25_26") as RentalShop["dataStatus"],
+      serviceNote: ["jisan", "yongpyong"].includes(resort.id)
+        ? "공식 25/26 장비·의류 렌탈 요금 페이지 확인."
+        : "공식 리조트 내 렌탈 운영 확인. 공개 25/26 세부 요금은 추가 확인 필요.",
       distanceMinutes: 0,
       recommendationTags: ["공식", "리조트내"],
       sourceUrl: resort.rentalUrl,
-      lastCheckedAt: checkedAt
+      lastCheckedAt: "2026-07-15"
     })),
   {
     id: "elysian-worldski",
@@ -774,6 +781,22 @@ export const rentalShops: RentalShop[] = [
     lastCheckedAt: checkedAt
   }
 ];
+
+const verifiedLegacyRentalShopIds = new Set([
+  "jisan-boong",
+  "yongpyong-drsnow",
+  "konjiam-goodgear",
+  "edenvalley-modooski"
+]);
+
+for (const shop of rentalShops) {
+  if (!shop.dataStatus) {
+    shop.dataStatus = verifiedLegacyRentalShopIds.has(shop.id) ? "verified_25_26" : "listed_25_26";
+    shop.serviceNote ??= verifiedLegacyRentalShopIds.has(shop.id)
+      ? "25/26 업체 또는 예약 페이지에서 공개 가격을 확인한 렌탈샵."
+      : "업체·예약 경로는 확인했으나 25/26 최종 가격은 추가 확인 필요.";
+  }
+}
 
 export const departureLocations: DepartureLocation[] = [
   {

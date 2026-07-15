@@ -40,19 +40,19 @@ const liftSeeds: LiftSeed[] = [
   {
     resortId: "jisan",
     resortName: "지산 포레스트 리조트",
-    sourceName: "지산 25/26 가격 정리 및 공식 확인 메모",
-    sourceUrl: "https://qooo2.tistory.com/entry/%E2%80%8B%E2%9D%84%EF%B8%8F-20252026-%EC%8B%9C%EC%A6%8C-%EC%A7%80%EC%82%B0-%ED%8F%AC%EB%A0%88%EC%8A%A4%ED%8A%B8-%EB%A6%AC%EC%A1%B0%ED%8A%B8-%EC%8A%A4%ED%82%A4%EC%9E%A5-%EA%B0%9C%EC%9E%A5%EC%9D%BC-%EB%B0%8F-%EB%A6%AC%ED%94%84%ED%8A%B8%EA%B6%8C-%EA%B0%80%EA%B2%A9-%EC%B4%9D%EC%A0%95%EB%A6%AC",
+    sourceName: "지산리조트 25/26 종합요금안내",
+    sourceUrl: "https://www.jisanresort.co.kr/m/ski/use/rental.asp",
     sourceType: "official_site",
-    verifiedByHuman: false,
-    verificationNote: "공식 페이지 최종 가격표는 이미지/동적 영역이라 재검증 필요.",
-    memo: "25/26 정리 자료와 공식 사이트 확인 링크 기반의 임시 정상가.",
+    verifiedByHuman: true,
+    verificationNote: "공식 25/26 리프트 정상가 표 기준. 대인·소인 통합.",
+    memo: "주중/주말 정상가 범위를 min/max에 기록.",
     slots: {
-      "2h": { adult: 42000, min: 38000, max: 48000 },
-      "3h": { adult: 52000, min: 48000, max: 60000 },
-      "4h": { adult: 62000, min: 58000, max: 70000 },
-      "6h": { adult: 74000, min: 68000, max: 85000 },
-      night: { adult: 52000, min: 48000, max: 62000 },
-      full_day: { adult: 85000, min: 78000, max: 95000 }
+      "2h": { adult: 65000, min: 65000, max: 82000, confidence: "confirmed" },
+      "3h": { adult: 69000, min: 69000, max: 87000, confidence: "confirmed" },
+      "4h": { adult: 75000, min: 75000, max: 92000, confidence: "confirmed" },
+      "6h": { adult: 79000, min: 79000, max: 97000, confidence: "confirmed" },
+      night: { adult: 65000, min: 39000, max: 79000, confidence: "confirmed" },
+      full_day: { adult: 97000, min: 79000, max: 97000, confidence: "estimated" }
     }
   },
   {
@@ -398,15 +398,24 @@ type RentalSeed = {
 };
 
 const rentalSeedOverrides: Record<string, RentalSeed> = {
+  "jisan-official-rental": { shopId: "jisan-official-rental", sourceType: "official_site", confidence: "confirmed", verifiedByHuman: true, verificationNote: "지산 공식 25/26 4시간 장비와 의류 정상가 기준.", equipment: 31000, clothing: 25000, packagePrice: 56000, maxExtra: 5000 },
+  "yongpyong-official-rental": { shopId: "yongpyong-official-rental", sourceType: "official_site", confidence: "confirmed", verifiedByHuman: true, verificationNote: "모나 용평 공식 25/26 반일 장비와 의류 요금 기준.", equipment: 40000, clothing: 20000, packagePrice: 60000, maxExtra: 8000 },
+  "konjiam-brothers": { shopId: "konjiam-brothers", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 옵션 가격 기준. 4시간 일반 스키와 신상 의류 가격.", equipment: 20000, clothing: 20000, packagePrice: 40000, maxExtra: 10000 },
+  "jisan-yg-leports": { shopId: "jisan-yg-leports", sourceType: "official_site", confidence: "confirmed", verifiedByHuman: true, verificationNote: "업체 25/26 가격표의 장비·의류 시작가 및 리프트 결합 패키지 기준.", equipment: 10000, clothing: 10000, packagePrice: 20000, maxExtra: 10000 },
+  "vivaldi-vision": { shopId: "vivaldi-vision", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 고급장비·고급의류 4시간권 기준.", equipment: 15000, clothing: 15000, packagePrice: 30000, maxExtra: 10000 },
+  "phoenix-torres": { shopId: "phoenix-torres", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 4시간 고급의류+고급장비 패스권 기준.", equipment: 29800, clothing: 29800, packagePrice: 29800, maxExtra: 10000 },
+  "yongpyong-beaver": { shopId: "yongpyong-beaver", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 일반 장비 1타임 가격 기준. 의류는 공개 판매 페이지의 취급 확인값.", equipment: 15000, clothing: 15000, packagePrice: 30000, maxExtra: 10000 },
+  "alpensia-point-ski": { shopId: "alpensia-point-ski", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 일반장비 단품 및 일반장비+일반의류 1타임 가격 기준.", equipment: 15000, clothing: 20000, packagePrice: 35000, maxExtra: 10000 },
+  "muju-arirang": { shopId: "muju-arirang", sourceType: "official_booking", confidence: "confirmed", verifiedByHuman: true, verificationNote: "25/26 NOL 고급장비·고급의류 단품 가격 기준.", equipment: 15000, clothing: 15000, packagePrice: 30000, maxExtra: 15000 },
   "jisan-boong": {
     shopId: "jisan-boong",
     sourceType: "official_site",
-    confidence: "estimated",
-    verifiedByHuman: false,
-    verificationNote: "25/26 가격표 페이지 확보. 시간권/주중/주말 세부 옵션은 방문 전 재확인 필요.",
-    equipment: 15000,
-    clothing: 20000,
-    packagePrice: 35000,
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "업체 25/26 가격표의 장비·스탠다드 의류 단품 가격 기준.",
+    equipment: 10000,
+    clothing: 10000,
+    packagePrice: 20000,
     maxExtra: 10000
   },
   "vivaldi-thedream": {
@@ -593,9 +602,9 @@ function rentalSeedForShop(shopId: string): RentalSeed {
 }
 
 export const rentalPriceRules: RentalPriceRule[] = rentalShops.flatMap((shop) => {
-  if (shop.dataStatus && shop.dataStatus !== "verified_25_26") return [];
-  const seed = rentalSeedForShop(shop.id);
   const official = shop.id.endsWith("official-rental");
+  if (!official && shop.dataStatus && shop.dataStatus !== "verified_25_26") return [];
+  const seed = rentalSeedForShop(shop.id);
   const providerType: RentalPriceRule["providerType"] = official ? "resort_official" : "external_shop";
   const common = {
     rentalShopId: shop.id,

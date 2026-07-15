@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { rentalPriceRules } from "@/data/prices";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
-import { getRentalShopsForResort } from "@/data/resorts";
+import { getRentalShopsForResort, rentalShops, resorts } from "@/data/resorts";
 import { getStaticDataReport, validateStaticData } from "@/lib/data-validation";
 
 describe("static data validation", () => {
@@ -17,6 +17,27 @@ describe("static data validation", () => {
 
   it("keeps resort, price, rental, and departure data internally consistent", () => {
     expect(validateStaticData().filter((issue) => issue.severity === "error")).toEqual([]);
+  });
+
+  it("covers every resort with official rental and official lodging data", () => {
+    for (const resort of resorts) {
+      expect(getRentalShopsForResort(resort.id).some((shop) => shop.id.endsWith("official-rental"))).toBe(true);
+      expect(getNearbyLodgingsForResort(resort.id).some((lodging) => lodging.distanceMinutes === 0)).toBe(true);
+    }
+  });
+
+  it("never exposes listing-only rental shops to the price calculator", () => {
+    const listingOnlyIds = new Set(
+      rentalShops
+        .filter((shop) => shop.dataStatus === "listed_25_26" && !shop.id.endsWith("official-rental"))
+        .map((shop) => shop.id)
+    );
+
+    expect(
+      rentalPriceRules.some((rule) => rule.rentalShopId !== undefined && listingOnlyIds.has(rule.rentalShopId))
+    ).toBe(false);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "jisan-yg-leports")).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "muju-arirang")).toBe(true);
   });
 
   it("reports resort-level data quality metrics", () => {

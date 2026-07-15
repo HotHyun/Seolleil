@@ -56,27 +56,41 @@ export const resortMapPoints: ResortMapPoint[] = [
 
 export const nearbyLodgings: NearbyLodging[] = [
   ...[
-    ["konjiam", "곤지암리조트 객실", "https://www.konjiamresort.co.kr/"],
-    ["jisan", "지산 포레스트 리조트 주변 숙박", "https://www.jisanresort.co.kr/"],
-    ["vivaldi", "소노벨 비발디파크", "https://www.sonohotelsresorts.com/complex_vp"],
-    ["elysian", "엘리시안 강촌 리조트 객실", "https://www.elysian.co.kr/"],
-    ["phoenix", "휘닉스 평창 호텔&콘도", "https://phoenixhnr.co.kr/"],
-    ["yongpyong", "모나 용평 호텔&콘도", "https://www.yongpyong.co.kr/"],
-    ["wellihilli", "웰리힐리파크 객실", "https://www.wellihillipark.com/"],
-    ["oakvalley", "오크밸리 리조트 객실", "https://www.oakvalley.co.kr/"],
-    ["alpensia", "알펜시아 호텔&콘도", "https://www.alpensia.com/"],
-    ["o2", "오투리조트 객실", "https://www.o2resort.com/"],
-    ["muju", "무주 덕유산 리조트 객실", "https://www.mdysresort.com/"],
-    ["edenvalley", "에덴밸리 리조트 객실", "https://www.edenvalley.co.kr/"]
-  ].map(([resortId, name, url]) => ({
-    id: `${resortId}-official-lodging`,
+    ["konjiam", "konjiam-ew-village", "곤지암리조트 EW 빌리지", "condo", "https://www.konjiamresort.co.kr/"],
+    ["jisan", "jisan-maple-condo", "지산리조트 메이플콘도", "condo", "https://www.jisanresort.co.kr/"],
+    ["jisan", "jisan-maple-hotel", "지산리조트 메이플호텔", "resort_hotel", "https://www.jisanresort.co.kr/"],
+    ["vivaldi", "vivaldi-sonobell", "소노벨 비발디파크", "resort_hotel", "https://www.sonohotelsresorts.com/complex_vp"],
+    ["vivaldi", "vivaldi-sonocam", "소노캄 비발디파크", "resort_hotel", "https://www.sonohotelsresorts.com/complex_vp"],
+    ["vivaldi", "vivaldi-sonofelice", "소노펠리체 비발디파크", "condo", "https://www.sonohotelsresorts.com/complex_vp"],
+    ["elysian", "elysian-gangchon-condo", "엘리시안 강촌 콘도", "condo", "https://www.elysian.co.kr/"],
+    ["phoenix", "phoenix-pyeongchang-hotel", "휘닉스 호텔 평창", "resort_hotel", "https://phoenixhnr.co.kr/"],
+    ["phoenix", "phoenix-pyeongchang-condo", "휘닉스 평창 콘도", "condo", "https://phoenixhnr.co.kr/"],
+    ["phoenix", "phoenix-sky-condo", "휘닉스 스카이콘도", "condo", "https://phoenixhnr.co.kr/"],
+    ["yongpyong", "yongpyong-dragon-valley-hotel", "모나 용평 드래곤밸리호텔", "resort_hotel", "https://www.yongpyong.co.kr/"],
+    ["yongpyong", "yongpyong-tower-condo", "모나 용평 타워콘도", "condo", "https://www.yongpyong.co.kr/"],
+    ["yongpyong", "yongpyong-greenpia-condo", "모나 용평 그린피아콘도", "condo", "https://www.yongpyong.co.kr/"],
+    ["yongpyong", "yongpyong-villa-condo", "모나 용평 빌라콘도", "condo", "https://www.yongpyong.co.kr/"],
+    ["yongpyong", "yongpyong-berdehill", "모나 용평 베르데힐콘도", "condo", "https://www.yongpyong.co.kr/"],
+    ["wellihilli", "wellihilli-condo", "웰리힐리파크 콘도", "condo", "https://www.wellihillipark.com/"],
+    ["oakvalley", "oakvalley-golf-village", "오크밸리 골프빌리지", "condo", "https://www.oakvalley.co.kr/"],
+    ["oakvalley", "oakvalley-south-condo", "오크밸리 사우스콘도", "condo", "https://www.oakvalley.co.kr/"],
+    ["alpensia", "alpensia-intercontinental", "인터컨티넨탈 알펜시아 평창 리조트", "resort_hotel", "https://www.alpensia.com/"],
+    ["alpensia", "alpensia-holidayinn-resort", "홀리데이 인 리조트 알펜시아 평창", "resort_hotel", "https://www.alpensia.com/"],
+    ["alpensia", "alpensia-holidayinn-suites", "홀리데이 인&스위트 알펜시아 평창", "condo", "https://www.alpensia.com/"],
+    ["o2", "o2-tower-condo", "오투리조트 타워콘도", "condo", "https://www.o2resort.com/"],
+    ["muju", "muju-hotel-tirol", "무주 덕유산리조트 호텔티롤", "resort_hotel", "https://www.mdysresort.com/"],
+    ["muju", "muju-family-hotel", "무주 덕유산리조트 가족호텔", "condo", "https://www.mdysresort.com/"],
+    ["edenvalley", "edenvalley-condo", "에덴밸리리조트 콘도", "condo", "https://www.edenvalley.co.kr/"]
+  ].map(([resortId, id, name, category, url]) => ({
+    id,
     resortId,
     name,
-    category: "resort_hotel" as const,
+    category: category as NearbyLodging["category"],
     url,
+    mapLinks: { naver: `https://map.naver.com/p/search/${encodeURIComponent(name)}` },
     sourceUrl: url,
     distanceMinutes: 0,
-    lastCheckedAt: checkedAt
+    lastCheckedAt: "2026-07-15"
   })),
   ...[
     ["high1-grand-hotel", "하이원 그랜드호텔", "resort_hotel"],

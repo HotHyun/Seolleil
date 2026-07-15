@@ -185,6 +185,64 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["25/26상품", "리프트패키지", "강습"], sourceUrl: "https://www.waug.com/ko/activities/127677", lastCheckedAt: checkedAt
   },
   {
+    id: "oakvalley-advance", resortId: "oakvalley", name: "전진스키",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20%EC%A0%84%EC%A7%84%EC%8A%A4%ED%82%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: false, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "verified_25_26", serviceNote: "25/26 장비 렌탈과 강습 판매 상품 및 장비 렌탈 공개 판매가 확인. 의류·리프트 취급은 재확인 필요.",
+    recommendationTags: ["25/26확인", "장비", "강습"], sourceUrl: "https://search.danawa.com/dsearch.php?query=%EC%9B%90%EC%A3%BC%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-ski1004", resortId: "oakvalley", name: "넌스키난보드", url: "https://ski1004.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%EC%9B%90%EC%A3%BC%EC%8B%9C%20%EC%A7%80%EC%A0%95%EB%A9%B4%20%EA%B5%AC%EC%9E%AC%EB%A1%9C%20132" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 원주시 지정면 구재로 132", phone: "010-5262-0088", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류·리프트권·강습과 자체 예약 경로 확인. 25/26 단품 최종가는 문의 필요.",
+    recommendationTags: ["업체사이트", "리프트권", "강습"], sourceUrl: "https://ski1004.com/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-mongski", resortId: "oakvalley", name: "몽스키", url: "https://www.mongski.com/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%EC%9B%90%EC%A3%BC%EC%8B%9C%20%EC%A7%80%EC%A0%95%EB%A9%B4%20%EA%B5%AC%EC%9E%AC%EB%A1%9C%20282" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 원주시 지정면 구재로 282", phone: "033-731-0120 / 010-7244-1600", dataStatus: "listed_25_26",
+    serviceNote: "장비·의류 렌탈과 소속 강사·강습 운영 경로 확인. 25/26 가격과 리프트권 취급은 문의 필요.",
+    recommendationTags: ["업체사이트", "장비의류", "강습"], sourceUrl: "https://www.mongski.com/default/03/02.php?left=2&topmenu=3", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-better-ski", resortId: "oakvalley", name: "더 잘타짐",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20%EB%8D%94%20%EC%9E%98%ED%83%80%EC%A7%90" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "25/26 시즌 NOL 장비·의류 렌탈 및 강습 판매 목록 확인. 주소와 최종 옵션 가격은 예약 단계에서 확인 필요.",
+    recommendationTags: ["25/26판매목록", "장비의류", "강습"], sourceUrl: "https://nol.yanolja.com/recommend/list?display=DOMESTIC_STAY_PDP___LEISURE&itemId=1000103984&itemType=DOMESTIC_STAY", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-snb", resortId: "oakvalley", name: "SNB 스키보드 렌탈샵",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20SNB%20%EB%A0%8C%ED%83%88%EC%83%B5" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "현재 NOL 장비·의류 렌탈 판매 목록 확인. 과거 시즌 가격만 공개되어 25/26 최종가는 재확인 필요.",
+    recommendationTags: ["판매목록", "장비의류", "재확인필요"], sourceUrl: "https://nol.yanolja.com/recommend/list?display=DOMESTIC_STAY_PDP___LEISURE&itemId=1000103984&itemType=DOMESTIC_STAY", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-kang-pro", resortId: "oakvalley", name: "강윤정프로 렌탈샵",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20%EA%B0%95%EC%9C%A4%EC%A0%95%ED%94%84%EB%A1%9C%20%EB%A0%8C%ED%83%88%EC%83%B5" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "현재 NOL 렌탈 판매 목록과 강습 판매 경로 확인. 공개 상세 가격은 과거 시즌 자료여서 계산에서 제외.",
+    recommendationTags: ["판매목록", "장비의류", "강습"], sourceUrl: "https://www.11st.co.kr/products/3186826025", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-maru", resortId: "oakvalley", name: "마루스키·마루강습센터",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20%EB%A7%88%EB%A3%A8%EC%8A%A4%ED%82%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "현재 NOL 렌탈·강습 판매 목록 확인. 주소와 25/26 최종 단품 가격은 예약 단계에서 확인 필요.",
+    recommendationTags: ["판매목록", "렌탈", "강습"], sourceUrl: "https://nol.yanolja.com/recommend/list?display=DOMESTIC_STAY_PDP___LEISURE&itemId=1000102585&itemType=DOMESTIC_STAY", lastCheckedAt: checkedAt
+  },
+  {
+    id: "oakvalley-cat-ski", resortId: "oakvalley", name: "스키타는야옹이",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC%20%EC%8A%A4%ED%82%A4%ED%83%80%EB%8A%94%EC%95%BC%EC%98%B9%EC%9D%B4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    dataStatus: "listed_25_26", serviceNote: "25/26 시즌 최근 이용 기록에서 장비·의류 렌탈과 강습 운영 확인. 공식 예약 URL·주소·최종 가격은 추가 확인 필요.",
+    recommendationTags: ["25/26이용확인", "장비의류", "강습"], sourceUrl: "https://pandarank.net/contents/695b442dde98049214e605c0", lastCheckedAt: checkedAt
+  },
+  {
     id: "vivaldi-jamesboard", resortId: "vivaldi", name: "제임스보드", url: "https://www.jamesboardski.co.kr/",
     mapLinks: { naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC%20%EC%A0%9C%EC%9E%84%EC%8A%A4%EB%B3%B4%EB%93%9C" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,

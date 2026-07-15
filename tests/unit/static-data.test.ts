@@ -113,6 +113,16 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "elysian-vision")).toBe(false);
   });
 
+  it("keeps the researched Oak Valley rental directory and verified prices separated", () => {
+    const shops = getRentalShopsForResort("oakvalley");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(9);
+    expect(shops.some((shop) => shop.id === "oakvalley-advance" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "oakvalley-mongski" && shop.address?.includes("구재로 282"))).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "oakvalley-advance" && rule.representativePrice === 14250)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "oakvalley-snb")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

@@ -24,6 +24,8 @@ Do not use a local development server for OCI-agent UI verification. When `E2E_B
 - health response and critical public routes;
 - mobile overflow and ski-map visibility;
 - an opt-in anonymous trip lifecycle;
+- trip-internal rental filters, map/fallback visibility, rental product selection, and official/custom lodging cost capture;
+- a 390px trip decision-workspace pass for horizontal overflow, key controls, and same-origin 5xx responses;
 - custom trip-name and memo persistence with public-link memo privacy;
 - persistent read-link validity after a checklist mutation;
 - read-only capability boundaries;

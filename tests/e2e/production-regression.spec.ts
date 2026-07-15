@@ -55,6 +55,10 @@ test.describe("production regression", () => {
     test.skip(testInfo.project.name !== "chromium", "Run the mutation lifecycle once, then cover mobile with read-only checks.");
 
     let editUrl: string | undefined;
+    const serverErrors: string[] = [];
+    page.on("response", (response) => {
+      if (response.url().startsWith("https://ski.hothyun.com") && response.status() >= 500) serverErrors.push(`${response.status()} ${response.url()}`);
+    });
     try {
       await page.goto(planQuery, { waitUntil: "networkidle" });
       await page.getByRole("button", { name: /이 스키장으로 트립 만들기/ }).first().click();
@@ -81,7 +85,11 @@ test.describe("production regression", () => {
       await page.getByRole("link", { name: /선택·예약/ }).first().click();
       const decisions = page.getByTestId("trip-decision-workspace");
       await expect(decisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
-      await expect(decisions.getByTestId(/trip-place-map/).first()).toBeVisible();
+      await expect(decisions.getByTestId("trip-place-map").or(decisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
+      await expect(decisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
+      await decisions.getByRole("button", { name: "픽업", exact: true }).click();
+      await expect(decisions.getByRole("heading", { name: "간지보더" })).toBeVisible();
+      await decisions.getByRole("button", { name: "전체", exact: true }).click();
       await decisions.getByRole("button", { name: "이 상품 저장" }).first().click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
       await decisions.locator("#lift").getByRole("combobox").click();
@@ -128,6 +136,15 @@ test.describe("production regression", () => {
       await expect(page.getByTestId("trip-budget-workspace").getByLabel("몇 명이 나눌까요?")).toHaveValue("4");
 
       await expectNoHorizontalOverflow(page);
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(`${editUrl}?view=decisions`);
+      const mobileDecisions = page.getByTestId("trip-decision-workspace");
+      await expect(mobileDecisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
+      await expect(mobileDecisions.getByTestId("trip-place-map").or(mobileDecisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
+      await expect(mobileDecisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
+      await expect(mobileDecisions.getByRole("heading", { name: "공식 숙소 비교" })).toBeVisible();
+      await expectNoHorizontalOverflow(page);
+      expect(serverErrors, `Production 5xx responses: ${serverErrors.join("\n")}`).toEqual([]);
     } finally {
       for (const candidate of context.pages()) {
         if (candidate !== page) await candidate.close();

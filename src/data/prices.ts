@@ -442,16 +442,16 @@ const rentalSeedOverrides: Record<string, RentalSeed> = {
     packagePrice: 34000,
     maxExtra: 15000
   },
-  "phoenix-snowlab": {
-    shopId: "phoenix-snowlab",
+  "phoenix-junski": {
+    shopId: "phoenix-junski",
     sourceType: "official_booking",
-    confidence: "estimated",
-    verifiedByHuman: false,
-    verificationNote: "밀림 예약 상품 페이지 기반. 옵션별 가격은 예약 화면에서 재확인 필요.",
-    equipment: 30000,
-    clothing: 25000,
-    packagePrice: 55000,
-    maxExtra: 15000
+    confidence: "confirmed",
+    verifiedByHuman: true,
+    verificationNote: "25/26 판매 상품의 1타임 장비·의류·결합 옵션 노출가 기준.",
+    equipment: 14160,
+    clothing: 23660,
+    packagePrice: 33160,
+    maxExtra: 9500
   },
   "yongpyong-drsnow": {
     shopId: "yongpyong-drsnow",

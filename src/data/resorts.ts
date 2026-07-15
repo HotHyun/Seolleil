@@ -400,23 +400,6 @@ export const rentalShops: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
-    id: "phoenix-snowlab",
-    resortId: "phoenix",
-    name: "스노우랩 휘닉스파크점",
-    url: "https://www.millim.in/goods/view/SNOWL-0001",
-    mapLinks: {
-      naver: "https://map.naver.com/p/search/%EC%8A%A4%EB%85%B8%EC%9A%B0%EB%9E%A9%20%ED%9C%98%EB%8B%89%EC%8A%A4%ED%8C%8C%ED%81%AC"
-    },
-    equipmentRentalAvailable: true,
-    clothingRentalAvailable: true,
-    pickupAvailable: true,
-    deliveryAvailable: false,
-    distanceMinutes: 6,
-    recommendationTags: ["외부샵", "예약처", "리조트인근"],
-    sourceUrl: "https://www.millim.in/goods/view/SNOWL-0001",
-    lastCheckedAt: checkedAt
-  },
-  {
     id: "yongpyong-drsnow",
     resortId: "yongpyong",
     name: "닥터스노우",

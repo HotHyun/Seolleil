@@ -29,6 +29,16 @@ test.describe("production regression", () => {
     await lodging.click();
     await expect.poll(async () => (await detailMap.boundingBox())?.y ?? 999).toBeLessThan(120);
     await expect(detailMap.getByText("곤지암리조트 객실")).toBeVisible();
+
+    await page.goto("/resorts/phoenix");
+    const phoenixMap = page.getByTestId("resort-detail-nearby-map");
+    await expect(page.getByRole("button", { name: "스노우랩 휘닉스파크점 지도에서 보기" })).toBeVisible();
+    const phoenixRental = page.getByRole("button", { name: "꾹이네 렌탈샵 지도에서 보기" });
+    await phoenixRental.scrollIntoViewIfNeeded();
+    await phoenixRental.click();
+    await expect.poll(async () => (await phoenixMap.boundingBox())?.y ?? 999).toBeLessThan(120);
+    await expect(phoenixMap.getByText("꾹이네 렌탈샵")).toBeVisible();
+    await expectNoHorizontalOverflow(page);
   });
 
   test("anonymous trip supports identity, decisions, checklist, and budget lifecycle", async ({ page, context }, testInfo) => {

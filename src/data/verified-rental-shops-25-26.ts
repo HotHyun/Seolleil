@@ -452,6 +452,54 @@ export const verifiedRentalShops2526: RentalShop[] = [
     lastCheckedAt: checkedAt
   },
   {
+    id: "phoenix-snowlab", resortId: "phoenix", name: "스노우랩 휘닉스파크점", url: "https://snowlab.kr/home",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%B4%89%ED%8F%89%EB%A9%B4%20%ED%83%9C%EA%B8%B0%EB%A1%9C%20283-2" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: true, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 평창군 봉평면 태기로 283-2, 103~105호", phone: "033-333-6660", dataStatus: "listed_25_26", distanceMinutes: 1,
+    serviceNote: "25/26 신규 매장의 신상 장비·의류·헬멧·고글과 픽업·샌딩·딜리버리 운영 확인. 공개 최종 가격은 예약 단계에서 확인 필요.",
+    recommendationTags: ["25/26신규", "무료픽업", "신상장비"], sourceUrl: "https://snowlab.kr/home", lastCheckedAt: checkedAt
+  },
+  {
+    id: "phoenix-feelgood", resortId: "phoenix", name: "필굿 렌탈샵", url: "https://feelgoodshop.co.kr/22",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%B4%89%ED%8F%89%EB%A9%B4%20%ED%83%9C%EA%B8%B0%EB%A1%9C%20141" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 평창군 봉평면 태기로 141", phone: "033-332-5006", dataStatus: "listed_25_26", distanceMinutes: 2,
+    serviceNote: "25/26 리프트+신상 장비와 의류·바이저 헬멧 올인원 패키지의 시간대별 가격 확인.",
+    recommendationTags: ["25/26가격확인", "리프트패키지", "올인원"], sourceUrl: "https://feelgoodshop.co.kr/22", lastCheckedAt: checkedAt
+  },
+  {
+    id: "phoenix-kkookine", resortId: "phoenix", name: "꾹이네 렌탈샵", url: "https://www.klook.com/ko/activity/190441-phoenix-park-rental-shop-rental-lesson-pass/",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%EB%8F%84%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%B4%89%ED%8F%89%EB%A9%B4%20%ED%83%9C%EA%B8%B0%EB%A1%9C%20279" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: true, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 평창군 봉평면 태기로 279, 102호", phone: "010-5412-2731", dataStatus: "listed_25_26", distanceMinutes: 2,
+    serviceNote: "장비·의류 UV 살균, 스키장 앞 무료 픽업·배달·반납과 사전 예약 리프트 할인 확인. 현재 판매처 예약 불가로 최종 가격은 문의 필요.",
+    recommendationTags: ["무료픽업", "장비배달", "리프트할인"], sourceUrl: "https://www.klook.com/ko/activity/190441-phoenix-park-rental-shop-rental-lesson-pass/", lastCheckedAt: checkedAt
+  },
+  {
+    id: "phoenix-junski", resortId: "phoenix", name: "준스키", url: "https://www.11st.co.kr/products/8884986966",
+    mapLinks: { naver: "https://map.naver.com/p/search/%ED%9C%98%EB%8B%89%EC%8A%A4%ED%8C%8C%ED%81%AC%20%EC%A4%80%EC%8A%A4%ED%82%A4" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    dataStatus: "verified_25_26", distanceMinutes: 2,
+    serviceNote: "25/26 장비·의류 단품과 결합권의 1타임·2타임·종일 가격 및 리프트 할인 취급 확인.",
+    recommendationTags: ["25/26가격확인", "리조트인근", "리프트할인"], sourceUrl: "https://www.11st.co.kr/products/8884986966", lastCheckedAt: checkedAt
+  },
+  {
+    id: "phoenix-jetski", resortId: "phoenix", name: "제트스키 렌탈샵", url: "https://timeticket.co.kr/product/6697",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%ED%8A%B9%EB%B3%84%EC%9E%90%EC%B9%98%EB%8F%84%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%B4%89%ED%8F%89%EB%A9%B4%20%ED%83%9C%EA%B8%B0%EB%A1%9C%20151" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: true, deliveryAvailable: false, liftTicketSalesAvailable: true,
+    address: "강원특별자치도 평창군 봉평면 태기로 151 1층", phone: "033-334-3343 / 010-7516-6516", dataStatus: "listed_25_26", distanceMinutes: 1,
+    serviceNote: "25/26 판매 경로에서 장비·의류·고글과 픽업, 사전 예약 리프트 할인 취급 확인. 옵션별 최종 렌탈 가격은 예약 단계에서 확인 필요.",
+    recommendationTags: ["도보1분", "픽업", "리프트할인"], sourceUrl: "https://timeticket.co.kr/product/6697", lastCheckedAt: checkedAt
+  },
+  {
+    id: "phoenix-baekya", resortId: "phoenix", name: "백야 렌탈샵", url: "https://www.waug.com/ko/activities/127169",
+    mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%B4%89%ED%8F%89%EB%A9%B4%20%ED%83%9C%EA%B8%B0%EB%A1%9C%20523" },
+    equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
+    address: "강원특별자치도 평창군 봉평면 태기로 523, 1층 103호", dataStatus: "listed_25_26",
+    serviceNote: "25/26 시즌 판매 기간과 최신급 장비·신상 의류·강습 운영 확인. 단품별 최종 가격과 리프트권 취급은 예약 단계에서 확인 필요.",
+    recommendationTags: ["25/26영업확인", "신상의류", "강습"], sourceUrl: "https://www.waug.com/ko/activities/127169", lastCheckedAt: checkedAt
+  },
+  {
     id: "yongpyong-beaver",
     resortId: "yongpyong",
     name: "비버네렌탈샵",

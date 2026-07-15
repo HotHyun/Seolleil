@@ -159,6 +159,17 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "jisan-boardbox")).toBe(false);
   });
 
+  it("keeps the researched Phoenix directory and confirmed 25/26 prices separated", () => {
+    const shops = getRentalShopsForResort("phoenix");
+
+    expect(shops.filter((shop) => !shop.id.endsWith("official-rental")).length).toBeGreaterThanOrEqual(8);
+    expect(shops.some((shop) => shop.id === "phoenix-junski" && shop.dataStatus === "verified_25_26")).toBe(true);
+    expect(shops.some((shop) => shop.id === "phoenix-snowlab" && shop.pickupAvailable && shop.deliveryAvailable)).toBe(true);
+    expect(shops.some((shop) => shop.id === "phoenix-kkookine" && shop.liftTicketSalesAvailable)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "phoenix-junski" && rule.representativePrice === 14160)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId === "phoenix-feelgood")).toBe(false);
+  });
+
   it("reports resort-level data quality metrics", () => {
     const report = getStaticDataReport(new Date("2026-05-16T00:00:00Z"));
 

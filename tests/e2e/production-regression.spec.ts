@@ -3,6 +3,10 @@ import { expectNoEmptyMain, expectNoHorizontalOverflow, planQuery } from "./help
 
 test.describe("production regression", () => {
   test("public routes and mobile ski map remain usable", async ({ page }) => {
+    const pageErrors: string[] = [];
+    const consoleErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    page.on("console", (message) => { if (message.type() === "error") consoleErrors.push(message.text()); });
     const health = await page.request.get("/api/health");
     expect(health.ok()).toBeTruthy();
 
@@ -21,6 +25,17 @@ test.describe("production regression", () => {
     const [mapBox, selectionBox] = await Promise.all([map.boundingBox(), selection.boundingBox()]);
     expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(460);
     expect(Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0))).toBeLessThanOrEqual(42);
+    await expect(selection.getByText(/렌탈 후보/)).toBeVisible();
+    await expect(selection.getByText(/숙박 후보/)).toBeVisible();
+    await expect(selection.getByText(/^초보\s*\d+$/)).toHaveCount(0);
+    await expect(selection.getByText(/^접근\s*\d+$/)).toHaveCount(0);
+    const fallback = page.getByRole("heading", { name: "실제 지도 연결을 준비하고 있어요" });
+    if (await fallback.count()) await expect(page.getByRole("link", { name: /카카오맵에서 정확히 보기/ })).toBeVisible();
+    await selection.getByRole("button", { name: "주변 보기" }).click();
+    await expect(page.getByRole("button", { name: "전체", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "픽업", exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "가격 확인", exact: true }).click();
 
     await page.goto("/resorts/konjiam");
     await expect(page.getByRole("heading", { name: "퇴근 후에도 닿는 수도권 스키" })).toBeVisible();
@@ -30,6 +45,8 @@ test.describe("production regression", () => {
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
     await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();
     await expectNoHorizontalOverflow(page);
+    expect(pageErrors, `Page errors: ${pageErrors.join("\n")}`).toEqual([]);
+    expect(consoleErrors, `Console errors: ${consoleErrors.join("\n")}`).toEqual([]);
   });
 
   test("anonymous trip supports identity, decisions, checklist, and budget lifecycle", async ({ page, context }, testInfo) => {

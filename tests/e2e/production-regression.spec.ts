@@ -86,6 +86,8 @@ test.describe("production regression", () => {
       const decisions = page.getByTestId("trip-decision-workspace");
       await expect(decisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
       await expect(decisions.getByTestId("trip-place-map").or(decisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
+      await decisions.getByRole("combobox", { name: "렌탈샵 정렬" }).click();
+      await page.getByRole("option", { name: "가격순" }).click();
       await expect(decisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
       await decisions.getByRole("button", { name: "픽업", exact: true }).click();
       await expect(decisions.getByRole("heading", { name: "간지보더" })).toBeVisible();

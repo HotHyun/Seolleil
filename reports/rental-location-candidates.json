@@ -1,0 +1,5182 @@
+{
+  "generatedAt": "2026-07-16T00:49:51.091Z",
+  "source": "Kakao Maps JavaScript Places keyword search via ski.hothyun.com",
+  "counts": {
+    "verified": 81,
+    "review": 3,
+    "uncertain": 8,
+    "unresolved": 26
+  },
+  "results": [
+    {
+      "shopId": "konjiam-brothers",
+      "resortId": "konjiam",
+      "shopName": "곤지암 브라더스",
+      "currentAddress": "경기 광주시 도척면 도척윗로 258",
+      "currentPhone": "010-8722-3982",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 도웅리 132-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1598",
+        "id": "296556681",
+        "phone": "010-8722-3982",
+        "place_name": "곤지암렌탈샵 브라더스",
+        "place_url": "http://place.map.kakao.com/296556681",
+        "road_address_name": "경기 광주시 도척면 도척윗로 258",
+        "x": "127.314296879445",
+        "y": "37.3345021838233",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 도웅리 132-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1598",
+          "id": "296556681",
+          "phone": "010-8722-3982",
+          "place_name": "곤지암렌탈샵 브라더스",
+          "place_url": "http://place.map.kakao.com/296556681",
+          "road_address_name": "경기 광주시 도척면 도척윗로 258",
+          "x": "127.314296879445",
+          "y": "37.3345021838233",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 광주시 곤지암읍 곤지암리 124-13",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "서비스,산업 > 건설,건축 > 종합건설사",
+          "distance": "5314",
+          "id": "1870905996",
+          "phone": "031-859-2223",
+          "place_name": "빅브라더스",
+          "place_url": "http://place.map.kakao.com/1870905996",
+          "road_address_name": "경기 광주시 곤지암읍 광여로99번길 66",
+          "x": "127.352932132801",
+          "y": "37.3537463672914",
+          "score": 1,
+          "reasons": [
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-skibucks",
+      "resortId": "konjiam",
+      "shopName": "스키벅스",
+      "currentAddress": "경기 광주시 도척면 도척윗로 283",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 도웅리 99-5",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "1416",
+        "id": "1482887869",
+        "phone": "",
+        "place_name": "스키벅스",
+        "place_url": "http://place.map.kakao.com/1482887869",
+        "road_address_name": "경기 광주시 도척면 도척윗로 283",
+        "x": "127.31191458215",
+        "y": "37.3336272830001",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 도웅리 99-5",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "1416",
+          "id": "1482887869",
+          "phone": "",
+          "place_name": "스키벅스",
+          "place_url": "http://place.map.kakao.com/1482887869",
+          "road_address_name": "경기 광주시 도척면 도척윗로 283",
+          "x": "127.31191458215",
+          "y": "37.3336272830001",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-ganjiboarder",
+      "resortId": "konjiam",
+      "shopName": "간지보더",
+      "currentAddress": "경기 광주시 도척면 독고개길 318",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 도웅리 251",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "797",
+        "id": "15736488",
+        "phone": "031-769-9375",
+        "place_name": "곤지암리조트 렌탈샵 간지보더",
+        "place_url": "http://place.map.kakao.com/15736488",
+        "road_address_name": "경기 광주시 도척면 독고개길 318",
+        "x": "127.3055535516756",
+        "y": "37.338015668382674",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 도웅리 251",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "797",
+          "id": "15736488",
+          "phone": "031-769-9375",
+          "place_name": "곤지암리조트 렌탈샵 간지보더",
+          "place_url": "http://place.map.kakao.com/15736488",
+          "road_address_name": "경기 광주시 도척면 독고개길 318",
+          "x": "127.3055535516756",
+          "y": "37.338015668382674",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-coconut",
+      "resortId": "konjiam",
+      "shopName": "코코넛스키",
+      "currentAddress": "경기 광주시 도척면 독고개길302번길 2",
+      "currentPhone": "010-4332-3884",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 도웅리 271",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "731",
+        "id": "329260199",
+        "phone": "010-4332-3884",
+        "place_name": "곤지암스키장 코코넛렌탈샵",
+        "place_url": "http://place.map.kakao.com/329260199",
+        "road_address_name": "경기 광주시 도척면 독고개길302번길 2",
+        "x": "127.304416151354",
+        "y": "37.3394350154282",
+        "score": 14,
+        "reasons": [
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 도웅리 271",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "731",
+          "id": "329260199",
+          "phone": "010-4332-3884",
+          "place_name": "곤지암스키장 코코넛렌탈샵",
+          "place_url": "http://place.map.kakao.com/329260199",
+          "road_address_name": "경기 광주시 도척면 독고개길302번길 2",
+          "x": "127.304416151354",
+          "y": "37.3394350154282",
+          "score": 14,
+          "reasons": [
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 광주시 도척면 도웅리 271",
+          "category_group_code": "AD5",
+          "category_group_name": "숙박",
+          "category_name": "여행 > 숙박 > 펜션",
+          "distance": "734",
+          "id": "12729354",
+          "phone": "031-764-7039",
+          "place_name": "느티나무펜션",
+          "place_url": "http://place.map.kakao.com/12729354",
+          "road_address_name": "경기 광주시 도척면 독고개길302번길 2",
+          "x": "127.304437664991",
+          "y": "37.3394529806251",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-wski",
+      "resortId": "konjiam",
+      "shopName": "W스키",
+      "currentAddress": "경기 광주시 도척면 도척윗로 166",
+      "currentPhone": "031-763-2990 / 010-4108-0401",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 궁평리 326-8",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2376",
+        "id": "12747448",
+        "phone": "031-763-2990",
+        "place_name": "곤지암렌탈샵",
+        "place_url": "http://place.map.kakao.com/12747448",
+        "road_address_name": "경기 광주시 도척면 도척윗로 166",
+        "x": "127.323374103421",
+        "y": "37.3385269389713",
+        "score": 14,
+        "reasons": [
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 궁평리 326-8",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2376",
+          "id": "12747448",
+          "phone": "031-763-2990",
+          "place_name": "곤지암렌탈샵",
+          "place_url": "http://place.map.kakao.com/12747448",
+          "road_address_name": "경기 광주시 도척면 도척윗로 166",
+          "x": "127.323374103421",
+          "y": "37.3385269389713",
+          "score": 14,
+          "reasons": [
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 광주시 도척면 궁평리 326-8",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품",
+          "distance": "2368",
+          "id": "15242564",
+          "phone": "031-761-4901",
+          "place_name": "곤지암스키장렌탈샵 W",
+          "place_url": "http://place.map.kakao.com/15242564",
+          "road_address_name": "경기 광주시 도척면 도척윗로 166",
+          "x": "127.32328809385498",
+          "y": "37.33846950830188",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-youthski",
+      "resortId": "konjiam",
+      "shopName": "청춘스키",
+      "currentAddress": "경기 광주시 도척면 도척윗로 248",
+      "currentPhone": "031-764-3938",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 궁평리 587-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1691",
+        "id": "974030056",
+        "phone": "031-764-3938",
+        "place_name": "곤지암렌탈샵",
+        "place_url": "http://place.map.kakao.com/974030056",
+        "road_address_name": "경기 광주시 도척면 도척윗로 248",
+        "x": "127.31543683744057",
+        "y": "37.33483613446207",
+        "score": 14,
+        "reasons": [
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 궁평리 587-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1691",
+          "id": "974030056",
+          "phone": "031-764-3938",
+          "place_name": "곤지암렌탈샵",
+          "place_url": "http://place.map.kakao.com/974030056",
+          "road_address_name": "경기 광주시 도척면 도척윗로 248",
+          "x": "127.31543683744057",
+          "y": "37.33483613446207",
+          "score": 14,
+          "reasons": [
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 이천시 마장면 해월리 80-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "14817",
+          "id": "755818684",
+          "phone": "",
+          "place_name": "청춘스키",
+          "place_url": "http://place.map.kakao.com/755818684",
+          "road_address_name": "경기 이천시 마장면 지산로 142",
+          "x": "127.360210701594",
+          "y": "37.213843347264",
+          "score": 9,
+          "reasons": [
+            "exact_name",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-iwon",
+      "resortId": "konjiam",
+      "shopName": "아이원 렌탈샵",
+      "currentAddress": "경기 광주시 도척면 도척윗로 102",
+      "currentPhone": "0507-1381-3780",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 궁평리 77-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2935",
+        "id": "11701454",
+        "phone": "031-762-3779",
+        "place_name": "곤지암렌탈샵 아이원",
+        "place_url": "http://place.map.kakao.com/11701454",
+        "road_address_name": "경기 광주시 도척면 도척윗로 102",
+        "x": "127.32947112406318",
+        "y": "37.34057527012618",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 궁평리 77-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2935",
+          "id": "11701454",
+          "phone": "031-762-3779",
+          "place_name": "곤지암렌탈샵 아이원",
+          "place_url": "http://place.map.kakao.com/11701454",
+          "road_address_name": "경기 광주시 도척면 도척윗로 102",
+          "x": "127.32947112406318",
+          "y": "37.34057527012618",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-vski",
+      "resortId": "konjiam",
+      "shopName": "V스키",
+      "currentAddress": "경기 광주시 도척면 도척윗로 218",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 궁평리 572-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1914",
+        "id": "22810510",
+        "phone": "031-769-9997",
+        "place_name": "곤지암리조트렌탈샵 V스키",
+        "place_url": "http://place.map.kakao.com/22810510",
+        "road_address_name": "경기 광주시 도척면 도척윗로 218",
+        "x": "127.318164492539",
+        "y": "37.336241642019",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 궁평리 572-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1914",
+          "id": "22810510",
+          "phone": "031-769-9997",
+          "place_name": "곤지암리조트렌탈샵 V스키",
+          "place_url": "http://place.map.kakao.com/22810510",
+          "road_address_name": "경기 광주시 도척면 도척윗로 218",
+          "x": "127.318164492539",
+          "y": "37.336241642019",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-joy",
+      "resortId": "konjiam",
+      "shopName": "조이강습센터",
+      "currentAddress": "경기 광주시 도척면 도척윗로 242",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 궁평리 590-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스키,스노우보드",
+        "distance": "1741",
+        "id": "1417303275",
+        "phone": "",
+        "place_name": "조이강습센터",
+        "place_url": "http://place.map.kakao.com/1417303275",
+        "road_address_name": "경기 광주시 도척면 도척윗로 242",
+        "x": "127.316035567993",
+        "y": "37.3349967216579",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 궁평리 590-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스키,스노우보드",
+          "distance": "1741",
+          "id": "1417303275",
+          "phone": "",
+          "place_name": "조이강습센터",
+          "place_url": "http://place.map.kakao.com/1417303275",
+          "road_address_name": "경기 광주시 도척면 도척윗로 242",
+          "x": "127.316035567993",
+          "y": "37.3349967216579",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-yg-leports",
+      "resortId": "jisan",
+      "shopName": "YG레포츠",
+      "currentAddress": "경기 이천시 마장면 지산로 210",
+      "currentPhone": "010-6647-4330",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 196-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "934",
+        "id": "1615247451",
+        "phone": "010-6647-4330",
+        "place_name": "와이지레포츠",
+        "place_url": "http://place.map.kakao.com/1615247451",
+        "road_address_name": "경기 이천시 마장면 지산로 210",
+        "x": "127.353620510291",
+        "y": "37.2153877730958",
+        "score": 14,
+        "reasons": [
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 196-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "934",
+          "id": "1615247451",
+          "phone": "010-6647-4330",
+          "place_name": "와이지레포츠",
+          "place_url": "http://place.map.kakao.com/1615247451",
+          "road_address_name": "경기 이천시 마장면 지산로 210",
+          "x": "127.353620510291",
+          "y": "37.2153877730958",
+          "score": 14,
+          "reasons": [
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-boss",
+      "resortId": "jisan",
+      "shopName": "보스렌탈샵",
+      "currentAddress": "경기 이천시 마장면 지산로 234",
+      "currentPhone": "031-631-5520 / 010-4413-5520",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 306-5",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "696",
+        "id": "484393835",
+        "phone": "031-631-5520",
+        "place_name": "지산리조트 보스렌탈샵",
+        "place_url": "http://place.map.kakao.com/484393835",
+        "road_address_name": "경기 이천시 마장면 지산로 234",
+        "x": "127.35103868255153",
+        "y": "37.2159613090761",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 306-5",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "696",
+          "id": "484393835",
+          "phone": "031-631-5520",
+          "place_name": "지산리조트 보스렌탈샵",
+          "place_url": "http://place.map.kakao.com/484393835",
+          "road_address_name": "경기 이천시 마장면 지산로 234",
+          "x": "127.35103868255153",
+          "y": "37.2159613090761",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-boardbox",
+      "resortId": "jisan",
+      "shopName": "보드박스",
+      "currentAddress": "경기 이천시 마장면 지산로 236",
+      "currentPhone": "031-637-7553 / 010-7143-1800",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 306-4",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "669",
+        "id": "15619605",
+        "phone": "031-637-7553",
+        "place_name": "지산리조트 렌탈샵 보드박스",
+        "place_url": "http://place.map.kakao.com/15619605",
+        "road_address_name": "경기 이천시 마장면 지산로 236",
+        "x": "127.350764287537",
+        "y": "37.2160702473592",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 306-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "669",
+          "id": "15619605",
+          "phone": "031-637-7553",
+          "place_name": "지산리조트 렌탈샵 보드박스",
+          "place_url": "http://place.map.kakao.com/15619605",
+          "road_address_name": "경기 이천시 마장면 지산로 236",
+          "x": "127.350764287537",
+          "y": "37.2160702473592",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 광주시 도척면 도웅리 131",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "13241",
+          "id": "12728357",
+          "phone": "031-797-7554",
+          "place_name": "보드박스",
+          "place_url": "http://place.map.kakao.com/12728357",
+          "road_address_name": "경기 광주시 도척면 독고개길 402",
+          "x": "127.31400639901044",
+          "y": "37.33465793188389",
+          "score": 9,
+          "reasons": [
+            "exact_name",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-camp",
+      "resortId": "jisan",
+      "shopName": "지산캠프",
+      "currentAddress": "경기 이천시 마장면 지산로 257-7",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 222-2",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "454",
+        "id": "14560262",
+        "phone": "031-637-7310",
+        "place_name": "지산캠프",
+        "place_url": "http://place.map.kakao.com/14560262",
+        "road_address_name": "경기 이천시 마장면 지산로 257-7",
+        "x": "127.34836391787947",
+        "y": "37.21642333260071",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 222-2",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "454",
+          "id": "14560262",
+          "phone": "031-637-7310",
+          "place_name": "지산캠프",
+          "place_url": "http://place.map.kakao.com/14560262",
+          "road_address_name": "경기 이천시 마장면 지산로 257-7",
+          "x": "127.34836391787947",
+          "y": "37.21642333260071",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 이천시 마장면 해월리 306-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스키,스노우보드",
+          "distance": "667",
+          "id": "2139074201",
+          "phone": "",
+          "place_name": "지산스키캠프",
+          "place_url": "http://place.map.kakao.com/2139074201",
+          "road_address_name": "경기 이천시 마장면 지산로 236",
+          "x": "127.350746395054",
+          "y": "37.2160991337805",
+          "score": 2,
+          "reasons": [
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-rshop",
+      "resortId": "jisan",
+      "shopName": "샵알 지산점",
+      "currentAddress": "경기 이천시 마장면 지산로 138",
+      "currentPhone": "010-4836-8068 / 010-5725-8068",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 79-2",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1583",
+        "id": "18533118",
+        "phone": "010-4836-8068",
+        "place_name": "샵알 지산점",
+        "place_url": "http://place.map.kakao.com/18533118",
+        "road_address_name": "경기 이천시 마장면 지산로 138",
+        "x": "127.360713760683",
+        "y": "37.2139679626755",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 79-2",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1583",
+          "id": "18533118",
+          "phone": "010-4836-8068",
+          "place_name": "샵알 지산점",
+          "place_url": "http://place.map.kakao.com/18533118",
+          "road_address_name": "경기 이천시 마장면 지산로 138",
+          "x": "127.360713760683",
+          "y": "37.2139679626755",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-youthski",
+      "resortId": "jisan",
+      "shopName": "청춘스키",
+      "currentAddress": "경기 이천시 마장면 지산로 142",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 80-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1544",
+        "id": "755818684",
+        "phone": "",
+        "place_name": "청춘스키",
+        "place_url": "http://place.map.kakao.com/755818684",
+        "road_address_name": "경기 이천시 마장면 지산로 142",
+        "x": "127.360210701594",
+        "y": "37.213843347264",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 80-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1544",
+          "id": "755818684",
+          "phone": "",
+          "place_name": "청춘스키",
+          "place_url": "http://place.map.kakao.com/755818684",
+          "road_address_name": "경기 이천시 마장면 지산로 142",
+          "x": "127.360210701594",
+          "y": "37.213843347264",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 광주시 도척면 궁평리 587-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "13236",
+          "id": "974030056",
+          "phone": "031-764-3938",
+          "place_name": "곤지암렌탈샵",
+          "place_url": "http://place.map.kakao.com/974030056",
+          "road_address_name": "경기 광주시 도척면 도척윗로 248",
+          "x": "127.31543683744057",
+          "y": "37.33483613446207",
+          "score": 1,
+          "reasons": [
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-season-company",
+      "resortId": "jisan",
+      "shopName": "시즌컴퍼니",
+      "currentAddress": "경기 이천시 마장면 지산로 222",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 205-55",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "816",
+        "id": "1664228177",
+        "phone": "010-2811-8823",
+        "place_name": "시즌렌탈샵",
+        "place_url": "http://place.map.kakao.com/1664228177",
+        "road_address_name": "경기 이천시 마장면 지산로 222",
+        "x": "127.35230886136513",
+        "y": "37.2155754948554",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 205-55",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "816",
+          "id": "1664228177",
+          "phone": "010-2811-8823",
+          "place_name": "시즌렌탈샵",
+          "place_url": "http://place.map.kakao.com/1664228177",
+          "road_address_name": "경기 이천시 마장면 지산로 222",
+          "x": "127.35230886136513",
+          "y": "37.2155754948554",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 이천시 마장면 해월리 205-55",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "822",
+          "id": "15419600",
+          "phone": "031-637-8626",
+          "place_name": "지산알파인",
+          "place_url": "http://place.map.kakao.com/15419600",
+          "road_address_name": "경기 이천시 마장면 지산로 222",
+          "x": "127.35235814749008",
+          "y": "37.21551407719405",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-roky",
+      "resortId": "jisan",
+      "shopName": "로키스키 지산점",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "jisan-snowman",
+      "resortId": "jisan",
+      "shopName": "눈사람 렌탈샵",
+      "currentAddress": "경기도 이천시 마장면 지산로 244",
+      "currentPhone": "031-636-4030",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "jisan-snowland",
+      "resortId": "jisan",
+      "shopName": "스노우랜드",
+      "currentAddress": "경기도 이천시 마장면 지산로 148",
+      "currentPhone": "031-637-2207 / 010-7486-0909",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "경기 용인시 처인구 포곡읍 전대리 310",
+        "category_group_code": "AT4",
+        "category_group_name": "관광명소",
+        "category_name": "스포츠,레저 > 스포츠시설 > 눈썰매장",
+        "distance": "14647",
+        "id": "27190844",
+        "phone": "031-320-5000",
+        "place_name": "에버랜드 스노우버스터",
+        "place_url": "http://place.map.kakao.com/27190844",
+        "road_address_name": "경기 용인시 처인구 포곡읍 에버랜드로 199",
+        "x": "127.20522654150273",
+        "y": "37.28982514155337",
+        "score": 1,
+        "reasons": [
+          "within_20km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 용인시 처인구 포곡읍 전대리 310",
+          "category_group_code": "AT4",
+          "category_group_name": "관광명소",
+          "category_name": "스포츠,레저 > 스포츠시설 > 눈썰매장",
+          "distance": "14647",
+          "id": "27190844",
+          "phone": "031-320-5000",
+          "place_name": "에버랜드 스노우버스터",
+          "place_url": "http://place.map.kakao.com/27190844",
+          "road_address_name": "경기 용인시 처인구 포곡읍 에버랜드로 199",
+          "x": "127.20522654150273",
+          "y": "37.28982514155337",
+          "score": 1,
+          "reasons": [
+            "within_20km"
+          ]
+        },
+        {
+          "address_name": "경기 용인시 처인구 포곡읍 전대리 310",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 아웃도어용품",
+          "distance": "14988",
+          "id": "2024492751",
+          "phone": "",
+          "place_name": "스노우피크 에버랜드점",
+          "place_url": "http://place.map.kakao.com/2024492751",
+          "road_address_name": "경기 용인시 처인구 포곡읍 에버랜드로 199",
+          "x": "127.204590948936",
+          "y": "37.2945738022675",
+          "score": 1,
+          "reasons": [
+            "within_20km"
+          ]
+        },
+        {
+          "address_name": "경기 용인시 처인구 포곡읍 전대리 310",
+          "category_group_code": "AT4",
+          "category_group_name": "관광명소",
+          "category_name": "여행 > 관광,명소 > 테마파크",
+          "distance": "15071",
+          "id": "784414359",
+          "phone": "031-320-5000",
+          "place_name": "에버랜드",
+          "place_url": "http://place.map.kakao.com/784414359",
+          "road_address_name": "경기 용인시 처인구 포곡읍 에버랜드로 199",
+          "x": "127.20219830178264",
+          "y": "37.293101115700345",
+          "score": 1,
+          "reasons": [
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-vision",
+      "resortId": "vivaldi",
+      "shopName": "비전렌탈샵",
+      "currentAddress": "강원특별자치도 홍천군 서면 한서로 2166",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 홍천군 서면 굴업리 385-19",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3554",
+        "id": "552972150",
+        "phone": "033-434-1948",
+        "place_name": "비발디파크 렌탈샵 비전",
+        "place_url": "http://place.map.kakao.com/552972150",
+        "road_address_name": "강원특별자치도 홍천군 서면 한서로 2166",
+        "x": "127.67373087058475",
+        "y": "37.61477276221917",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 홍천군 서면 굴업리 385-19",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3554",
+          "id": "552972150",
+          "phone": "033-434-1948",
+          "place_name": "비발디파크 렌탈샵 비전",
+          "place_url": "http://place.map.kakao.com/552972150",
+          "road_address_name": "강원특별자치도 홍천군 서면 한서로 2166",
+          "x": "127.67373087058475",
+          "y": "37.61477276221917",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-leisure-friend",
+      "resortId": "elysian",
+      "shopName": "레저친구",
+      "currentAddress": "강원특별자치도 춘천시 남산면 서백길 72",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 서천리 212",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3541",
+        "id": "671515395",
+        "phone": "033-263-4258",
+        "place_name": "레저친구아카데미",
+        "place_url": "http://place.map.kakao.com/671515395",
+        "road_address_name": "강원특별자치도 춘천시 남산면 서백길 72",
+        "x": "127.551612674602",
+        "y": "37.8417713299175",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 서천리 212",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3541",
+          "id": "671515395",
+          "phone": "033-263-4258",
+          "place_name": "레저친구아카데미",
+          "place_url": "http://place.map.kakao.com/671515395",
+          "road_address_name": "강원특별자치도 춘천시 남산면 서백길 72",
+          "x": "127.551612674602",
+          "y": "37.8417713299175",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-star",
+      "resortId": "elysian",
+      "shopName": "스타렌탈샵",
+      "currentAddress": "강원특별자치도 춘천시 남산면 강촌로 72",
+      "currentPhone": "010-5534-1245",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 강촌리 239-13",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "4431",
+        "id": "1964597946",
+        "phone": "010-5534-1245",
+        "place_name": "엘리시안강촌 스타렌탈샵",
+        "place_url": "http://place.map.kakao.com/1964597946",
+        "road_address_name": "강원특별자치도 춘천시 남산면 강촌로 72",
+        "x": "127.634269398437",
+        "y": "37.8125934784353",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 강촌리 239-13",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "4431",
+          "id": "1964597946",
+          "phone": "010-5534-1245",
+          "place_name": "엘리시안강촌 스타렌탈샵",
+          "place_url": "http://place.map.kakao.com/1964597946",
+          "road_address_name": "강원특별자치도 춘천시 남산면 강촌로 72",
+          "x": "127.634269398437",
+          "y": "37.8125934784353",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-vision",
+      "resortId": "elysian",
+      "shopName": "비젼 스키샵",
+      "currentAddress": "강원특별자치도 춘천시 남산면 북한강변길 906",
+      "currentPhone": "033-263-3118 / 010-3647-3118",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 강촌리 582-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1999",
+        "id": "957018522",
+        "phone": "010-3647-3118",
+        "place_name": "엘리시안강촌 렌탈샵 스키강습 비젼",
+        "place_url": "http://place.map.kakao.com/957018522",
+        "road_address_name": "강원특별자치도 춘천시 남산면 북한강변길 906",
+        "x": "127.611602660985",
+        "y": "37.8277879459529",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 강촌리 582-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1999",
+          "id": "957018522",
+          "phone": "010-3647-3118",
+          "place_name": "엘리시안강촌 렌탈샵 스키강습 비젼",
+          "place_url": "http://place.map.kakao.com/957018522",
+          "road_address_name": "강원특별자치도 춘천시 남산면 북한강변길 906",
+          "x": "127.611602660985",
+          "y": "37.8277879459529",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-canada",
+      "resortId": "elysian",
+      "shopName": "캐나다스키",
+      "currentAddress": "강원특별자치도 춘천시 남산면 강촌로 87",
+      "currentPhone": "010-9978-3333",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 강촌리 247-27",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "4582",
+        "id": "949047",
+        "phone": "",
+        "place_name": "캐나다스키",
+        "place_url": "http://place.map.kakao.com/949047",
+        "road_address_name": "강원특별자치도 춘천시 남산면 강촌로 87",
+        "x": "127.635634703457",
+        "y": "37.8116986887429",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 강촌리 247-27",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "4582",
+          "id": "949047",
+          "phone": "",
+          "place_name": "캐나다스키",
+          "place_url": "http://place.map.kakao.com/949047",
+          "road_address_name": "강원특별자치도 춘천시 남산면 강촌로 87",
+          "x": "127.635634703457",
+          "y": "37.8116986887429",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-mc-snow",
+      "resortId": "elysian",
+      "shopName": "MC스노우",
+      "currentAddress": "강원특별자치도 춘천시 남산면 서백길 200",
+      "confidence": "review",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 백양리 470-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2796",
+        "id": "811562507",
+        "phone": "033-263-8420",
+        "place_name": "엠씨스노우",
+        "place_url": "http://place.map.kakao.com/811562507",
+        "road_address_name": "강원특별자치도 춘천시 남산면 서백길 200",
+        "x": "127.5573868881",
+        "y": "37.8315914051247",
+        "score": 8,
+        "reasons": [
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 백양리 470-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2796",
+          "id": "811562507",
+          "phone": "033-263-8420",
+          "place_name": "엠씨스노우",
+          "place_url": "http://place.map.kakao.com/811562507",
+          "road_address_name": "강원특별자치도 춘천시 남산면 서백길 200",
+          "x": "127.5573868881",
+          "y": "37.8315914051247",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-winter-and-ski",
+      "resortId": "elysian",
+      "shopName": "겨울앤스키",
+      "currentAddress": "강원특별자치도 춘천시 남산면 서백길 86-4",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 서천리 209-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3483",
+        "id": "672714706",
+        "phone": "010-5446-5546",
+        "place_name": "힐링캠프레져겨울앤스키",
+        "place_url": "http://place.map.kakao.com/672714706",
+        "road_address_name": "강원특별자치도 춘천시 남산면 서백길 86-4",
+        "x": "127.55178719399488",
+        "y": "37.840645233995055",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 서천리 209-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3483",
+          "id": "672714706",
+          "phone": "010-5446-5546",
+          "place_name": "힐링캠프레져겨울앤스키",
+          "place_url": "http://place.map.kakao.com/672714706",
+          "road_address_name": "강원특별자치도 춘천시 남산면 서백길 86-4",
+          "x": "127.55178719399488",
+          "y": "37.840645233995055",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "elysian-mobydic",
+      "resortId": "elysian",
+      "shopName": "모비딕스키",
+      "currentAddress": "강원특별자치도 춘천시 남산면 서백길 37",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 서천리 254",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3883",
+        "id": "2071071494",
+        "phone": "010-5678-2904",
+        "place_name": "엘리시안강촌 모비딕 스키강습렌탈샵",
+        "place_url": "http://place.map.kakao.com/2071071494",
+        "road_address_name": "강원특별자치도 춘천시 남산면 서백길 37",
+        "x": "127.54808112497338",
+        "y": "37.84307076207251",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 서천리 254",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3883",
+          "id": "2071071494",
+          "phone": "010-5678-2904",
+          "place_name": "엘리시안강촌 모비딕 스키강습렌탈샵",
+          "place_url": "http://place.map.kakao.com/2071071494",
+          "road_address_name": "강원특별자치도 춘천시 남산면 서백길 37",
+          "x": "127.54808112497338",
+          "y": "37.84307076207251",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "oakvalley-advance",
+      "resortId": "oakvalley",
+      "shopName": "전진스키",
+      "currentAddress": "강원특별자치도 원주시 지정면 구재로 264",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 원주시 지정면 판대리 555-4",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "2971",
+        "id": "12633226",
+        "phone": "033-744-7206",
+        "place_name": "전진스키",
+        "place_url": "http://place.map.kakao.com/12633226",
+        "road_address_name": "강원특별자치도 원주시 지정면 구재로 264",
+        "x": "127.801820913004",
+        "y": "37.4063893757685",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 원주시 지정면 판대리 555-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "2971",
+          "id": "12633226",
+          "phone": "033-744-7206",
+          "place_name": "전진스키",
+          "place_url": "http://place.map.kakao.com/12633226",
+          "road_address_name": "강원특별자치도 원주시 지정면 구재로 264",
+          "x": "127.801820913004",
+          "y": "37.4063893757685",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "oakvalley-ski1004",
+      "resortId": "oakvalley",
+      "shopName": "넌스키난보드",
+      "currentAddress": "강원특별자치도 원주시 지정면 구재로 132",
+      "currentPhone": "010-5262-0088",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 원주시 지정면 판대리 483-2",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "4126",
+        "id": "11494407",
+        "phone": "0503-7153-7316",
+        "place_name": "넌스키난보드",
+        "place_url": "http://place.map.kakao.com/11494407",
+        "road_address_name": "강원특별자치도 원주시 지정면 구재로 132",
+        "x": "127.79186166374359",
+        "y": "37.398799816890204",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 원주시 지정면 판대리 483-2",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "4126",
+          "id": "11494407",
+          "phone": "0503-7153-7316",
+          "place_name": "넌스키난보드",
+          "place_url": "http://place.map.kakao.com/11494407",
+          "road_address_name": "강원특별자치도 원주시 지정면 구재로 132",
+          "x": "127.79186166374359",
+          "y": "37.398799816890204",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "oakvalley-mongski",
+      "resortId": "oakvalley",
+      "shopName": "몽스키",
+      "currentAddress": "강원특별자치도 원주시 지정면 구재로 282",
+      "currentPhone": "033-731-0120 / 010-7244-1600",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 원주시 지정면 판대리 565-7",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "2784",
+        "id": "12777214",
+        "phone": "",
+        "place_name": "몽스키",
+        "place_url": "http://place.map.kakao.com/12777214",
+        "road_address_name": "강원특별자치도 원주시 지정면 구재로 282",
+        "x": "127.802641599551",
+        "y": "37.4079371257252",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 원주시 지정면 판대리 565-7",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "2784",
+          "id": "12777214",
+          "phone": "",
+          "place_name": "몽스키",
+          "place_url": "http://place.map.kakao.com/12777214",
+          "road_address_name": "강원특별자치도 원주시 지정면 구재로 282",
+          "x": "127.802641599551",
+          "y": "37.4079371257252",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "oakvalley-better-ski",
+      "resortId": "oakvalley",
+      "shopName": "더 잘타짐",
+      "currentAddress": "강원특별자치도 원주시 지정면 오크밸리2길 15",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 원주시 지정면 판대리 579-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2456",
+        "id": "661518273",
+        "phone": "010-8812-9182",
+        "place_name": "오크밸리 더잘타짐 렌탈샵",
+        "place_url": "http://place.map.kakao.com/661518273",
+        "road_address_name": "강원특별자치도 원주시 지정면 오크밸리2길 15",
+        "x": "127.805179834544",
+        "y": "37.4102858830808",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 원주시 지정면 판대리 579-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2456",
+          "id": "661518273",
+          "phone": "010-8812-9182",
+          "place_name": "오크밸리 더잘타짐 렌탈샵",
+          "place_url": "http://place.map.kakao.com/661518273",
+          "road_address_name": "강원특별자치도 원주시 지정면 오크밸리2길 15",
+          "x": "127.805179834544",
+          "y": "37.4102858830808",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "oakvalley-snb",
+      "resortId": "oakvalley",
+      "shopName": "SNB 스키보드 렌탈샵",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "oakvalley-kang-pro",
+      "resortId": "oakvalley",
+      "shopName": "강윤정프로 렌탈샵",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "oakvalley-maru",
+      "resortId": "oakvalley",
+      "shopName": "마루스키·마루강습센터",
+      "currentAddress": "강원특별자치도 원주시 지정면 오크밸리2길 15",
+      "confidence": "review",
+      "best": {
+        "address_name": "강원특별자치도 원주시 지정면 판대리 579-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스키,스노우보드",
+        "distance": "2458",
+        "id": "1323627821",
+        "phone": "010-8145-9182",
+        "place_name": "오크밸리 스키강습 마루강습센터",
+        "place_url": "http://place.map.kakao.com/1323627821",
+        "road_address_name": "강원특별자치도 원주시 지정면 오크밸리2길 15",
+        "x": "127.8051615900163",
+        "y": "37.410269789394604",
+        "score": 8,
+        "reasons": [
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 원주시 지정면 판대리 579-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스키,스노우보드",
+          "distance": "2458",
+          "id": "1323627821",
+          "phone": "010-8145-9182",
+          "place_name": "오크밸리 스키강습 마루강습센터",
+          "place_url": "http://place.map.kakao.com/1323627821",
+          "road_address_name": "강원특별자치도 원주시 지정면 오크밸리2길 15",
+          "x": "127.8051615900163",
+          "y": "37.410269789394604",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "oakvalley-cat-ski",
+      "resortId": "oakvalley",
+      "shopName": "스키타는야옹이",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "o2-snow-world",
+      "resortId": "o2",
+      "shopName": "스노월드 스키샵",
+      "currentAddress": "강원특별자치도 태백시 오투로 149",
+      "currentPhone": "010-9158-2494",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "wellihilli-w-ski",
+      "resortId": "wellihilli",
+      "shopName": "W스키",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 265",
+      "currentPhone": "010-5333-7792",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 두원리 935-2",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2563",
+        "id": "21291997",
+        "phone": "010-5333-7792",
+        "place_name": "웰리힐리파크 렌탈샵 W스키",
+        "place_url": "http://place.map.kakao.com/21291997",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 265",
+        "x": "128.227958295098",
+        "y": "37.5056135153243",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 두원리 935-2",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2563",
+          "id": "21291997",
+          "phone": "010-5333-7792",
+          "place_name": "웰리힐리파크 렌탈샵 W스키",
+          "place_url": "http://place.map.kakao.com/21291997",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 265",
+          "x": "128.227958295098",
+          "y": "37.5056135153243",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 면온리 893-20",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "12208",
+          "id": "532238993",
+          "phone": "033-333-8151",
+          "place_name": "휘닉스파크 렌탈샵 W스키",
+          "place_url": "http://place.map.kakao.com/532238993",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 321",
+          "x": "128.340042048179",
+          "y": "37.5754986669899",
+          "score": 6,
+          "reasons": [
+            "partial_name",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-ski911",
+      "resortId": "wellihilli",
+      "shopName": "스키911",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 162",
+      "currentPhone": "033-344-9119",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 자포곡리 358-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "3218",
+        "id": "25892368",
+        "phone": "",
+        "place_name": "스키911",
+        "place_url": "http://place.map.kakao.com/25892368",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 162",
+        "x": "128.2243512738",
+        "y": "37.511326953993",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 자포곡리 358-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "3218",
+          "id": "25892368",
+          "phone": "",
+          "place_name": "스키911",
+          "place_url": "http://place.map.kakao.com/25892368",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 162",
+          "x": "128.2243512738",
+          "y": "37.511326953993",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-dreamworld",
+      "resortId": "wellihilli",
+      "shopName": "드림월드프로샵",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 397",
+      "currentPhone": "0507-1428-2054 / 010-7979-8310",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 두원리 793-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1290",
+        "id": "15454720",
+        "phone": "010-7979-8310",
+        "place_name": "웰리힐리파크렌탈샵 드림월드프로샵",
+        "place_url": "http://place.map.kakao.com/15454720",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 397",
+        "x": "128.238968307358",
+        "y": "37.4981900195352",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 두원리 793-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1290",
+          "id": "15454720",
+          "phone": "010-7979-8310",
+          "place_name": "웰리힐리파크렌탈샵 드림월드프로샵",
+          "place_url": "http://place.map.kakao.com/15454720",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 397",
+          "x": "128.238968307358",
+          "y": "37.4981900195352",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-rocky",
+      "resortId": "wellihilli",
+      "shopName": "록키스키",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 389",
+      "currentPhone": "033-342-8768 / 070-8690-8768",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 두원리 792-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1362",
+        "id": "11780935",
+        "phone": "033-342-8768",
+        "place_name": "록키스키클럽",
+        "place_url": "http://place.map.kakao.com/11780935",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 389",
+        "x": "128.238420382096",
+        "y": "37.4987002984205",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 두원리 792-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1362",
+          "id": "11780935",
+          "phone": "033-342-8768",
+          "place_name": "록키스키클럽",
+          "place_url": "http://place.map.kakao.com/11780935",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 389",
+          "x": "128.238420382096",
+          "y": "37.4987002984205",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-worldski",
+      "resortId": "wellihilli",
+      "shopName": "월드스키",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 112",
+      "currentPhone": "0507-1472-4222",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 자포곡리 445",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3495",
+        "id": "11543318",
+        "phone": "033-344-4222",
+        "place_name": "웰리힐리파크 렌탈샵 월드스키",
+        "place_url": "http://place.map.kakao.com/11543318",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 112",
+        "x": "128.219025001753",
+        "y": "37.5101207188767",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 자포곡리 445",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3495",
+          "id": "11543318",
+          "phone": "033-344-4222",
+          "place_name": "웰리힐리파크 렌탈샵 월드스키",
+          "place_url": "http://place.map.kakao.com/11543318",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 112",
+          "x": "128.219025001753",
+          "y": "37.5101207188767",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 무이리 729-38",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "여행 > 숙박부속시설",
+          "distance": "12154",
+          "id": "748518142",
+          "phone": "",
+          "place_name": "휘닉스평창 스키월드",
+          "place_url": "http://place.map.kakao.com/748518142",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 140",
+          "x": "128.325769101524",
+          "y": "37.5833447977416",
+          "score": 1,
+          "reasons": [
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-friends",
+      "resortId": "wellihilli",
+      "shopName": "친구사이 렌탈샵",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 390",
+      "currentPhone": "033-344-7942",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 두원리 795",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1378",
+        "id": "8546740",
+        "phone": "033-344-7942",
+        "place_name": "친구사이 렌탈샵",
+        "place_url": "http://place.map.kakao.com/8546740",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 390",
+        "x": "128.23801432946334",
+        "y": "37.49848922773386",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 두원리 795",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1378",
+          "id": "8546740",
+          "phone": "033-344-7942",
+          "place_name": "친구사이 렌탈샵",
+          "place_url": "http://place.map.kakao.com/8546740",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로 390",
+          "x": "128.23801432946334",
+          "y": "37.49848922773386",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-baekya",
+      "resortId": "wellihilli",
+      "shopName": "백야 웰리힐리파크점",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로412번길 1-8",
+      "currentPhone": "033-345-4407",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 횡성군 둔내면 두원리 616-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1083",
+        "id": "1781185973",
+        "phone": "033-345-4407",
+        "place_name": "백야 웰리힐리파크점",
+        "place_url": "http://place.map.kakao.com/1781185973",
+        "road_address_name": "강원특별자치도 횡성군 둔내면 고원로412번길 1-8",
+        "x": "128.2405694064513",
+        "y": "37.49674790917071",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 두원리 616-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1083",
+          "id": "1781185973",
+          "phone": "033-345-4407",
+          "place_name": "백야 웰리힐리파크점",
+          "place_url": "http://place.map.kakao.com/1781185973",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로412번길 1-8",
+          "x": "128.2405694064513",
+          "y": "37.49674790917071",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-jamesboard",
+      "resortId": "vivaldi",
+      "shopName": "제임스보드",
+      "currentAddress": "강원특별자치도 홍천군 서면 한치골길 972",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 홍천군 서면 팔봉리 996-9",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "5724",
+        "id": "18489600",
+        "phone": "0502-5551-6319",
+        "place_name": "제임스보드",
+        "place_url": "http://place.map.kakao.com/18489600",
+        "road_address_name": "강원특별자치도 홍천군 서면 한치골길 972",
+        "x": "127.70289345106167",
+        "y": "37.6950858655795",
+        "score": 15,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_20km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 홍천군 서면 팔봉리 996-9",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "5724",
+          "id": "18489600",
+          "phone": "0502-5551-6319",
+          "place_name": "제임스보드",
+          "place_url": "http://place.map.kakao.com/18489600",
+          "road_address_name": "강원특별자치도 홍천군 서면 한치골길 972",
+          "x": "127.70289345106167",
+          "y": "37.6950858655795",
+          "score": 15,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-tomato",
+      "resortId": "vivaldi",
+      "shopName": "토마토 렌탈샵",
+      "currentAddress": "강원특별자치도 홍천군 서면 한치골길 602",
+      "currentPhone": "033-433-4933",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 홍천군 서면 팔봉리 676-9",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2315",
+        "id": "27447339",
+        "phone": "033-433-4933",
+        "place_name": "토마토렌탈샵",
+        "place_url": "http://place.map.kakao.com/27447339",
+        "road_address_name": "강원특별자치도 홍천군 서면 한치골길 602",
+        "x": "127.694312833819",
+        "y": "37.6649454757832",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 홍천군 서면 팔봉리 676-9",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2315",
+          "id": "27447339",
+          "phone": "033-433-4933",
+          "place_name": "토마토렌탈샵",
+          "place_url": "http://place.map.kakao.com/27447339",
+          "road_address_name": "강원특별자치도 홍천군 서면 한치골길 602",
+          "x": "127.694312833819",
+          "y": "37.6649454757832",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-smile",
+      "resortId": "vivaldi",
+      "shopName": "스마일 렌탈샵",
+      "currentAddress": "강원특별자치도 홍천군 서면 한치골길 1023",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 홍천군 서면 팔봉리 989-8",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "6027",
+        "id": "218851364",
+        "phone": "0503-7153-2883",
+        "place_name": "비발디파크 렌탈샵 스마일",
+        "place_url": "http://place.map.kakao.com/218851364",
+        "road_address_name": "강원특별자치도 홍천군 서면 한치골길 1023",
+        "x": "127.70064569352081",
+        "y": "37.69840576182738",
+        "score": 12,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_20km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 홍천군 서면 팔봉리 989-8",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "6027",
+          "id": "218851364",
+          "phone": "0503-7153-2883",
+          "place_name": "비발디파크 렌탈샵 스마일",
+          "place_url": "http://place.map.kakao.com/218851364",
+          "road_address_name": "강원특별자치도 홍천군 서면 한치골길 1023",
+          "x": "127.70064569352081",
+          "y": "37.69840576182738",
+          "score": 12,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_20km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 홍천군 서면 팔봉리 989-8",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "6033",
+          "id": "349417761",
+          "phone": "0503-7151-2314",
+          "place_name": "비발디파크 렌탈샵",
+          "place_url": "http://place.map.kakao.com/349417761",
+          "road_address_name": "강원특별자치도 홍천군 서면 한치골길 1023",
+          "x": "127.70094048624134",
+          "y": "37.69840400978757",
+          "score": 7,
+          "reasons": [
+            "address",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-jjijjippong",
+      "resortId": "vivaldi",
+      "shopName": "찌찌뽕 렌탈샵",
+      "currentAddress": "강원특별자치도 홍천군 서면 한서로 2177",
+      "currentPhone": "0507-1407-9227",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 홍천군 서면 굴업리 246-27",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3581",
+        "id": "837471402",
+        "phone": "010-4158-6415",
+        "place_name": "찌찌뽕렌탈샵",
+        "place_url": "http://place.map.kakao.com/837471402",
+        "road_address_name": "강원특별자치도 홍천군 서면 한서로 2177",
+        "x": "127.675062755084",
+        "y": "37.6142642096885",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 홍천군 서면 굴업리 246-27",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3581",
+          "id": "837471402",
+          "phone": "010-4158-6415",
+          "place_name": "찌찌뽕렌탈샵",
+          "place_url": "http://place.map.kakao.com/837471402",
+          "road_address_name": "강원특별자치도 홍천군 서면 한서로 2177",
+          "x": "127.675062755084",
+          "y": "37.6142642096885",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-boardyoon",
+      "resortId": "vivaldi",
+      "shopName": "보드윤",
+      "currentAddress": "강원특별자치도 홍천군 서면 한치골길 1004",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 홍천군 서면 팔봉리 986-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "6038",
+        "id": "1482650162",
+        "phone": "010-4644-6443",
+        "place_name": "비발디파크렌탈샵 보드윤",
+        "place_url": "http://place.map.kakao.com/1482650162",
+        "road_address_name": "강원특별자치도 홍천군 서면 한치골길 1004",
+        "x": "127.70237357073371",
+        "y": "37.69814861942648",
+        "score": 12,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_20km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 홍천군 서면 팔봉리 986-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "6038",
+          "id": "1482650162",
+          "phone": "010-4644-6443",
+          "place_name": "비발디파크렌탈샵 보드윤",
+          "place_url": "http://place.map.kakao.com/1482650162",
+          "road_address_name": "강원특별자치도 홍천군 서면 한치골길 1004",
+          "x": "127.70237357073371",
+          "y": "37.69814861942648",
+          "score": 12,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-torres",
+      "resortId": "phoenix",
+      "shopName": "토레스 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 353",
+      "currentPhone": "010-2290-9094 / 010-7284-9094",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 면온리 869-36",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2007",
+        "id": "647438602",
+        "phone": "033-335-8887",
+        "place_name": "휘닉스파크렌탈샵 토레스",
+        "place_url": "http://place.map.kakao.com/647438602",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 353",
+        "x": "128.34231837768053",
+        "y": "37.57347904105491",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 면온리 869-36",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2007",
+          "id": "647438602",
+          "phone": "033-335-8887",
+          "place_name": "휘닉스파크렌탈샵 토레스",
+          "place_url": "http://place.map.kakao.com/647438602",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 353",
+          "x": "128.34231837768053",
+          "y": "37.57347904105491",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-snowland",
+      "resortId": "phoenix",
+      "shopName": "스노우랜드 렌탈샵",
+      "currentPhone": "010-5345-6579",
+      "confidence": "review",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 무이리 709-4",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "443",
+        "id": "9844234",
+        "phone": "010-5345-6579",
+        "place_name": "휘닉스파크렌탈샵 스노랜드",
+        "place_url": "http://place.map.kakao.com/9844234",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 155",
+        "x": "128.32704559794004",
+        "y": "37.58459265559814",
+        "score": 8,
+        "reasons": [
+          "phone",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 무이리 709-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "443",
+          "id": "9844234",
+          "phone": "010-5345-6579",
+          "place_name": "휘닉스파크렌탈샵 스노랜드",
+          "place_url": "http://place.map.kakao.com/9844234",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 155",
+          "x": "128.32704559794004",
+          "y": "37.58459265559814",
+          "score": 8,
+          "reasons": [
+            "phone",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-snowlab",
+      "resortId": "phoenix",
+      "shopName": "스노우랩 휘닉스파크점",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 283-2",
+      "currentPhone": "033-333-6660",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 면온리 903-10",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1446",
+        "id": "193327540",
+        "phone": "033-333-6660",
+        "place_name": "스노우랩",
+        "place_url": "http://place.map.kakao.com/193327540",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 283-2",
+        "x": "128.338128368188",
+        "y": "37.5782438921484",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 면온리 903-10",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1446",
+          "id": "193327540",
+          "phone": "033-333-6660",
+          "place_name": "스노우랩",
+          "place_url": "http://place.map.kakao.com/193327540",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 283-2",
+          "x": "128.338128368188",
+          "y": "37.5782438921484",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-feelgood",
+      "resortId": "phoenix",
+      "shopName": "필굿 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 141",
+      "currentPhone": "033-332-5006",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 무이리 705-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "394",
+        "id": "788331827",
+        "phone": "033-332-5006",
+        "place_name": "휘닉스파크 렌탈샵 필굿",
+        "place_url": "http://place.map.kakao.com/788331827",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 141",
+        "x": "128.325888160107",
+        "y": "37.5850786531207",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 무이리 705-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "394",
+          "id": "788331827",
+          "phone": "033-332-5006",
+          "place_name": "휘닉스파크 렌탈샵 필굿",
+          "place_url": "http://place.map.kakao.com/788331827",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 141",
+          "x": "128.325888160107",
+          "y": "37.5850786531207",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-kkookine",
+      "resortId": "phoenix",
+      "shopName": "꾹이네 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 279",
+      "currentPhone": "010-5412-2731",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 면온리 903-7",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1400",
+        "id": "434003423",
+        "phone": "010-5412-2731",
+        "place_name": "휘닉스파크 렌탈샵 꾹이네",
+        "place_url": "http://place.map.kakao.com/434003423",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 279",
+        "x": "128.337699558537",
+        "y": "37.5785091219702",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 면온리 903-7",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1400",
+          "id": "434003423",
+          "phone": "010-5412-2731",
+          "place_name": "휘닉스파크 렌탈샵 꾹이네",
+          "place_url": "http://place.map.kakao.com/434003423",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 279",
+          "x": "128.337699558537",
+          "y": "37.5785091219702",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-junski",
+      "resortId": "phoenix",
+      "shopName": "준스키",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 155",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 무이리 709-4",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "449",
+        "id": "14850879",
+        "phone": "010-6472-5333",
+        "place_name": "휘닉스파크 준스키보드렌탈샵",
+        "place_url": "http://place.map.kakao.com/14850879",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 155",
+        "x": "128.327113814035",
+        "y": "37.5846090062282",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 무이리 709-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "449",
+          "id": "14850879",
+          "phone": "010-6472-5333",
+          "place_name": "휘닉스파크 준스키보드렌탈샵",
+          "place_url": "http://place.map.kakao.com/14850879",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 155",
+          "x": "128.327113814035",
+          "y": "37.5846090062282",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-jetski",
+      "resortId": "phoenix",
+      "shopName": "제트스키 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 151",
+      "currentPhone": "033-334-3343 / 010-7516-6516",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 무이리 709",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "420",
+        "id": "14711098",
+        "phone": "0503-7150-9100",
+        "place_name": "휘닉스파크 렌탈샵 제트스키",
+        "place_url": "http://place.map.kakao.com/14711098",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 151",
+        "x": "128.32641812859",
+        "y": "37.5849591807344",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 무이리 709",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "420",
+          "id": "14711098",
+          "phone": "0503-7150-9100",
+          "place_name": "휘닉스파크 렌탈샵 제트스키",
+          "place_url": "http://place.map.kakao.com/14711098",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 151",
+          "x": "128.32641812859",
+          "y": "37.5849591807344",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "phoenix-baekya",
+      "resortId": "phoenix",
+      "shopName": "백야 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 봉평면 태기로 523",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 봉평면 면온리 671",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3416",
+        "id": "22017290",
+        "phone": "033-332-4407",
+        "place_name": "휘닉스파크 렌탈샵 백야",
+        "place_url": "http://place.map.kakao.com/22017290",
+        "road_address_name": "강원특별자치도 평창군 봉평면 태기로 523",
+        "x": "128.35343298471693",
+        "y": "37.56392297730669",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 봉평면 면온리 671",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3416",
+          "id": "22017290",
+          "phone": "033-332-4407",
+          "place_name": "휘닉스파크 렌탈샵 백야",
+          "place_url": "http://place.map.kakao.com/22017290",
+          "road_address_name": "강원특별자치도 평창군 봉평면 태기로 523",
+          "x": "128.35343298471693",
+          "y": "37.56392297730669",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 횡성군 둔내면 두원리 616-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "11980",
+          "id": "1781185973",
+          "phone": "033-345-4407",
+          "place_name": "백야 웰리힐리파크점",
+          "place_url": "http://place.map.kakao.com/1781185973",
+          "road_address_name": "강원특별자치도 횡성군 둔내면 고원로412번길 1-8",
+          "x": "128.2405694064513",
+          "y": "37.49674790917071",
+          "score": 6,
+          "reasons": [
+            "partial_name",
+            "within_20km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-beaver",
+      "resortId": "yongpyong",
+      "shopName": "비버네렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 솔봉로 278-14",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 용산리 251-32",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2622",
+        "id": "788980690",
+        "phone": "",
+        "place_name": "비버네렌탈샵",
+        "place_url": "http://place.map.kakao.com/788980690",
+        "road_address_name": "강원특별자치도 평창군 대관령면 솔봉로 278-14",
+        "x": "128.663850507224",
+        "y": "37.6640598059589",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 용산리 251-32",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2622",
+          "id": "788980690",
+          "phone": "",
+          "place_name": "비버네렌탈샵",
+          "place_url": "http://place.map.kakao.com/788980690",
+          "road_address_name": "강원특별자치도 평창군 대관령면 솔봉로 278-14",
+          "x": "128.663850507224",
+          "y": "37.6640598059589",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-point-ski",
+      "resortId": "alpensia",
+      "shopName": "포인트스키",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 12",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-24",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3251",
+        "id": "14558342",
+        "phone": "033-336-0297",
+        "place_name": "용평리조트 렌탈샵 포인트스키",
+        "place_url": "http://place.map.kakao.com/14558342",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 12",
+        "x": "128.69995574830742",
+        "y": "37.677756203929235",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-24",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3251",
+          "id": "14558342",
+          "phone": "033-336-0297",
+          "place_name": "용평리조트 렌탈샵 포인트스키",
+          "place_url": "http://place.map.kakao.com/14558342",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 12",
+          "x": "128.69995574830742",
+          "y": "37.677756203929235",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-ski911",
+      "resortId": "alpensia",
+      "shopName": "스키911",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 10",
+      "currentPhone": "033-336-1235 / 010-4334-1331 / 010-8840-5363",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-23",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3258",
+        "id": "22247815",
+        "phone": "033-335-1235",
+        "place_name": "용평스키911렌탈샵",
+        "place_url": "http://place.map.kakao.com/22247815",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 10",
+        "x": "128.699936624474",
+        "y": "37.6778618823469",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-23",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3258",
+          "id": "22247815",
+          "phone": "033-335-1235",
+          "place_name": "용평스키911렌탈샵",
+          "place_url": "http://place.map.kakao.com/22247815",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 10",
+          "x": "128.699936624474",
+          "y": "37.6778618823469",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-discovery",
+      "resortId": "alpensia",
+      "shopName": "디스커버리 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 22",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3190",
+        "id": "1351485555",
+        "phone": "033-332-5559",
+        "place_name": "디스커버리렌탈샵",
+        "place_url": "http://place.map.kakao.com/1351485555",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 22",
+        "x": "128.70000449693688",
+        "y": "37.67686273123023",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3190",
+          "id": "1351485555",
+          "phone": "033-332-5559",
+          "place_name": "디스커버리렌탈샵",
+          "place_url": "http://place.map.kakao.com/1351485555",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 22",
+          "x": "128.70000449693688",
+          "y": "37.67686273123023",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-kind-ski",
+      "resortId": "alpensia",
+      "shopName": "친절한렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 솔봉로 236-3",
+      "currentPhone": "010-7541-4443",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 용산리 256",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1262",
+        "id": "213056230",
+        "phone": "010-7675-4442",
+        "place_name": "친절한렌탈샵",
+        "place_url": "http://place.map.kakao.com/213056230",
+        "road_address_name": "강원특별자치도 평창군 대관령면 솔봉로 236-3",
+        "x": "128.66395308277927",
+        "y": "37.667638470023626",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 용산리 256",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1262",
+          "id": "213056230",
+          "phone": "010-7675-4442",
+          "place_name": "친절한렌탈샵",
+          "place_url": "http://place.map.kakao.com/213056230",
+          "road_address_name": "강원특별자치도 평창군 대관령면 솔봉로 236-3",
+          "x": "128.66395308277927",
+          "y": "37.667638470023626",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-tatata",
+      "resortId": "alpensia",
+      "shopName": "타타타 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 삼현동1길 10-4",
+      "currentPhone": "010-5050-1079 / 010-4994-5060",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 수하리 156-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2323",
+        "id": "942477183",
+        "phone": "010-4994-5060",
+        "place_name": "용평리조트 알펜시아 타타타렌탈샵",
+        "place_url": "http://place.map.kakao.com/942477183",
+        "road_address_name": "강원특별자치도 평창군 대관령면 삼현동1길 10-4",
+        "x": "128.69824298914082",
+        "y": "37.66199027878831",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 수하리 156-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2323",
+          "id": "942477183",
+          "phone": "010-4994-5060",
+          "place_name": "용평리조트 알펜시아 타타타렌탈샵",
+          "place_url": "http://place.map.kakao.com/942477183",
+          "road_address_name": "강원특별자치도 평창군 대관령면 삼현동1길 10-4",
+          "x": "128.69824298914082",
+          "y": "37.66199027878831",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-beaver",
+      "resortId": "alpensia",
+      "shopName": "비버네렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 솔봉로 278-14",
+      "currentPhone": "010-5532-6172",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 용산리 251-32",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "975",
+        "id": "788980690",
+        "phone": "",
+        "place_name": "비버네렌탈샵",
+        "place_url": "http://place.map.kakao.com/788980690",
+        "road_address_name": "강원특별자치도 평창군 대관령면 솔봉로 278-14",
+        "x": "128.663850507224",
+        "y": "37.6640598059589",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 용산리 251-32",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "975",
+          "id": "788980690",
+          "phone": "",
+          "place_name": "비버네렌탈샵",
+          "place_url": "http://place.map.kakao.com/788980690",
+          "road_address_name": "강원특별자치도 평창군 대관령면 솔봉로 278-14",
+          "x": "128.663850507224",
+          "y": "37.6640598059589",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-ski-zone",
+      "resortId": "alpensia",
+      "shopName": "용평스키존",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 193",
+      "currentPhone": "033-335-5114 / 010-5375-0216",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 355-6",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "3417",
+        "id": "16480044",
+        "phone": "033-335-5114",
+        "place_name": "용평스키존",
+        "place_url": "http://place.map.kakao.com/16480044",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 193",
+        "x": "128.70987146939132",
+        "y": "37.6658644821877",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 355-6",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "3417",
+          "id": "16480044",
+          "phone": "033-335-5114",
+          "place_name": "용평스키존",
+          "place_url": "http://place.map.kakao.com/16480044",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 193",
+          "x": "128.70987146939132",
+          "y": "37.6658644821877",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-korea-leisure",
+      "resortId": "alpensia",
+      "shopName": "코리아레저스쿨",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 234",
+      "currentPhone": "033-335-7787 / 010-3587-3804",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-68",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2994",
+        "id": "1128014100",
+        "phone": "033-335-7787",
+        "place_name": "코리아레저스쿨",
+        "place_url": "http://place.map.kakao.com/1128014100",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 234",
+        "x": "128.705152153865",
+        "y": "37.6651562622929",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-68",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2994",
+          "id": "1128014100",
+          "phone": "033-335-7787",
+          "place_name": "코리아레저스쿨",
+          "place_url": "http://place.map.kakao.com/1128014100",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 234",
+          "x": "128.705152153865",
+          "y": "37.6651562622929",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-white-sports",
+      "resortId": "yongpyong",
+      "shopName": "화이트스포츠",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 32",
+      "currentPhone": "010-5244-3130 / 010-9971-3130",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "yongpyong-tatata",
+      "resortId": "yongpyong",
+      "shopName": "타타타 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 삼현동1길 10-4",
+      "currentPhone": "010-4994-5060 / 010-5050-1079",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 수하리 156-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2348",
+        "id": "942477183",
+        "phone": "010-4994-5060",
+        "place_name": "용평리조트 알펜시아 타타타렌탈샵",
+        "place_url": "http://place.map.kakao.com/942477183",
+        "road_address_name": "강원특별자치도 평창군 대관령면 삼현동1길 10-4",
+        "x": "128.69824298914082",
+        "y": "37.66199027878831",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 수하리 156-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2348",
+          "id": "942477183",
+          "phone": "010-4994-5060",
+          "place_name": "용평리조트 알펜시아 타타타렌탈샵",
+          "place_url": "http://place.map.kakao.com/942477183",
+          "road_address_name": "강원특별자치도 평창군 대관령면 삼현동1길 10-4",
+          "x": "128.69824298914082",
+          "y": "37.66199027878831",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-ski-zone",
+      "resortId": "yongpyong",
+      "shopName": "용평스키존",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 193",
+      "currentPhone": "033-335-5114 / 010-5375-0216",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 355-6",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "3362",
+        "id": "16480044",
+        "phone": "033-335-5114",
+        "place_name": "용평스키존",
+        "place_url": "http://place.map.kakao.com/16480044",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 193",
+        "x": "128.70987146939132",
+        "y": "37.6658644821877",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 355-6",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "3362",
+          "id": "16480044",
+          "phone": "033-335-5114",
+          "place_name": "용평스키존",
+          "place_url": "http://place.map.kakao.com/16480044",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 193",
+          "x": "128.70987146939132",
+          "y": "37.6658644821877",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-skinet",
+      "resortId": "yongpyong",
+      "shopName": "용평스키넷",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-64",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "2946",
+        "id": "16770761",
+        "phone": "033-335-6623",
+        "place_name": "오대산레져",
+        "place_url": "http://place.map.kakao.com/16770761",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 242",
+        "x": "128.704280319704",
+        "y": "37.6649922937682",
+        "score": 2,
+        "reasons": [
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-64",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "2946",
+          "id": "16770761",
+          "phone": "033-335-6623",
+          "place_name": "오대산레져",
+          "place_url": "http://place.map.kakao.com/16770761",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 242",
+          "x": "128.704280319704",
+          "y": "37.6649922937682",
+          "score": 2,
+          "reasons": [
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-korea-leisure",
+      "resortId": "yongpyong",
+      "shopName": "코리아레저스쿨",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 234",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-68",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3012",
+        "id": "1128014100",
+        "phone": "033-335-7787",
+        "place_name": "코리아레저스쿨",
+        "place_url": "http://place.map.kakao.com/1128014100",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 234",
+        "x": "128.705152153865",
+        "y": "37.6651562622929",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-68",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3012",
+          "id": "1128014100",
+          "phone": "033-335-7787",
+          "place_name": "코리아레저스쿨",
+          "place_url": "http://place.map.kakao.com/1128014100",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 234",
+          "x": "128.705152153865",
+          "y": "37.6651562622929",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-rainbow",
+      "resortId": "yongpyong",
+      "shopName": "레인보우 렌탈샵",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 246",
+      "currentPhone": "033-335-5001 / 010-8138-5900",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-15",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "2927",
+        "id": "12538218",
+        "phone": "033-335-5001",
+        "place_name": "레인보우스키보드",
+        "place_url": "http://place.map.kakao.com/12538218",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 246",
+        "x": "128.704029765405",
+        "y": "37.66493825847477",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 344-15",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "2927",
+          "id": "12538218",
+          "phone": "033-335-5001",
+          "place_name": "레인보우스키보드",
+          "place_url": "http://place.map.kakao.com/12538218",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 246",
+          "x": "128.704029765405",
+          "y": "37.66493825847477",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "yongpyong-point-ski",
+      "resortId": "yongpyong",
+      "shopName": "포인트스키",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 12",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-24",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3940",
+        "id": "14558342",
+        "phone": "033-336-0297",
+        "place_name": "용평리조트 렌탈샵 포인트스키",
+        "place_url": "http://place.map.kakao.com/14558342",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 12",
+        "x": "128.69995574830742",
+        "y": "37.677756203929235",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 376-24",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3940",
+          "id": "14558342",
+          "phone": "033-336-0297",
+          "place_name": "용평리조트 렌탈샵 포인트스키",
+          "place_url": "http://place.map.kakao.com/14558342",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 12",
+          "x": "128.69995574830742",
+          "y": "37.677756203929235",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-arirang",
+      "resortId": "muju",
+      "shopName": "아리랑스키",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 3",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 680-25",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2940",
+        "id": "12646235",
+        "phone": "0503-7154-0378",
+        "place_name": "무주스키샵 아리랑스키",
+        "place_url": "http://place.map.kakao.com/12646235",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 3",
+        "x": "127.75919241578028",
+        "y": "35.910593752322846",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 680-25",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2940",
+          "id": "12646235",
+          "phone": "0503-7154-0378",
+          "place_name": "무주스키샵 아리랑스키",
+          "place_url": "http://place.map.kakao.com/12646235",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 3",
+          "x": "127.75919241578028",
+          "y": "35.910593752322846",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-snowpark",
+      "resortId": "muju",
+      "shopName": "스노우파크",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선1로 60",
+      "currentPhone": "063-322-2355 / 010-4445-2355",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 551-4",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2234",
+        "id": "1222477174",
+        "phone": "063-322-2355",
+        "place_name": "무주스노우파크스키샵&렌탈샵",
+        "place_url": "http://place.map.kakao.com/1222477174",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선1로 60",
+        "x": "127.75548196236979",
+        "y": "35.904726761586545",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 551-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2234",
+          "id": "1222477174",
+          "phone": "063-322-2355",
+          "place_name": "무주스노우파크스키샵&렌탈샵",
+          "place_url": "http://place.map.kakao.com/1222477174",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선1로 60",
+          "x": "127.75548196236979",
+          "y": "35.904726761586545",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-hyundai",
+      "resortId": "muju",
+      "shopName": "현대스키샵",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 22",
+      "currentPhone": "063-322-1664",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 671-7",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "2845",
+        "id": "11575189",
+        "phone": "063-322-1664",
+        "place_name": "현대스키&보드",
+        "place_url": "http://place.map.kakao.com/11575189",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 22",
+        "x": "127.757153988201",
+        "y": "35.9108211143774",
+        "score": 19,
+        "reasons": [
+          "partial_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 671-7",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "2845",
+          "id": "11575189",
+          "phone": "063-322-1664",
+          "place_name": "현대스키&보드",
+          "place_url": "http://place.map.kakao.com/11575189",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 22",
+          "x": "127.757153988201",
+          "y": "35.9108211143774",
+          "score": 19,
+          "reasons": [
+            "partial_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-skilife",
+      "resortId": "muju",
+      "shopName": "스키라이프",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 36-2",
+      "currentPhone": "063-322-2111 / 010-8820-3140",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 645-2",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "서비스,산업 > 건설,건축 > 건축관련검사서비스",
+        "distance": "2702",
+        "id": "10542376",
+        "phone": "",
+        "place_name": "스키 라이프",
+        "place_url": "http://place.map.kakao.com/10542376",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 36-2",
+        "x": "127.755742160504",
+        "y": "35.9100729817637",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 645-2",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "서비스,산업 > 건설,건축 > 건축관련검사서비스",
+          "distance": "2702",
+          "id": "10542376",
+          "phone": "",
+          "place_name": "스키 라이프",
+          "place_url": "http://place.map.kakao.com/10542376",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 36-2",
+          "x": "127.755742160504",
+          "y": "35.9100729817637",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 645-2",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2703",
+          "id": "1830254377",
+          "phone": "063-322-9113",
+          "place_name": "무주스키라이프스키샵&렌탈샵",
+          "place_url": "http://place.map.kakao.com/1830254377",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 36-2",
+          "x": "127.755798475302",
+          "y": "35.9100537016328",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-skiworld",
+      "resortId": "muju",
+      "shopName": "무주스키월드",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 82",
+      "currentPhone": "063-322-2007",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 587-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2321",
+        "id": "591839720",
+        "phone": "0502-5551-1558",
+        "place_name": "무주스키샵&렌탈샵 스키월드",
+        "place_url": "http://place.map.kakao.com/591839720",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 82",
+        "x": "127.755338202259",
+        "y": "35.9059181820422",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 587-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2321",
+          "id": "591839720",
+          "phone": "0502-5551-1558",
+          "place_name": "무주스키샵&렌탈샵 스키월드",
+          "place_url": "http://place.map.kakao.com/591839720",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 82",
+          "x": "127.755338202259",
+          "y": "35.9059181820422",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-mentor",
+      "resortId": "muju",
+      "shopName": "멘토 렌탈샵",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 38",
+      "currentPhone": "063-324-7922 / 010-7173-7922",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 581-10",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2673",
+        "id": "26397062",
+        "phone": "063-324-7922",
+        "place_name": "무주스키샵",
+        "place_url": "http://place.map.kakao.com/26397062",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 38",
+        "x": "127.75574351474957",
+        "y": "35.90974943427584",
+        "score": 14,
+        "reasons": [
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 581-10",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2673",
+          "id": "26397062",
+          "phone": "063-324-7922",
+          "place_name": "무주스키샵",
+          "place_url": "http://place.map.kakao.com/26397062",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 38",
+          "x": "127.75574351474957",
+          "y": "35.90974943427584",
+          "score": 14,
+          "reasons": [
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-silkroad",
+      "resortId": "muju",
+      "shopName": "실크로드 스키샵",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 57",
+      "confidence": "verified",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 584-9",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "2507",
+        "id": "7875736",
+        "phone": "063-322-7115",
+        "place_name": "실크로드스키샵",
+        "place_url": "http://place.map.kakao.com/7875736",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 57",
+        "x": "127.75560223440625",
+        "y": "35.90793976678459",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 584-9",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "2507",
+          "id": "7875736",
+          "phone": "063-322-7115",
+          "place_name": "실크로드스키샵",
+          "place_url": "http://place.map.kakao.com/7875736",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 57",
+          "x": "127.75560223440625",
+          "y": "35.90793976678459",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "muju-noritur",
+      "resortId": "muju",
+      "shopName": "노리터 스키샵",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "edenvalley-jjeombbang",
+      "resortId": "edenvalley",
+      "shopName": "점빵스키",
+      "currentAddress": "경남 양산시 어실로 608",
+      "currentPhone": "055-363-6694 / 055-363-6695",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경남 양산시 어곡동 1600-17",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2882",
+        "id": "11686928",
+        "phone": "055-363-6694",
+        "place_name": "점빵스키",
+        "place_url": "http://place.map.kakao.com/11686928",
+        "road_address_name": "경남 양산시 어실로 608",
+        "x": "129.00327873860684",
+        "y": "35.407582571161406",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경남 양산시 어곡동 1600-17",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2882",
+          "id": "11686928",
+          "phone": "055-363-6694",
+          "place_name": "점빵스키",
+          "place_url": "http://place.map.kakao.com/11686928",
+          "road_address_name": "경남 양산시 어실로 608",
+          "x": "129.00327873860684",
+          "y": "35.407582571161406",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "edenvalley-superman",
+      "resortId": "edenvalley",
+      "shopName": "슈퍼맨 스키샵",
+      "currentAddress": "경상남도 양산시 어실로 434",
+      "currentPhone": "010-7182-5475",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "경남 양산시 어곡동 1515",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3996",
+        "id": "425382370",
+        "phone": "010-7737-2818",
+        "place_name": "위스키",
+        "place_url": "http://place.map.kakao.com/425382370",
+        "road_address_name": "경남 양산시 어실로 434",
+        "x": "129.010607599316",
+        "y": "35.3945726505716",
+        "score": 5,
+        "reasons": [
+          "address_tail",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경남 양산시 어곡동 1515",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3996",
+          "id": "425382370",
+          "phone": "010-7737-2818",
+          "place_name": "위스키",
+          "place_url": "http://place.map.kakao.com/425382370",
+          "road_address_name": "경남 양산시 어실로 434",
+          "x": "129.010607599316",
+          "y": "35.3945726505716",
+          "score": 5,
+          "reasons": [
+            "address_tail",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-boong",
+      "resortId": "jisan",
+      "shopName": "붕어빵 렌탈샵",
+      "currentAddress": "경기도 이천시 마장면 지산로 200",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "경기 이천시 마장면 해월리 200-6",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1023",
+        "id": "958666728",
+        "phone": "031-633-2479",
+        "place_name": "지산리조트 Snow24 렌탈샵",
+        "place_url": "http://place.map.kakao.com/958666728",
+        "road_address_name": "경기 이천시 마장면 지산로 200",
+        "x": "127.354344420773",
+        "y": "37.2145557472831",
+        "score": 5,
+        "reasons": [
+          "address_tail",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 이천시 마장면 해월리 200-6",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1023",
+          "id": "958666728",
+          "phone": "031-633-2479",
+          "place_name": "지산리조트 Snow24 렌탈샵",
+          "place_url": "http://place.map.kakao.com/958666728",
+          "road_address_name": "경기 이천시 마장면 지산로 200",
+          "x": "127.354344420773",
+          "y": "37.2145557472831",
+          "score": 5,
+          "reasons": [
+            "address_tail",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "vivaldi-thedream",
+      "resortId": "vivaldi",
+      "shopName": "더드림 렌탈 패키지",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "yongpyong-drsnow",
+      "resortId": "yongpyong",
+      "shopName": "닥터스노우",
+      "currentAddress": "강원특별자치도 평창군 대관령면 올림픽로 56",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 평창군 대관령면 횡계리 373-7",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "3559",
+        "id": "11597372",
+        "phone": "033-336-4233",
+        "place_name": "닥터스노우",
+        "place_url": "http://place.map.kakao.com/11597372",
+        "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 56",
+        "x": "128.700477648787",
+        "y": "37.6737568881043",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 평창군 대관령면 횡계리 373-7",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "3559",
+          "id": "11597372",
+          "phone": "033-336-4233",
+          "place_name": "닥터스노우",
+          "place_url": "http://place.map.kakao.com/11597372",
+          "road_address_name": "강원특별자치도 평창군 대관령면 올림픽로 56",
+          "x": "128.700477648787",
+          "y": "37.6737568881043",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-ski-no1",
+      "resortId": "high1",
+      "shopName": "하이원스키샵1호점",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 28-5",
+      "currentPhone": "033-592-3334 / 033-591-8896",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 124-141",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "1775",
+        "id": "693521035",
+        "phone": "033-592-3334",
+        "place_name": "하이원스키샵 1호점",
+        "place_url": "http://place.map.kakao.com/693521035",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 28-5",
+        "x": "128.842449466005",
+        "y": "37.2081623853477",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 124-141",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "1775",
+          "id": "693521035",
+          "phone": "033-592-3334",
+          "place_name": "하이원스키샵 1호점",
+          "place_url": "http://place.map.kakao.com/693521035",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 28-5",
+          "x": "128.842449466005",
+          "y": "37.2081623853477",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-myski",
+      "resortId": "high1",
+      "shopName": "하이원 마이스키",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 36-2",
+      "currentPhone": "033-591-0175",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 124-16",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1842",
+        "id": "2094359759",
+        "phone": "033-591-0175",
+        "place_name": "하이원 마이스키",
+        "place_url": "http://place.map.kakao.com/2094359759",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 36-2",
+        "x": "128.843185406068",
+        "y": "37.2079482246436",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 124-16",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1842",
+          "id": "2094359759",
+          "phone": "033-591-0175",
+          "place_name": "하이원 마이스키",
+          "place_url": "http://place.map.kakao.com/2094359759",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 36-2",
+          "x": "128.843185406068",
+          "y": "37.2079482246436",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-noonnara",
+      "resortId": "high1",
+      "shopName": "눈의나라",
+      "currentAddress": "강원특별자치도 정선군 사북읍 하이원길 36",
+      "currentPhone": "033-591-1221 / 010-4926-7100",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 사북읍 사북리 397",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1686",
+        "id": "21692745",
+        "phone": "033-591-1221",
+        "place_name": "눈의나라",
+        "place_url": "http://place.map.kakao.com/21692745",
+        "road_address_name": "강원특별자치도 정선군 사북읍 하이원길 36",
+        "x": "128.81525321489224",
+        "y": "37.22324859731984",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 사북읍 사북리 397",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1686",
+          "id": "21692745",
+          "phone": "033-591-1221",
+          "place_name": "눈의나라",
+          "place_url": "http://place.map.kakao.com/21692745",
+          "road_address_name": "강원특별자치도 정선군 사북읍 하이원길 36",
+          "x": "128.81525321489224",
+          "y": "37.22324859731984",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-repo4u",
+      "resortId": "high1",
+      "shopName": "레포투유 스키캠프&강습센터",
+      "currentAddress": "강원특별자치도 정선군 고한읍 하이원길 500 (밸리콘도)",
+      "currentPhone": "033-592-7900 / 010-9999-5019",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 130-38",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "교통,수송 > 자동차 > 전기차 충전소",
+        "distance": "1567",
+        "id": "1657264027",
+        "phone": "1661-7766",
+        "place_name": "강원랜드 스키장(밸리콘도) 전기차충전소",
+        "place_url": "http://place.map.kakao.com/1657264027",
+        "road_address_name": "강원특별자치도 정선군 고한읍 하이원길 500",
+        "x": "128.83963288729856",
+        "y": "37.205816021085795",
+        "score": 2,
+        "reasons": [
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 130-38",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "교통,수송 > 자동차 > 전기차 충전소",
+          "distance": "1567",
+          "id": "1657264027",
+          "phone": "1661-7766",
+          "place_name": "강원랜드 스키장(밸리콘도) 전기차충전소",
+          "place_url": "http://place.map.kakao.com/1657264027",
+          "road_address_name": "강원특별자치도 정선군 고한읍 하이원길 500",
+          "x": "128.83963288729856",
+          "y": "37.205816021085795",
+          "score": 2,
+          "reasons": [
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 130-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "서비스,산업 > 관리,운영 > 숙박시설관리운영",
+          "distance": "1580",
+          "id": "17583183",
+          "phone": "",
+          "place_name": "하이원스키장 밸리콘도동",
+          "place_url": "http://place.map.kakao.com/17583183",
+          "road_address_name": "강원특별자치도 정선군 고한읍 하이원길 500",
+          "x": "128.839805600115",
+          "y": "37.205878204516",
+          "score": 2,
+          "reasons": [
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 130-38",
+          "category_group_code": "AD5",
+          "category_group_name": "숙박",
+          "category_name": "여행 > 숙박 > 콘도,리조트",
+          "distance": "1637",
+          "id": "8129931",
+          "phone": "1588-7789",
+          "place_name": "하이원리조트 밸리콘도",
+          "place_url": "http://place.map.kakao.com/8129931",
+          "road_address_name": "강원특별자치도 정선군 고한읍 하이원길 500",
+          "x": "128.840307290191",
+          "y": "37.2053875132484",
+          "score": 2,
+          "reasons": [
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-four-season",
+      "resortId": "high1",
+      "shopName": "포시즌 렌탈샵",
+      "currentAddress": "강원특별자치도 정선군 사북읍 하이원길 36",
+      "currentPhone": "010-2928-7711",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "강원특별자치도 정선군 사북읍 사북리 397-11",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "금융,보험 > 금융서비스 > 대출 > 전당포",
+        "distance": "1686",
+        "id": "26017608",
+        "phone": "",
+        "place_name": "로또전당사",
+        "place_url": "http://place.map.kakao.com/26017608",
+        "road_address_name": "강원특별자치도 정선군 사북읍 하이원길 36",
+        "x": "128.815257719628",
+        "y": "37.223248528256",
+        "score": 8,
+        "reasons": [
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 사북읍 사북리 397-11",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "금융,보험 > 금융서비스 > 대출 > 전당포",
+          "distance": "1686",
+          "id": "26017608",
+          "phone": "",
+          "place_name": "로또전당사",
+          "place_url": "http://place.map.kakao.com/26017608",
+          "road_address_name": "강원특별자치도 정선군 사북읍 하이원길 36",
+          "x": "128.815257719628",
+          "y": "37.223248528256",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 정선군 사북읍 사북리 397",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1686",
+          "id": "21692745",
+          "phone": "033-591-1221",
+          "place_name": "눈의나라",
+          "place_url": "http://place.map.kakao.com/21692745",
+          "road_address_name": "강원특별자치도 정선군 사북읍 하이원길 36",
+          "x": "128.81525321489224",
+          "y": "37.22324859731984",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-donggang-explorer",
+      "resortId": "high1",
+      "shopName": "동강탐험대 하이원스키렌탈샵",
+      "currentAddress": "강원특별자치도 정선군 고한읍 강원남로 6071",
+      "currentPhone": "033-592-7200 / 1544-3414",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 145-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1168",
+        "id": "26203817",
+        "phone": "",
+        "place_name": "동강탐험대 하이원스키캠프앤렌탈샵",
+        "place_url": "http://place.map.kakao.com/26203817",
+        "road_address_name": "강원특별자치도 정선군 고한읍 강원남로 6071",
+        "x": "128.834494157952",
+        "y": "37.2135211700525",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 145-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1168",
+          "id": "26203817",
+          "phone": "",
+          "place_name": "동강탐험대 하이원스키캠프앤렌탈샵",
+          "place_url": "http://place.map.kakao.com/26203817",
+          "road_address_name": "강원특별자치도 정선군 고한읍 강원남로 6071",
+          "x": "128.834494157952",
+          "y": "37.2135211700525",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-winter-world",
+      "resortId": "high1",
+      "shopName": "겨울세상",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 83",
+      "currentPhone": "033-591-7794",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 104-16",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2264",
+        "id": "23488077",
+        "phone": "033-591-7794",
+        "place_name": "겨울세상",
+        "place_url": "http://place.map.kakao.com/23488077",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 83",
+        "x": "128.847576425733",
+        "y": "37.2054725277254",
+        "score": 22,
+        "reasons": [
+          "exact_name",
+          "phone",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 104-16",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2264",
+          "id": "23488077",
+          "phone": "033-591-7794",
+          "place_name": "겨울세상",
+          "place_url": "http://place.map.kakao.com/23488077",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 83",
+          "x": "128.847576425733",
+          "y": "37.2054725277254",
+          "score": 22,
+          "reasons": [
+            "exact_name",
+            "phone",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-high-and-high",
+      "resortId": "high1",
+      "shopName": "하이앤하이",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 35",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 121-13",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1862",
+        "id": "11824386",
+        "phone": "033-591-7377",
+        "place_name": "하이앤하이",
+        "place_url": "http://place.map.kakao.com/11824386",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 35",
+        "x": "128.8434270853722",
+        "y": "37.208066988321136",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 121-13",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1862",
+          "id": "11824386",
+          "phone": "033-591-7377",
+          "place_name": "하이앤하이",
+          "place_url": "http://place.map.kakao.com/11824386",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 35",
+          "x": "128.8434270853722",
+          "y": "37.208066988321136",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-seolleim",
+      "resortId": "high1",
+      "shopName": "설래임 렌탈샵",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "high1-wolnam",
+      "resortId": "high1",
+      "shopName": "월남스키",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 40",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 121-14",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1868",
+        "id": "12624780",
+        "phone": "033-592-4567",
+        "place_name": "월남스키",
+        "place_url": "http://place.map.kakao.com/12624780",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 40",
+        "x": "128.843448268319",
+        "y": "37.2076414223009",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 121-14",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1868",
+          "id": "12624780",
+          "phone": "033-592-4567",
+          "place_name": "월남스키",
+          "place_url": "http://place.map.kakao.com/12624780",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 40",
+          "x": "128.843448268319",
+          "y": "37.2076414223009",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-sereno",
+      "resortId": "high1",
+      "shopName": "쎄레노",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 39",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 121-12",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+        "distance": "1891",
+        "id": "336790624",
+        "phone": "010-5716-1369",
+        "place_name": "쎄레노스키샵",
+        "place_url": "http://place.map.kakao.com/336790624",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 39",
+        "x": "128.843721911559",
+        "y": "37.2077777062753",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 121-12",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드용품",
+          "distance": "1891",
+          "id": "336790624",
+          "phone": "010-5716-1369",
+          "place_name": "쎄레노스키샵",
+          "place_url": "http://place.map.kakao.com/336790624",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 39",
+          "x": "128.843721911559",
+          "y": "37.2077777062753",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "high1-seven-ski",
+      "resortId": "high1",
+      "shopName": "세븐스키",
+      "currentAddress": "강원특별자치도 정선군 고한읍 고한로 8",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 정선군 고한읍 고한리 127-37",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "1673",
+        "id": "12648693",
+        "phone": "033-591-6777",
+        "place_name": "세븐스키 하이원점",
+        "place_url": "http://place.map.kakao.com/12648693",
+        "road_address_name": "강원특별자치도 정선군 고한읍 고한로 8",
+        "x": "128.84133484505944",
+        "y": "37.20957255162565",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 정선군 고한읍 고한리 127-37",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "1673",
+          "id": "12648693",
+          "phone": "033-591-6777",
+          "place_name": "세븐스키 하이원점",
+          "place_url": "http://place.map.kakao.com/12648693",
+          "road_address_name": "강원특별자치도 정선군 고한읍 고한로 8",
+          "x": "128.84133484505944",
+          "y": "37.20957255162565",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "alpensia-waug-rental",
+      "resortId": "alpensia",
+      "shopName": "알펜시아 예약처 렌탈 패키지",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "o2-resort-package",
+      "resortId": "o2",
+      "shopName": "오투리조트 리프트·렌탈 패키지",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "muju-baegam",
+      "resortId": "muju",
+      "shopName": "백암스키샵",
+      "currentAddress": "전북특별자치도 무주군 설천면 만선로 32",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "전북특별자치도 무주군 설천면 심곡리 645-4",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "2742",
+        "id": "704070562",
+        "phone": "063-322-2244",
+        "place_name": "무주스키샵 렌탈샵 백암스키",
+        "place_url": "http://place.map.kakao.com/704070562",
+        "road_address_name": "전북특별자치도 무주군 설천면 만선로 32",
+        "x": "127.755999761484",
+        "y": "35.9103678623616",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 645-4",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "2742",
+          "id": "704070562",
+          "phone": "063-322-2244",
+          "place_name": "무주스키샵 렌탈샵 백암스키",
+          "place_url": "http://place.map.kakao.com/704070562",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 32",
+          "x": "127.755999761484",
+          "y": "35.9103678623616",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "전북특별자치도 무주군 설천면 심곡리 645-8",
+          "category_group_code": "AD5",
+          "category_group_name": "숙박",
+          "category_name": "여행 > 숙박 > 콘도,리조트",
+          "distance": "2743",
+          "id": "12601910",
+          "phone": "063-322-2244",
+          "place_name": "백암스키콘도",
+          "place_url": "http://place.map.kakao.com/12601910",
+          "road_address_name": "전북특별자치도 무주군 설천면 만선로 32",
+          "x": "127.75600203699129",
+          "y": "35.91037415662388",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "konjiam-official-rental",
+      "resortId": "konjiam",
+      "shopName": "곤지암리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "high1-official-rental",
+      "resortId": "high1",
+      "shopName": "하이원리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "konjiam-goodgear",
+      "resortId": "konjiam",
+      "shopName": "장비좋은집",
+      "currentAddress": "경기 광주시 도척면 독고개길 307",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경기 광주시 도척면 도웅리 267",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "808",
+        "id": "12068891",
+        "phone": "031-762-7375",
+        "place_name": "곤지암렌탈샵 장비좋은집",
+        "place_url": "http://place.map.kakao.com/12068891",
+        "road_address_name": "경기 광주시 도척면 독고개길 307",
+        "x": "127.305469517556",
+        "y": "37.3389998072838",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경기 광주시 도척면 도웅리 267",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "808",
+          "id": "12068891",
+          "phone": "031-762-7375",
+          "place_name": "곤지암렌탈샵 장비좋은집",
+          "place_url": "http://place.map.kakao.com/12068891",
+          "road_address_name": "경기 광주시 도척면 독고개길 307",
+          "x": "127.305469517556",
+          "y": "37.3389998072838",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "경기 광주시 도척면 도웅리 267",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "서비스,산업 > 제조업 > 가구",
+          "distance": "805",
+          "id": "26057069",
+          "phone": "070-4233-7375",
+          "place_name": "오스카퍼니처",
+          "place_url": "http://place.map.kakao.com/26057069",
+          "road_address_name": "경기 광주시 도척면 독고개길 307",
+          "x": "127.30544680236864",
+          "y": "37.33896382483874",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "jisan-official-rental",
+      "resortId": "jisan",
+      "shopName": "지산 포레스트 리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "vivaldi-official-rental",
+      "resortId": "vivaldi",
+      "shopName": "비발디파크 스키월드 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "elysian-official-rental",
+      "resortId": "elysian",
+      "shopName": "엘리시안 강촌 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "phoenix-official-rental",
+      "resortId": "phoenix",
+      "shopName": "휘닉스 스노우파크 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "yongpyong-official-rental",
+      "resortId": "yongpyong",
+      "shopName": "모나 용평 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "wellihilli-official-rental",
+      "resortId": "wellihilli",
+      "shopName": "웰리힐리파크 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "oakvalley-official-rental",
+      "resortId": "oakvalley",
+      "shopName": "오크밸리 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "alpensia-official-rental",
+      "resortId": "alpensia",
+      "shopName": "알펜시아 리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "o2-official-rental",
+      "resortId": "o2",
+      "shopName": "오투리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "muju-official-rental",
+      "resortId": "muju",
+      "shopName": "무주 덕유산 리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "edenvalley-official-rental",
+      "resortId": "edenvalley",
+      "shopName": "에덴밸리 리조트 공식 렌탈",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "elysian-worldski",
+      "resortId": "elysian",
+      "shopName": "월드스키",
+      "currentAddress": "강원특별자치도 춘천시 남산면 서백길 75",
+      "confidence": "verified",
+      "best": {
+        "address_name": "강원특별자치도 춘천시 남산면 서천리 34-3",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3486",
+        "id": "14721153",
+        "phone": "033-263-0075",
+        "place_name": "월드스키",
+        "place_url": "http://place.map.kakao.com/14721153",
+        "road_address_name": "강원특별자치도 춘천시 남산면 서백길 75",
+        "x": "127.552137541253",
+        "y": "37.8414661533122",
+        "score": 16,
+        "reasons": [
+          "exact_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 서천리 34-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3486",
+          "id": "14721153",
+          "phone": "033-263-0075",
+          "place_name": "월드스키",
+          "place_url": "http://place.map.kakao.com/14721153",
+          "road_address_name": "강원특별자치도 춘천시 남산면 서백길 75",
+          "x": "127.552137541253",
+          "y": "37.8414661533122",
+          "score": 16,
+          "reasons": [
+            "exact_name",
+            "address",
+            "within_5km"
+          ]
+        },
+        {
+          "address_name": "강원특별자치도 춘천시 남산면 서천리 34-3",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스키,스노우보드",
+          "distance": "3487",
+          "id": "1609553382",
+          "phone": "033-263-0075",
+          "place_name": "월드강습센터",
+          "place_url": "http://place.map.kakao.com/1609553382",
+          "road_address_name": "강원특별자치도 춘천시 남산면 서백길 75",
+          "x": "127.552127431096",
+          "y": "37.84148151675",
+          "score": 8,
+          "reasons": [
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "wellihilli-daegwallyeong-sports",
+      "resortId": "wellihilli",
+      "shopName": "대관령스포츠",
+      "currentAddress": "강원특별자치도 횡성군 둔내면 고원로 222",
+      "currentPhone": "033-344-2120 / 033-344-2121",
+      "confidence": "unresolved",
+      "candidates": []
+    },
+    {
+      "shopId": "oakvalley-firstclub",
+      "resortId": "oakvalley",
+      "shopName": "오크밸리 스키&보드 강습센터",
+      "confidence": "uncertain",
+      "best": {
+        "address_name": "강원특별자치도 원주시 지정면 판대리 528",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3400",
+        "id": "15526558",
+        "phone": "033-742-4320",
+        "place_name": "강윤정프로샵 오크밸리점",
+        "place_url": "http://place.map.kakao.com/15526558",
+        "road_address_name": "강원특별자치도 원주시 지정면 구재로 216",
+        "x": "127.799003760765",
+        "y": "37.4031720651246",
+        "score": 2,
+        "reasons": [
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "강원특별자치도 원주시 지정면 판대리 528",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3400",
+          "id": "15526558",
+          "phone": "033-742-4320",
+          "place_name": "강윤정프로샵 오크밸리점",
+          "place_url": "http://place.map.kakao.com/15526558",
+          "road_address_name": "강원특별자치도 원주시 지정면 구재로 216",
+          "x": "127.799003760765",
+          "y": "37.4031720651246",
+          "score": 2,
+          "reasons": [
+            "within_5km"
+          ]
+        }
+      ]
+    },
+    {
+      "shopId": "edenvalley-modooski",
+      "resortId": "edenvalley",
+      "shopName": "모두스키",
+      "currentAddress": "경남 양산시 어실로 440",
+      "currentPhone": "010-2142-2385",
+      "confidence": "verified",
+      "best": {
+        "address_name": "경남 양산시 어곡동 1462-1",
+        "category_group_code": "",
+        "category_group_name": "",
+        "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+        "distance": "3998",
+        "id": "928540398",
+        "phone": "010-3138-2385",
+        "place_name": "모두스키샵",
+        "place_url": "http://place.map.kakao.com/928540398",
+        "road_address_name": "경남 양산시 어실로 440",
+        "x": "129.009926673998",
+        "y": "35.394673198913",
+        "score": 13,
+        "reasons": [
+          "partial_name",
+          "address",
+          "within_5km"
+        ]
+      },
+      "candidates": [
+        {
+          "address_name": "경남 양산시 어곡동 1462-1",
+          "category_group_code": "",
+          "category_group_name": "",
+          "category_name": "스포츠,레저 > 스포츠용품 > 스키,보드렌탈",
+          "distance": "3998",
+          "id": "928540398",
+          "phone": "010-3138-2385",
+          "place_name": "모두스키샵",
+          "place_url": "http://place.map.kakao.com/928540398",
+          "road_address_name": "경남 양산시 어실로 440",
+          "x": "129.009926673998",
+          "y": "35.394673198913",
+          "score": 13,
+          "reasons": [
+            "partial_name",
+            "address",
+            "within_5km"
+          ]
+        }
+      ]
+    }
+  ]
+}

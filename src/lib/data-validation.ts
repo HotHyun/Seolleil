@@ -212,6 +212,38 @@ export function validateStaticData(): ValidationIssue[] {
       id: shop.id,
       message: "lastCheckedAt must be YYYY-MM-DD"
     });
+    const hasLatitude = shop.latitude !== undefined;
+    const hasLongitude = shop.longitude !== undefined;
+    pushIf(issues, hasLatitude !== hasLongitude, {
+      scope: "rental_shop",
+      severity: "error",
+      id: shop.id,
+      message: "latitude and longitude must be provided together"
+    });
+    pushIf(issues, hasLatitude && (shop.latitude! < 33 || shop.latitude! > 38.7 || shop.longitude! < 124.6 || shop.longitude! > 131.2), {
+      scope: "rental_shop",
+      severity: "error",
+      id: shop.id,
+      message: "coordinates must be inside South Korea bounds"
+    });
+    pushIf(issues, Boolean(shop.locationCheckedAt) && !isDateString(shop.locationCheckedAt), {
+      scope: "rental_shop",
+      severity: "error",
+      id: shop.id,
+      message: "locationCheckedAt must be YYYY-MM-DD"
+    });
+    pushIf(issues, Boolean(shop.kakaoPlaceId) && !isUrl(shop.mapLinks?.kakao), {
+      scope: "rental_shop",
+      severity: "error",
+      id: shop.id,
+      message: "Kakao Place ID requires a Kakao map URL"
+    });
+    pushIf(issues, !hasLatitude || !shop.kakaoPlaceId, {
+      scope: "rental_shop",
+      severity: "warning",
+      id: shop.id,
+      message: "rental shop location requires manual verification"
+    });
   }
 
   for (const rule of priceRules) {

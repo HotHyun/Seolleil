@@ -180,6 +180,13 @@ describe("static data validation", () => {
     expect(report.estimatedPriceCount).toBeGreaterThan(0);
   });
 
+  it("keeps verified rental coordinates and exact Kakao place links together", () => {
+    const located = rentalShops.filter((shop) => shop.latitude !== undefined && shop.longitude !== undefined);
+    expect(located.length).toBeGreaterThanOrEqual(80);
+    expect(located.every((shop) => shop.kakaoPlaceId && shop.locationCheckedAt === "2026-07-16")).toBe(true);
+    expect(located.every((shop) => shop.mapLinks?.kakao === `https://place.map.kakao.com/${shop.kakaoPlaceId}`)).toBe(true);
+  });
+
   it("provides decision-oriented detail stories without exposing internal scores", () => {
     for (const resort of resorts) {
       const story = getResortStory(resort);

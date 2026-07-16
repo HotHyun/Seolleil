@@ -13,6 +13,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import type { NearbyLodging } from "@/data/resort-map";
 import type { RentalPriceRule, RentalShop } from "@/lib/types";
+import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/rental-comparison";
 import { formatCurrency } from "@/lib/utils";
 
 type Trip = { id: string; resortId: string; selectedRentalOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; lodgingName: string | null; lodgingUrl: string | null; lodgingCostInput: number | null };
@@ -23,11 +24,13 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
   const router = useRouter();
   const access = editToken ? { name: "editToken", value: editToken } : shareToken ? { name: "shareToken", value: shareToken } : { name: "tripId", value: trip.id };
   const [filter, setFilter] = useState<RentalFilter>("all");
+  const [sort, setSort] = useState<RentalComparisonSort>("verified");
   const [rentalId, setRentalId] = useState<string | null>(trip.selectedRentalShopId ?? rentalGroups[0]?.shop.id ?? null);
   const rentalListRef = useRef<HTMLDivElement | null>(null);
   const initialLodging = lodgingOptions.find(item => item.name === trip.lodgingName);
   const [lodgingId, setLodgingId] = useState<string | null>(initialLodging?.id ?? null);
-  const filtered = useMemo(() => rentalGroups.filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), [filter, rentalGroups]);
+  const filtered = useMemo(() => sortRentalComparisonGroups(rentalGroups
+    .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, trip.selectedRentalShopId), [filter, rentalGroups, sort, trip.selectedRentalShopId]);
   const selectedLodging = lodgingOptions.find(item => item.id === lodgingId);
   const selectRentalFromMap = useCallback((id: string) => {
     setRentalId(id);
@@ -39,15 +42,23 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
     });
   }, []);
   async function save(data: FormData) { const result = await updateTripDecisionSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); }
-  const toCandidate = (id: string, name: string, address?: string, latitude?: number, longitude?: number, externalMapUrl?: string): PlaceCandidate => ({ id, name, address, latitude, longitude, searchQuery: `${name} ${address ?? ""}`.trim(), externalMapUrl });
+  const toCandidate = (id: string, name: string, typeOrAddress?: "rental" | "lodging" | string, addressOrLatitude?: string | number, latitudeOrLongitude?: number, longitudeOrUrl?: number | string, externalMapUrl?: string): PlaceCandidate => {
+    const typed = typeOrAddress === "rental" || typeOrAddress === "lodging";
+    const type = typed ? typeOrAddress : "lodging";
+    const address = typed ? (addressOrLatitude as string | undefined) : typeOrAddress;
+    const latitude = typed ? latitudeOrLongitude : (addressOrLatitude as number | undefined);
+    const longitude = typed ? (longitudeOrUrl as number | undefined) : latitudeOrLongitude;
+    const mapUrl = typed ? externalMapUrl : (longitudeOrUrl as string | undefined);
+    return { id, name, type, address, latitude, longitude, searchQuery: `${name} ${address ?? ""}`.trim(), externalMapUrl: mapUrl };
+  };
 
   return <div className="space-y-5" data-testid="trip-decision-workspace">
     <section className="overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6"><div className="flex items-start gap-4"><span className="rounded-2xl bg-primary p-3 text-primary-foreground shadow-lg shadow-primary/20"><Sparkles className="h-5 w-5" /></span><div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Choose with confidence</p><h2 className="mt-1 text-2xl font-black">결정할수록 트립이 선명해져요</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">지도와 목록으로 후보를 비교해 저장하세요. 실제 예약·결제 여부는 체크리스트에서 관리합니다.</p></div></div></section>
 
     <DecisionSection id="rental" title="렌탈샵과 상품" description="위치, 제공 품목, 시즌 가격과 원문을 한 화면에서 비교하세요." icon={<Shirt />}>
-      <div className="mb-4 flex gap-2 overflow-x-auto pb-1" aria-label="렌탈샵 필터">{([['all','전체'],['verified','가격 확인'],['pickup','픽업'],['clothing','의류'],['lift','리프트권']] as const).map(([value,label]) => <Button key={value} type="button" variant={filter === value ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" onClick={() => setFilter(value)}>{label}</Button>)}</div>
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="flex gap-2 overflow-x-auto pb-1" aria-label="렌탈샵 필터">{([['all','전체'],['verified','가격 확인'],['pickup','픽업'],['clothing','의류'],['lift','리프트권']] as const).map(([value,label]) => <Button key={value} type="button" variant={filter === value ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" onClick={() => setFilter(value)}>{label}</Button>)}</div><div className="w-full sm:w-36"><SelectField name="rentalSort" ariaLabel="렌탈샵 정렬" value={sort} onValueChange={(value) => setSort(value as RentalComparisonSort)} options={[{value:"verified",label:"검증순"},{value:"distance",label:"거리순"},{value:"price",label:"가격순"}]} /></div></div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]">
-        <PlaceComparisonMap candidates={filtered.map(({shop}) => toCandidate(shop.id, shop.name, shop.address, shop.latitude, shop.longitude, shop.mapLinks?.kakao ?? shop.mapLinks?.naver))} selectedId={rentalId} onSelect={selectRentalFromMap} />
+        <PlaceComparisonMap candidates={filtered.map(({shop}) => toCandidate(shop.id, shop.name, "rental", shop.address, shop.latitude, shop.longitude, shop.mapLinks?.kakao ?? shop.mapLinks?.naver))} selectedId={rentalId} onSelect={selectRentalFromMap} />
         <div ref={rentalListRef} className="max-h-[520px] space-y-3 overflow-y-auto pr-1">{filtered.length ? filtered.map(({ shop, options }) => { const selected = rentalId === shop.id; const saved = trip.selectedRentalShopId === shop.id; return <Card key={shop.id} data-rental-shop-id={shop.id} tabIndex={-1} className={selected ? "border-primary ring-1 ring-primary/40" : ""}><CardHeader className="cursor-pointer pb-3" onClick={() => setRentalId(shop.id)}><div className="flex items-start justify-between gap-3"><div><CardTitle className="text-base">{shop.name}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{shop.distanceMinutes !== undefined ? `리조트에서 약 ${shop.distanceMinutes}분` : "지도에서 위치 확인"}</p></div>{saved ? <span className="rounded-full bg-primary p-1.5 text-primary-foreground"><Check className="h-3.5 w-3.5" /></span> : null}</div></CardHeader>{selected ? <CardContent className="space-y-3"><div className="flex flex-wrap gap-1.5 text-[11px] font-bold">{shop.dataStatus === "verified_25_26" ? <Tag>25/26 가격 확인</Tag> : <Tag>가격 원문 확인</Tag>}{shop.pickupAvailable ? <Tag>픽업</Tag> : null}{shop.clothingRentalAvailable ? <Tag>의류</Tag> : null}{shop.liftTicketSalesAvailable ? <Tag>리프트권</Tag> : null}</div>{options.length ? <form action={save} className="grid gap-2"><AccessInput access={access} /><input type="hidden" name="decision" value="rental" /><SelectField name="selectedRentalOptionId" ariaLabel={`${shop.name} 렌탈 상품`} defaultValue={options.some(option => option.id === trip.selectedRentalOptionId) ? trip.selectedRentalOptionId! : options[0].id} options={options.map(option => ({ value: option.id, label: `${option.label} · ${option.representativePrice ? formatCurrency(option.representativePrice) : "원문 확인"}` }))} />{canEdit ? <SubmitButton variant="secondary" pendingText="저장 중…">이 상품 저장</SubmitButton> : null}</form> : <form action={save}><AccessInput access={access} /><input type="hidden" name="decision" value="rental_shop" /><input type="hidden" name="selectedRentalShopId" value={shop.id} /><p className="mb-3 rounded-lg bg-muted p-3 text-xs leading-5 text-muted-foreground">공개 가격이 없어 업체만 후보로 저장합니다. 예상 비용은 임의로 바꾸지 않습니다.</p>{canEdit ? <SubmitButton variant="secondary" pendingText="저장 중…">이 업체 저장</SubmitButton> : null}</form>}<SourceLinks mapUrl={shop.mapLinks?.kakao ?? shop.mapLinks?.naver} siteUrl={shop.url} /></CardContent> : null}</Card>; }) : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">조건에 맞는 업체가 없습니다.</p>}</div>
       </div>
     </DecisionSection>

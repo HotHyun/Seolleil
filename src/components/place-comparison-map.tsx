@@ -12,6 +12,7 @@ export type PlaceCandidate = {
   longitude?: number;
   searchQuery: string;
   externalMapUrl?: string;
+  type?: "rental" | "lodging";
 };
 
 type Point = { lat: number; lng: number };
@@ -85,7 +86,13 @@ export function PlaceComparisonMap({ candidates, selectedId, onSelect }: { candi
     markersRef.current = candidates.flatMap((candidate) => {
       const point = points[candidate.id];
       if (!point || !window.kakao?.maps) return [];
-      const marker = new window.kakao.maps.Marker({ map, position: new window.kakao.maps.LatLng(point.lat, point.lng), title: candidate.name });
+      const isSelected = candidate.id === selectedId;
+      const size = isSelected ? 40 : 32;
+      const color = candidate.type === "lodging" ? "2563eb" : "f97316";
+      const label = candidate.type === "lodging" ? "H" : "R";
+      const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#${color}" stroke="${isSelected ? "white" : "#111827"}" stroke-width="${isSelected ? 4 : 2}"/><text x="20" y="25" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="900" fill="white">${label}</text></svg>`);
+      const image = new window.kakao.maps.MarkerImage(`data:image/svg+xml;charset=UTF-8,${svg}`, new window.kakao.maps.Size(size, size), { offset: new window.kakao.maps.Point(size / 2, size / 2) });
+      const marker = new window.kakao.maps.Marker({ map, position: new window.kakao.maps.LatLng(point.lat, point.lng), title: candidate.name, image });
       window.kakao.maps.event.addListener(marker, "click", () => onSelect(candidate.id));
       return [marker];
     });

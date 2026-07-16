@@ -24,6 +24,8 @@
     "data:validate": "tsx scripts/validate-static-data.ts",
     "data:report": "tsx scripts/report-static-data.ts",
     "data:links": "tsx scripts/check-links.ts",
+    "data:locations:audit": "tsx scripts/audit-rental-locations.ts --write",
+    "data:locations": "tsx scripts/generate-rental-location-data.ts",
     "appwrite:schema": "tsx scripts/with-env.ts tsx scripts/setup-appwrite-schema.ts"
   },
   "dependencies": {

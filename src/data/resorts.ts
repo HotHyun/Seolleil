@@ -1,4 +1,5 @@
 import type { DepartureLocation, RentalShop, SkiResort } from "@/lib/types";
+import { rentalLocationRecords } from "@/data/rental-locations";
 import { verifiedRentalShops2526 } from "@/data/verified-rental-shops-25-26";
 
 const checkedAt = "2026-05-13";
@@ -792,6 +793,16 @@ const verifiedLegacyRentalShopIds = new Set([
 ]);
 
 for (const shop of rentalShops) {
+  const location = rentalLocationRecords[shop.id as keyof typeof rentalLocationRecords];
+  if (location) {
+    shop.latitude = location.latitude;
+    shop.longitude = location.longitude;
+    shop.kakaoPlaceId = location.kakaoPlaceId;
+    shop.locationSource = location.locationSource;
+    shop.locationCheckedAt = location.locationCheckedAt;
+    shop.address = location.address;
+    shop.mapLinks = { ...shop.mapLinks, kakao: location.kakaoMapUrl };
+  }
   if (!shop.dataStatus) {
     shop.dataStatus = verifiedLegacyRentalShopIds.has(shop.id) ? "verified_25_26" : "listed_25_26";
     shop.serviceNote ??= verifiedLegacyRentalShopIds.has(shop.id)

@@ -36,7 +36,10 @@ declare global {
       maps: {
         LatLng: new (lat: number, lng: number) => unknown;
         Map: new (container: HTMLElement, options: { center: unknown; level: number }) => KakaoMap;
-        Marker: new (options: { map: KakaoMap; position: unknown; title?: string }) => KakaoMarker;
+        Marker: new (options: { map: KakaoMap; position: unknown; title?: string; image?: unknown }) => KakaoMarker;
+        MarkerImage: new (src: string, size: unknown, options?: { offset?: unknown }) => unknown;
+        Size: new (width: number, height: number) => unknown;
+        Point: new (x: number, y: number) => unknown;
         CustomOverlay: new (options: { content: HTMLElement; map?: KakaoMap; position: unknown; yAnchor?: number }) => KakaoCustomOverlay;
         event: {
           addListener: (target: KakaoMarker, type: string, handler: () => void) => void;

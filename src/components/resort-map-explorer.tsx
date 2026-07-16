@@ -511,10 +511,12 @@ function MapUnavailable({ resort }: { resort?: SkiResort }) {
 
 function MapStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-lg bg-muted p-1.5 sm:p-2">
-      <div className="mx-auto mb-1 hidden w-fit text-muted-foreground sm:block [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
-      <div className="text-[11px] font-bold text-muted-foreground">{label}</div>
-      <div className="mt-1 text-base font-black">{value}</div>
+    <div className="flex items-center gap-2.5 rounded-lg bg-muted p-2.5 text-left">
+      <div className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-md bg-background text-primary sm:flex [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
+      <div className="min-w-0">
+        <div className="text-[11px] font-bold text-muted-foreground">{label}</div>
+        <div className="mt-0.5 text-base font-black">{value}</div>
+      </div>
     </div>
   );
 }

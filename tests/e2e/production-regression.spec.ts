@@ -89,6 +89,8 @@ test.describe("production regression", () => {
       await expect(decisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
       await decisions.getByRole("button", { name: "픽업", exact: true }).click();
       await expect(decisions.getByRole("heading", { name: "간지보더" })).toBeVisible();
+      await decisions.getByRole("heading", { name: "간지보더" }).click();
+      await expect(decisions.getByRole("combobox", { name: "간지보더 렌탈 상품" })).toBeVisible();
       await decisions.getByRole("button", { name: "전체", exact: true }).click();
       await decisions.getByRole("button", { name: "이 상품 저장" }).first().click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();

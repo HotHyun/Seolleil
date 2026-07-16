@@ -46,6 +46,13 @@ E2E_ALLOW_PRODUCTION_WRITES=1 \
 pnpm exec playwright test tests/e2e/production-regression.spec.ts
 ```
 
+렌탈 위치 데이터나 Kakao 지도 연동을 배포한 뒤에는 전체 회귀에 이어 다음 재사용 스크립트로 SDK 로딩, 지도 타일, 정확한 Place ID 링크, 콘솔·페이지·5xx 오류를 확인한다.
+
+```bash
+PLAYWRIGHT_BROWSERS_PATH=/tmp/ms-playwright \
+node scripts/playwright/generated/korean-ski-54f01a4f8c.js
+```
+
 The GitHub Actions `Production regression` workflow is manual, accepts the deployed URL and mutation opt-in, serializes runs, and retains failure traces/screenshots/videos for 14 days.
 
 ## Post-Deploy Agent Flow

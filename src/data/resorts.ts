@@ -97,7 +97,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.elysian.co.kr/",
     liftTicketUrl: "https://www.elysian.co.kr/",
     rentalUrl: "https://www.elysian.co.kr/about-gangchon/ski",
-    shuttleUrl: "https://www.elysian.co.kr/",
+    shuttleUrl: "https://www.elysian.co.kr/shuttle-bus-reservation",
     lodgingUrl: "https://www.elysian.co.kr/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%97%98%EB%A6%AC%EC%8B%9C%EC%95%88%EA%B0%95%EC%B4%8C",

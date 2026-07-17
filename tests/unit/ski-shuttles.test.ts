@@ -47,6 +47,14 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "만종역").map(route => route.id)).toEqual(["oakvalley-wonju-weekend"]);
   });
 
+  it("keeps Elysian's confirmed station link without inventing an archived timetable", () => {
+    const routes = getSkiShuttleRoutes("elysian");
+    expect(routes.map(route => route.id)).toEqual(["elysian-baegyangri"]);
+    expect(routes[0]).toMatchObject({ operator: "엘리시안 강촌", priceLabel: "무료 내부 순환셔틀", dataStatus: "route_only_25_26" });
+    expect(routes[0].stops[0].departureTime).toBeUndefined();
+    expect(searchShuttleRoutes(routes, "백양리역").map(route => route.id)).toEqual(["elysian-baegyangri"]);
+  });
+
   it("finds routes by city and stop name", () => {
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "동래").map(route => route.id)).toEqual(["eunsung-busan"]);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "수원").map(route => route.id)).toContain("kd-suwon");

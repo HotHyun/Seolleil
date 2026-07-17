@@ -7,6 +7,7 @@ const jisan = "jisan";
 const wellihilli = "wellihilli";
 const o2 = "o2";
 const oakvalley = "oakvalley";
+const elysian = "elysian";
 
 export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
@@ -54,7 +55,8 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   wellihilliRoute("wellihilli-kd-ilsan", "경기", "일산선", "경기권 주말 운행 · 송내 합류", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
   wellihilliRoute("wellihilli-kd-incheon", "인천", "인천·부평선", "경기권 주말 운행 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
   o2Route(),
-  oakvalleyRoute()
+  oakvalleyRoute(),
+  elysianRoute()
 ];
 
 type StopInput = [city: string, name: string, departureTime?: string];
@@ -83,6 +85,11 @@ function oakvalleyRoute(): SkiShuttleRoute {
   const bookingUrl = "https://www.oakvalley.co.kr/";
   const sourceUrl = "https://japanese.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=250737";
   return { id: "oakvalley-wonju-weekend", resortId: oakvalley, season: "25/26", operator: "오크밸리", region: "강원 원주", name: "원주시내 주말 고객 셔틀", operationNote: "토·일 무료 운행 · 2026년 2월 22일까지", arrivalName: "오크밸리 스키장", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀", bookingUrl, sourceUrl, stops: [["원주","원주역","08:00 / 15:50"],["원주","원주종합버스터미널","08:10 / 16:00"],["원주","만종역","08:20 / 16:10"]].map(([city, name, departureTime], index) => ({ id: `oakvalley-wonju-weekend-${index + 1}`, city, name, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+}
+function elysianRoute(): SkiShuttleRoute {
+  const bookingUrl = "https://www.elysian.co.kr/shuttle-bus-reservation";
+  const sourceUrl = "https://www.elysian.co.kr/about-gangchon/way-to-come";
+  return { id: "elysian-baegyangri", resortId: elysian, season: "25/26", operator: "엘리시안 강촌", operatorPhone: "033-260-2345", region: "강원 춘천", name: "백양리역 무료 순환선", operationNote: "25/26 주말·공휴일 약 20분 간격 · 정확한 시간 재확인", arrivalName: "엘리시안 강촌 리조트", priceLabel: "무료 내부 순환셔틀", bookingUrl, sourceUrl, stops: [{ id: "elysian-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
 }
 
 export function getSkiShuttleRoutes(resortId: string) { return skiShuttleRoutes2526.filter(route => route.resortId === resortId); }

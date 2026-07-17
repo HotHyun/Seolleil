@@ -58,6 +58,14 @@ test.describe("production regression", () => {
     await expect(phoenixShuttle.getByText("수원 · 06:20 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
+    await page.goto("/resorts/wellihilli");
+    const wellihilliShuttle = page.getByTestId("shuttle-route-explorer");
+    await wellihilliShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("인덕원");
+    await wellihilliShuttle.getByRole("button", { name: /산본·안양선/ }).click();
+    await expect(wellihilliShuttle.getByText("인덕원역", { exact: true })).toBeVisible();
+    await expect(wellihilliShuttle.getByText("경기권 주말 운행 · 서현 합류", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
     await page.goto("/resorts/high1");
     const shuttle = page.getByTestId("shuttle-route-explorer");
     await expect(shuttle.getByText(/내 출발지에서 하이원.*까지/)).toBeVisible();

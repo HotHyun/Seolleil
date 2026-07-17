@@ -24,6 +24,14 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "종합운동장").map(route => route.id)).toEqual(["jisan-jamsil"]);
   });
 
+  it("covers the confirmed Welli Hilli Seoul and weekend Gyeonggi network", () => {
+    const routes = getSkiShuttleRoutes("wellihilli");
+    expect(routes).toHaveLength(12);
+    expect(routes.every(route => route.operator === "대원관광" && route.priceLabel === "웰리힐리 교통시즌권 25만원")).toBe(true);
+    expect(routes.filter(route => route.region !== "서울").every(route => route.operationNote.includes("주말"))).toBe(true);
+    expect(searchShuttleRoutes(routes, "인덕원").map(route => route.id)).toEqual(["wellihilli-kd-anyang"]);
+  });
+
   it("finds routes by city and stop name", () => {
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "동래").map(route => route.id)).toEqual(["eunsung-busan"]);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "수원").map(route => route.id)).toContain("kd-suwon");

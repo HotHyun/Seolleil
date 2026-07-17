@@ -207,6 +207,7 @@ export const resorts: SkiResort[] = [
     liftTicketUrl: "https://www.wellihillipark.com/",
     rentalUrl: "https://www.wellihillipark.com/",
     lodgingUrl: "https://www.wellihillipark.com/",
+    shuttleUrl: "https://skibus.purplebus.co.kr/Shop/YpSeason25/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%9B%B0%EB%A6%AC%ED%9E%90%EB%A6%AC%ED%8C%8C%ED%81%AC",
       kakao: "https://map.kakao.com/link/search/%EC%9B%B0%EB%A6%AC%ED%9E%90%EB%A6%AC%ED%8C%8C%ED%81%AC"

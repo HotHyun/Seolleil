@@ -66,6 +66,14 @@ test.describe("production regression", () => {
     await expect(wellihilliShuttle.getByText("경기권 주말 운행 · 서현 합류", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
+    await page.goto("/resorts/o2");
+    const o2Shuttle = page.getByTestId("shuttle-route-explorer");
+    await o2Shuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("태백역");
+    await o2Shuttle.getByRole("button", { name: /태백역 연계선/ }).click();
+    await expect(o2Shuttle.getByText("태백역 앞 시티투어 버스정류장", { exact: true })).toBeVisible();
+    await expect(o2Shuttle.getByText("태백 · 09:00 / 12:55 출발", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
     await page.goto("/resorts/high1");
     const shuttle = page.getByTestId("shuttle-route-explorer");
     await expect(shuttle.getByText(/내 출발지에서 하이원.*까지/)).toBeVisible();

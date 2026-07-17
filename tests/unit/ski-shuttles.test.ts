@@ -32,6 +32,13 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "인덕원").map(route => route.id)).toEqual(["wellihilli-kd-anyang"]);
   });
 
+  it("covers only O2's current official Taebaek Station connection", () => {
+    const routes = getSkiShuttleRoutes("o2");
+    expect(routes.map(route => route.id)).toEqual(["o2-taebaek-station"]);
+    expect(routes[0]).toMatchObject({ operator: "오투리조트", returnTime: "12:45 / 21:50", dataStatus: "confirmed_25_26" });
+    expect(searchShuttleRoutes(routes, "태백역").map(route => route.id)).toEqual(["o2-taebaek-station"]);
+  });
+
   it("finds routes by city and stop name", () => {
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "동래").map(route => route.id)).toEqual(["eunsung-busan"]);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "수원").map(route => route.id)).toContain("kd-suwon");

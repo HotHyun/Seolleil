@@ -42,6 +42,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.jisanresort.co.kr/",
     liftTicketUrl: "https://www.jisanresort.co.kr/",
     rentalUrl: "https://www.jisanresort.co.kr/m/ski/use/rental.asp",
+    shuttleUrl: "https://jisan.allthatlimo.net/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%A7%80%EC%82%B0%ED%8F%AC%EB%A0%88%EC%8A%A4%ED%8A%B8%EB%A6%AC%EC%A1%B0%ED%8A%B8",
       kakao: "https://map.kakao.com/link/search/%EC%A7%80%EC%82%B0%ED%8F%AC%EB%A0%88%EC%8A%A4%ED%8A%B8%EB%A6%AC%EC%A1%B0%ED%8A%B8"

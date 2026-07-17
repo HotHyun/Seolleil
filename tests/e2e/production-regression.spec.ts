@@ -41,6 +41,13 @@ test.describe("production regression", () => {
     await expect(page.getByRole("heading", { name: "퇴근 후에도 닿는 수도권 스키" })).toBeVisible();
     await expect(page.getByRole("link", { name: /곤지암리조트으로 트립 만들기/ })).toBeVisible();
 
+    await page.goto("/resorts/jisan");
+    const jisanShuttle = page.getByTestId("shuttle-route-explorer");
+    await jisanShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("종합운동장");
+    await jisanShuttle.getByRole("button", { name: /잠실선/ }).click();
+    await expect(jisanShuttle.getByText("종합운동장역 1번 출구", { exact: true })).toBeVisible();
+    await expect(jisanShuttle.getByText("서울 · 07:30 / 13:30 출발", { exact: true })).toBeVisible();
+
     await page.goto("/resorts/phoenix");
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
     await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();

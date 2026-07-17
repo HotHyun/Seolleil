@@ -3,6 +3,7 @@ import type { SkiShuttleRoute } from "@/lib/types";
 const checkedAt = "2026-07-17";
 const high1 = "high1";
 const phoenix = "phoenix";
+const jisan = "jisan";
 
 export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
@@ -34,7 +35,9 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   phoenixRoute("phoenix-kd-anyang", "경기", "산본·안양선", "주말 중심 · 서현 합류", [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]),
   phoenixRoute("phoenix-kd-suwon", "경기", "수원·영통선", "매일 운행 중심 · 영통 합류", [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]),
   phoenixRoute("phoenix-kd-ilsan", "경기", "일산선", "주말 중심 · 송내 합류", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
-  phoenixRoute("phoenix-kd-incheon", "인천", "인천·부평선", "주말 중심 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]])
+  phoenixRoute("phoenix-kd-incheon", "인천", "인천·부평선", "주말 중심 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
+  jisanRoute("jisan-cityhall", "서울시청선", "시청역 2번 출구"),
+  jisanRoute("jisan-jamsil", "잠실선", "종합운동장역 1번 출구")
 ];
 
 type StopInput = [city: string, name: string, departureTime?: string];
@@ -47,6 +50,9 @@ function unconfirmed(id: string, region: string, name: string, operator: string,
 function phoenixRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
   return { id, resortId: phoenix, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "휘닉스 스노우파크", priceLabel: "휘닉스 교통시즌권 27.5만원", bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+}
+function jisanRoute(id: string, name: string, stopName: string): SkiShuttleRoute {
+  return { id, resortId: jisan, season: "25/26", operator: "투어윈도우글로벌", operatorPhone: "02-2039-7728", region: "서울", name, operationNote: "25/26 시즌 · 사전 예약 필수", arrivalName: "지산리조트 제1주차장", returnTime: "12:00 / 18:00 선택", priceLabel: "편도 2만원 · 왕복 3.8만원", bookingUrl: "https://jisan.allthatlimo.net/", sourceUrl: "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski", stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime: "07:30 / 13:30" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 
 export function getSkiShuttleRoutes(resortId: string) { return skiShuttleRoutes2526.filter(route => route.resortId === resortId); }

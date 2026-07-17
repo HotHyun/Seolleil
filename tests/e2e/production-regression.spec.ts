@@ -111,7 +111,7 @@ test.describe("production regression", () => {
       await decisions.locator("#lift").getByRole("button", { name: "저장하기" }).click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
       await decisions.locator("#transport").getByRole("combobox").click();
-      await page.getByRole("option", { name: "스키장 셔틀" }).click();
+      await page.getByRole("option", { name: "스키장 제휴 셔틀" }).click();
       await decisions.locator("#transport").getByRole("button", { name: "저장하기" }).click();
       await decisions.getByRole("button", { name: /다른 숙소 직접 입력/ }).click();
       await decisions.getByLabel("숙소 이름").fill("Playwright 테스트 숙소");

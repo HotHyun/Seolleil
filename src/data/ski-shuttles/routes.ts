@@ -129,10 +129,3 @@ function vivaldiRoutes(): SkiShuttleRoute[] {
     { id: "vivaldi-jamsil", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "종합운동장 직행선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", bookingUrl, sourceUrl, stops: [{ id: "vivaldi-jamsil-1", city: "서울", name: "종합운동장역" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt }
   ];
 }
-
-export function getSkiShuttleRoutes(resortId: string) { return skiShuttleRoutes2526.filter(route => route.resortId === resortId); }
-export function getShuttleRegions(routes: SkiShuttleRoute[]) { return [...new Set(routes.map(route => route.region))]; }
-export function searchShuttleRoutes(routes: SkiShuttleRoute[], query: string, region = "all") {
-  const normalized = query.trim().toLocaleLowerCase("ko-KR");
-  return routes.filter(route => (region === "all" || route.region === region) && (!normalized || [route.name, route.operator, route.region, ...route.stops.flatMap(stop => [stop.city, stop.name])].some(value => value.toLocaleLowerCase("ko-KR").includes(normalized))));
-}

@@ -1,0 +1,23 @@
+import type { SkiShuttleRoute } from "@/lib/types";
+import type { SkiResort } from "@/lib/types";
+
+export type ShuttleCoverageStatus = "confirmed_schedule" | "needs_recheck" | "no_affiliate_service";
+
+export type SkiShuttleCoverage = {
+  resortId: string;
+  season: "25/26";
+  status: ShuttleCoverageStatus;
+  confirmedRouteCount: number;
+  recheckRouteCount: number;
+  officialTransportUrl?: string;
+  lastCheckedAt: string;
+};
+
+const noAffiliateServiceResortIds = new Set(["konjiam", "muju"]);
+
+export function getSkiShuttleCoverage(resort: Pick<SkiResort, "id" | "shuttleUrl" | "lastCheckedAt">, routes: SkiShuttleRoute[]): SkiShuttleCoverage {
+  const confirmedRouteCount = routes.filter(route => route.dataStatus === "confirmed_25_26").length;
+  const recheckRouteCount = routes.length - confirmedRouteCount;
+  const status = noAffiliateServiceResortIds.has(resort.id) ? "no_affiliate_service" : recheckRouteCount > 0 ? "needs_recheck" : "confirmed_schedule";
+  return { resortId: resort.id, season: "25/26", status, confirmedRouteCount, recheckRouteCount, officialTransportUrl: resort.shuttleUrl, lastCheckedAt: routes[0]?.lastCheckedAt ?? resort.lastCheckedAt };
+}

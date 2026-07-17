@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { buildDefaultTasks, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
-import { getSkiShuttleRoutes } from "@/data/ski-shuttles-25-26";
+import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";

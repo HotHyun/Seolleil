@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { getShuttleRegions, getSkiShuttleRoutes, searchShuttleRoutes, skiShuttleRoutes2526 } from "@/data/ski-shuttles-25-26";
+import { getShuttleRegions, getSkiShuttleCoverage, getSkiShuttleRoutes, searchShuttleRoutes, skiShuttleOperators, skiShuttleRoutes2526, skiShuttleSeasons, skiShuttleStops } from "@/data/ski-shuttles";
+import { resorts } from "@/data/resorts";
 
 describe("25/26 ski shuttle data", () => {
   it("covers the confirmed High1 operating networks", () => {
@@ -81,6 +82,27 @@ describe("25/26 ski shuttle data", () => {
   it("does not invent public 25/26 affiliate routes for Muju or Konjiam", () => {
     expect(getSkiShuttleRoutes("muju")).toEqual([]);
     expect(getSkiShuttleRoutes("konjiam")).toEqual([]);
+  });
+
+  it("builds normalized season, operator, and stop catalogs from the route source", () => {
+    expect(skiShuttleSeasons).toEqual(["25/26"]);
+    expect(skiShuttleOperators.find(operator => operator.name === "대원관광")?.resortIds).toEqual(expect.arrayContaining(["high1", "phoenix", "wellihilli", "alpensia", "yongpyong"]));
+    expect(skiShuttleStops).toHaveLength(skiShuttleRoutes2526.reduce((count, route) => count + route.stops.length, 0));
+    expect(skiShuttleStops.find(stop => stop.name === "동래역 3번 출구")).toMatchObject({ resortId: "high1", season: "25/26" });
+  });
+
+  it("summarizes confirmed, recheck, and no-service coverage explicitly", () => {
+    const high1Routes = getSkiShuttleRoutes("high1");
+    expect(getSkiShuttleCoverage({ id: "high1", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, high1Routes)).toMatchObject({ status: "needs_recheck", confirmedRouteCount: 16, recheckRouteCount: 2 });
+    expect(getSkiShuttleCoverage({ id: "jisan", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, getSkiShuttleRoutes("jisan"))).toMatchObject({ status: "confirmed_schedule", confirmedRouteCount: 2, recheckRouteCount: 0 });
+    expect(getSkiShuttleCoverage({ id: "muju", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, [])).toMatchObject({ status: "no_affiliate_service", confirmedRouteCount: 0, recheckRouteCount: 0 });
+  });
+
+  it("assigns an explicit shuttle coverage state to every registered resort", () => {
+    const coverage = resorts.map(resort => getSkiShuttleCoverage(resort, getSkiShuttleRoutes(resort.id)));
+    expect(coverage).toHaveLength(resorts.length);
+    expect(coverage.filter(item => item.status === "no_affiliate_service").map(item => item.resortId)).toEqual(["konjiam", "muju"]);
+    expect(coverage.every(item => item.status === "no_affiliate_service" || item.confirmedRouteCount + item.recheckRouteCount > 0)).toBe(true);
   });
 
   it("finds routes by city and stop name", () => {

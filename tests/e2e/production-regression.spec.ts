@@ -40,6 +40,16 @@ test.describe("production regression", () => {
     await page.goto("/resorts/konjiam");
     await expect(page.getByRole("heading", { name: "퇴근 후에도 닿는 수도권 스키" })).toBeVisible();
     await expect(page.getByRole("link", { name: /곤지암리조트으로 트립 만들기/ })).toBeVisible();
+    const konjiamCoverage = page.getByTestId("shuttle-coverage");
+    await expect(konjiamCoverage.getByText("확인된 25/26 제휴 셔틀 없음", { exact: true })).toBeVisible();
+    await expect(konjiamCoverage.getByText("운행 없음", { exact: true })).toBeVisible();
+    await expect(konjiamCoverage.getByRole("link", { name: /공식 교통 안내/ })).toHaveAttribute("href", /konjiamresort\.co\.kr/);
+
+    await page.goto("/resorts/muju");
+    const mujuCoverage = page.getByTestId("shuttle-coverage");
+    await expect(mujuCoverage.getByText("확인된 25/26 제휴 셔틀 없음", { exact: true })).toBeVisible();
+    await expect(mujuCoverage.getByRole("link", { name: /공식 교통 안내/ })).toHaveAttribute("href", /way_search\.asp/);
+    await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/jisan");
     const jisanShuttle = page.getByTestId("shuttle-route-explorer");

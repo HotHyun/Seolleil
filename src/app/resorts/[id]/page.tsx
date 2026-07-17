@@ -53,8 +53,8 @@ export default async function ResortDetailPage({ params }: PageProps) {
         {story.bestFor.map((item) => <div key={item} className="rounded-2xl border bg-card p-5"><Sparkles className="h-5 w-5 text-primary" /><p className="mt-3 font-black">{item}</p></div>)}
       </section>
 
-      <div className="mt-10 grid gap-6 lg:grid-cols-[1fr_340px]">
-        <div className="space-y-6">
+      <div className="mt-10 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="min-w-0 space-y-6">
           <section className="grid gap-4 sm:grid-cols-2">
             <StoryCard icon={<Route />} title="코스는 이렇게 살펴보세요" description={story.courseNote} action={<ExternalTextLink href={resort.slopeStatusUrl} label="공식 코스·운영 현황" resortId={resort.id} type="course_guide" />} />
             <StoryCard icon={<Eye />} title="이곳에서 만나는 풍경" description={story.sceneryNote} action={<ExternalTextLink href={resort.officialUrl} label="공식 소개 더 보기" resortId={resort.id} type="resort_story" />} />
@@ -66,7 +66,7 @@ export default async function ResortDetailPage({ params }: PageProps) {
           {shuttleRoutes.length ? <Card><CardHeader><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-black tracking-[0.14em] text-primary">SKI SHUTTLE</p><CardTitle className="mt-2">차 없이 하이원 가는 법</CardTitle></div><BusFront className="h-6 w-6 text-primary" /></div></CardHeader><CardContent><ShuttleRouteExplorer routes={shuttleRoutes} /></CardContent></Card> : null}
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start"><Card className="border-primary/25"><CardHeader><CardTitle>이 여행을 구체화할까요?</CardTitle></CardHeader><CardContent><p className="mb-5 text-sm leading-6 text-muted-foreground">날짜와 인원만 정하면 예상 비용과 준비 체크리스트가 만들어져요.</p><div className="grid gap-3"><Link href={`/plan?resortId=${resort.id}`} className="block"><Button className="w-full justify-between">트립 만들기 <ArrowRight className="h-4 w-4" /></Button></Link><ExternalButton href={resort.liftTicketUrl} label="공식 리프트권" resortId={resort.id} type="lift_ticket" /><ExternalButton href={resort.rentalUrl} label="공식 렌탈" resortId={resort.id} type="rental" /><ExternalButton href={resort.lodgingUrl} label="공식 숙박" resortId={resort.id} type="lodging" /><ExternalButton href={resort.mapLinks.kakao ?? resort.mapLinks.naver} label="외부 지도에서 보기" resortId={resort.id} type="external_map" /></div></CardContent></Card></aside>
+        <aside className="min-w-0 space-y-4 lg:sticky lg:top-24 lg:self-start"><Card className="border-primary/25"><CardHeader><CardTitle>이 여행을 구체화할까요?</CardTitle></CardHeader><CardContent><p className="mb-5 text-sm leading-6 text-muted-foreground">날짜와 인원만 정하면 예상 비용과 준비 체크리스트가 만들어져요.</p><div className="grid gap-3"><Link href={`/plan?resortId=${resort.id}`} className="block"><Button className="w-full justify-between">트립 만들기 <ArrowRight className="h-4 w-4" /></Button></Link><ExternalButton href={resort.liftTicketUrl} label="공식 리프트권" resortId={resort.id} type="lift_ticket" /><ExternalButton href={resort.rentalUrl} label="공식 렌탈" resortId={resort.id} type="rental" /><ExternalButton href={resort.lodgingUrl} label="공식 숙박" resortId={resort.id} type="lodging" /><ExternalButton href={resort.mapLinks.kakao ?? resort.mapLinks.naver} label="외부 지도에서 보기" resortId={resort.id} type="external_map" /></div></CardContent></Card></aside>
       </div>
     </div>
   </main>;

@@ -18,8 +18,12 @@ const { chromium } = require('@playwright/test');
   await explorer.getByRole('button', { name: /수원·영통선/ }).click();
   const stopVisible = await explorer.getByText('수원역', { exact: true }).isVisible();
   const overflow = await page.evaluate(() => Math.max(0, document.documentElement.scrollWidth - window.innerWidth));
-  if (!stopVisible || overflow > 2 || consoleErrors.length || pageErrors.length) throw new Error(JSON.stringify({ stopVisible, overflow, consoleErrors, pageErrors }));
-  const result = { url: page.url(), stopVisible, overflow, consoleErrors, pageErrors };
+  const offenders = await page.evaluate(() => [...document.querySelectorAll('*')].map(element => {
+    const rect = element.getBoundingClientRect();
+    return { tag: element.tagName, className: String(element.className).slice(0, 180), text: (element.textContent || '').trim().slice(0, 80), left: Math.round(rect.left), right: Math.round(rect.right), width: Math.round(rect.width), scrollWidth: element.scrollWidth };
+  }).filter(item => item.right > window.innerWidth + 2 || item.left < -2).sort((a, b) => b.right - a.right).slice(0, 12));
+  if (!stopVisible || overflow > 2 || consoleErrors.length || pageErrors.length) throw new Error(JSON.stringify({ stopVisible, overflow, offenders, consoleErrors, pageErrors }));
+  const result = { url: page.url(), stopVisible, overflow, offenders, consoleErrors, pageErrors };
 
   console.log(JSON.stringify(result, null, 2));
   await browser.close();

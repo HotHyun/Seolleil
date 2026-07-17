@@ -39,6 +39,14 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "태백역").map(route => route.id)).toEqual(["o2-taebaek-station"]);
   });
 
+  it("covers Oak Valley's free weekend Wonju connection", () => {
+    const routes = getSkiShuttleRoutes("oakvalley");
+    expect(routes.map(route => route.id)).toEqual(["oakvalley-wonju-weekend"]);
+    expect(routes[0]).toMatchObject({ operator: "오크밸리", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀" });
+    expect(routes[0].stops).toHaveLength(3);
+    expect(searchShuttleRoutes(routes, "만종역").map(route => route.id)).toEqual(["oakvalley-wonju-weekend"]);
+  });
+
   it("finds routes by city and stop name", () => {
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "동래").map(route => route.id)).toEqual(["eunsung-busan"]);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "수원").map(route => route.id)).toContain("kd-suwon");

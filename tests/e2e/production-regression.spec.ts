@@ -74,6 +74,14 @@ test.describe("production regression", () => {
     await expect(o2Shuttle.getByText("태백 · 09:00 / 12:55 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
+    await page.goto("/resorts/oakvalley");
+    const oakvalleyShuttle = page.getByTestId("shuttle-route-explorer");
+    await oakvalleyShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("만종역");
+    await oakvalleyShuttle.getByRole("button", { name: /원주시내 주말 고객 셔틀/ }).click();
+    await expect(oakvalleyShuttle.getByText("만종역", { exact: true })).toBeVisible();
+    await expect(oakvalleyShuttle.getByText("원주 · 08:20 / 16:10 출발", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
     await page.goto("/resorts/high1");
     const shuttle = page.getByTestId("shuttle-route-explorer");
     await expect(shuttle.getByText(/내 출발지에서 하이원.*까지/)).toBeVisible();

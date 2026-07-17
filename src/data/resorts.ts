@@ -235,6 +235,7 @@ export const resorts: SkiResort[] = [
     liftTicketUrl: "https://www.oakvalley.co.kr/",
     rentalUrl: "https://www.oakvalley.co.kr/",
     lodgingUrl: "https://www.oakvalley.co.kr/",
+    shuttleUrl: "https://www.oakvalley.co.kr/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC",
       kakao: "https://map.kakao.com/link/search/%EC%98%A4%ED%81%AC%EB%B0%B8%EB%A6%AC"

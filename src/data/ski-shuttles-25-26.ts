@@ -6,6 +6,7 @@ const phoenix = "phoenix";
 const jisan = "jisan";
 const wellihilli = "wellihilli";
 const o2 = "o2";
+const oakvalley = "oakvalley";
 
 export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
@@ -52,7 +53,8 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   wellihilliRoute("wellihilli-kd-suwon", "경기", "수원·영통선", "경기권 주말 운행 · 영통 합류", [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]),
   wellihilliRoute("wellihilli-kd-ilsan", "경기", "일산선", "경기권 주말 운행 · 송내 합류", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
   wellihilliRoute("wellihilli-kd-incheon", "인천", "인천·부평선", "경기권 주말 운행 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
-  o2Route()
+  o2Route(),
+  oakvalleyRoute()
 ];
 
 type StopInput = [city: string, name: string, departureTime?: string];
@@ -76,6 +78,11 @@ function wellihilliRoute(id: string, region: string, name: string, operationNote
 function o2Route(): SkiShuttleRoute {
   const url = "https://www.o2resort.com/mobile/traffic";
   return { id: "o2-taebaek-station", resortId: o2, season: "25/26", operator: "오투리조트", region: "강원 태백", name: "태백역 연계선", operationNote: "공식 동계 구내셔틀 · 야간편은 야간 스키 운영일만 운행", arrivalName: "오투리조트 스키하우스", returnTime: "12:45 / 21:50", bookingUrl: url, sourceUrl: url, stops: [{ id: "o2-taebaek-station-1", city: "태백", name: "태백역 앞 시티투어 버스정류장", departureTime: "09:00 / 12:55" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+}
+function oakvalleyRoute(): SkiShuttleRoute {
+  const bookingUrl = "https://www.oakvalley.co.kr/";
+  const sourceUrl = "https://japanese.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=250737";
+  return { id: "oakvalley-wonju-weekend", resortId: oakvalley, season: "25/26", operator: "오크밸리", region: "강원 원주", name: "원주시내 주말 고객 셔틀", operationNote: "토·일 무료 운행 · 2026년 2월 22일까지", arrivalName: "오크밸리 스키장", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀", bookingUrl, sourceUrl, stops: [["원주","원주역","08:00 / 15:50"],["원주","원주종합버스터미널","08:10 / 16:00"],["원주","만종역","08:20 / 16:10"]].map(([city, name, departureTime], index) => ({ id: `oakvalley-wonju-weekend-${index + 1}`, city, name, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 
 export function getSkiShuttleRoutes(resortId: string) { return skiShuttleRoutes2526.filter(route => route.resortId === resortId); }

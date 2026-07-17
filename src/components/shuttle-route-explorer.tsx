@@ -7,9 +7,9 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { getShuttleRegions, searchShuttleRoutes } from "@/data/ski-shuttles-25-26";
 import type { SkiShuttleRoute } from "@/lib/types";
 
-type ExplorerProps = { routes: SkiShuttleRoute[]; compact?: boolean; selectedRouteId?: string | null; selectedStopId?: string | null; access?: { name: string; value: string }; saveAction?: (data: FormData) => void | Promise<void>; canEdit?: boolean };
+type ExplorerProps = { routes: SkiShuttleRoute[]; destinationName?: string; compact?: boolean; selectedRouteId?: string | null; selectedStopId?: string | null; access?: { name: string; value: string }; saveAction?: (data: FormData) => void | Promise<void>; canEdit?: boolean };
 
-export function ShuttleRouteExplorer({ routes, compact = false, selectedRouteId, selectedStopId, access, saveAction, canEdit = false }: ExplorerProps) {
+export function ShuttleRouteExplorer({ routes, destinationName, compact = false, selectedRouteId, selectedStopId, access, saveAction, canEdit = false }: ExplorerProps) {
   const regions = useMemo(() => getShuttleRegions(routes), [routes]);
   const [region, setRegion] = useState("all");
   const [query, setQuery] = useState("");
@@ -19,7 +19,7 @@ export function ShuttleRouteExplorer({ routes, compact = false, selectedRouteId,
 
   return <div className="min-w-0 max-w-full space-y-4" data-testid="shuttle-route-explorer">
     <div className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-sky-500/20 bg-[linear-gradient(135deg,hsl(var(--card)),hsl(var(--primary)/.08))] p-4 sm:p-5">
-      <div className="flex items-start gap-3"><span className="rounded-xl bg-sky-500/15 p-2.5 text-sky-700 dark:text-sky-300"><BusFront className="h-5 w-5" /></span><div><div className="flex flex-wrap items-center gap-2"><p className="font-black">내 출발지에서 하이원까지</p><span className="rounded-full bg-amber-500/15 px-2 py-1 text-[10px] font-black text-amber-800 dark:text-amber-200">25/26 종료 시즌</span></div><p className="mt-1 text-sm leading-6 text-muted-foreground">도시나 역 이름을 찾으면 제휴 운행사와 새벽 탑승 순서를 바로 볼 수 있어요. 다음 시즌에는 반드시 운영사 원문을 다시 확인하세요.</p></div></div>
+      <div className="flex items-start gap-3"><span className="rounded-xl bg-sky-500/15 p-2.5 text-sky-700 dark:text-sky-300"><BusFront className="h-5 w-5" /></span><div><div className="flex flex-wrap items-center gap-2"><p className="font-black">내 출발지에서 {destinationName ?? routes[0]?.arrivalName ?? "스키장"}까지</p><span className="rounded-full bg-amber-500/15 px-2 py-1 text-[10px] font-black text-amber-800 dark:text-amber-200">25/26 종료 시즌</span></div><p className="mt-1 text-sm leading-6 text-muted-foreground">도시나 역 이름을 찾으면 제휴 운행사와 새벽 탑승 순서를 바로 볼 수 있어요. 다음 시즌에는 반드시 운영사 원문을 다시 확인하세요.</p></div></div>
       <label className="relative mt-4 block"><span className="sr-only">출발 도시 또는 정류장 검색</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={event => { setQuery(event.target.value); setSelectedId(null); }} placeholder="예: 수원, 동래역, 전주" className="h-12 w-full rounded-xl border bg-background pl-10 pr-3 text-sm font-bold outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" /></label>
       <div className="mt-3 flex max-w-full gap-2 overflow-x-auto pb-1" aria-label="셔틀 권역 필터"><Filter active={region === "all"} onClick={() => { setRegion("all"); setSelectedId(null); }}>전국</Filter>{regions.map(item => <Filter key={item} active={region === item} onClick={() => { setRegion(item); setSelectedId(null); }}>{item}</Filter>)}</div>
     </div>

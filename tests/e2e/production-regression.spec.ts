@@ -44,11 +44,16 @@ test.describe("production regression", () => {
     await page.goto("/resorts/phoenix");
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
     await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();
+    const phoenixShuttle = page.getByTestId("shuttle-route-explorer");
+    await phoenixShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("수원");
+    await phoenixShuttle.getByRole("button", { name: /수원·영통선/ }).click();
+    await expect(phoenixShuttle.getByText("수원역", { exact: true })).toBeVisible();
+    await expect(phoenixShuttle.getByText("수원 · 06:20 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/high1");
     const shuttle = page.getByTestId("shuttle-route-explorer");
-    await expect(shuttle.getByText("내 출발지에서 하이원까지")).toBeVisible();
+    await expect(shuttle.getByText(/내 출발지에서 하이원.*까지/)).toBeVisible();
     await shuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("동래");
     await shuttle.getByRole("button", { name: /부산·서마산선/ }).click();
     await expect(shuttle.getByText("동래역 3번 출구", { exact: true })).toBeVisible();

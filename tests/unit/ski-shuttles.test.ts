@@ -9,6 +9,14 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.every(route => route.sourceUrl && route.bookingUrl && route.stops.length > 0)).toBe(true);
   });
 
+  it("covers the confirmed Phoenix Seoul and Gyeonggi network", () => {
+    const routes = getSkiShuttleRoutes("phoenix");
+    expect(routes).toHaveLength(12);
+    expect(new Set(routes.map(route => route.operator))).toEqual(new Set(["대원관광"]));
+    expect(routes.every(route => route.dataStatus === "confirmed_25_26" && route.priceLabel === "휘닉스 교통시즌권 27.5만원")).toBe(true);
+    expect(searchShuttleRoutes(routes, "수원").map(route => route.id)).toContain("phoenix-kd-suwon");
+  });
+
   it("finds routes by city and stop name", () => {
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "동래").map(route => route.id)).toEqual(["eunsung-busan"]);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "수원").map(route => route.id)).toContain("kd-suwon");

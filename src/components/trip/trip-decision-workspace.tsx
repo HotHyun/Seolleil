@@ -6,12 +6,14 @@ import { BedDouble, BusFront, Car, Check, Clock3, ExternalLink, MapPin, Shirt, S
 import { updateTripDecisionSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
+import { ShuttleRouteExplorer } from "@/components/shuttle-route-explorer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import type { NearbyLodging } from "@/data/resort-map";
+import { getSkiShuttleRoutes } from "@/data/ski-shuttles-25-26";
 import type { RentalPriceRule, RentalShop } from "@/lib/types";
 import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/rental-comparison";
 import { formatCurrency } from "@/lib/utils";
@@ -32,6 +34,7 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
   const filtered = useMemo(() => sortRentalComparisonGroups(rentalGroups
     .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, trip.selectedRentalShopId), [filter, rentalGroups, sort, trip.selectedRentalShopId]);
   const selectedLodging = lodgingOptions.find(item => item.id === lodgingId);
+  const shuttleRoutes = useMemo(() => getSkiShuttleRoutes(trip.resortId), [trip.resortId]);
   const selectRentalFromMap = useCallback((id: string) => {
     setRentalId(id);
     window.requestAnimationFrame(() => {
@@ -65,7 +68,7 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
 
     <div className="grid gap-5 xl:grid-cols-2">
       <DecisionSection id="lift" title="리프트권" description="이용 시간을 먼저 정하고 공식 판매 조건을 확인하세요." icon={<Clock3 />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift" /><SelectField name="liftTicketTimeSlot" ariaLabel="리프트권 시간" defaultValue={trip.liftTicketTimeSlot} options={[{value:"2h",label:"2시간권"},{value:"3h",label:"3시간권"},{value:"4h",label:"4시간권"},{value:"6h",label:"6시간권"},{value:"night",label:"야간권"},{value:"full_day",label:"종일권"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></DecisionSection>
-      <DecisionSection id="transport" title="교통" description="이동 방식을 저장하고 셔틀은 공식 노선을 확인하세요." icon={trip.transportType === "car" ? <Car /> : <BusFront />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="transport" /><SelectField name="transportType" ariaLabel="교통수단" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"스키장 셔틀"},{value:"bus",label:"고속·시외버스"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}{shuttleUrl ? <ExternalButton href={shuttleUrl}>셔틀 노선 확인</ExternalButton> : null}</div></form></DecisionSection>
+      <DecisionSection id="transport" title="교통" description="이동 방식을 저장하고 내 출발지와 가까운 제휴 셔틀을 찾아보세요." icon={trip.transportType === "car" ? <Car /> : <BusFront />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="transport" /><SelectField name="transportType" ariaLabel="교통수단" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"스키장 제휴 셔틀"},{value:"bus",label:"고속·시외버스"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}{shuttleUrl && shuttleRoutes.length === 0 ? <ExternalButton href={shuttleUrl}>셔틀 노선 확인</ExternalButton> : null}</div></form>{shuttleRoutes.length ? <div className="mt-4 border-t pt-4"><ShuttleRouteExplorer routes={shuttleRoutes} compact /></div> : null}</DecisionSection>
     </div>
 
     <DecisionSection id="lodging" title="공식 숙소 비교" description="리조트 공식 숙소의 위치를 비교하고, 실제 확인한 숙박비를 직접 입력하세요." icon={<BedDouble />}>

@@ -8,6 +8,33 @@ export type OperationStatus =
 export type SkillLevel = "first_time" | "beginner" | "intermediate" | "advanced";
 export type RideType = "ski" | "snowboard";
 export type TransportType = "car" | "shuttle" | "bus";
+export type ShuttleDataStatus = "confirmed_25_26" | "route_only_25_26";
+
+export type SkiShuttleStop = {
+  id: string;
+  city: string;
+  name: string;
+  departureTime?: string;
+};
+
+export type SkiShuttleRoute = {
+  id: string;
+  resortId: string;
+  season: string;
+  operator: string;
+  operatorPhone?: string;
+  region: string;
+  name: string;
+  operationNote: string;
+  arrivalName: string;
+  returnTime?: string;
+  priceLabel?: string;
+  bookingUrl: string;
+  sourceUrl: string;
+  stops: SkiShuttleStop[];
+  dataStatus: ShuttleDataStatus;
+  lastCheckedAt: string;
+};
 export type TripDuration = "same_day" | "overnight";
 export type Priority =
   | "close"

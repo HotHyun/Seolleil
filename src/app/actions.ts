@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { buildDefaultTasks, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
+import { getSkiShuttleRoutes } from "@/data/ski-shuttles-25-26";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
@@ -474,6 +475,16 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       if (!["car", "shuttle", "bus"].includes(value)) throw new AppError("INVALID_INPUT", "교통수단을 다시 선택해 주세요.");
       patch.transportType = value as TripInput["transportType"];
       taskCategory = "transport";
+    } else if (decision === "shuttle") {
+      const routeId = String(formData.get("shuttleRouteId") ?? "");
+      const stopId = String(formData.get("shuttleStopId") ?? "");
+      const route = getSkiShuttleRoutes(trip.resortId).find(item => item.id === routeId);
+      const stop = route?.stops.find(item => item.id === stopId);
+      if (!route || !stop) throw new AppError("INVALID_INPUT", "선택한 셔틀 노선과 정류장을 다시 확인해 주세요.");
+      patch.transportType = "shuttle";
+      patch.shuttleRouteId = route.id;
+      patch.shuttleStopId = stop.id;
+      taskCategory = "transport";
     } else if (decision === "lodging") {
       const lodgingName = String(formData.get("lodgingName") ?? "").trim().slice(0, 120);
       const lodgingUrl = String(formData.get("lodgingUrl") ?? "").trim();
@@ -494,7 +505,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
     } else {
       throw new AppError("INVALID_INPUT", "저장할 선택 항목을 확인해 주세요.");
     }
-    if (decision !== "lodging" && decision !== "rental_shop") {
+    if (decision !== "lodging" && decision !== "rental_shop" && decision !== "shuttle") {
       const resort = getResort(trip.resortId);
       const selectedRentalOptionId = patch.selectedRentalOptionId === undefined ? trip.selectedRentalOptionId : patch.selectedRentalOptionId;
       const input: TripInput = {

@@ -73,6 +73,8 @@ String attributes:
 - `skillLevel`, required, size 32.
 - `rideType`, required, size 32.
 - `transportType`, required, size 32.
+- `shuttleRouteId`, optional, size 128.
+- `shuttleStopId`, optional, size 128.
 - `tripDuration`, required, size 32.
 - `liftTicketTimeSlot`, required, size 32.
 - `selectedRentalShopId`, optional, size 128.

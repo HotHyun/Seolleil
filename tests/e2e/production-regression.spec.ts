@@ -45,6 +45,16 @@ test.describe("production regression", () => {
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
     await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();
     await expectNoHorizontalOverflow(page);
+
+    await page.goto("/resorts/high1");
+    const shuttle = page.getByTestId("shuttle-route-explorer");
+    await expect(shuttle.getByText("내 출발지에서 하이원까지")).toBeVisible();
+    await shuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("동래");
+    await shuttle.getByRole("button", { name: /부산·서마산선/ }).click();
+    await expect(shuttle.getByText("동래역 3번 출구", { exact: true })).toBeVisible();
+    await expect(shuttle.getByText("부산 · 04:00 출발", { exact: true })).toBeVisible();
+    await expect(shuttle.getByRole("link", { name: /운영사 예약·원문 확인/ })).toHaveAttribute("href", /es365\.co\.kr/);
+    await expectNoHorizontalOverflow(page);
     expect(pageErrors, `Page errors: ${pageErrors.join("\n")}`).toEqual([]);
     expect(consoleErrors, `Console errors: ${consoleErrors.join("\n")}`).toEqual([]);
   });

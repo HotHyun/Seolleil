@@ -38,6 +38,8 @@ export type TripRecord = {
   skillLevel: SkillLevel;
   rideType: RideType;
   transportType: TransportType;
+  shuttleRouteId: string | null;
+  shuttleStopId: string | null;
   tripDuration: TripDuration;
   ownsEquipment: boolean;
   ownsClothing: boolean;
@@ -61,7 +63,9 @@ export type TripRecord = {
   tasks: TripTaskRecord[];
 };
 
-export type TripCreateInput = Omit<TripRecord, "id" | "createdAt" | "updatedAt" | "tasks"> & {
+export type TripCreateInput = Omit<TripRecord, "id" | "createdAt" | "updatedAt" | "tasks" | "shuttleRouteId" | "shuttleStopId"> & {
+  shuttleRouteId?: string | null;
+  shuttleStopId?: string | null;
   tasks: Array<Omit<TripTaskRecord, "id" | "tripId" | "createdAt" | "updatedAt">>;
 };
 
@@ -82,6 +86,8 @@ type TripDocument = {
   skillLevel: SkillLevel;
   rideType: RideType;
   transportType: TransportType;
+  shuttleRouteId?: string | null;
+  shuttleStopId?: string | null;
   tripDuration: TripDuration;
   ownsEquipment: boolean;
   ownsClothing: boolean;
@@ -193,6 +199,8 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     skillLevel: document.skillLevel,
     rideType: document.rideType,
     transportType: document.transportType,
+    shuttleRouteId: document.shuttleRouteId ?? null,
+    shuttleStopId: document.shuttleStopId ?? null,
     tripDuration: document.tripDuration,
     ownsEquipment: document.ownsEquipment,
     ownsClothing: document.ownsClothing,
@@ -259,7 +267,7 @@ export async function createTrip(input: TripCreateInput) {
   return mapTrip(trip, await getTripTasks(trip.$id));
 }
 
-function serializeTrip(input: Omit<TripRecord, "id" | "createdAt" | "updatedAt" | "tasks">): TripDocument {
+function serializeTrip(input: TripCreateInput): TripDocument {
   return {
     userId: input.userId,
     editTokenHash: input.editTokenHash,
@@ -277,6 +285,8 @@ function serializeTrip(input: Omit<TripRecord, "id" | "createdAt" | "updatedAt" 
     skillLevel: input.skillLevel,
     rideType: input.rideType,
     transportType: input.transportType,
+    shuttleRouteId: input.shuttleRouteId,
+    shuttleStopId: input.shuttleStopId,
     tripDuration: input.tripDuration,
     ownsEquipment: input.ownsEquipment,
     ownsClothing: input.ownsClothing,

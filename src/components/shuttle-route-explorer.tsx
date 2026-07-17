@@ -17,15 +17,15 @@ export function ShuttleRouteExplorer({ routes, compact = false, selectedRouteId,
   const filtered = useMemo(() => searchShuttleRoutes(routes, query, region), [query, region, routes]);
   const selected = filtered.find(route => route.id === selectedId) ?? (filtered.length === 1 ? filtered[0] : null);
 
-  return <div className="space-y-4" data-testid="shuttle-route-explorer">
-    <div className="rounded-2xl border border-sky-500/20 bg-[linear-gradient(135deg,hsl(var(--card)),hsl(var(--primary)/.08))] p-4 sm:p-5">
+  return <div className="min-w-0 max-w-full space-y-4" data-testid="shuttle-route-explorer">
+    <div className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-sky-500/20 bg-[linear-gradient(135deg,hsl(var(--card)),hsl(var(--primary)/.08))] p-4 sm:p-5">
       <div className="flex items-start gap-3"><span className="rounded-xl bg-sky-500/15 p-2.5 text-sky-700 dark:text-sky-300"><BusFront className="h-5 w-5" /></span><div><div className="flex flex-wrap items-center gap-2"><p className="font-black">내 출발지에서 하이원까지</p><span className="rounded-full bg-amber-500/15 px-2 py-1 text-[10px] font-black text-amber-800 dark:text-amber-200">25/26 종료 시즌</span></div><p className="mt-1 text-sm leading-6 text-muted-foreground">도시나 역 이름을 찾으면 제휴 운행사와 새벽 탑승 순서를 바로 볼 수 있어요. 다음 시즌에는 반드시 운영사 원문을 다시 확인하세요.</p></div></div>
       <label className="relative mt-4 block"><span className="sr-only">출발 도시 또는 정류장 검색</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={event => { setQuery(event.target.value); setSelectedId(null); }} placeholder="예: 수원, 동래역, 전주" className="h-12 w-full rounded-xl border bg-background pl-10 pr-3 text-sm font-bold outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" /></label>
-      <div className="mt-3 flex gap-2 overflow-x-auto pb-1" aria-label="셔틀 권역 필터"><Filter active={region === "all"} onClick={() => { setRegion("all"); setSelectedId(null); }}>전국</Filter>{regions.map(item => <Filter key={item} active={region === item} onClick={() => { setRegion(item); setSelectedId(null); }}>{item}</Filter>)}</div>
+      <div className="mt-3 flex max-w-full gap-2 overflow-x-auto pb-1" aria-label="셔틀 권역 필터"><Filter active={region === "all"} onClick={() => { setRegion("all"); setSelectedId(null); }}>전국</Filter>{regions.map(item => <Filter key={item} active={region === item} onClick={() => { setRegion(item); setSelectedId(null); }}>{item}</Filter>)}</div>
     </div>
 
-    <div className={compact ? "grid gap-3" : "grid gap-3 lg:grid-cols-[minmax(250px,.72fr)_minmax(0,1.28fr)]"}>
-      <div className={compact ? "flex gap-2 overflow-x-auto pb-1" : "space-y-2 lg:max-h-[520px] lg:overflow-y-auto lg:pr-1"} aria-label="검색된 셔틀 노선">
+    <div className={compact ? "grid min-w-0 gap-3" : "grid min-w-0 gap-3 lg:grid-cols-[minmax(250px,.72fr)_minmax(0,1.28fr)]"}>
+      <div className={compact ? "flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1" : "min-w-0 space-y-2 lg:max-h-[520px] lg:overflow-y-auto lg:pr-1"} aria-label="검색된 셔틀 노선">
         {filtered.map(route => <button key={route.id} type="button" onClick={() => setSelectedId(route.id)} className={`${compact ? "min-w-[250px]" : "w-full"} rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${selected?.id === route.id ? "border-primary bg-primary/5 shadow-sm" : "bg-card hover:border-primary/40 hover:bg-muted/40"}`}><span className="flex items-start justify-between gap-3"><span><span className="block text-[11px] font-black tracking-[0.08em] text-primary">{route.region}</span><span className="mt-1 block font-black">{route.name}</span><span className="mt-1 block text-xs text-muted-foreground">{route.operator} · 정류장 {route.stops.length}곳</span></span><ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" /></span></button>)}
         {filtered.length === 0 ? <div className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">25/26 제휴 노선에서 찾지 못했어요.<br />다른 도시명이나 가까운 광역시를 검색해 보세요.</div> : null}
       </div>

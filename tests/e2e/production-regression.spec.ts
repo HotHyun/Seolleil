@@ -58,6 +58,37 @@ test.describe("production regression", () => {
     await expect(phoenixShuttle.getByText("수원 · 06:20 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
+    await page.goto("/resorts/edenvalley");
+    const edenShuttle = page.getByTestId("shuttle-route-explorer");
+    await edenShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("반월당");
+    await edenShuttle.getByRole("button", { name: /대구 도심 왕복 스키투어 셔틀/ }).click();
+    await expect(edenShuttle.getByText("반월당역 21번 출구", { exact: true })).toBeVisible();
+    await expect(edenShuttle.getByText("대구 · 08:30 출발", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
+    await page.goto("/resorts/alpensia");
+    const alpensiaShuttle = page.getByTestId("shuttle-route-explorer");
+    await alpensiaShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("인덕원");
+    await alpensiaShuttle.getByRole("button", { name: /산본·안양선/ }).click();
+    await expect(alpensiaShuttle.getByText("인덕원역", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
+    await page.goto("/resorts/vivaldi");
+    const vivaldiShuttle = page.getByTestId("shuttle-route-explorer");
+    await vivaldiShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("건대입구");
+    await vivaldiShuttle.getByRole("button", { name: /홍대·동대문·건대선/ }).click();
+    await expect(vivaldiShuttle.getByText("건대입구역", { exact: true })).toBeVisible();
+    await expect(vivaldiShuttle.getByText("25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
+    await page.goto("/resorts/yongpyong");
+    const yongpyongShuttle = page.getByTestId("shuttle-route-explorer");
+    await yongpyongShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("수원역");
+    await yongpyongShuttle.getByRole("button", { name: /수원·영통선/ }).click();
+    await expect(yongpyongShuttle.getByText("수원역", { exact: true })).toBeVisible();
+    await expect(yongpyongShuttle.getByText("수원 · 06:20 출발", { exact: true })).toBeVisible();
+    await expectNoHorizontalOverflow(page);
+
     await page.goto("/resorts/wellihilli");
     const wellihilliShuttle = page.getByTestId("shuttle-route-explorer");
     await wellihilliShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("인덕원");

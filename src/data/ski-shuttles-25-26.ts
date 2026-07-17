@@ -8,6 +8,10 @@ const wellihilli = "wellihilli";
 const o2 = "o2";
 const oakvalley = "oakvalley";
 const elysian = "elysian";
+const edenvalley = "edenvalley";
+const alpensia = "alpensia";
+const vivaldi = "vivaldi";
+const yongpyong = "yongpyong";
 
 export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
@@ -56,7 +60,11 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   wellihilliRoute("wellihilli-kd-incheon", "인천", "인천·부평선", "경기권 주말 운행 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
   o2Route(),
   oakvalleyRoute(),
-  elysianRoute()
+  elysianRoute(),
+  edenvalleyRoute(),
+  ...kdPyeongchangRoutes(alpensia, "알펜시아 스키700"),
+  ...vivaldiRoutes(),
+  ...kdPyeongchangRoutes(yongpyong, "모나용평 드래곤프라자")
 ];
 
 type StopInput = [city: string, name: string, departureTime?: string];
@@ -90,6 +98,36 @@ function elysianRoute(): SkiShuttleRoute {
   const bookingUrl = "https://www.elysian.co.kr/shuttle-bus-reservation";
   const sourceUrl = "https://www.elysian.co.kr/about-gangchon/way-to-come";
   return { id: "elysian-baegyangri", resortId: elysian, season: "25/26", operator: "엘리시안 강촌", operatorPhone: "033-260-2345", region: "강원 춘천", name: "백양리역 무료 순환선", operationNote: "25/26 주말·공휴일 약 20분 간격 · 정확한 시간 재확인", arrivalName: "엘리시안 강촌 리조트", priceLabel: "무료 내부 순환셔틀", bookingUrl, sourceUrl, stops: [{ id: "elysian-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+}
+function edenvalleyRoute(): SkiShuttleRoute {
+  const url = "https://www.kkday.com/ko/product/29058";
+  return { id: "edenvalley-daegu-tour", resortId: edenvalley, season: "25/26", operator: "KKday 제휴 현지 운영사", region: "대구", name: "대구 도심 왕복 스키투어 셔틀", operationNote: "겨울 한정 제휴 상품 · 25/26 판매 종료, 다음 시즌 일정 재확인", arrivalName: "에덴밸리 스키리조트", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진", bookingUrl: url, sourceUrl: url, stops: [["대구","반월당역 21번 출구","08:30"],["대구","동대구역 3번 출구","09:00"]].map(([city, name, departureTime], index) => ({ id: `edenvalley-daegu-tour-${index + 1}`, city, name, departureTime })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+}
+function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleRoute[] {
+  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const specs: [string, string, string, string, StopInput[]][] = [
+    ["sadang","서울","사당·강남선","매일 운행 중심 · 종합운동장 합류",[["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]],
+    ["myeongdong","서울","명동·강남선","매일 운행 중심 · 종합운동장 합류",[["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]]],
+    ["sinchon","서울","홍대·신촌선","성수기 매일, 비수기 주말 중심",[["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]]],
+    ["nowon","서울","노원·광나루선","성수기 매일, 비수기 주말 중심",[["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]]],
+    ["mokdong","서울","강서·목동선","성수기 매일, 비수기 주말 중심",[["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]]],
+    ["sillim","서울","구디·신림선","주말 중심 · 종합운동장 합류",[["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]]],
+    ["cheongnyangni","서울","성신여대·청량리선","토요일 중심 · 종합운동장 합류",[["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]]],
+    ["bundang","경기","수지·분당선","주말 중심 · 서현 합류",[["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]]],
+    ["anyang","경기","산본·안양선","주말 중심 · 서현 합류",[["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]],
+    ["suwon","경기","수원·영통선","매일 운행 중심 · 영통 합류",[["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]],
+    ["ilsan","경기","일산선","주말 중심 · 송내 합류",[["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]],
+    ["incheon","인천","인천·부평선","주말 중심 · 송내 합류",[["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]]
+  ];
+  return specs.map(([suffix, region, name, operationNote, stops]) => ({ id: `${resortId}-kd-${suffix}`, resortId, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName, priceLabel: "용평·알펜시아 교통시즌권 29만원", bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${resortId}-kd-${suffix}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt }));
+}
+function vivaldiRoutes(): SkiShuttleRoute[] {
+  const bookingUrl = "https://vivabus.net/";
+  const sourceUrl = "https://www.sonohotelsresorts.com/skiboard/info";
+  return [
+    { id: "vivaldi-hongdae", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "홍대·동대문·건대선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", bookingUrl, sourceUrl, stops: ["홍대입구역","동대문역사문화공원역","건대입구역"].map((name, index) => ({ id: `vivaldi-hongdae-${index + 1}`, city: "서울", name })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt },
+    { id: "vivaldi-jamsil", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "종합운동장 직행선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", bookingUrl, sourceUrl, stops: [{ id: "vivaldi-jamsil-1", city: "서울", name: "종합운동장역" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt }
+  ];
 }
 
 export function getSkiShuttleRoutes(resortId: string) { return skiShuttleRoutes2526.filter(route => route.resortId === resortId); }

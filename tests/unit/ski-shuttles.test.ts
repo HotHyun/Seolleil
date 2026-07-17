@@ -55,6 +55,34 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "백양리역").map(route => route.id)).toEqual(["elysian-baegyangri"]);
   });
 
+  it("covers Eden Valley's documented Daegu winter tour without presenting a sold-out timetable as active", () => {
+    const routes = getSkiShuttleRoutes("edenvalley");
+    expect(routes.map(route => route.id)).toEqual(["edenvalley-daegu-tour"]);
+    expect(routes[0]).toMatchObject({ dataStatus: "route_only_25_26", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진" });
+    expect(searchShuttleRoutes(routes, "반월당").map(route => route.id)).toEqual(["edenvalley-daegu-tour"]);
+  });
+
+  it.each([["alpensia", "알펜시아 스키700"], ["yongpyong", "모나용평 드래곤프라자"]])("covers the complete KD Seoul and Gyeonggi network for %s", (resortId, arrivalName) => {
+    const routes = getSkiShuttleRoutes(resortId);
+    expect(routes).toHaveLength(12);
+    expect(routes.every(route => route.operator === "대원관광" && route.arrivalName === arrivalName && route.priceLabel === "용평·알펜시아 교통시즌권 29만원")).toBe(true);
+    expect(searchShuttleRoutes(routes, "수원역")).toHaveLength(1);
+    expect(searchShuttleRoutes(routes, "인천터미널")).toHaveLength(1);
+  });
+
+  it("covers Vivaldi's two documented 25/26 Seoul routes without inventing hidden departure times", () => {
+    const routes = getSkiShuttleRoutes("vivaldi");
+    expect(routes.map(route => route.id)).toEqual(["vivaldi-hongdae", "vivaldi-jamsil"]);
+    expect(routes.every(route => route.operator === "대명투어" && route.dataStatus === "route_only_25_26")).toBe(true);
+    expect(routes.flatMap(route => route.stops).every(stop => stop.departureTime === undefined)).toBe(true);
+    expect(searchShuttleRoutes(routes, "건대입구역").map(route => route.id)).toEqual(["vivaldi-hongdae"]);
+  });
+
+  it("does not invent public 25/26 affiliate routes for Muju or Konjiam", () => {
+    expect(getSkiShuttleRoutes("muju")).toEqual([]);
+    expect(getSkiShuttleRoutes("konjiam")).toEqual([]);
+  });
+
   it("finds routes by city and stop name", () => {
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "동래").map(route => route.id)).toEqual(["eunsung-busan"]);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "수원").map(route => route.id)).toContain("kd-suwon");

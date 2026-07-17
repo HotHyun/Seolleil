@@ -69,7 +69,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.sonohotelsresorts.com/complex_vp",
     liftTicketUrl: "https://www.sonohotelsresorts.com/complex_vp",
     rentalUrl: "https://www.sonohotelsresorts.com/complex_vp",
-    shuttleUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    shuttleUrl: "https://vivabus.net/",
     lodgingUrl: "https://www.sonohotelsresorts.com/complex_vp",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EB%B9%84%EB%B0%9C%EB%94%94%ED%8C%8C%ED%81%AC",
@@ -152,6 +152,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.yongpyong.co.kr/",
     liftTicketUrl: "https://www.yongpyong.co.kr/",
     rentalUrl: "https://yongpyong.co.kr/mobile/kor/skiNboard/charge/equipment.do",
+    shuttleUrl: "https://skibus.purplebus.co.kr/Shop/YpSeason25/",
     lodgingUrl: "https://www.yongpyong.co.kr/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EB%AA%A8%EB%82%98%EC%9A%A9%ED%8F%89",
@@ -262,6 +263,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.alpensia.com/",
     liftTicketUrl: "https://www.alpensia.com/",
     rentalUrl: "https://www.alpensia.com/",
+    shuttleUrl: "https://skibus.purplebus.co.kr/Shop/YpSeason25/",
     lodgingUrl: "https://www.alpensia.com/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%95%8C%ED%8E%9C%EC%8B%9C%EC%95%84%EB%A6%AC%EC%A1%B0%ED%8A%B8",
@@ -317,6 +319,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.mdysresort.com/",
     liftTicketUrl: "https://www.mdysresort.com/",
     rentalUrl: "https://www.mdysresort.com/",
+    shuttleUrl: "https://www.mdysresort.com/guide/way_search.asp",
     lodgingUrl: "https://www.mdysresort.com/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EB%AC%B4%EC%A3%BC%EB%8D%95%EC%9C%A0%EC%82%B0%EB%A6%AC%EC%A1%B0%ED%8A%B8",
@@ -344,6 +347,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.edenvalley.co.kr/",
     liftTicketUrl: "https://www.edenvalley.co.kr/",
     rentalUrl: "https://www.edenvalley.co.kr/",
+    shuttleUrl: "https://edenvalley.co.kr/CS/View.asp?location=06",
     lodgingUrl: "https://www.edenvalley.co.kr/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%97%90%EB%8D%B4%EB%B0%B8%EB%A6%AC%EB%A6%AC%EC%A1%B0%ED%8A%B8",

@@ -410,7 +410,8 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
       : null;
     if (selectedRentalOptionId && !selectedRentalShopId) throw new AppError("INVALID_INPUT", "선택한 렌탈 상품을 찾을 수 없습니다.");
     const input: TripInput = { visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount, tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment, ownsClothing: trip.ownsClothing, transportType, priorities: ["rental"], liftTicketTimeSlot, lodgingCostInput: budgetData.overrides.lodging };
-    const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined) : null;
+    const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
+    const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute) : null;
     await updateTrip(trip.id, {
       lodgingName: lodgingName || null,
       lodgingUrl: lodgingUrlValue || null,
@@ -505,7 +506,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
     } else {
       throw new AppError("INVALID_INPUT", "저장할 선택 항목을 확인해 주세요.");
     }
-    if (decision !== "lodging" && decision !== "rental_shop" && decision !== "shuttle") {
+    if (decision !== "lodging" && decision !== "rental_shop") {
       const resort = getResort(trip.resortId);
       const selectedRentalOptionId = patch.selectedRentalOptionId === undefined ? trip.selectedRentalOptionId : patch.selectedRentalOptionId;
       const input: TripInput = {
@@ -515,7 +516,8 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
         liftTicketTimeSlot: (patch.liftTicketTimeSlot ?? trip.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"],
         lodgingCostInput: trip.budgetData.overrides.lodging
       };
-      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined) : null;
+      const shuttleRoute = (patch.shuttleRouteId ?? trip.shuttleRouteId) ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === (patch.shuttleRouteId ?? trip.shuttleRouteId)) : undefined;
+      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute) : null;
       if (cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object") patch.selectedRecommendation = { ...trip.selectedRecommendation, cost };
     }
     await updateTrip(trip.id, patch);

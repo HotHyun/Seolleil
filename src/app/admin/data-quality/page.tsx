@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getStaticDataReport } from "@/lib/data-validation";
 import { resorts } from "@/data/resorts";
+import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 
 export const metadata: Metadata = {
   title: "데이터 품질 | Korean Ski",
@@ -24,6 +25,9 @@ export default async function AdminDataQualityPage() {
   const confirmedRate = totalRules ? Math.round((confirmedTotal / totalRules) * 100) : 0;
   const shuttleCoverage = resorts.filter(resort => resort.shuttleUrl).length;
   const lodgingCoverage = resorts.filter(resort => resort.lodgingUrl).length;
+  const shuttleRows = resorts.map(resort => { const routes = getSkiShuttleRoutes(resort.id); return { resort, routes, coverage: getSkiShuttleCoverage(resort, routes), stopCount: routes.reduce((sum, route) => sum + route.stops.length, 0), missingSourceCount: routes.filter(route => !route.sourceUrl || !route.bookingUrl).length }; });
+  const shuttleConfirmed = shuttleRows.reduce((sum, row) => sum + row.coverage.confirmedRouteCount, 0);
+  const shuttleRecheck = shuttleRows.reduce((sum, row) => sum + row.coverage.recheckRouteCount, 0);
 
   return (
     <main className="page-shell py-8">
@@ -82,6 +86,11 @@ export default async function AdminDataQualityPage() {
             </tbody>
           </table>
         </CardContent>
+      </Card>
+
+      <Card className="mt-6" data-testid="admin-shuttle-quality">
+        <CardHeader><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-black tracking-[0.14em] text-primary">25/26 SKI SHUTTLE</p><CardTitle className="mt-2">셔틀 데이터 품질</CardTitle></div><div className="flex flex-wrap gap-2"><StatusBadge tone="good">확정 {shuttleConfirmed}</StatusBadge><StatusBadge tone="warn">재확인 {shuttleRecheck}</StatusBadge><StatusBadge>{shuttleRows.filter(row => row.coverage.status === "no_affiliate_service").length}곳 운행 없음</StatusBadge></div></div></CardHeader>
+        <CardContent className="overflow-x-auto"><table className="w-full min-w-[980px] text-left text-sm"><thead className="text-xs text-muted-foreground"><tr className="border-b"><th className="py-2">스키장</th><th>상태</th><th>노선</th><th>정류장</th><th>확정</th><th>재확인</th><th>출처 누락</th><th>마지막 확인</th><th>다음 조치</th></tr></thead><tbody>{shuttleRows.map(({ resort, routes, coverage, stopCount, missingSourceCount }) => <tr key={resort.id} className="border-b"><td className="py-3 font-bold">{resort.name}</td><td><StatusBadge tone={coverage.status === "confirmed_schedule" ? "good" : coverage.status === "needs_recheck" ? "warn" : "neutral"}>{coverage.status === "confirmed_schedule" ? "확정 시간표" : coverage.status === "needs_recheck" ? "시간 재확인" : "운행 없음"}</StatusBadge></td><td>{routes.length}</td><td>{stopCount}</td><td>{coverage.confirmedRouteCount}</td><td>{coverage.recheckRouteCount}</td><td className={missingSourceCount ? "font-bold text-amber-500" : ""}>{missingSourceCount || "-"}</td><td>{coverage.lastCheckedAt}</td><td className="text-xs text-muted-foreground">{coverage.status === "no_affiliate_service" ? "26/27 신규 공지 확인" : coverage.recheckRouteCount ? "시간·가격 갱신" : routes.some(route => !route.fare || route.fare.type === "unknown") ? "요금 보강" : "26/27 교체 대기"}</td></tr>)}</tbody></table></CardContent>
       </Card>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-2">

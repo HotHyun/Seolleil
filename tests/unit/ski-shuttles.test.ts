@@ -23,6 +23,7 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.map(route => route.id)).toEqual(["jisan-cityhall", "jisan-jamsil"]);
     expect(routes.every(route => route.operator === "투어윈도우글로벌" && route.priceLabel === "편도 2만원 · 왕복 3.8만원")).toBe(true);
     expect(searchShuttleRoutes(routes, "종합운동장").map(route => route.id)).toEqual(["jisan-jamsil"]);
+    expect(routes[0]).toMatchObject({ fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { bookingRequirement: "사전 예약 필수" } });
   });
 
   it("covers the confirmed Welli Hilli Seoul and weekend Gyeonggi network", () => {
@@ -38,6 +39,7 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.map(route => route.id)).toEqual(["o2-taebaek-station"]);
     expect(routes[0]).toMatchObject({ operator: "오투리조트", returnTime: "12:45 / 21:50", dataStatus: "confirmed_25_26" });
     expect(searchShuttleRoutes(routes, "태백역").map(route => route.id)).toEqual(["o2-taebaek-station"]);
+    expect(routes[0].fare).toEqual({ type: "free", roundTripAdult: 0 });
   });
 
   it("covers Oak Valley's free weekend Wonju connection", () => {
@@ -46,6 +48,7 @@ describe("25/26 ski shuttle data", () => {
     expect(routes[0]).toMatchObject({ operator: "오크밸리", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀" });
     expect(routes[0].stops).toHaveLength(3);
     expect(searchShuttleRoutes(routes, "만종역").map(route => route.id)).toEqual(["oakvalley-wonju-weekend"]);
+    expect(routes[0]).toMatchObject({ fare: { type: "free", roundTripAdult: 0 }, service: { days: "토·일" } });
   });
 
   it("keeps Elysian's confirmed station link without inventing an archived timetable", () => {
@@ -89,6 +92,7 @@ describe("25/26 ski shuttle data", () => {
     expect(skiShuttleOperators.find(operator => operator.name === "대원관광")?.resortIds).toEqual(expect.arrayContaining(["high1", "phoenix", "wellihilli", "alpensia", "yongpyong"]));
     expect(skiShuttleStops).toHaveLength(skiShuttleRoutes2526.reduce((count, route) => count + route.stops.length, 0));
     expect(skiShuttleStops.find(stop => stop.name === "동래역 3번 출구")).toMatchObject({ resortId: "high1", season: "25/26" });
+    expect(skiShuttleRoutes2526.every(route => route.fare && route.service)).toBe(true);
   });
 
   it("summarizes confirmed, recheck, and no-service coverage explicitly", () => {

@@ -6,6 +6,7 @@ import type {
   DayType,
   PriceConfidence,
   RentalPriceRule,
+  SkiShuttleRoute,
   SkiResort,
   TimeSlot,
   TripInput
@@ -83,7 +84,17 @@ function resolveRentalPrice(
   )[0];
 }
 
-export function estimateTransportCost(resort: SkiResort, input: TripInput): CostItem {
+export function estimateTransportCost(resort: SkiResort, input: TripInput, shuttleRoute?: SkiShuttleRoute): CostItem {
+  if (input.transportType === "shuttle" && shuttleRoute?.fare) {
+    const fare = shuttleRoute.fare;
+    const perPerson = fare.roundTripAdult ?? fare.seasonPassAdult;
+    if (perPerson !== undefined) {
+      const total = perPerson * input.peopleCount;
+      const isSeasonPass = fare.roundTripAdult === undefined && fare.seasonPassAdult !== undefined;
+      return { key: "transport", label: isSeasonPass ? "셔틀 교통시즌권" : fare.type === "free" ? "무료 셔틀" : "셔틀 왕복 비용", representative: total, min: total, max: total, confidence: "confirmed", sourceName: shuttleRoute.operator, sourceUrl: shuttleRoute.sourceUrl, bookingUrl: shuttleRoute.bookingUrl, lastCheckedAt: shuttleRoute.lastCheckedAt, note: fare.note ?? `${shuttleRoute.name} · ${isSeasonPass ? "1인 시즌권" : "1인 왕복"} 기준` };
+    }
+  }
+
   const departure = departureLocations.find((location) => location.id === input.departureLocation);
   const distance = departure?.distances[resort.id];
   if (!distance) {
@@ -128,7 +139,8 @@ export function estimateTransportCost(resort: SkiResort, input: TripInput): Cost
 export function estimateTripCost(
   resort: SkiResort,
   input: TripInput,
-  selectedRentalOptionId?: string
+  selectedRentalOptionId?: string,
+  shuttleRoute?: SkiShuttleRoute
 ): CostEstimate {
   const people = Math.max(1, input.peopleCount);
   const items: CostItem[] = [];
@@ -187,7 +199,7 @@ export function estimateTripCost(
     });
   }
 
-  items.push(estimateTransportCost(resort, input));
+  items.push(estimateTransportCost(resort, input, shuttleRoute));
 
   const min = items.reduce((sum, item) => sum + (item.min ?? item.representative ?? 0), 0);
   const max = items.reduce((sum, item) => sum + (item.max ?? item.representative ?? 0), 0);

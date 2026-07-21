@@ -9,6 +9,7 @@ export type SkillLevel = "first_time" | "beginner" | "intermediate" | "advanced"
 export type RideType = "ski" | "snowboard";
 export type TransportType = "car" | "shuttle" | "bus";
 export type ShuttleDataStatus = "confirmed_25_26" | "route_only_25_26";
+export type ShuttleFareType = "single_ride" | "season_pass" | "free" | "tour_package" | "unknown";
 
 export type SkiShuttleStop = {
   id: string;
@@ -29,6 +30,20 @@ export type SkiShuttleRoute = {
   arrivalName: string;
   returnTime?: string;
   priceLabel?: string;
+  fare?: {
+    type: ShuttleFareType;
+    oneWayAdult?: number;
+    roundTripAdult?: number;
+    seasonPassAdult?: number;
+    note?: string;
+  };
+  service?: {
+    period?: string;
+    days?: string;
+    reservationDeadline?: string;
+    minimumPassengers?: number;
+    bookingRequirement?: string;
+  };
   bookingUrl: string;
   sourceUrl: string;
   stops: SkiShuttleStop[];

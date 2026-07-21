@@ -69,39 +69,40 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
 
 type StopInput = [city: string, name: string, departureTime?: string];
 function route(id: string, region: string, name: string, operator: string, operatorPhone: string | undefined, operationNote: string, url: string, priceLabel: string | undefined, stops: StopInput[], returnTime?: string): SkiShuttleRoute {
-  return { id, resortId: high1, season: "25/26", operator, operatorPhone, region, name, operationNote, arrivalName: "하이원 밸리하우스", returnTime, priceLabel, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  const details = high1RouteDetails(id);
+  return { id, resortId: high1, season: "25/26", operator, operatorPhone, region, name, operationNote, arrivalName: "하이원 밸리하우스", returnTime, priceLabel, ...details, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 function unconfirmed(id: string, region: string, name: string, operator: string, url: string, stops: StopInput[]): SkiShuttleRoute {
-  return { id, resortId: high1, season: "25/26", operator, region, name, operationNote: "25/26 운행 확인 · 세부 시간은 운영사에 재확인", arrivalName: "하이원", bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+  return { id, resortId: high1, season: "25/26", operator, region, name, operationNote: "25/26 운행 확인 · 세부 시간은 운영사에 재확인", arrivalName: "하이원", fare: { type: "unknown", note: "운영사에 편도·왕복 요금 문의" }, service: { bookingRequirement: "시간·운행일·예약 조건 재확인" }, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
 }
 function phoenixRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
-  return { id, resortId: phoenix, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "휘닉스 스노우파크", priceLabel: "휘닉스 교통시즌권 27.5만원", bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id, resortId: phoenix, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "휘닉스 스노우파크", priceLabel: "휘닉스 교통시즌권 27.5만원", fare: { type: "season_pass", seasonPassAdult: 275000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 function jisanRoute(id: string, name: string, stopName: string): SkiShuttleRoute {
-  return { id, resortId: jisan, season: "25/26", operator: "투어윈도우글로벌", operatorPhone: "02-2039-7728", region: "서울", name, operationNote: "25/26 시즌 · 사전 예약 필수", arrivalName: "지산리조트 제1주차장", returnTime: "12:00 / 18:00 선택", priceLabel: "편도 2만원 · 왕복 3.8만원", bookingUrl: "https://jisan.allthatlimo.net/", sourceUrl: "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski", stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime: "07:30 / 13:30" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id, resortId: jisan, season: "25/26", operator: "투어윈도우글로벌", operatorPhone: "02-2039-7728", region: "서울", name, operationNote: "25/26 시즌 · 사전 예약 필수", arrivalName: "지산리조트 제1주차장", returnTime: "12:00 / 18:00 선택", priceLabel: "편도 2만원 · 왕복 3.8만원", fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { days: "운영일 캘린더 기준", bookingRequirement: "사전 예약 필수" }, bookingUrl: "https://jisan.allthatlimo.net/", sourceUrl: "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski", stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime: "07:30 / 13:30" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 function wellihilliRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
-  return { id, resortId: wellihilli, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "웰리힐리파크 서관 앞 버스주차장", priceLabel: "웰리힐리 교통시즌권 25만원", bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id, resortId: wellihilli, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "웰리힐리파크 서관 앞 버스주차장", priceLabel: "웰리힐리 교통시즌권 25만원", fare: { type: "season_pass", seasonPassAdult: 250000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 function o2Route(): SkiShuttleRoute {
   const url = "https://www.o2resort.com/mobile/traffic";
-  return { id: "o2-taebaek-station", resortId: o2, season: "25/26", operator: "오투리조트", region: "강원 태백", name: "태백역 연계선", operationNote: "공식 동계 구내셔틀 · 야간편은 야간 스키 운영일만 운행", arrivalName: "오투리조트 스키하우스", returnTime: "12:45 / 21:50", bookingUrl: url, sourceUrl: url, stops: [{ id: "o2-taebaek-station-1", city: "태백", name: "태백역 앞 시티투어 버스정류장", departureTime: "09:00 / 12:55" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id: "o2-taebaek-station", resortId: o2, season: "25/26", operator: "오투리조트", region: "강원 태백", name: "태백역 연계선", operationNote: "공식 동계 구내셔틀 · 야간편은 야간 스키 운영일만 운행", arrivalName: "오투리조트 스키하우스", returnTime: "12:45 / 21:50", fare: { type: "free", roundTripAdult: 0 }, service: { days: "동계 운영일 · 야간편은 야간 스키 운영일", bookingRequirement: "공식 운행표 재확인" }, bookingUrl: url, sourceUrl: url, stops: [{ id: "o2-taebaek-station-1", city: "태백", name: "태백역 앞 시티투어 버스정류장", departureTime: "09:00 / 12:55" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 function oakvalleyRoute(): SkiShuttleRoute {
   const bookingUrl = "https://www.oakvalley.co.kr/";
   const sourceUrl = "https://japanese.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=250737";
-  return { id: "oakvalley-wonju-weekend", resortId: oakvalley, season: "25/26", operator: "오크밸리", region: "강원 원주", name: "원주시내 주말 고객 셔틀", operationNote: "토·일 무료 운행 · 2026년 2월 22일까지", arrivalName: "오크밸리 스키장", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀", bookingUrl, sourceUrl, stops: [["원주","원주역","08:00 / 15:50"],["원주","원주종합버스터미널","08:10 / 16:00"],["원주","만종역","08:20 / 16:10"]].map(([city, name, departureTime], index) => ({ id: `oakvalley-wonju-weekend-${index + 1}`, city, name, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id: "oakvalley-wonju-weekend", resortId: oakvalley, season: "25/26", operator: "오크밸리", region: "강원 원주", name: "원주시내 주말 고객 셔틀", operationNote: "토·일 무료 운행 · 2026년 2월 22일까지", arrivalName: "오크밸리 스키장", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀", fare: { type: "free", roundTripAdult: 0 }, service: { period: "~ 2026-02-22", days: "토·일", bookingRequirement: "고객 셔틀 운행 여부 재확인" }, bookingUrl, sourceUrl, stops: [["원주","원주역","08:00 / 15:50"],["원주","원주종합버스터미널","08:10 / 16:00"],["원주","만종역","08:20 / 16:10"]].map(([city, name, departureTime], index) => ({ id: `oakvalley-wonju-weekend-${index + 1}`, city, name, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
 function elysianRoute(): SkiShuttleRoute {
   const bookingUrl = "https://www.elysian.co.kr/shuttle-bus-reservation";
   const sourceUrl = "https://www.elysian.co.kr/about-gangchon/way-to-come";
-  return { id: "elysian-baegyangri", resortId: elysian, season: "25/26", operator: "엘리시안 강촌", operatorPhone: "033-260-2345", region: "강원 춘천", name: "백양리역 무료 순환선", operationNote: "25/26 주말·공휴일 약 20분 간격 · 정확한 시간 재확인", arrivalName: "엘리시안 강촌 리조트", priceLabel: "무료 내부 순환셔틀", bookingUrl, sourceUrl, stops: [{ id: "elysian-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+  return { id: "elysian-baegyangri", resortId: elysian, season: "25/26", operator: "엘리시안 강촌", operatorPhone: "033-260-2345", region: "강원 춘천", name: "백양리역 무료 순환선", operationNote: "25/26 주말·공휴일 약 20분 간격 · 정확한 시간 재확인", arrivalName: "엘리시안 강촌 리조트", priceLabel: "무료 내부 순환셔틀", fare: { type: "free", roundTripAdult: 0 }, service: { days: "주말·공휴일", bookingRequirement: "탑승 전 운영 시간 재확인" }, bookingUrl, sourceUrl, stops: [{ id: "elysian-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
 }
 function edenvalleyRoute(): SkiShuttleRoute {
   const url = "https://www.kkday.com/ko/product/29058";
-  return { id: "edenvalley-daegu-tour", resortId: edenvalley, season: "25/26", operator: "KKday 제휴 현지 운영사", region: "대구", name: "대구 도심 왕복 스키투어 셔틀", operationNote: "겨울 한정 제휴 상품 · 25/26 판매 종료, 다음 시즌 일정 재확인", arrivalName: "에덴밸리 스키리조트", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진", bookingUrl: url, sourceUrl: url, stops: [["대구","반월당역 21번 출구","08:30"],["대구","동대구역 3번 출구","09:00"]].map(([city, name, departureTime], index) => ({ id: `edenvalley-daegu-tour-${index + 1}`, city, name, departureTime })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+  return { id: "edenvalley-daegu-tour", resortId: edenvalley, season: "25/26", operator: "KKday 제휴 현지 운영사", region: "대구", name: "대구 도심 왕복 스키투어 셔틀", operationNote: "겨울 한정 제휴 상품 · 25/26 판매 종료, 다음 시즌 일정 재확인", arrivalName: "에덴밸리 스키리조트", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진", fare: { type: "tour_package", note: "교통 단독 옵션 가격은 판매 원문 재확인" }, service: { days: "겨울 한정", bookingRequirement: "현재 판매 종료 · 다음 시즌 재확인" }, bookingUrl: url, sourceUrl: url, stops: [["대구","반월당역 21번 출구","08:30"],["대구","동대구역 3번 출구","09:00"]].map(([city, name, departureTime], index) => ({ id: `edenvalley-daegu-tour-${index + 1}`, city, name, departureTime })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
 }
 function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleRoute[] {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
@@ -119,13 +120,25 @@ function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleR
     ["ilsan","경기","일산선","주말 중심 · 송내 합류",[["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]],
     ["incheon","인천","인천·부평선","주말 중심 · 송내 합류",[["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]]
   ];
-  return specs.map(([suffix, region, name, operationNote, stops]) => ({ id: `${resortId}-kd-${suffix}`, resortId, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName, priceLabel: "용평·알펜시아 교통시즌권 29만원", bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${resortId}-kd-${suffix}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt }));
+  return specs.map(([suffix, region, name, operationNote, stops]) => ({ id: `${resortId}-kd-${suffix}`, resortId, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName, priceLabel: "용평·알펜시아 교통시즌권 29만원", fare: { type: "season_pass", seasonPassAdult: 290000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${resortId}-kd-${suffix}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt }));
 }
 function vivaldiRoutes(): SkiShuttleRoute[] {
   const bookingUrl = "https://vivabus.net/";
   const sourceUrl = "https://www.sonohotelsresorts.com/skiboard/info";
   return [
-    { id: "vivaldi-hongdae", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "홍대·동대문·건대선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", bookingUrl, sourceUrl, stops: ["홍대입구역","동대문역사문화공원역","건대입구역"].map((name, index) => ({ id: `vivaldi-hongdae-${index + 1}`, city: "서울", name })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt },
-    { id: "vivaldi-jamsil", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "종합운동장 직행선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", bookingUrl, sourceUrl, stops: [{ id: "vivaldi-jamsil-1", city: "서울", name: "종합운동장역" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt }
+    { id: "vivaldi-hongdae", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "홍대·동대문·건대선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", fare: { type: "unknown", note: "날짜·출발지별 예약 화면에서 확인" }, service: { period: "2025-12-05 ~ 2026-03-02", bookingRequirement: "사전 예약" }, bookingUrl, sourceUrl, stops: ["홍대입구역","동대문역사문화공원역","건대입구역"].map((name, index) => ({ id: `vivaldi-hongdae-${index + 1}`, city: "서울", name })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt },
+    { id: "vivaldi-jamsil", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "종합운동장 직행선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", fare: { type: "unknown", note: "날짜별 예약 화면에서 확인" }, service: { period: "2025-12-05 ~ 2026-03-02", bookingRequirement: "사전 예약" }, bookingUrl, sourceUrl, stops: [{ id: "vivaldi-jamsil-1", city: "서울", name: "종합운동장역" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt }
   ];
+}
+
+function kdService(): NonNullable<SkiShuttleRoute["service"]> {
+  return { period: "스키장 개장 주말 ~ 2026-03-02", days: "노선별 매일 또는 주말", bookingRequirement: "대원관광 홈페이지 사전 예약 · 전화 예약 불가" };
+}
+
+function high1RouteDetails(id: string): Pick<SkiShuttleRoute, "fare" | "service"> {
+  if (id.startsWith("kd-")) return { fare: { type: "season_pass", seasonPassAdult: 300000 }, service: kdService() };
+  if (id.startsWith("osung-")) return { fare: { type: "single_ride", oneWayAdult: 38000, roundTripAdult: 45000, note: "45석 일반버스 성인 기준" }, service: { period: "2025-12-24 ~ 2026-02-28 지정 운행일", days: id.endsWith("-1") ? "평일·주말" : "주말", reservationDeadline: "출발 1일 전 15:00 · 휴일 12:00", bookingRequirement: "15시 이후 잔여석 전화 예약", minimumPassengers: 10 } };
+  if (id === "eunsung-busan") return { fare: { type: "single_ride", roundTripAdult: 60000, note: "부산 일반버스 기준 · 리무진 별도" }, service: { days: "의무운행일", bookingRequirement: "운영사 사전 예약" } };
+  if (id === "daewon-honam") return { fare: { type: "tour_package", roundTripAdult: 120000, note: "당일 왕복 상품 시작가" }, service: { days: "토·일·공휴일", reservationDeadline: "출발 3일 전 15:00", minimumPassengers: 12, bookingRequirement: "최소 인원 미달 시 취소·전액 환불" } };
+  return { fare: { type: "unknown" }, service: { bookingRequirement: "운영사에 세부 조건 재확인" } };
 }

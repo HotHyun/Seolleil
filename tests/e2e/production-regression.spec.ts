@@ -57,6 +57,8 @@ test.describe("production regression", () => {
     await jisanShuttle.getByRole("button", { name: /잠실선/ }).click();
     await expect(jisanShuttle.getByText("종합운동장역 1번 출구", { exact: true })).toBeVisible();
     await expect(jisanShuttle.getByText("서울 · 07:30 / 13:30 출발", { exact: true })).toBeVisible();
+    await expect(jisanShuttle.getByText("왕복 38,000원", { exact: true })).toBeVisible();
+    await expect(jisanShuttle.getByText("사전 예약 필수", { exact: true })).toBeVisible();
 
     await page.goto("/resorts/phoenix");
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();

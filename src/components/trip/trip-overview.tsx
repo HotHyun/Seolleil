@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { rentalPriceRules } from "@/data/prices";
 import { getRentalShopsForResort, getResort } from "@/data/resorts";
+import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTripCost } from "@/lib/pricing";
 import type { CostEstimate, CostItem, PriceConfidence, TimeSlot } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
@@ -19,6 +20,8 @@ type TripOverviewData = {
   departureLocation: string;
   peopleCount: number;
   transportType: "car" | "shuttle" | "bus";
+  shuttleRouteId: string | null;
+  shuttleStopId: string | null;
   tripDuration: "same_day" | "overnight";
   skillLevel: "first_time" | "beginner" | "intermediate" | "advanced";
   rideType: "ski" | "snowboard";
@@ -43,6 +46,8 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
   const rentalOption = trip.selectedRentalOptionId
     ? rentalPriceRules.find((rule) => rule.id === trip.selectedRentalOptionId)
     : undefined;
+  const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
+  const shuttleStop = shuttleRoute?.stops.find(stop => stop.id === trip.shuttleStopId);
   const currentCost = resort
     ? estimateTripCost(
         resort,
@@ -62,7 +67,8 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
           liftTicketTimeSlot: trip.liftTicketTimeSlot as TimeSlot,
           lodgingCostInput: trip.lodgingCostInput ?? undefined
         },
-        trip.selectedRentalOptionId ?? undefined
+        trip.selectedRentalOptionId ?? undefined,
+        shuttleRoute
       )
     : null;
   const priceChanged =
@@ -125,6 +131,8 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
             ) : null}
           </div>
         ) : null}
+
+        {shuttleRoute ? <div className="rounded-lg border bg-white/7 p-4" data-testid="selected-shuttle-summary"><div className="flex flex-wrap items-start justify-between gap-2"><div><div className="text-xs font-semibold text-muted-foreground">선택한 셔틀</div><div className="mt-1 font-black">{shuttleRoute.name}</div></div><StatusBadge tone={shuttleRoute.dataStatus === "confirmed_25_26" ? "good" : "warn"}>{shuttleRoute.dataStatus === "confirmed_25_26" ? "확정 시간표" : "시간 재확인"}</StatusBadge></div><p className="mt-2 text-sm text-muted-foreground">{shuttleStop?.name ?? "탑승지 재선택"}{shuttleStop?.departureTime ? ` · ${shuttleStop.departureTime} 출발` : ""}{shuttleRoute.returnTime ? ` · 귀가 ${shuttleRoute.returnTime}` : ""}</p><p className="mt-2 text-xs text-muted-foreground">{shuttleRoute.service?.bookingRequirement ?? "운영사 예약 조건을 확인하세요."}</p><AnalyticsLink href={shuttleRoute.bookingUrl} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "selected_shuttle", resortId: trip.resortId }} className="mt-3 inline-flex text-sm font-semibold text-primary">셔틀 예약 원문 <ExternalLink className="ml-1 h-4 w-4" /></AnalyticsLink></div> : null}
 
         <div className="grid gap-2">
           {resort?.liftTicketUrl ? (

@@ -67,8 +67,9 @@ export default async function MyTripDetailPage({
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
-    <main className="page-shell py-4 sm:py-8">
-      <div className="mx-auto max-w-5xl space-y-4">
+    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4">
+      <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks}>
+        <div className="space-y-4">
           <Link href="/my-trips" className="inline-flex"><Button variant="ghost" className="-ml-2 h-10 px-2 text-muted-foreground"><ArrowLeft className="h-4 w-4" /> 내 트립으로 돌아가기</Button></Link>
           <Card>
             <CardHeader>
@@ -119,16 +120,12 @@ export default async function MyTripDetailPage({
               </div>
             </CardContent>
           </Card>
-          <div className="grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
-            <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks} />
-            <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
               {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
               {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
               {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
-            </section>
-          </div>
-      </div>
+        </div>
+      </TripWorkspaceNav>
     </main>
   );
 }

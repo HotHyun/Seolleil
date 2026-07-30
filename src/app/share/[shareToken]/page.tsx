@@ -39,15 +39,13 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
 
   return (
-    <main className="page-shell py-8">
-      <div className="mb-6">
+    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4">
+      <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
+      <div className="mb-4">
         <StatusBadge tone="good">{link?.permission === "edit" ? "함께 편집" : "보기 전용"}</StatusBadge>
         <h1 className="mt-3 text-3xl font-black md:text-5xl">{getTripDisplayName(trip)}</h1>
         <p className="mt-2 font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
       </div>
-      <div className="grid min-w-0 gap-5 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
-        <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks} />
-        <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
           {activeView === "overview" ? (
             <div className="space-y-5">
               <TripDashboard trip={trip} basePath={`/share/${shareToken}`} />
@@ -83,8 +81,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
           </CardContent>
           </Card>) : null}
           {activeView === "budget" ? (link?.permission === "edit" ? <TripBudgetWorkspace trip={trip} shareToken={shareToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
-        </section>
-      </div>
+      </TripWorkspaceNav>
     </main>
   );
 }

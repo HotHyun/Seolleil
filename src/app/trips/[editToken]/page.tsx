@@ -50,8 +50,9 @@ export default async function TripEditPage({
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
-    <main className="page-shell py-4 sm:py-8">
-      <div className="mx-auto max-w-5xl space-y-4">
+    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4">
+      <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks}>
+      <div className="space-y-4">
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-950 sm:p-4">
         <div className="flex gap-3">
           <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" />
@@ -127,16 +128,12 @@ export default async function TripEditPage({
             </CardContent>
           </Card>
           ) : activeView === "overview" ? <div className="flex items-center gap-2 rounded-xl bg-primary/10 p-3 text-sm font-semibold text-primary"><CheckCircle2 className="h-4 w-4" /> 내 트립에 저장되어 있어요.</div> : null}
-          <div className="grid min-w-0 gap-4 lg:grid-cols-[220px_minmax(0,1fr)] lg:items-start">
-            <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks} />
-            <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/trips/${editToken}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
               {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} editToken={editToken} /> : null}
               {activeView === "checklist" ? <TaskList tasks={trip.tasks} editToken={editToken} basePath={`/trips/${editToken}`} /> : null}
               {activeView === "budget" ? <TripBudgetWorkspace trip={trip} editToken={editToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : null}
-            </section>
-          </div>
       </div>
+      </TripWorkspaceNav>
     </main>
   );
 }

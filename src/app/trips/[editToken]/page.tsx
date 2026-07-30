@@ -50,7 +50,7 @@ export default async function TripEditPage({
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
-    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4">
+    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
       <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks}>
       <div className="space-y-4">
       <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-950 sm:p-4">

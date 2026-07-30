@@ -39,7 +39,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
 
   return (
-    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4">
+    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
       <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
       <div className="mb-4">
         <StatusBadge tone="good">{link?.permission === "edit" ? "함께 편집" : "보기 전용"}</StatusBadge>

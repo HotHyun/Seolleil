@@ -67,7 +67,7 @@ export default async function MyTripDetailPage({
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (
-    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4">
+    <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
       <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks}>
         <div className="space-y-4">
           <Link href="/my-trips" className="inline-flex"><Button variant="ghost" className="-ml-2 h-10 px-2 text-muted-foreground"><ArrowLeft className="h-4 w-4" /> 내 트립으로 돌아가기</Button></Link>

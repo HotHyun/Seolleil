@@ -50,7 +50,7 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children }: { ba
       <nav className="flex gap-2 overflow-x-auto px-3 pb-1 lg:hidden" aria-label="트립 기능 탭">
         {items.map(item => <WorkspaceLink key={item.id} {...item} href={`${basePath}?view=${item.id}`} active={activeView === item.id} />)}
       </nav>
-      <div className={cn("grid min-w-0 gap-3 px-3 pb-4 transition-[grid-template-columns] duration-300 motion-reduce:transition-none sm:px-4 lg:grid lg:gap-5 lg:px-5 lg:pb-6", collapsed ? "lg:grid-cols-[76px_minmax(0,1fr)]" : "lg:grid-cols-[248px_minmax(0,1fr)]")}>
+      <div className={cn("grid min-w-0 gap-3 px-3 pb-4 transition-[grid-template-columns] duration-300 motion-reduce:transition-none sm:px-4 lg:grid lg:gap-0 lg:px-0 lg:pb-0", collapsed ? "lg:grid-cols-[76px_minmax(0,1fr)]" : "lg:grid-cols-[248px_minmax(0,1fr)]")}>
         <aside aria-label="트립 기능" className="sticky top-16 hidden h-[calc(100svh-4rem)] self-start border-r bg-card lg:flex lg:flex-col">
           <div className={cn("border-b bg-primary/10 py-5", collapsed ? "px-3" : "px-5")}>
             {collapsed ? <p className="text-center text-sm font-black text-primary" aria-label={`준비 진행률 ${progress}%`}>{progress}%</p> : <>
@@ -66,7 +66,7 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children }: { ba
             <ButtonLike onClick={toggleSidebar} collapsed={collapsed} />
           </div>
         </aside>
-        <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none">{children}</section>
+        <section className="min-w-0 animate-in fade-in duration-200 motion-reduce:animate-none lg:px-5 lg:py-4 lg:pb-6">{children}</section>
       </div>
     </>
   );

@@ -152,7 +152,6 @@ function TripCard({ item }: { item: TripDashboardItem }) {
           <p className="text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
         </CardHeader>
         <CardContent className="space-y-4">
-          {trip.tripMemo ? <p className="line-clamp-2 rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground">{trip.tripMemo}</p> : null}
           <TripCompanions members={members} currentUserId={currentUserId} />
           <div className="grid gap-2 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2">

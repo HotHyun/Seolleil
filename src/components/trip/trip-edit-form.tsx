@@ -10,7 +10,6 @@ import { SelectField } from "@/components/ui/select-field";
 type TripEditFormData = {
   id: string;
   tripName: string | null;
-  tripMemo: string | null;
   resortId: string;
   resortNameSnapshot: string;
   visitDate: Date;
@@ -41,7 +40,6 @@ export function TripEditForm({
       <form action={async data => { const result = await updateTripDetailsSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); }} className="space-y-4">
         {accessField}
         <input type="hidden" name="tripName" value={trip.tripName?.trim() || `${trip.resortNameSnapshot} 트립`} />
-        <input type="hidden" name="tripMemo" value={trip.tripMemo ?? ""} />
         <div className="grid gap-3 md:grid-cols-2">
           <Field label="방문 날짜">
             <Input name="visitDate" type="date" defaultValue={trip.visitDate.toISOString().slice(0, 10)} />

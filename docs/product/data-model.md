@@ -21,7 +21,7 @@ trip 1 ── * analytics_event
 
 ## Trips
 
-트립은 사용자 지정 `tripName`, 팀 내부용 `tripMemo`, 리조트/시즌/방문일/인원/교통/장비 조건, 가격 계산 입력, 상태와 선택 결과 snapshot을 가진다. `lodgingName`, `lodgingUrl`은 가격을 수집하지 않는 숙소 기록이고, `splitCount`는 단순 균등 정산 인원이다. `budgetData` JSON snapshot은 항목별 사용자 확정 금액과 최대 30개의 추가 비용을 저장한다. 확정 금액은 static 예상 가격보다 우선한다. 기존 레코드처럼 이름이 없으면 `리조트명 트립`으로 표시한다. 익명 트립은 `userId=null`이고 `editTokenHash`로 관리한다. 계정 트립은 소유자 `userId`를 가진다. `teamId`는 첫 계정 초대 시 연결한다.
+트립은 사용자 지정 `tripName`, 리조트/시즌/방문일/인원/교통/장비 조건, 가격 계산 입력, 상태와 선택 결과 snapshot을 가진다. 기존 `tripMemo` 필드는 이전 레코드 호환을 위해 스키마에 남기지만 제품에서 입력·표시·복제하지 않는다. `lodgingName`, `lodgingUrl`은 가격을 수집하지 않는 숙소 기록이고, `splitCount`는 단순 균등 정산 인원이다. `budgetData` JSON snapshot은 항목별 사용자 확정 금액과 최대 30개의 추가 비용을 저장한다. 확정 금액은 static 예상 가격보다 우선한다. 기존 레코드처럼 이름이 없으면 `리조트명 트립`으로 표시한다. 익명 트립은 `userId=null`이고 `editTokenHash`로 관리한다. 계정 트립은 소유자 `userId`를 가진다. `teamId`는 첫 계정 초대 시 연결한다.
 
 ## Tasks
 

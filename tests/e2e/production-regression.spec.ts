@@ -159,7 +159,7 @@ test.describe("production regression", () => {
     try {
       await page.goto(planQuery, { waitUntil: "networkidle" });
       await page.getByRole("button", { name: /이 스키장으로 트립 만들기/ }).first().click();
-      await page.getByRole("button", { name: "링크 저장하고 비로그인으로 계속" }).click();
+      await page.getByRole("button", { name: "로그인 없이 링크로 만들기" }).click();
       await expect(page).toHaveURL(/\/trips\/[^?]+/);
       editUrl = page.url().split("?")[0];
       await expect(page.getByText("비공개 트립을 만들었어요.")).toBeVisible();
@@ -168,17 +168,11 @@ test.describe("production regression", () => {
       await expect(page.getByRole("menuitem", { name: "공유 관리" })).toHaveCount(0);
 
       const tripName = `회귀 스키 트립 ${Date.now()}`;
-      const tripMemo = "토요일 아침 테스트 출발";
       await page.getByRole("button", { name: "트립 이름 수정" }).click();
       await page.getByRole("dialog", { name: "트립 이름 수정" }).getByRole("textbox", { name: "트립 이름" }).fill(tripName);
       await page.getByRole("dialog", { name: "트립 이름 수정" }).getByRole("button", { name: "저장하기" }).click();
       await expect(page.getByText("트립 정보를 저장했어요.")).toBeVisible();
       await expect(page.getByRole("heading", { name: tripName })).toBeVisible();
-      await page.getByRole("button", { name: "메모 추가" }).click();
-      await page.getByRole("dialog", { name: "트립 메모 추가" }).getByRole("textbox", { name: "트립 메모" }).fill(tripMemo);
-      await page.getByRole("dialog", { name: "트립 메모 추가" }).getByRole("button", { name: "저장하기" }).click();
-      await expect(page.getByText(tripMemo)).toBeVisible();
-
       await page.getByRole("link", { name: /선택·예약/ }).first().click();
       const decisions = page.getByTestId("trip-decision-workspace");
       await expect(decisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();

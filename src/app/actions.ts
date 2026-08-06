@@ -284,9 +284,7 @@ export async function updateTripDetailsAction(formData: FormData) {
   const current = await getTripById(accessTrip.id);
   if (!current) throw new Error("트립을 찾을 수 없습니다.");
   const tripName = String(formData.get("tripName") ?? current.tripName ?? `${current.resortNameSnapshot} 트립`).trim();
-  const tripMemo = String(formData.get("tripMemo") ?? current.tripMemo ?? "").trim();
   if (!tripName || tripName.length > 80) throw new AppError("INVALID_INPUT", "트립 이름은 1~80자로 입력해 주세요.");
-  if (tripMemo.length > 1000) throw new AppError("INVALID_INPUT", "트립 메모는 1,000자 이내로 입력해 주세요.");
 
   const input: TripInput = {
     visitDate: String(formData.get("visitDate") ?? current.visitDate.toISOString().slice(0, 10)),
@@ -315,7 +313,6 @@ export async function updateTripDetailsAction(formData: FormData) {
 
   await updateTrip(current.id, {
       tripName,
-      tripMemo: tripMemo || null,
       selectedRecommendation: {
         score: recommendation.score,
         reasons: recommendation.reasons,
@@ -710,7 +707,7 @@ export async function duplicateTripAction(formData: FormData) {
     userId: session.user.id,
     teamId: null,
     tripName: `${source.tripName?.trim() || `${source.resortNameSnapshot} 트립`} 복사본`,
-    tripMemo: source.tripMemo,
+    tripMemo: null,
     editTokenHash: hashToken(editToken),
     shareTokenHash: hashToken(shareToken),
     resortId: source.resortId,

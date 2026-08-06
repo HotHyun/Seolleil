@@ -63,7 +63,7 @@ export default async function MyTripDetailPage({
   const resort = getResort(trip.resortId);
   const rentalGroups = getRentalOptionsForResort(trip.resortId);
   const lodgingOptions = getNearbyLodgingsForResort(trip.resortId);
-  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
+  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.filter(option => option.itemType !== "lift_ticket").map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
   const shareUrl = shareToken ? `/share/${shareToken}` : undefined;
 
   return (

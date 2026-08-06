@@ -151,7 +151,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                     options={[
                       { value: "skip", label: "나중에 선택" },
                       ...rentalOptions.flatMap(({ shop, options }) =>
-                        options.map((option) => ({
+                        options.filter(option => option.itemType !== "lift_ticket").map((option) => ({
                           value: option.id,
                           label: `${shop.id.endsWith("official-rental") ? "공식" : "외부"} · ${shop.name} · ${option.label} (${formatCurrency(option.representativePrice)})`
                         }))

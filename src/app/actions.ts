@@ -142,6 +142,7 @@ export async function createTripAction(formData: FormData) {
       splitCount: input.peopleCount,
       budgetData: { overrides: input.lodgingCostInput ? { lodging: input.lodgingCostInput } : {}, extras: [] },
       liftTicketTimeSlot: input.liftTicketTimeSlot,
+      selectedLiftTicketOptionId: null,
       selectedRentalOptionId: selectedRentalOptionId ?? null,
       selectedRentalShopId: selectedRentalOptionId
         ? getRentalShopsForResort(resortId).find((shop) =>
@@ -240,6 +241,7 @@ export async function createDirectTripAction(formData: FormData) {
       splitCount: input.peopleCount,
       budgetData: { overrides: input.lodgingCostInput ? { lodging: input.lodgingCostInput } : {}, extras: [] },
       liftTicketTimeSlot: input.liftTicketTimeSlot,
+      selectedLiftTicketOptionId: null,
       selectedRentalOptionId: null,
       selectedRentalShopId: null,
       status: "planning",
@@ -408,7 +410,7 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
     if (selectedRentalOptionId && !selectedRentalShopId) throw new AppError("INVALID_INPUT", "선택한 렌탈 상품을 찾을 수 없습니다.");
     const input: TripInput = { visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount, tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment, ownsClothing: trip.ownsClothing, transportType, priorities: ["rental"], liftTicketTimeSlot, lodgingCostInput: budgetData.overrides.lodging };
     const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
-    const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute) : null;
+    const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute, trip.selectedLiftTicketOptionId ?? undefined) : null;
     await updateTrip(trip.id, {
       lodgingName: lodgingName || null,
       lodgingUrl: lodgingUrlValue || null,
@@ -467,6 +469,16 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       const value = String(formData.get("liftTicketTimeSlot") ?? "");
       if (!["2h", "3h", "4h", "6h", "night", "full_day"].includes(value)) throw new AppError("INVALID_INPUT", "리프트권을 다시 선택해 주세요.");
       patch.liftTicketTimeSlot = value;
+      patch.selectedLiftTicketOptionId = null;
+      taskCategory = "lift_ticket";
+    } else if (decision === "discounted_lift") {
+      const optionId = String(formData.get("selectedLiftTicketOptionId") ?? "");
+      const option = getRentalOptionsForResort(trip.resortId)
+        .flatMap(group => group.options.map(item => ({ item, shop: group.shop })))
+        .find(entry => entry.item.id === optionId && entry.item.itemType === "lift_ticket");
+      if (!option || !option.item.timeSlot) throw new AppError("INVALID_INPUT", "선택한 할인 리프트권을 찾을 수 없습니다.");
+      patch.selectedLiftTicketOptionId = option.item.id;
+      patch.liftTicketTimeSlot = option.item.timeSlot;
       taskCategory = "lift_ticket";
     } else if (decision === "transport") {
       const value = String(formData.get("transportType") ?? "");
@@ -506,6 +518,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
     if (decision !== "lodging" && decision !== "rental_shop") {
       const resort = getResort(trip.resortId);
       const selectedRentalOptionId = patch.selectedRentalOptionId === undefined ? trip.selectedRentalOptionId : patch.selectedRentalOptionId;
+      const selectedLiftTicketOptionId = patch.selectedLiftTicketOptionId === undefined ? trip.selectedLiftTicketOptionId : patch.selectedLiftTicketOptionId;
       const input: TripInput = {
         visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount,
         tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment,
@@ -514,7 +527,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
         lodgingCostInput: trip.budgetData.overrides.lodging
       };
       const shuttleRoute = (patch.shuttleRouteId ?? trip.shuttleRouteId) ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === (patch.shuttleRouteId ?? trip.shuttleRouteId)) : undefined;
-      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute) : null;
+      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute, selectedLiftTicketOptionId ?? undefined) : null;
       if (cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object") patch.selectedRecommendation = { ...trip.selectedRecommendation, cost };
     }
     await updateTrip(trip.id, patch);
@@ -733,6 +746,7 @@ export async function duplicateTripAction(formData: FormData) {
     splitCount: source.splitCount,
     budgetData: source.budgetData,
     liftTicketTimeSlot: source.liftTicketTimeSlot,
+    selectedLiftTicketOptionId: source.selectedLiftTicketOptionId,
     selectedRentalShopId: source.selectedRentalShopId,
     selectedRentalOptionId: source.selectedRentalOptionId,
     status: "planning",

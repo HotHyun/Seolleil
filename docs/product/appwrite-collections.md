@@ -79,6 +79,7 @@ String attributes:
 - `liftTicketTimeSlot`, required, size 32.
 - `selectedRentalShopId`, optional, size 128.
 - `selectedRentalOptionId`, optional, size 128.
+- `selectedLiftTicketOptionId`, optional, size 128. 렌탈샵 할인 리프트권 선택을 장비·의류 렌탈 선택과 독립적으로 저장한다.
 - `status`, required, size 32.
 
 Datetime attributes:

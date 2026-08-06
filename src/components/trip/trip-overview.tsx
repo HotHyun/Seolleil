@@ -16,6 +16,7 @@ type TripOverviewData = {
   resortNameSnapshot: string;
   selectedRecommendation: unknown;
   selectedRentalOptionId: string | null;
+  selectedLiftTicketOptionId: string | null;
   visitDate: Date;
   departureLocation: string;
   peopleCount: number;
@@ -68,7 +69,8 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
           lodgingCostInput: trip.lodgingCostInput ?? undefined
         },
         trip.selectedRentalOptionId ?? undefined,
-        shuttleRoute
+        shuttleRoute,
+        trip.selectedLiftTicketOptionId ?? undefined
       )
     : null;
   const priceChanged =

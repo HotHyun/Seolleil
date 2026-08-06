@@ -34,7 +34,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   const resort = getResort(trip.resortId);
   const rentalGroups = getRentalOptionsForResort(trip.resortId);
   const lodgingOptions = getNearbyLodgingsForResort(trip.resortId);
-  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
+  const rentalOptions = rentalGroups.flatMap(({ shop, options }) => options.filter(option => option.itemType !== "lift_ticket").map(option => ({ value: option.id, label: `${shop.name} · ${option.label}` })));
 
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_page_viewed" });
 

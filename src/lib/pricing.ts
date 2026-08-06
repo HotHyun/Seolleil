@@ -35,7 +35,7 @@ function dayTypeScore(ruleDayType: DayType, visitDayType: DayType) {
   return 0;
 }
 
-function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate: string) {
+export function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate: string) {
   const visitDayType = getVisitDayType(visitDate);
   return priceRules
     .filter(
@@ -57,7 +57,7 @@ function resolveRentalPrice(
   selectedRentalOptionId?: string
 ): RentalPriceRule | undefined {
   if (selectedRentalOptionId) {
-    return rentalPriceRules.find((rule) => rule.id === selectedRentalOptionId);
+    return rentalPriceRules.find((rule) => rule.id === selectedRentalOptionId && rule.itemType !== "lift_ticket");
   }
 
   const needEquipment = !input.ownsEquipment || input.priorities.includes("rental");
@@ -82,6 +82,20 @@ function resolveRentalPrice(
   return candidates.sort(
     (a, b) => (a.representativePrice ?? 999999) - (b.representativePrice ?? 999999)
   )[0];
+}
+
+export function liftTicketSavings(option: RentalPriceRule, visitDate: string) {
+  if (option.itemType !== "lift_ticket" || !option.timeSlot || !option.representativePrice) return null;
+  const official = resolveLiftPrice(option.resortId, option.timeSlot, visitDate);
+  const officialPrice = official?.adultPrice ?? official?.priceMin;
+  if (!officialPrice || officialPrice <= option.representativePrice) return null;
+  const savedPerPerson = officialPrice - option.representativePrice;
+  return {
+    officialPrice,
+    shopPrice: option.representativePrice,
+    savedPerPerson,
+    discountRate: Math.round(savedPerPerson / officialPrice * 100)
+  };
 }
 
 export function estimateTransportCost(resort: SkiResort, input: TripInput, shuttleRoute?: SkiShuttleRoute): CostItem {
@@ -140,17 +154,23 @@ export function estimateTripCost(
   resort: SkiResort,
   input: TripInput,
   selectedRentalOptionId?: string,
-  shuttleRoute?: SkiShuttleRoute
+  shuttleRoute?: SkiShuttleRoute,
+  selectedLiftTicketOptionId?: string
 ): CostEstimate {
   const people = Math.max(1, input.peopleCount);
   const items: CostItem[] = [];
-  const lift = resolveLiftPrice(resort.id, input.liftTicketTimeSlot, input.visitDate);
+  const discountedLift = selectedLiftTicketOptionId
+    ? rentalPriceRules.find(rule => rule.id === selectedLiftTicketOptionId && rule.resortId === resort.id && rule.itemType === "lift_ticket")
+    : undefined;
+  const lift = discountedLift ?? resolveLiftPrice(resort.id, input.liftTicketTimeSlot, input.visitDate);
 
   if (lift) {
-    const adult = lift.adultPrice ?? lift.priceMin;
+    const adult = discountedLift
+      ? discountedLift.representativePrice ?? discountedLift.priceMin
+      : "adultPrice" in lift ? lift.adultPrice ?? lift.priceMin : lift.priceMin;
     items.push({
       key: "lift_ticket",
-      label: `${lift.label}`,
+      label: discountedLift ? `${lift.sourceName ?? "렌탈샵"} · ${lift.label}` : `${lift.label}`,
       representative: adult ? adult * people : undefined,
       min: lift.priceMin ? lift.priceMin * people : undefined,
       max: lift.priceMax ? lift.priceMax * people : undefined,

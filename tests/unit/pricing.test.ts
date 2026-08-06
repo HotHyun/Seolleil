@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { resorts } from "@/data/resorts";
+import { rentalPriceRules } from "@/data/prices";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
-import { estimateTransportCost, estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
+import { estimateTransportCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings } from "@/lib/pricing";
 import { tripInput } from "../fixtures/trip-input";
 
 describe("pricing", () => {
@@ -48,6 +49,16 @@ describe("pricing", () => {
 
     expect(weekday.items.find((item) => item.key === "lift_ticket")?.representative).toBe(162000);
     expect(weekend.items.find((item) => item.key === "lift_ticket")?.representative).toBe(192000);
+  });
+
+  it("prices a rental-shop lift ticket independently and reports verified savings", () => {
+    const high1 = resorts.find((resort) => resort.id === "high1")!;
+    const liftOption = rentalPriceRules.find(rule => rule.id === "high1-myski-lift-peak-7h")!;
+    const savings = liftTicketSavings(liftOption, "2026-01-17");
+    const estimate = estimateTripCost(high1, tripInput({ visitDate: "2026-01-17", peopleCount: 3, liftTicketTimeSlot: "7h" }), undefined, undefined, liftOption.id);
+
+    expect(savings).toMatchObject({ officialPrice: 82000, shopPrice: 53000, savedPerPerson: 29000, discountRate: 35 });
+    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ representative: 159000, sourceName: "하이원 마이스키" });
   });
 
   it("uses a selected shuttle's structured round-trip fare instead of the generic estimate", () => {

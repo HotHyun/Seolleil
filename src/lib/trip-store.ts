@@ -55,6 +55,7 @@ export type TripRecord = {
   liftTicketTimeSlot: string;
   selectedRentalShopId: string | null;
   selectedRentalOptionId: string | null;
+  selectedLiftTicketOptionId: string | null;
   status: TripStatus;
   archivedAt: Date | null;
   expiresAt: Date | null;
@@ -103,6 +104,7 @@ type TripDocument = {
   liftTicketTimeSlot: string;
   selectedRentalShopId?: string | null;
   selectedRentalOptionId?: string | null;
+  selectedLiftTicketOptionId?: string | null;
   status: TripStatus;
   archivedAt?: string | null;
   expiresAt?: string | null;
@@ -216,6 +218,7 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     liftTicketTimeSlot: document.liftTicketTimeSlot,
     selectedRentalShopId: document.selectedRentalShopId ?? null,
     selectedRentalOptionId: document.selectedRentalOptionId ?? null,
+    selectedLiftTicketOptionId: document.selectedLiftTicketOptionId ?? null,
     status: document.status,
     archivedAt: fromDate(document.archivedAt),
     expiresAt: fromDate(document.expiresAt),
@@ -302,6 +305,7 @@ function serializeTrip(input: TripCreateInput): TripDocument {
     liftTicketTimeSlot: input.liftTicketTimeSlot,
     selectedRentalShopId: input.selectedRentalShopId,
     selectedRentalOptionId: input.selectedRentalOptionId,
+    selectedLiftTicketOptionId: input.selectedLiftTicketOptionId,
     status: input.status,
     archivedAt: toIsoDate(input.archivedAt),
     expiresAt: toIsoDate(input.expiresAt)

@@ -11,6 +11,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { departureLocations } from "@/data/resorts";
 import { priorityLabels, timeSlotLabels } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { currentPathWithSearch, readPendingTripDraft } from "@/lib/pending-trip-draft";
 import type { SkiResort } from "@/lib/types";
 
 const steps = [
@@ -52,10 +53,24 @@ export function TripBuilderForm({
   const [step, setStep] = React.useState(0);
   const [maxStepReached, setMaxStepReached] = React.useState(0);
   const [error, setError] = React.useState("");
+  const [draftValues, setDraftValues] = React.useState<Record<string, string>>({});
+  const [draftRevision, setDraftRevision] = React.useState(0);
   const formRef = React.useRef<HTMLFormElement>(null);
   const progress = ((step + 1) / steps.length) * 100;
   const activeStep = steps[step];
   const ActiveIcon = activeStep.icon;
+
+  React.useEffect(() => {
+    if (!isAuthenticated || !selectedResort) return;
+    const draft = readPendingTripDraft(currentPathWithSearch());
+    if (!draft || draft.values.resortId !== selectedResort.id) return;
+    setDraftValues(draft.values);
+    setStep(steps.length - 1);
+    setMaxStepReached(steps.length - 1);
+    setDraftRevision(1);
+  }, [isAuthenticated, selectedResort]);
+
+  const draftValue = (name: string, fallback?: string) => draftValues[name] ?? fallback;
 
   function goToNextStep() {
     const form = formRef.current;
@@ -95,6 +110,7 @@ export function TripBuilderForm({
   return (
     <form ref={formRef} action={action} onSubmit={handleSubmit} className="grid gap-5">
       {selectedResort ? <input type="hidden" name="resortId" value={selectedResort.id} /> : null}
+      <React.Fragment key={draftRevision}>
       <Card className="overflow-hidden">
         <div className="h-1 bg-muted">
           <div className="h-full bg-primary transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
@@ -163,22 +179,22 @@ export function TripBuilderForm({
           <div className="relative min-h-[460px]">
             <StepPanel active={step === 0}>
               <Field label="방문 날짜">
-                <DatePicker name="visitDate" required />
+                <DatePicker name="visitDate" required defaultValue={draftValue("visitDate")} />
               </Field>
               <Field label="출발지">
                 <SelectField
                   name="departureLocation"
-                  defaultValue="seoul-gangnam"
+                  defaultValue={draftValue("departureLocation", "seoul-gangnam")}
                   options={departureLocations.map((location) => ({ value: location.id, label: location.label }))}
                 />
               </Field>
               <Field label="인원">
-                <Input name="peopleCount" type="number" min={1} max={20} defaultValue={2} />
+                <Input name="peopleCount" type="number" min={1} max={20} defaultValue={draftValue("peopleCount", "2")} />
               </Field>
               <Field label="일정">
                 <SelectField
                   name="tripDuration"
-                  defaultValue="same_day"
+                  defaultValue={draftValue("tripDuration", "same_day")}
                   options={[
                     { value: "same_day", label: "당일치기" },
                     { value: "overnight", label: "1박 이상" }
@@ -188,7 +204,7 @@ export function TripBuilderForm({
               <Field label="교통수단">
                 <SelectField
                   name="transportType"
-                  defaultValue="car"
+                  defaultValue={draftValue("transportType", "car")}
                   options={[
                     { value: "car", label: "자차" },
                     { value: "shuttle", label: "셔틀" },
@@ -202,7 +218,7 @@ export function TripBuilderForm({
               <Field label="실력">
                 <SelectField
                   name="skillLevel"
-                  defaultValue="beginner"
+                  defaultValue={draftValue("skillLevel", "beginner")}
                   options={[
                     { value: "first_time", label: "처음" },
                     { value: "beginner", label: "초보" },
@@ -214,7 +230,7 @@ export function TripBuilderForm({
               <Field label="종목">
                 <SelectField
                   name="rideType"
-                  defaultValue="ski"
+                  defaultValue={draftValue("rideType", "ski")}
                   options={[
                     { value: "ski", label: "스키" },
                     { value: "snowboard", label: "보드" }
@@ -224,7 +240,7 @@ export function TripBuilderForm({
               <Field label="장비 보유">
                 <SelectField
                   name="ownsEquipment"
-                  defaultValue="false"
+                  defaultValue={draftValue("ownsEquipment", "false")}
                   options={[
                     { value: "false", label: "렌탈 필요" },
                     { value: "true", label: "보유" }
@@ -234,7 +250,7 @@ export function TripBuilderForm({
               <Field label="의류 보유">
                 <SelectField
                   name="ownsClothing"
-                  defaultValue="false"
+                  defaultValue={draftValue("ownsClothing", "false")}
                   options={[
                     { value: "false", label: "렌탈 필요" },
                     { value: "true", label: "보유" }
@@ -245,31 +261,31 @@ export function TripBuilderForm({
 
             <StepPanel active={step === 2}>
               <Field label="예산 최소">
-                <Input name="budgetMin" type="number" min={0} step={10000} placeholder="예: 100000" />
+                <Input name="budgetMin" type="number" min={0} step={10000} defaultValue={draftValue("budgetMin")} placeholder="예: 100000" />
               </Field>
               <Field label="예산 최대">
-                <Input name="budgetMax" type="number" min={0} step={10000} placeholder="예: 250000" />
+                <Input name="budgetMax" type="number" min={0} step={10000} defaultValue={draftValue("budgetMax")} placeholder="예: 250000" />
               </Field>
               <Field label="1순위">
-                <SelectField name="priority1" defaultValue="beginner" options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
+                <SelectField name="priority1" defaultValue={draftValue("priority1", "beginner")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
               </Field>
               <Field label="2순위">
-                <SelectField name="priority2" defaultValue="close" options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
+                <SelectField name="priority2" defaultValue={draftValue("priority2", "close")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
               </Field>
               <Field label="3순위">
-                <SelectField name="priority3" defaultValue="rental" options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
+                <SelectField name="priority3" defaultValue={draftValue("priority3", "rental")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
               </Field>
               <Field label="리프트권 시간권">
                 <SelectField
                   name="liftTicketTimeSlot"
-                  defaultValue="4h"
+                  defaultValue={draftValue("liftTicketTimeSlot", "4h")}
                   options={Object.entries(timeSlotLabels)
                     .filter(([value]) => value !== "all")
                     .map(([value, label]) => ({ value, label }))}
                 />
               </Field>
               <Field label="숙박비 직접 입력">
-                <Input name="lodgingCostInput" type="number" min={0} step={10000} placeholder="1박이면 선택 입력" />
+                <Input name="lodgingCostInput" type="number" min={0} step={10000} defaultValue={draftValue("lodgingCostInput")} placeholder="1박이면 선택 입력" />
               </Field>
             </StepPanel>
 
@@ -321,6 +337,7 @@ export function TripBuilderForm({
           )}
         </div>
       </div>
+      </React.Fragment>
     </form>
   );
 }

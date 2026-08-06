@@ -16,6 +16,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import type { NearbyLodging } from "@/data/resort-map";
 import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import type { RentalPriceRule, RentalShop } from "@/lib/types";
+import type { TripDecisionView } from "@/lib/trip-workspace";
 import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/rental-comparison";
 import { formatCurrency } from "@/lib/utils";
 
@@ -23,7 +24,7 @@ type Trip = { id: string; resortId: string; selectedRentalOptionId: string | nul
 type RentalGroup = { shop: RentalShop; options: RentalPriceRule[] };
 type RentalFilter = "all" | "verified" | "pickup" | "clothing" | "lift";
 
-export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, liftUrl, shuttleUrl, lodgingSearchUrl, editToken, shareToken, canEdit = true }: { trip: Trip; rentalGroups: RentalGroup[]; lodgingOptions: NearbyLodging[]; liftUrl?: string; shuttleUrl?: string; lodgingSearchUrl?: string; editToken?: string; shareToken?: string; canEdit?: boolean }) {
+export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions, liftUrl, shuttleUrl, lodgingSearchUrl, editToken, shareToken, canEdit = true }: { view: TripDecisionView; trip: Trip; rentalGroups: RentalGroup[]; lodgingOptions: NearbyLodging[]; liftUrl?: string; shuttleUrl?: string; lodgingSearchUrl?: string; editToken?: string; shareToken?: string; canEdit?: boolean }) {
   const router = useRouter();
   const access = editToken ? { name: "editToken", value: editToken } : shareToken ? { name: "shareToken", value: shareToken } : { name: "tripId", value: trip.id };
   const [filter, setFilter] = useState<RentalFilter>("all");
@@ -37,6 +38,11 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
   const selectedLodging = lodgingOptions.find(item => item.id === lodgingId);
   const shuttleRoutes = useMemo(() => getSkiShuttleRoutes(trip.resortId), [trip.resortId]);
   const shuttleCoverage = useMemo(() => getSkiShuttleCoverage({ id: trip.resortId, shuttleUrl, lastCheckedAt: "2026-07-17" }, shuttleRoutes), [shuttleRoutes, shuttleUrl, trip.resortId]);
+  const workspaceCopy = view === "rental_lift"
+    ? { eyebrow: "Gear & lift", title: "장비와 리프트권을 함께 골라요", description: "렌탈샵의 상품과 리프트권 판매 여부를 한 흐름에서 비교하고, 내 이용 시간까지 정하세요." }
+    : view === "lodging"
+      ? { eyebrow: "Stay", title: "머무를 곳에만 집중해요", description: "공식 숙소의 위치를 비교하고 실제 확인한 숙박 정보와 비용을 기록하세요." }
+      : { eyebrow: "Getting there", title: "가는 방법을 구체적으로 정해요", description: "이동수단을 고르고 이용 가능한 셔틀 노선과 탑승지를 차분히 확인하세요." };
   const selectRentalFromMap = useCallback((id: string) => {
     setRentalId(id);
     window.requestAnimationFrame(() => {
@@ -58,8 +64,9 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
   };
 
   return <div className="space-y-5" data-testid="trip-decision-workspace">
-    <section className="overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6"><div className="flex items-start gap-4"><span className="rounded-2xl bg-primary p-3 text-primary-foreground shadow-lg shadow-primary/20"><Sparkles className="h-5 w-5" /></span><div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Choose with confidence</p><h2 className="mt-1 text-2xl font-black">결정할수록 트립이 선명해져요</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">지도와 목록으로 후보를 비교해 저장하세요. 실제 예약·결제 여부는 체크리스트에서 관리합니다.</p></div></div></section>
+    <section className="overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6"><div className="flex items-start gap-4"><span className="rounded-2xl bg-primary p-3 text-primary-foreground shadow-lg shadow-primary/20"><Sparkles className="h-5 w-5" /></span><div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{workspaceCopy.eyebrow}</p><h2 className="mt-1 text-2xl font-black">{workspaceCopy.title}</h2><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{workspaceCopy.description}</p></div></div></section>
 
+    {view === "rental_lift" ? <>
     <DecisionSection id="rental" title="렌탈샵과 상품" description="위치, 제공 품목, 시즌 가격과 원문을 한 화면에서 비교하세요." icon={<Shirt />}>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="flex gap-2 overflow-x-auto pb-1" aria-label="렌탈샵 필터">{([['all','전체'],['verified','가격 확인'],['pickup','픽업'],['clothing','의류'],['lift','리프트권']] as const).map(([value,label]) => <Button key={value} type="button" variant={filter === value ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs hover:translate-y-0" onClick={() => setFilter(value)}>{label}</Button>)}</div><div className="w-full sm:w-36"><SelectField name="rentalSort" ariaLabel="렌탈샵 정렬" value={sort} onValueChange={(value) => setSort(value as RentalComparisonSort)} options={[{value:"verified",label:"검증순"},{value:"distance",label:"거리순"},{value:"price",label:"가격순"}]} /></div></div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]">
@@ -68,14 +75,16 @@ export function TripDecisionWorkspace({ trip, rentalGroups, lodgingOptions, lift
       </div>
     </DecisionSection>
 
-    <div className="space-y-5">
-      <DecisionSection id="lift" title="리프트권" description="이용 시간을 먼저 정하고 공식 판매 조건을 확인하세요." icon={<Clock3 />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift" /><SelectField name="liftTicketTimeSlot" ariaLabel="리프트권 시간" defaultValue={trip.liftTicketTimeSlot} options={[{value:"2h",label:"2시간권"},{value:"3h",label:"3시간권"},{value:"4h",label:"4시간권"},{value:"6h",label:"6시간권"},{value:"night",label:"야간권"},{value:"full_day",label:"종일권"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></DecisionSection>
-      <DecisionSection id="transport" title="교통" description="이동 방식을 저장하고 내 출발지와 가까운 제휴 셔틀을 찾아보세요." icon={trip.transportType === "car" ? <Car /> : <BusFront />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="transport" /><SelectField name="transportType" ariaLabel="교통수단" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"스키장 제휴 셔틀"},{value:"bus",label:"고속·시외버스"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}</div></form>{shuttleRoutes.length ? <div className="mt-4 border-t pt-4"><ShuttleRouteExplorer routes={shuttleRoutes} compact selectedRouteId={trip.shuttleRouteId} selectedStopId={trip.shuttleStopId} access={access} saveAction={save} canEdit={canEdit} /></div> : <div className="mt-4 border-t pt-4"><NoAffiliateShuttleNotice coverage={shuttleCoverage} compact /></div>}</DecisionSection>
-    </div>
+    <DecisionSection id="lift" title="리프트권" description="렌탈샵의 할인 판매 여부를 확인한 뒤, 이용할 시간권을 함께 정하세요." icon={<Clock3 />}><div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-muted-foreground">렌탈샵에서 리프트권을 함께 판매하거나 할인하는 경우가 있어요. 위 업체 카드의 <strong className="text-foreground">리프트권</strong> 표시와 가격·예약 원문을 먼저 확인해 보세요.</div><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift" /><SelectField name="liftTicketTimeSlot" ariaLabel="리프트권 시간" defaultValue={trip.liftTicketTimeSlot} options={[{value:"2h",label:"2시간권"},{value:"3h",label:"3시간권"},{value:"4h",label:"4시간권"},{value:"6h",label:"6시간권"},{value:"night",label:"야간권"},{value:"full_day",label:"종일권"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></DecisionSection>
+    </> : null}
 
+    {view === "lodging" ?
     <DecisionSection id="lodging" title="공식 숙소 비교" description="리조트 공식 숙소의 위치를 비교하고, 실제 확인한 숙박비를 직접 입력하세요." icon={<BedDouble />}>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]"><PlaceComparisonMap candidates={lodgingOptions.map(item => toCandidate(item.id, item.name, undefined, item.latitude, item.longitude, item.mapLinks?.kakao ?? item.mapLinks?.naver))} selectedId={lodgingId} onSelect={setLodgingId} /><div className="space-y-3"><div className="grid max-h-56 gap-2 overflow-y-auto"><button type="button" onClick={() => setLodgingId(null)} className={`rounded-xl border p-3 text-left transition-colors ${lodgingId === null ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">다른 숙소 직접 입력</span><span className="mt-1 block text-xs text-muted-foreground">외부에서 찾은 숙소도 기록할 수 있어요.</span></button>{lodgingOptions.map(item => <button key={item.id} type="button" onClick={() => setLodgingId(item.id)} className={`rounded-xl border p-3 text-left transition-colors ${lodgingId === item.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">{item.name}</span><span className="mt-1 block text-xs text-muted-foreground">공식 숙박 · {item.category === "resort_hotel" ? "호텔" : "콘도"}</span></button>)}</div><form key={lodgingId ?? "custom"} action={save} className="grid gap-3 sm:grid-cols-2"><AccessInput access={access} /><input type="hidden" name="decision" value="lodging" /><Field label="숙소 이름"><Input name="lodgingName" required maxLength={120} defaultValue={selectedLodging?.name ?? trip.lodgingName ?? ""} readOnly={Boolean(selectedLodging)} placeholder="예약하거나 검토 중인 숙소" /></Field><Field label="예상 숙박비 (전체)"><Input name="lodgingCostInput" type="number" min="0" max="100000000" step="1000" defaultValue={trip.lodgingCostInput ?? ""} placeholder="직접 확인한 금액" /></Field><Field label="예약·숙소 링크"><Input name="lodgingUrl" type="url" defaultValue={selectedLodging?.url ?? trip.lodgingUrl ?? ""} readOnly={Boolean(selectedLodging)} placeholder="https://" /></Field><div className="flex flex-wrap items-end gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">검토 중으로 저장</SubmitButton> : null}{selectedLodging?.url ? <ExternalButton href={selectedLodging.url}>공식 원문</ExternalButton> : lodgingSearchUrl ? <ExternalButton href={lodgingSearchUrl}>주변 숙소</ExternalButton> : null}</div><p className="text-xs leading-5 text-muted-foreground sm:col-span-2">저장하면 체크리스트가 ‘선택됨’으로 바뀝니다. 예약·결제 완료는 체크리스트에서 직접 표시하세요.</p></form></div></div>
     </DecisionSection>
+    : null}
+
+    {view === "transport" ? <DecisionSection id="transport" title="교통" description="이동 방식을 저장하고 내 출발지와 가까운 제휴 셔틀을 찾아보세요." icon={trip.transportType === "car" ? <Car /> : <BusFront />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="transport" /><SelectField name="transportType" ariaLabel="교통수단" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"스키장 제휴 셔틀"},{value:"bus",label:"고속·시외버스"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}</div></form>{shuttleRoutes.length ? <div className="mt-4 border-t pt-4"><ShuttleRouteExplorer routes={shuttleRoutes} compact selectedRouteId={trip.shuttleRouteId} selectedStopId={trip.shuttleStopId} access={access} saveAction={save} canEdit={canEdit} /></div> : <div className="mt-4 border-t pt-4"><NoAffiliateShuttleNotice coverage={shuttleCoverage} compact /></div>}</DecisionSection> : null}
   </div>;
 }
 

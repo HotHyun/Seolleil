@@ -9,7 +9,7 @@ import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { TripDashboard } from "@/components/trip/trip-dashboard";
 import { TripDecisionWorkspace } from "@/components/trip/trip-decision-workspace";
-import { getTripWorkspaceView } from "@/lib/trip-workspace";
+import { getTripWorkspaceView, isTripDecisionView } from "@/lib/trip-workspace";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
 import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
@@ -62,7 +62,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
               </aside>
             </div>
           ) : null}
-          {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit={link?.permission === "edit"} /> : null}
+          {isTripDecisionView(activeView) ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit={link?.permission === "edit"} /> : null}
           {activeView === "checklist" ? (link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} basePath={`/share/${shareToken}`} /> : <Card>
           <CardHeader>
             <CardTitle>예약·준비 상태</CardTitle>

@@ -26,7 +26,7 @@ test.describe("core trip flow", () => {
       await expect(page.getByText("이 편집 링크를 가진 사람은 트립을 수정할 수 있습니다.")).toBeVisible();
       await expect(page.getByText("비공개 트립을 만들었어요.")).toBeVisible();
       await expect(page.getByText("이번 여행, 지금 정해진 것")).toBeVisible();
-      await page.getByRole("link", { name: /선택·예약/ }).first().click();
+      await page.getByRole("link", { name: /렌탈샵 & 리프트/ }).first().click();
       await expect(page.getByTestId("trip-decision-workspace")).toBeVisible();
       await expect(page.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
       await expectNoHorizontalOverflow(page);

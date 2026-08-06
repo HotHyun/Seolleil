@@ -14,7 +14,7 @@ import { TripDecisionWorkspace } from "@/components/trip/trip-decision-workspace
 import { TripIdentityEditor } from "@/components/trip/trip-identity-editor";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
-import { getTripWorkspaceView } from "@/lib/trip-workspace";
+import { getTripWorkspaceView, isTripDecisionView } from "@/lib/trip-workspace";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
@@ -121,7 +121,7 @@ export default async function MyTripDetailPage({
             </CardContent>
           </Card>
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
-              {activeView === "decisions" ? <TripDecisionWorkspace trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
+              {isTripDecisionView(activeView) ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
               {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
               {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
         </div>

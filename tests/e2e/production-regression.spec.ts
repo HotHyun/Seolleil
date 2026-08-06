@@ -173,7 +173,7 @@ test.describe("production regression", () => {
       await page.getByRole("dialog", { name: "트립 이름 수정" }).getByRole("button", { name: "저장하기" }).click();
       await expect(page.getByText("트립 정보를 저장했어요.")).toBeVisible();
       await expect(page.getByRole("heading", { name: tripName })).toBeVisible();
-      await page.getByRole("link", { name: /선택·예약/ }).first().click();
+      await page.getByRole("link", { name: /렌탈샵 & 리프트/ }).first().click();
       const decisions = page.getByTestId("trip-decision-workspace");
       await expect(decisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
       await expect(decisions.getByTestId("trip-place-map").or(decisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
@@ -232,12 +232,13 @@ test.describe("production regression", () => {
 
       await expectNoHorizontalOverflow(page);
       await page.setViewportSize({ width: 390, height: 844 });
-      await page.goto(`${editUrl}?view=decisions`);
+      await page.goto(`${editUrl}?view=rental_lift`);
       const mobileDecisions = page.getByTestId("trip-decision-workspace");
       await expect(mobileDecisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
       await expect(mobileDecisions.getByTestId("trip-place-map").or(mobileDecisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
       await expect(mobileDecisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
-      await expect(mobileDecisions.getByRole("heading", { name: "공식 숙소 비교" })).toBeVisible();
+      await page.getByRole("link", { name: /^숙박/ }).first().click();
+      await expect(page.getByTestId("trip-decision-workspace").getByRole("heading", { name: "공식 숙소 비교" })).toBeVisible();
       await expectNoHorizontalOverflow(page);
       expect(serverErrors, `Production 5xx responses: ${serverErrors.join("\n")}`).toEqual([]);
     } finally {

@@ -131,7 +131,7 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
                   <StatusSelect name="status" defaultValue={task.status} onStatusChange={(status) => updateVisibleTaskStatus(task.id, status)} />
                 </form>
                 </div>
-                {basePath && decisionTarget(task.category, task.title) ? <Link href={`${basePath}?view=decisions#${decisionTarget(task.category, task.title)}`} className="mt-2 inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-primary"><Compass className="h-3.5 w-3.5" /> 선택·예약 도우미 열기</Link> : null}
+                {basePath && decisionTarget(task.category, task.title) ? <Link href={`${basePath}?view=${decisionTarget(task.category, task.title)}`} className="mt-2 inline-flex min-h-9 items-center gap-1.5 text-xs font-bold text-primary"><Compass className="h-3.5 w-3.5" /> 선택·예약 도우미 열기</Link> : null}
                 <details className="group mt-2">
                   <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
@@ -165,8 +165,8 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
 }
 
 function decisionTarget(category: string, title: string) {
-  if (category === "lift_ticket") return "lift";
-  if (category === "equipment_rental" || category === "clothing_rental") return "rental";
+  if (category === "lift_ticket") return "rental_lift#lift";
+  if (category === "equipment_rental" || category === "clothing_rental") return "rental_lift";
   if (category === "transport" && (title.includes("이동") || title.includes("셔틀") || title.includes("버스"))) return "transport";
   if (category === "lodging") return "lodging";
   return null;

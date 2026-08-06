@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CheckSquare2, Compass, LayoutDashboard, PanelLeftClose, PanelLeftOpen, ReceiptText } from "lucide-react";
+import { BedDouble, BusFront, CheckSquare2, LayoutDashboard, PanelLeftClose, PanelLeftOpen, ReceiptText, Shirt } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { isTaskComplete } from "@/lib/checklist";
 import { taskStatusChangedEvent, type TaskStatusChangedDetail } from "@/components/trip/task-status-events";
@@ -10,7 +10,9 @@ import type { TripWorkspaceView } from "@/lib/trip-workspace";
 
 const items = [
   { id: "overview", label: "트립 개요", description: "일정과 준비 현황", icon: LayoutDashboard },
-  { id: "decisions", label: "선택·예약", description: "렌탈·리프트·이동·숙소", icon: Compass },
+  { id: "rental_lift", label: "렌탈샵 & 리프트", description: "샵·상품·리프트권", icon: Shirt },
+  { id: "lodging", label: "숙박", description: "숙소 비교와 기록", icon: BedDouble },
+  { id: "transport", label: "교통", description: "이동수단과 셔틀", icon: BusFront },
   { id: "checklist", label: "준비 체크리스트", description: "예약과 준비 상태", icon: CheckSquare2 },
   { id: "budget", label: "비용·정산", description: "선택과 1/N 비용", icon: ReceiptText }
 ] as const;
@@ -73,7 +75,7 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children }: { ba
 }
 
 function WorkspaceLink({ href, label, description, icon: Icon, active, desktop = false, collapsed = false }: { href: string; label: string; description: string; icon: typeof LayoutDashboard; active: boolean; desktop?: boolean; collapsed?: boolean }) {
-  return <Link href={href} aria-current={active ? "page" : undefined} aria-label={collapsed ? label : undefined} title={collapsed ? label : undefined} className={cn("group flex min-h-11 items-center rounded-xl border py-2.5 font-bold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring", collapsed ? "justify-center px-2" : "gap-3 px-3", desktop ? "mb-1 w-full border-transparent" : "shrink-0", active ? "border-primary/30 bg-primary text-primary-foreground shadow-sm" : "border-border bg-card text-foreground hover:border-primary/30 hover:bg-muted")}>
+  return <Link href={href} scroll={false} aria-current={active ? "page" : undefined} aria-label={collapsed ? label : undefined} title={collapsed ? label : undefined} className={cn("group flex min-h-11 items-center rounded-xl border py-2.5 font-bold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring", collapsed ? "justify-center px-2" : "gap-3 px-3", desktop ? "mb-1 w-full border-transparent" : "shrink-0", active ? "border-primary/30 bg-primary text-primary-foreground shadow-sm" : "border-border bg-card text-foreground hover:border-primary/30 hover:bg-muted")}>
     <Icon className="h-4 w-4 shrink-0" />
     {!collapsed ? <span className="text-left"><span className="block text-sm">{label}</span>{desktop ? <span className={cn("mt-0.5 block text-[11px] font-semibold", active ? "text-primary-foreground/75" : "text-muted-foreground")}>{description}</span> : null}</span> : null}
   </Link>;

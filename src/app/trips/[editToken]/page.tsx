@@ -63,7 +63,7 @@ export default async function TripEditPage({
         </div>
       </div>
 
-          <Card>
+          {activeView === "overview" ? <Card>
             <CardHeader>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -107,7 +107,7 @@ export default async function TripEditPage({
                 ) : null}
               </div>
             </CardContent>
-          </Card>
+          </Card> : null}
           {activeView === "overview" && !trip.userId ? (
           <Card>
             <CardHeader>

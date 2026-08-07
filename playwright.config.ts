@@ -28,7 +28,7 @@ export default defineConfig({
           "pnpm build && AUTH_SECRET=playwright-test-secret HOSTNAME=127.0.0.1 PORT=3211 node .next/standalone/server.js",
         url: baseURL,
         reuseExistingServer: !process.env.CI,
-        timeout: 120_000
+        timeout: 300_000
       },
   projects: [
     {

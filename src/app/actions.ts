@@ -372,11 +372,6 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
       throw new AppError("FORBIDDEN", "이 트립의 비용을 수정할 수 없습니다.");
     }
     const splitCount = Math.max(1, Math.min(100, Number(formData.get("splitCount") ?? trip.peopleCount) || 1));
-    const lodgingName = String(formData.get("lodgingName") ?? "").trim().slice(0, 120);
-    const lodgingUrlValue = String(formData.get("lodgingUrl") ?? "").trim();
-    if (lodgingUrlValue && !/^https:\/\//i.test(lodgingUrlValue)) {
-      throw new AppError("INVALID_INPUT", "숙소 링크는 https://로 시작하는 주소를 입력해 주세요.");
-    }
     const rawExtras = JSON.parse(String(formData.get("extras") ?? "[]")) as Array<Record<string, unknown>>;
     const extras = rawExtras.slice(0, 30).map((item, index) => {
       const title = String(item.title ?? "").trim().slice(0, 60);
@@ -396,47 +391,21 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
       return [[key, amount]];
     }));
     const budgetData = parseTripBudget({ overrides, extras });
-    const liftTicketTimeSlot = String(formData.get("liftTicketTimeSlot") ?? trip.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"];
-    const transportType = String(formData.get("transportType") ?? trip.transportType) as TripInput["transportType"];
-    const rentalValue = String(formData.get("selectedRentalOptionId") ?? trip.selectedRentalOptionId ?? "skip");
-    const selectedRentalOptionId = rentalValue === "skip" ? null : rentalValue;
-    if (!["2h", "3h", "4h", "6h", "night", "full_day"].includes(liftTicketTimeSlot) || !["car", "shuttle", "bus"].includes(transportType)) {
-      throw new AppError("INVALID_INPUT", "리프트권 또는 교통 선택을 확인해 주세요.");
-    }
     const resort = getResort(trip.resortId);
-    const selectedRentalShopId = selectedRentalOptionId
-      ? getRentalShopsForResort(trip.resortId).find(shop => getRentalOptionsForResort(trip.resortId).find(group => group.shop.id === shop.id)?.options.some(option => option.id === selectedRentalOptionId))?.id ?? null
-      : null;
-    if (selectedRentalOptionId && !selectedRentalShopId) throw new AppError("INVALID_INPUT", "선택한 렌탈 상품을 찾을 수 없습니다.");
-    const input: TripInput = { visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount, tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment, ownsClothing: trip.ownsClothing, transportType, priorities: ["rental"], liftTicketTimeSlot, lodgingCostInput: budgetData.overrides.lodging };
+    const input: TripInput = { visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount, tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment, ownsClothing: trip.ownsClothing, transportType: trip.transportType as TripInput["transportType"], priorities: ["rental"], liftTicketTimeSlot: trip.liftTicketTimeSlot as TripInput["liftTicketTimeSlot"], lodgingCostInput: budgetData.overrides.lodging };
     const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
-    const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute, trip.selectedLiftTicketOptionId ?? undefined) : null;
+    const cost = resort ? estimateTripCost(resort, input, trip.selectedRentalOptionId ?? undefined, shuttleRoute, trip.selectedLiftTicketOptionId ?? undefined) : null;
     await updateTrip(trip.id, {
-      lodgingName: lodgingName || null,
-      lodgingUrl: lodgingUrlValue || null,
       lodgingCostInput: budgetData.overrides.lodging ?? null,
       splitCount,
       budgetData,
-      liftTicketTimeSlot,
-      transportType,
-      selectedRentalOptionId,
-      selectedRentalShopId,
       selectedRecommendation: cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object" ? { ...trip.selectedRecommendation, cost } : trip.selectedRecommendation
     });
     const lodgingTask = trip.tasks.find(task => task.category === "lodging" && task.isDefault);
-    if (lodgingTask && (lodgingName || budgetData.overrides.lodging !== undefined) && lodgingTask.status === "needs_check") {
+    if (lodgingTask && (trip.lodgingName || budgetData.overrides.lodging !== undefined) && lodgingTask.status === "needs_check") {
       await updateTask(lodgingTask.id, { status: "planned" });
     }
-    const decisionTasks = trip.tasks.filter(task => task.isDefault && task.status === "needs_check" && (
-      (task.category === "lift_ticket" && task.title.includes("확인")) ||
-      (task.category === "equipment_rental" && task.title.includes("선택") && selectedRentalOptionId) ||
-      (task.category === "transport" && task.title.includes("이동 수단"))
-    ));
-    await Promise.all(decisionTasks.map(task => updateTask(task.id, {
-      status: "planned",
-      externalUrl: externalUrlForTask({ resortId: trip.resortId, selectedRentalOptionId, category: task.category, title: task.title }) ?? task.externalUrl
-    })));
-    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_budget_updated", properties: { splitCount, extraCount: extras.length, hasLodging: Boolean(lodgingName) } });
+    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_budget_updated", properties: { splitCount, extraCount: extras.length, hasLodging: Boolean(trip.lodgingName) } });
     revalidateTripAccess(formData);
     return actionSuccess("비용과 정산 정보를 저장했어요.");
   } catch (error) {

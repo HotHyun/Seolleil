@@ -16,7 +16,7 @@ import { TripManagementMenu } from "@/components/trip/trip-management-menu";
 import { TripWorkspaceNav } from "@/components/trip/trip-workspace-nav";
 import { getTripWorkspaceView, isTripDecisionView } from "@/lib/trip-workspace";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
 import { getSession, getSessionSecret } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
@@ -123,7 +123,7 @@ export default async function MyTripDetailPage({
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
               {isTripDecisionView(activeView) ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
               {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
-              {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
+              {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} basePath={`/my-trips/${trip.id}`} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
         </div>
       </TripWorkspaceNav>
     </main>
@@ -131,7 +131,7 @@ export default async function MyTripDetailPage({
 }
 
 function WorkspaceIntro({ title, description }: { title: string; description: string }) {
-  return <Card><CardHeader><CardTitle>{title}</CardTitle></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">{description}</p></CardContent></Card>;
+  return <Card><CardHeader><h1 data-trip-workspace-title tabIndex={-1} className="text-xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{title}</h1></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">{description}</p></CardContent></Card>;
 }
 
 function Info({ label, value }: { label: string; value: string }) {

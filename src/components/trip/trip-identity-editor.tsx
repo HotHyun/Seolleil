@@ -16,7 +16,7 @@ export function TripIdentityEditor({ tripId, editToken, name, canEdit }: { tripI
   const access = editToken ? <input type="hidden" name="editToken" value={editToken} /> : <input type="hidden" name="tripId" value={tripId} />;
   async function save(data: FormData) { const result = await updateTripDetailsSafeAction(data); showActionResult(result); if (result.ok) { setOpen(false); router.refresh(); } }
   return <>
-    <div className="flex items-center gap-2"><h1 className="min-w-0 truncate text-2xl font-black sm:text-3xl">{name}</h1>{canEdit ? <Button type="button" variant="ghost" className="h-9 w-9 shrink-0 p-0" aria-label="트립 이름 수정" onClick={() => setOpen(true)}><Pencil className="h-4 w-4" /></Button> : null}</div>
+    <div className="flex items-center gap-2"><h1 data-trip-workspace-title tabIndex={-1} className="min-w-0 truncate text-2xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:text-3xl">{name}</h1>{canEdit ? <Button type="button" variant="ghost" className="h-9 w-9 shrink-0 p-0" aria-label="트립 이름 수정" onClick={() => setOpen(true)}><Pencil className="h-4 w-4" /></Button> : null}</div>
     <Dialog open={open} onOpenChange={setOpen}><DialogContent>
       <DialogHeader><DialogTitle>트립 이름 수정</DialogTitle><DialogDescription>한 시즌의 여러 트립을 쉽게 구분할 수 있는 이름을 붙여보세요.</DialogDescription></DialogHeader>
       <form action={save} className="space-y-4">{access}

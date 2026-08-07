@@ -38,6 +38,12 @@ export function calculateTripBudget(cost: CostEstimate | null, budget: TripBudge
     overridden: budget.overrides[item.key as keyof TripBudgetState["overrides"]] !== undefined,
     confidence: item.confidence
   }));
+  const baseKeys = new Set(baseItems.map(item => item.key));
+  const overrideLabels = { lift_ticket: "리프트권", rental: "렌탈", transport: "교통비", lodging: "숙박비" } as const;
+  for (const [key, amount] of Object.entries(budget.overrides)) {
+    if (baseKeys.has(key) || amount === undefined) continue;
+    items.push({ key, label: overrideLabels[key as keyof typeof overrideLabels], amount, overridden: true, confidence: "confirmed" });
+  }
   const subtotal = items.reduce((sum, item) => sum + item.amount, 0);
   const extrasTotal = budget.extras.reduce((sum, item) => sum + item.amount, 0);
   const total = subtotal + extrasTotal;

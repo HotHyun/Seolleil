@@ -41,11 +41,11 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   return (
     <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
       <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
-      <div className="mb-4">
+      {activeView === "overview" ? <div className="mb-4">
         <StatusBadge tone="good">{link?.permission === "edit" ? "함께 편집" : "보기 전용"}</StatusBadge>
-        <h1 className="mt-3 text-3xl font-black md:text-5xl">{getTripDisplayName(trip)}</h1>
+        <h1 data-trip-workspace-title tabIndex={-1} className="mt-3 text-3xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-5xl">{getTripDisplayName(trip)}</h1>
         <p className="mt-2 font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
-      </div>
+      </div> : <div className="mb-3"><StatusBadge tone="good">{link?.permission === "edit" ? "함께 편집" : "보기 전용"}</StatusBadge></div>}
           {activeView === "overview" ? (
             <div className="space-y-5">
               <TripDashboard trip={trip} basePath={`/share/${shareToken}`} />
@@ -65,7 +65,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
           {isTripDecisionView(activeView) ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit={link?.permission === "edit"} /> : null}
           {activeView === "checklist" ? (link?.permission === "edit" ? <TaskList tasks={trip.tasks} shareToken={shareToken} basePath={`/share/${shareToken}`} /> : <Card>
           <CardHeader>
-            <CardTitle>예약·준비 상태</CardTitle>
+            <h1 data-trip-workspace-title tabIndex={-1} className="text-xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">예약·준비 상태</h1>
           </CardHeader>
           <CardContent>
             <div className="divide-y">
@@ -80,7 +80,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
             </div>
           </CardContent>
           </Card>) : null}
-          {activeView === "budget" ? (link?.permission === "edit" ? <TripBudgetWorkspace trip={trip} shareToken={shareToken} lodgingSearchUrl={resort?.lodgingUrl} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
+          {activeView === "budget" ? (link?.permission === "edit" ? <TripBudgetWorkspace trip={trip} basePath={`/share/${shareToken}`} shareToken={shareToken} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
       </TripWorkspaceNav>
     </main>
   );

@@ -21,4 +21,10 @@ describe("trip budget", () => {
   it("drops malformed persisted entries", () => {
     expect(parseTripBudget({ overrides: { rental: -1 }, extras: [{ id: "", title: "", amount: -1 }] })).toEqual({ overrides: {}, extras: [] });
   });
+
+  it("includes a confirmed cost even when the estimate has no matching item", () => {
+    const result = calculateTripBudget(cost, { overrides: { lodging: 240_000 }, extras: [] }, 3);
+    expect(result.items.find(item => item.key === "lodging")).toMatchObject({ amount: 240_000, overridden: true });
+    expect(result.total).toBe(400_000);
+  });
 });

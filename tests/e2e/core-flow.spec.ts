@@ -29,8 +29,10 @@ test.describe("core trip flow", () => {
       await expect(page.getByRole("button", { name: "트립 관리 메뉴" })).toBeVisible();
       await page.getByRole("link", { name: /렌탈샵 & 리프트/ }).first().click();
       await expect(page.getByTestId("trip-decision-workspace")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "장비와 리프트권을 함께 골라요", level: 1 })).toBeFocused();
       await expect(page.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
       await expect(page.getByRole("button", { name: "트립 관리 메뉴" })).toBeHidden();
+      await expect(page.getByText(/편집 권한 링크 사용 중/)).toBeVisible();
       await expectNoHorizontalOverflow(page);
     } finally {
       if (editUrl) {

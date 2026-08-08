@@ -16,6 +16,7 @@ import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, r
 import { getResort } from "@/data/resorts";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
+import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
 
 export const metadata: Metadata = {
   robots: {
@@ -53,7 +54,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
                 <Card>
                   <CardHeader><CardTitle>일정</CardTitle></CardHeader>
                   <CardContent className="space-y-3 text-sm">
-                    <ShareInfo icon={<CalendarDays />} label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
+                    <ShareInfo icon={<CalendarDays />} label="여행 기간" value={skiPlanDateLabel(trip.visitDate, trip.endDate)} />
                     <ShareInfo icon={<Users />} label="인원" value={`${trip.peopleCount}명`} />
                     <ShareInfo icon={<MapPin />} label="교통" value={trip.transportType} />
                   </CardContent>

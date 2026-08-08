@@ -20,8 +20,12 @@ import { liftTicketSavings } from "@/lib/pricing";
 import type { TripDecisionView } from "@/lib/trip-workspace";
 import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/rental-comparison";
 import { formatCurrency } from "@/lib/utils";
+import { DailyRentalChoices } from "@/components/trip/daily-rental-choices";
+import { TripSkiPlanEditor } from "@/components/trip/trip-ski-plan-editor";
+import { timeSlotLabels } from "@/lib/constants";
+import { tripDayTypeLabel, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
-type Trip = { id: string; resortId: string; visitDate: Date; peopleCount: number; selectedRentalOptionId: string | null; selectedLiftTicketOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; shuttleRouteId: string | null; shuttleStopId: string | null; lodgingName: string | null; lodgingUrl: string | null; lodgingCostInput: number | null };
+type Trip = { id: string; resortId: string; visitDate: Date; endDate: Date; peopleCount: number; rideType: "ski" | "snowboard"; skiPlan: TripSkiPlan; selectedRentalOptionId: string | null; selectedLiftTicketOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; shuttleRouteId: string | null; shuttleStopId: string | null; lodgingName: string | null; lodgingUrl: string | null; lodgingCostInput: number | null };
 type RentalGroup = { shop: RentalShop; options: RentalPriceRule[] };
 type RentalFilter = "all" | "verified" | "pickup" | "clothing" | "lift";
 
@@ -31,16 +35,18 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
   const [filter, setFilter] = useState<RentalFilter>("all");
   const [sort, setSort] = useState<RentalComparisonSort>("verified");
   const [rentalId, setRentalId] = useState<string | null>(trip.selectedRentalShopId ?? rentalGroups[0]?.shop.id ?? null);
+  const [activeSkiDate, setActiveSkiDate] = useState(trip.skiPlan.days[0]?.date ?? trip.visitDate.toISOString().slice(0, 10));
+  const activeSkiDay = trip.skiPlan.days.find(day => day.date === activeSkiDate) ?? trip.skiPlan.days[0];
   const rentalListRef = useRef<HTMLDivElement | null>(null);
   const initialLodging = lodgingOptions.find(item => item.name === trip.lodgingName);
   const [lodgingId, setLodgingId] = useState<string | null>(initialLodging?.id ?? null);
   const filtered = useMemo(() => sortRentalComparisonGroups(rentalGroups
-    .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, trip.selectedRentalShopId), [filter, rentalGroups, sort, trip.selectedRentalShopId]);
+    .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, activeSkiDay?.rentalShopId), [activeSkiDay?.rentalShopId, filter, rentalGroups, sort]);
   const selectedLodging = lodgingOptions.find(item => item.id === lodgingId);
   const shuttleRoutes = useMemo(() => getSkiShuttleRoutes(trip.resortId), [trip.resortId]);
   const shuttleCoverage = useMemo(() => getSkiShuttleCoverage({ id: trip.resortId, shuttleUrl, lastCheckedAt: "2026-07-17" }, shuttleRoutes), [shuttleRoutes, shuttleUrl, trip.resortId]);
   const workspaceCopy = view === "rental_lift"
-    ? { eyebrow: "Gear & lift", title: "장비와 리프트권을 함께 골라요", description: "렌탈샵의 상품과 리프트권 판매 여부를 한 흐름에서 비교하고, 내 이용 시간까지 정하세요." }
+    ? { eyebrow: "Daily gear plan", title: "날짜마다 필요한 장비만 골라요", description: "스키를 탈 날짜와 시간을 먼저 정한 뒤, 장비·의류·리프트권을 날짜별로 비교하세요." }
     : view === "lodging"
       ? { eyebrow: "Stay", title: "머무를 곳에만 집중해요", description: "공식 숙소의 위치를 비교하고 실제 확인한 숙박 정보와 비용을 기록하세요." }
       : { eyebrow: "Getting there", title: "가는 방법을 구체적으로 정해요", description: "이동수단을 고르고 이용 가능한 셔틀 노선과 탑승지를 차분히 확인하세요." };
@@ -68,15 +74,24 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
     <section className="overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6"><div className="flex items-start gap-4"><span className="rounded-2xl bg-primary p-3 text-primary-foreground shadow-lg shadow-primary/20"><Sparkles className="h-5 w-5" /></span><div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{workspaceCopy.eyebrow}</p><h1 data-trip-workspace-title tabIndex={-1} className="mt-1 text-pretty text-2xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{workspaceCopy.title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{workspaceCopy.description}</p></div></div></section>
 
     {view === "rental_lift" ? <>
+    <DecisionSection id="schedule" title="스키 일정" description="숙박 기간과 실제 스키를 탈 날짜는 다를 수 있어요. 날짜별 이용 시간을 먼저 정하세요." icon={<Clock3 />}>
+      <TripSkiPlanEditor trip={trip} editToken={editToken} shareToken={shareToken} canEdit={canEdit} />
+    </DecisionSection>
     <DecisionSection id="rental" title="렌탈샵과 상품" description="위치, 제공 품목, 시즌 가격과 원문을 한 화면에서 비교하세요." icon={<Shirt />}>
+      <div className="mb-4">
+        <p className="mb-2 text-xs font-black uppercase tracking-wider text-muted-foreground">설정할 스키 날짜</p>
+        <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="날짜별 렌탈 계획">
+          {trip.skiPlan.days.map(day => <button key={day.date} type="button" role="tab" aria-selected={activeSkiDate === day.date} onClick={() => { setActiveSkiDate(day.date); setRentalId(day.rentalShopId ?? rentalGroups[0]?.shop.id ?? null); }} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeSkiDate === day.date ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-black">{new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</span><span className={`mt-0.5 block text-[11px] ${activeSkiDate === day.date ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{tripDayTypeLabel(day.date)} · {timeSlotLabels[day.timeSlot]}</span></button>)}
+        </div>
+      </div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="flex gap-2 overflow-x-auto pb-1" aria-label="렌탈샵 필터">{([['all','전체'],['verified','가격 확인'],['pickup','픽업'],['clothing','의류'],['lift','리프트권']] as const).map(([value,label]) => <Button key={value} type="button" variant={filter === value ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs hover:translate-y-0" onClick={() => setFilter(value)}>{label}</Button>)}</div><div className="w-full sm:w-36"><SelectField name="rentalSort" ariaLabel="렌탈샵 정렬" value={sort} onValueChange={(value) => setSort(value as RentalComparisonSort)} options={[{value:"verified",label:"검증순"},{value:"distance",label:"거리순"},{value:"price",label:"가격순"}]} /></div></div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]">
         <PlaceComparisonMap candidates={filtered.map(({shop}) => toCandidate(shop.id, shop.name, "rental", shop.address, shop.latitude, shop.longitude, shop.mapLinks?.kakao ?? shop.mapLinks?.naver))} selectedId={rentalId} onSelect={selectRentalFromMap} />
-        <div ref={rentalListRef} className="max-h-[620px] space-y-3 overflow-y-auto pr-1">{filtered.length ? filtered.map(({ shop, options }) => { const selected = rentalId === shop.id; const saved = trip.selectedRentalShopId === shop.id; return <div key={shop.id} data-rental-shop-id={shop.id} tabIndex={-1} className={`rounded-2xl border bg-transparent text-card-foreground ${selected ? "border-primary ring-1 ring-primary/40" : "border-border"}`}><CardHeader className="cursor-pointer pb-3" onClick={() => setRentalId(shop.id)}><div className="flex items-start justify-between gap-3"><div><CardTitle className="text-base">{shop.name}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{shop.distanceMinutes !== undefined ? `리조트에서 약 ${shop.distanceMinutes}분` : "지도에서 위치 확인"}</p></div>{saved ? <span className="rounded-full bg-primary p-1.5 text-primary-foreground"><Check className="h-3.5 w-3.5" /></span> : null}</div></CardHeader>{selected ? <CardContent><RentalShopChoices shop={shop} options={options} trip={trip} access={access} save={save} canEdit={canEdit} /></CardContent> : null}</div>; }) : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">조건에 맞는 업체가 없습니다.</p>}</div>
+        <div ref={rentalListRef} className="max-h-[720px] space-y-3 overflow-y-auto pr-1">{activeSkiDay && filtered.length ? filtered.map(({ shop, options }) => { const selected = rentalId === shop.id; const saved = activeSkiDay.rentalShopId === shop.id; return <div key={shop.id} data-rental-shop-id={shop.id} tabIndex={-1} className={`rounded-2xl border bg-transparent text-card-foreground ${selected ? "border-primary ring-1 ring-primary/40" : "border-border"}`}><CardHeader className="cursor-pointer pb-3" onClick={() => setRentalId(shop.id)}><div className="flex items-start justify-between gap-3"><div><CardTitle className="text-base">{shop.name}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{shop.distanceMinutes !== undefined ? `리조트에서 약 ${shop.distanceMinutes}분` : "지도에서 위치 확인"}</p></div>{saved ? <span className="rounded-full bg-primary p-1.5 text-primary-foreground"><Check className="h-3.5 w-3.5" /></span> : null}</div></CardHeader>{selected ? <CardContent><DailyRentalChoices shop={shop} options={options} day={activeSkiDay} peopleCount={trip.peopleCount} rideType={trip.rideType} access={access} save={save} canEdit={canEdit} /></CardContent> : null}</div>; }) : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">{activeSkiDay ? "조건에 맞는 업체가 없습니다." : "먼저 스키를 탈 날짜를 저장해 주세요."}</p>}</div>
       </div>
     </DecisionSection>
 
-    <DecisionSection id="lift" title="공식 리조트 리프트권" description="렌탈샵 할인권 대신 공식권을 선택할 때 이용 시간권을 정하세요." icon={<Clock3 />}><div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-muted-foreground">공식권을 저장하면 위에서 선택한 렌탈샵 할인권은 해제됩니다. 렌탈 장비 선택은 그대로 유지돼요.</div><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift" /><SelectField name="liftTicketTimeSlot" ariaLabel="공식 리프트권 시간" defaultValue={trip.liftTicketTimeSlot} options={[{value:"2h",label:"2시간권"},{value:"3h",label:"3시간권"},{value:"4h",label:"4시간권"},{value:"6h",label:"6시간권"},{value:"night",label:"야간권"},{value:"full_day",label:"종일권"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">공식권으로 저장</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></DecisionSection>
+    <DecisionSection id="lift" title="공식 리조트 리프트권" description="선택한 날짜에 렌탈샵 할인권 대신 공식 시간권을 적용하세요." icon={<Clock3 />}>{activeSkiDay ? <><div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-muted-foreground">{activeSkiDay.date} · {tripDayTypeLabel(activeSkiDay.date)} 조건입니다. 공식권을 저장하면 이 날짜의 할인권만 해제됩니다.</div><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift_day" /><input type="hidden" name="skiDate" value={activeSkiDay.date} /><SelectField name="liftTicketTimeSlot" ariaLabel={`${activeSkiDay.date} 공식 리프트권 시간`} defaultValue={activeSkiDay.timeSlot} options={Object.entries(timeSlotLabels).filter(([value]) => value !== "all").map(([value,label]) => ({value,label}))} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">이 날짜에 공식권 적용</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></> : <p className="text-sm text-muted-foreground">먼저 스키 날짜를 저장해 주세요.</p>}</DecisionSection>
     </> : null}
 
     {view === "lodging" ?

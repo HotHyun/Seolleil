@@ -14,6 +14,8 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { calculateTripBudget, type TripBudgetState, type TripExpenseCategory } from "@/lib/trip-budget";
 import type { CostEstimate } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
+import { rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
+import { timeSlotLabels } from "@/lib/constants";
 
 type BudgetTrip = {
   id: string;
@@ -27,13 +29,13 @@ type BudgetTrip = {
   selectedRentalOptionId: string | null;
   selectedLiftTicketOptionId: string | null;
   transportType: string;
+  skiPlan: TripSkiPlan;
 };
 
 const categories: Array<{ value: TripExpenseCategory; label: string }> = [
   { value: "meal", label: "식비" }, { value: "fuel", label: "주유" }, { value: "toll", label: "통행료" },
   { value: "parking", label: "주차" }, { value: "transport", label: "추가 교통" }, { value: "other", label: "기타" }
 ];
-const liftLabels: Record<string, string> = { "2h": "2시간권", "3h": "3시간권", "4h": "4시간권", "6h": "6시간권", night: "야간권", full_day: "종일권" };
 const transportLabels: Record<string, string> = { car: "자차", shuttle: "스키장 제휴 셔틀", bus: "고속·시외버스" };
 const budgetCostKeys = [
   { key: "lift_ticket", label: "리프트권" },
@@ -56,8 +58,9 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   const [splitCount, setSplitCount] = useState(trip.splitCount || trip.peopleCount);
   const [dirty, setDirty] = useState(false);
   const totals = useMemo(() => calculateTripBudget(recommendationCost(trip.selectedRecommendation), budget, splitCount), [trip.selectedRecommendation, budget, splitCount]);
-  const rentalLabel = rentalOptions?.find(option => option.value === trip.selectedRentalOptionId)?.label ?? (trip.selectedRentalOptionId ? "선택한 렌탈 상품" : "렌탈하지 않음 / 미정");
-  const liftLabel = `${trip.selectedLiftTicketOptionId ? "할인 리프트권" : "공식 리프트권"} · ${liftLabels[trip.liftTicketTimeSlot] ?? trip.liftTicketTimeSlot}`;
+  const plannedRentalDays = trip.skiPlan.days.filter(day => rentalOptionIds(day).length > 0).length;
+  const rentalLabel = plannedRentalDays ? `${trip.skiPlan.days.length}일 중 ${plannedRentalDays}일 선택됨` : "렌탈하지 않음 / 미정";
+  const liftLabel = `${trip.skiPlan.days.length}일 · ${[...new Set(trip.skiPlan.days.map(day => timeSlotLabels[day.timeSlot]))].join(" · ")}`;
   const addExpense = () => {
     setBudget(current => ({ ...current, extras: [...current.extras, { id: crypto.randomUUID(), category: "meal", title: "", amount: 0 }] }));
     setDirty(true);

@@ -10,6 +10,7 @@ import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTripCost } from "@/lib/pricing";
 import type { CostEstimate, CostItem, PriceConfidence, TimeSlot } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
+import type { TripSkiPlan } from "@/lib/trip-ski-plan";
 
 type TripOverviewData = {
   resortId: string;
@@ -32,6 +33,7 @@ type TripOverviewData = {
   budgetMax: number | null;
   lodgingCostInput: number | null;
   liftTicketTimeSlot: string;
+  skiPlan: TripSkiPlan;
 };
 
 const confidenceLabels: Record<PriceConfidence, string> = {
@@ -70,7 +72,8 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
         },
         trip.selectedRentalOptionId ?? undefined,
         shuttleRoute,
-        trip.selectedLiftTicketOptionId ?? undefined
+        trip.selectedLiftTicketOptionId ?? undefined,
+        trip.skiPlan
       )
     : null;
   const priceChanged =

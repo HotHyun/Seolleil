@@ -7,6 +7,7 @@ import { migration202607130003TripBudget } from "./migrations/202607130003_trip_
 import { migration202607140001ShareLinkTokens } from "./migrations/202607140001_share_link_tokens";
 import { migration202607170001TripShuttleSelection } from "./migrations/202607170001_trip_shuttle_selection";
 import { migration202608060001TripLiftTicketSelection } from "./migrations/202608060001_trip_lift_choice";
+import { migration202608080001TripSkiPlan } from "./migrations/202608080001_trip_ski_plan";
 
 export type Migration = {
   id: string;
@@ -21,7 +22,8 @@ export const migrations: Migration[] = [
   migration202607130003TripBudget,
   migration202607140001ShareLinkTokens,
   migration202607170001TripShuttleSelection,
-  migration202608060001TripLiftTicketSelection
+  migration202608060001TripLiftTicketSelection,
+  migration202608080001TripSkiPlan
 ];
 
 export async function ensureMigrationsCollection(cfg: Config) {

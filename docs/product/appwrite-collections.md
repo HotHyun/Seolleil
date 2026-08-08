@@ -80,11 +80,13 @@ String attributes:
 - `selectedRentalShopId`, optional, size 128.
 - `selectedRentalOptionId`, optional, size 128.
 - `selectedLiftTicketOptionId`, optional, size 128. 렌탈샵 할인 리프트권 선택을 장비·의류 렌탈 선택과 독립적으로 저장한다.
+- `skiPlanData`, optional, size 32768. 버전이 있는 JSON으로 스키 날짜별 시간권, 렌탈샵, 장비·의류·패키지·보호장비, 할인 리프트권 선택을 저장한다. 기존 단일 선택 필드는 첫 스키 날짜의 호환 snapshot으로 유지한다.
 - `status`, required, size 32.
 
 Datetime attributes:
 
 - `visitDate`, required.
+- `endDate`, optional. 미설정 기존 문서는 `visitDate`와 같은 날짜로 해석한다.
 - `archivedAt`, optional.
 - `expiresAt`, optional.
 

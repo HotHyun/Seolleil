@@ -144,20 +144,10 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
                       ))}
                     </div>
                   </div>
-                  <label className="mb-2 block text-sm font-semibold">렌탈 옵션 선택</label>
-                  <SelectField
-                    name="selectedRentalOptionId"
-                    defaultValue="skip"
-                    options={[
-                      { value: "skip", label: "나중에 선택" },
-                      ...rentalOptions.flatMap(({ shop, options }) =>
-                        options.filter(option => option.itemType !== "lift_ticket").map((option) => ({
-                          value: option.id,
-                          label: `${shop.id.endsWith("official-rental") ? "공식" : "외부"} · ${shop.name} · ${option.label} (${formatCurrency(option.representativePrice)})`
-                        }))
-                      )
-                    ]}
-                  />
+                  <input type="hidden" name="selectedRentalOptionId" value="skip" />
+                  <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-muted-foreground">
+                    트립을 만든 뒤 날짜별로 장비와 의류, 이용 시간, 렌탈샵을 따로 비교할 수 있어요.
+                  </div>
                   <div className="mt-4 space-y-2">
                     <div className="text-xs font-semibold text-muted-foreground">렌탈 후보 비교</div>
                     {primaryRentalOptions.slice(0, 3).map(({ option, shop }) => (
@@ -291,6 +281,7 @@ function parseParams(params: Record<string, string | string[] | undefined>): Tri
   };
   return {
     visitDate: value("visitDate"),
+    endDate: value("endDate") || undefined,
     departureLocation: value("departureLocation", "seoul-gangnam"),
     peopleCount: Number(value("peopleCount", "2")),
     tripDuration: value("tripDuration", "same_day") as TripDuration,
@@ -310,6 +301,7 @@ function parseParams(params: Record<string, string | string[] | undefined>): Tri
 function inputToHidden(input: TripInput) {
   return {
     visitDate: input.visitDate,
+    endDate: input.endDate ?? input.visitDate,
     departureLocation: input.departureLocation,
     peopleCount: String(input.peopleCount),
     tripDuration: input.tripDuration,

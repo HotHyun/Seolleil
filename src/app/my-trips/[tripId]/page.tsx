@@ -23,6 +23,7 @@ import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collabora
 import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
+import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -88,7 +89,7 @@ export default async function MyTripDetailPage({
             <CardContent>
               <div className="mb-4"><TripCompanions members={members} currentUserId={session.user.id} /></div>
               <div className="grid gap-3 md:grid-cols-3">
-                <Info label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
+                <Info label="여행 기간" value={skiPlanDateLabel(trip.visitDate, trip.endDate)} />
                 <Info label="인원" value={`${trip.peopleCount}명`} />
                 <Info label="교통" value={trip.transportType} />
               </div>

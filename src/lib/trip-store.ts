@@ -1,6 +1,8 @@
 import { appwriteFetch, appwriteQuery, documentPath, getAppwriteConfig, type AppwriteDocument } from "@/lib/appwrite";
 import type { RideType, SkillLevel, TransportType, TripDuration } from "@/lib/types";
 import { EMPTY_TRIP_BUDGET, parseTripBudget, type TripBudgetState } from "@/lib/trip-budget";
+import { parseTripSkiPlan, type TripSkiPlan } from "@/lib/trip-ski-plan";
+import { rentalPriceRules } from "@/data/prices";
 
 export type TripStatus = "planning" | "ready" | "completed" | "archived" | "deleted";
 export type TripTaskStatus = "not_needed" | "needs_check" | "planned" | "reserved" | "paid" | "prepared";
@@ -33,6 +35,7 @@ export type TripRecord = {
   selectedRecommendation: unknown;
   season: string;
   visitDate: Date;
+  endDate: Date;
   departureLocation: string;
   peopleCount: number;
   skillLevel: SkillLevel;
@@ -56,6 +59,7 @@ export type TripRecord = {
   selectedRentalShopId: string | null;
   selectedRentalOptionId: string | null;
   selectedLiftTicketOptionId: string | null;
+  skiPlan: TripSkiPlan;
   status: TripStatus;
   archivedAt: Date | null;
   expiresAt: Date | null;
@@ -82,6 +86,7 @@ type TripDocument = {
   selectedRecommendation?: string | null;
   season: string;
   visitDate: string;
+  endDate?: string | null;
   departureLocation: string;
   peopleCount: number;
   skillLevel: SkillLevel;
@@ -105,6 +110,7 @@ type TripDocument = {
   selectedRentalShopId?: string | null;
   selectedRentalOptionId?: string | null;
   selectedLiftTicketOptionId?: string | null;
+  skiPlanData?: string | null;
   status: TripStatus;
   archivedAt?: string | null;
   expiresAt?: string | null;
@@ -183,6 +189,8 @@ function mapBudget(document: TripDocument) {
 }
 
 function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord[] = []): TripRecord {
+  const visitDate = new Date(document.visitDate);
+  const endDate = new Date(document.endDate ?? document.visitDate);
   return {
     id: document.$id,
     userId: document.userId ?? null,
@@ -195,7 +203,8 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     resortNameSnapshot: document.resortNameSnapshot,
     selectedRecommendation: decodeJson(document.selectedRecommendation),
     season: document.season,
-    visitDate: new Date(document.visitDate),
+    visitDate,
+    endDate,
     departureLocation: document.departureLocation,
     peopleCount: document.peopleCount,
     skillLevel: document.skillLevel,
@@ -219,6 +228,14 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     selectedRentalShopId: document.selectedRentalShopId ?? null,
     selectedRentalOptionId: document.selectedRentalOptionId ?? null,
     selectedLiftTicketOptionId: document.selectedLiftTicketOptionId ?? null,
+    skiPlan: parseTripSkiPlan(decodeJson(document.skiPlanData), {
+      visitDate,
+      liftTicketTimeSlot: document.liftTicketTimeSlot,
+      selectedRentalShopId: document.selectedRentalShopId,
+      selectedRentalOptionId: document.selectedRentalOptionId,
+      selectedLiftTicketOptionId: document.selectedLiftTicketOptionId,
+      rentalOptions: rentalPriceRules
+    }),
     status: document.status,
     archivedAt: fromDate(document.archivedAt),
     expiresAt: fromDate(document.expiresAt),
@@ -283,6 +300,7 @@ function serializeTrip(input: TripCreateInput): TripDocument {
     selectedRecommendation: encodeJson(input.selectedRecommendation),
     season: input.season,
     visitDate: input.visitDate.toISOString(),
+    endDate: input.endDate.toISOString(),
     departureLocation: input.departureLocation,
     peopleCount: input.peopleCount,
     skillLevel: input.skillLevel,
@@ -306,6 +324,7 @@ function serializeTrip(input: TripCreateInput): TripDocument {
     selectedRentalShopId: input.selectedRentalShopId,
     selectedRentalOptionId: input.selectedRentalOptionId,
     selectedLiftTicketOptionId: input.selectedLiftTicketOptionId,
+    skiPlanData: encodeJson(input.skiPlan),
     status: input.status,
     archivedAt: toIsoDate(input.archivedAt),
     expiresAt: toIsoDate(input.expiresAt)
@@ -435,7 +454,9 @@ function serializePartialTrip(data: Partial<Omit<TripRecord, "id" | "createdAt" 
   const serialized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) {
     if (value instanceof Date) serialized[key] = value.toISOString();
-    else if (key === "selectedRecommendation" || key === "budgetData") serialized[key] = encodeJson(value);
+    else if (key === "selectedRecommendation" || key === "budgetData" || key === "skiPlan") {
+      serialized[key === "skiPlan" ? "skiPlanData" : key] = encodeJson(value);
+    }
     else serialized[key] = value;
   }
   return serialized;

@@ -4,6 +4,7 @@ import { rentalPriceRules } from "@/data/prices";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTransportCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings } from "@/lib/pricing";
 import { tripInput } from "../fixtures/trip-input";
+import { createEmptySkiDay, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
 describe("pricing", () => {
   const konjiam = resorts.find((resort) => resort.id === "konjiam")!;
@@ -72,5 +73,23 @@ describe("pricing", () => {
     const o2 = resorts.find((resort) => resort.id === "o2")!;
     const route = getSkiShuttleRoutes("o2")[0];
     expect(estimateTransportCost(o2, tripInput({ transportType: "shuttle" }), route)).toMatchObject({ label: "무료 셔틀", representative: 0, min: 0, max: 0, confidence: "confirmed" });
+  });
+
+  it("adds lift and split rental selections across multiple ski dates", () => {
+    const high1 = resorts.find((resort) => resort.id === "high1")!;
+    const first = createEmptySkiDay("2026-01-16", "5h");
+    first.rentalShopId = "high1-ski-no1";
+    first.equipmentOptionId = "high1-ski-no1-equipment-5h";
+    first.clothingOptionId = "high1-ski-no1-clothing-grade";
+    const second = createEmptySkiDay("2026-01-17", "full_day");
+    second.rentalShopId = "high1-ski-no1";
+    second.equipmentOptionId = "high1-ski-no1-equipment-full-day";
+    second.clothingOptionId = "high1-ski-no1-clothing-grade";
+    const plan: TripSkiPlan = { version: 1, days: [first, second] };
+
+    const estimate = estimateTripCost(high1, tripInput({ visitDate: "2026-01-16", peopleCount: 2 }), undefined, undefined, undefined, plan);
+
+    expect(estimate.items.find(item => item.key === "rental")).toMatchObject({ representative: 166000 });
+    expect(estimate.items.find(item => item.key === "lift_ticket")?.representative).toBeGreaterThan(0);
   });
 });

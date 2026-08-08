@@ -220,6 +220,7 @@ export type DepartureLocation = {
 
 export type TripInput = {
   visitDate: string;
+  endDate?: string;
   departureLocation: string;
   peopleCount: number;
   tripDuration: TripDuration;

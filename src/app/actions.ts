@@ -33,8 +33,31 @@ import { createTripTeam, getTripTeamPermission, inviteTripMember, removeTripMemb
 import { actionFailure, actionSuccess, AppError } from "@/lib/app-error";
 import type { TripInput } from "@/lib/types";
 import { parseTripBudget, type TripExpenseCategory } from "@/lib/trip-budget";
+import {
+  addDays,
+  createLegacySkiPlan,
+  enumerateTripDates,
+  optionAppliesToDay,
+  rebuildSkiSchedule,
+  toDateOnly,
+  type TripSkiPlan
+} from "@/lib/trip-ski-plan";
+import type { TimeSlot } from "@/lib/types";
 
 const expenseCategories = new Set<TripExpenseCategory>(["meal", "fuel", "toll", "parking", "transport", "lodging", "other"]);
+
+function resolveTripRange(input: Pick<TripInput, "visitDate" | "endDate" | "tripDuration">) {
+  const startDate = input.visitDate;
+  const endDate = input.tripDuration === "same_day" ? startDate : input.endDate || addDays(startDate, 1);
+  const dates = enumerateTripDates(startDate, endDate);
+  if (!dates.length || dates.at(-1) !== endDate) {
+    throw new AppError("INVALID_INPUT", "여행 기간은 도착일부터 최대 14일까지 선택할 수 있습니다.");
+  }
+  return {
+    visitDate: new Date(`${startDate}T00:00:00Z`),
+    endDate: new Date(`${endDate}T00:00:00Z`)
+  };
+}
 
 async function findEditableTrip(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
@@ -101,11 +124,21 @@ export async function createTripAction(formData: FormData) {
 
   const editToken = createToken();
   const shareToken = createToken();
-  const visitDate = new Date(`${input.visitDate}T00:00:00`);
+  const { visitDate, endDate } = resolveTripRange(input);
   const expiresAt = new Date(visitDate);
   expiresAt.setMonth(4, 30);
   expiresAt.setFullYear(visitDate.getFullYear() + (visitDate.getMonth() >= 4 ? 1 : 0));
 
+  const selectedRental = selectedRentalOptionId
+    ? getRentalOptionsForResort(resortId).flatMap(group => group.options.map(item => ({ item, shop: group.shop }))).find(entry => entry.item.id === selectedRentalOptionId)
+    : undefined;
+  const skiPlan = createLegacySkiPlan({
+    visitDate,
+    liftTicketTimeSlot: input.liftTicketTimeSlot,
+    selectedRentalShopId: selectedRental?.shop.id,
+    selectedRentalOptionId,
+    rentalOptions: getRentalOptionsForResort(resortId).flatMap(group => group.options)
+  });
   const trip = await createTrip({
       userId: session?.user?.id ?? null,
       teamId: null,
@@ -124,6 +157,7 @@ export async function createTripAction(formData: FormData) {
       },
       season: CURRENT_SEASON,
       visitDate,
+      endDate,
       departureLocation: input.departureLocation,
       peopleCount: input.peopleCount,
       skillLevel: input.skillLevel,
@@ -144,11 +178,8 @@ export async function createTripAction(formData: FormData) {
       liftTicketTimeSlot: input.liftTicketTimeSlot,
       selectedLiftTicketOptionId: null,
       selectedRentalOptionId: selectedRentalOptionId ?? null,
-      selectedRentalShopId: selectedRentalOptionId
-        ? getRentalShopsForResort(resortId).find((shop) =>
-            recommendation.rentalShops.some((candidate) => candidate.id === shop.id)
-          )?.id ?? null
-        : null,
+      selectedRentalShopId: selectedRental?.shop.id ?? null,
+      skiPlan,
       status: "planning",
       archivedAt: null,
       expiresAt,
@@ -196,7 +227,7 @@ export async function createDirectTripAction(formData: FormData) {
   const cost = estimateTripCost(resort, input);
   const editToken = createToken();
   const shareToken = createToken();
-  const visitDate = new Date(`${input.visitDate}T00:00:00`);
+  const { visitDate, endDate } = resolveTripRange(input);
   const expiresAt = new Date(visitDate);
   expiresAt.setMonth(4, 30);
   expiresAt.setFullYear(visitDate.getFullYear() + (visitDate.getMonth() >= 4 ? 1 : 0));
@@ -223,6 +254,7 @@ export async function createDirectTripAction(formData: FormData) {
       },
       season: CURRENT_SEASON,
       visitDate,
+      endDate,
       departureLocation: input.departureLocation,
       peopleCount: input.peopleCount,
       skillLevel: input.skillLevel,
@@ -244,6 +276,7 @@ export async function createDirectTripAction(formData: FormData) {
       selectedLiftTicketOptionId: null,
       selectedRentalOptionId: null,
       selectedRentalShopId: null,
+      skiPlan: createLegacySkiPlan({ visitDate, liftTicketTimeSlot: input.liftTicketTimeSlot }),
       status: "planning",
       archivedAt: null,
       expiresAt,
@@ -311,7 +344,19 @@ export async function updateTripDetailsAction(formData: FormData) {
       : undefined;
   const recommendation = getRecommendations(input).find((item) => item.resort.id === current.resortId);
   if (!recommendation) throw new Error("선택한 스키장의 추천/가격을 다시 계산할 수 없습니다.");
-  const visitDate = new Date(`${input.visitDate}T00:00:00`);
+  const startDate = input.visitDate;
+  const endDateOnly = String(formData.get("endDate") ?? toDateOnly(current.endDate));
+  const dates = enumerateTripDates(startDate, endDateOnly);
+  if (!dates.length || dates.at(-1) !== endDateOnly) throw new AppError("INVALID_INPUT", "여행 기간은 최대 14일까지 선택할 수 있습니다.");
+  const visitDate = new Date(`${startDate}T00:00:00Z`);
+  const endDate = new Date(`${endDateOnly}T00:00:00Z`);
+  const existingDays = current.skiPlan.days
+    .filter(day => day.date >= startDate && day.date <= endDateOnly)
+    .map(day => ({ date: day.date, timeSlot: day.timeSlot }));
+  const skiPlan = rebuildSkiSchedule(current.skiPlan, existingDays.length ? existingDays : [{ date: startDate, timeSlot: input.liftTicketTimeSlot }]);
+  const resort = getResort(current.resortId);
+  const shuttleRoute = current.shuttleRouteId ? getSkiShuttleRoutes(current.resortId).find(route => route.id === current.shuttleRouteId) : undefined;
+  const cost = resort ? estimateTripCost(resort, { ...input, endDate: endDateOnly }, selectedRentalOptionId, shuttleRoute, current.selectedLiftTicketOptionId ?? undefined, skiPlan) : recommendation.cost;
 
   await updateTrip(current.id, {
       tripName,
@@ -320,9 +365,12 @@ export async function updateTripDetailsAction(formData: FormData) {
         reasons: recommendation.reasons,
         travelMinutes: recommendation.travelMinutes,
         travelKm: recommendation.travelKm,
-        cost: recommendation.cost
+        cost
       },
       visitDate,
+      endDate,
+      tripDuration: startDate === endDateOnly ? "same_day" : "overnight",
+      skiPlan,
       peopleCount: input.peopleCount,
       transportType: input.transportType,
       lodgingCostInput: input.lodgingCostInput,
@@ -394,7 +442,7 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
     const resort = getResort(trip.resortId);
     const input: TripInput = { visitDate: trip.visitDate.toISOString().slice(0, 10), departureLocation: trip.departureLocation, peopleCount: trip.peopleCount, tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment, ownsClothing: trip.ownsClothing, transportType: trip.transportType as TripInput["transportType"], priorities: ["rental"], liftTicketTimeSlot: trip.liftTicketTimeSlot as TripInput["liftTicketTimeSlot"], lodgingCostInput: budgetData.overrides.lodging };
     const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
-    const cost = resort ? estimateTripCost(resort, input, trip.selectedRentalOptionId ?? undefined, shuttleRoute, trip.selectedLiftTicketOptionId ?? undefined) : null;
+    const cost = resort ? estimateTripCost(resort, input, trip.selectedRentalOptionId ?? undefined, shuttleRoute, trip.selectedLiftTicketOptionId ?? undefined, trip.skiPlan) : null;
     await updateTrip(trip.id, {
       lodgingCostInput: budgetData.overrides.lodging ?? null,
       splitCount,
@@ -413,6 +461,70 @@ export async function updateTripBudgetSafeAction(formData: FormData) {
   }
 }
 
+export async function updateTripSkiScheduleSafeAction(formData: FormData) {
+  try {
+    const trip = await findEditableTrip(formData);
+    if (!trip || trip.status === "archived" || trip.status === "deleted") {
+      throw new AppError("FORBIDDEN", "이 트립의 스키 일정을 수정할 수 없습니다.");
+    }
+    const startDate = String(formData.get("startDate") ?? "");
+    const endDate = String(formData.get("endDate") ?? "");
+    const range = enumerateTripDates(startDate, endDate);
+    if (!range.length || range.at(-1) !== endDate) {
+      throw new AppError("INVALID_INPUT", "여행 기간은 도착일부터 최대 14일까지 선택해 주세요.");
+    }
+    const allowedSlots = new Set<TimeSlot>(["2h", "3h", "4h", "5h", "6h", "7h", "night", "full_day"]);
+    const rawDays = JSON.parse(String(formData.get("skiDays") ?? "[]")) as Array<Record<string, unknown>>;
+    const selectedDays = rawDays.slice(0, 14).map((item) => {
+      const date = String(item.date ?? "");
+      const timeSlot = String(item.timeSlot ?? "") as TimeSlot;
+      if (!range.includes(date) || !allowedSlots.has(timeSlot)) {
+        throw new AppError("INVALID_INPUT", "날짜별 스키 이용 시간을 다시 확인해 주세요.");
+      }
+      return { date, timeSlot };
+    });
+    if (!selectedDays.length) throw new AppError("INVALID_INPUT", "스키를 탈 날짜를 하나 이상 선택해 주세요.");
+    const skiPlan = rebuildSkiSchedule(trip.skiPlan, selectedDays);
+    const firstDay = skiPlan.days[0];
+    const resort = getResort(trip.resortId);
+    const input: TripInput = {
+      visitDate: startDate,
+      endDate,
+      departureLocation: trip.departureLocation,
+      peopleCount: trip.peopleCount,
+      tripDuration: startDate === endDate ? "same_day" : "overnight",
+      skillLevel: trip.skillLevel,
+      rideType: trip.rideType,
+      ownsEquipment: trip.ownsEquipment,
+      ownsClothing: trip.ownsClothing,
+      transportType: trip.transportType,
+      priorities: ["rental"],
+      liftTicketTimeSlot: firstDay.timeSlot,
+      lodgingCostInput: trip.budgetData.overrides.lodging
+    };
+    const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
+    const cost = resort ? estimateTripCost(resort, input, undefined, shuttleRoute, undefined, skiPlan) : null;
+    await updateTrip(trip.id, {
+      visitDate: new Date(`${startDate}T00:00:00Z`),
+      endDate: new Date(`${endDate}T00:00:00Z`),
+      tripDuration: startDate === endDate ? "same_day" : "overnight",
+      skiPlan,
+      liftTicketTimeSlot: firstDay.timeSlot,
+      selectedRentalShopId: firstDay.rentalShopId,
+      selectedRentalOptionId: firstDay.packageOptionId ?? firstDay.equipmentOptionId ?? firstDay.clothingOptionId,
+      selectedLiftTicketOptionId: firstDay.liftTicketOptionId,
+      selectedRecommendation: cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object"
+        ? { ...trip.selectedRecommendation, cost }
+        : trip.selectedRecommendation
+    });
+    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_ski_schedule_updated", properties: { tripDays: range.length, skiDays: skiPlan.days.length } });
+    revalidateTripAccess(formData);
+    return actionSuccess("날짜별 스키 일정을 저장했어요.");
+  } catch (error) {
+    return actionFailure(error, { action: "updateTripSkiSchedule" });
+  }
+}
+
 export async function updateTripDecisionSafeAction(formData: FormData) {
   try {
     const trip = await findEditableTrip(formData);
@@ -420,7 +532,69 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
     const decision = String(formData.get("decision") ?? "");
     const patch: Parameters<typeof updateTrip>[1] = {};
     let taskCategory = "";
-    if (decision === "rental") {
+    const extraTaskCategories: string[] = [];
+    if (decision === "rental_day") {
+      const skiDate = String(formData.get("skiDate") ?? "");
+      const day = trip.skiPlan.days.find(item => item.date === skiDate);
+      if (!day) throw new AppError("INVALID_INPUT", "렌탈을 적용할 스키 날짜를 다시 선택해 주세요.");
+      const shopId = String(formData.get("selectedRentalShopId") ?? "");
+      const group = getRentalOptionsForResort(trip.resortId).find(item => item.shop.id === shopId);
+      if (!group) throw new AppError("INVALID_INPUT", "선택한 렌탈샵을 찾을 수 없습니다.");
+      const optionFor = (field: string, itemTypes: string[]) => {
+        const id = String(formData.get(field) ?? "");
+        if (!id || id === "none") return null;
+        const option = group.options.find(item => item.id === id && itemTypes.includes(item.itemType));
+        if (!option || !optionAppliesToDay(option, day)) throw new AppError("INVALID_INPUT", `${skiDate}에 이용할 수 없는 렌탈 상품입니다.`);
+        if (option.itemType === "equipment" && option.rideType !== "all" && option.rideType !== trip.rideType) {
+          throw new AppError("INVALID_INPUT", "스키·보드 종목에 맞는 장비를 선택해 주세요.");
+        }
+        return option.id;
+      };
+      const packageOptionId = optionFor("packageOptionId", ["equipment_clothing_package"]);
+      const equipmentOptionId = packageOptionId ? null : optionFor("equipmentOptionId", ["equipment"]);
+      const clothingOptionId = packageOptionId ? null : optionFor("clothingOptionId", ["clothing"]);
+      const rawAccessories = JSON.parse(String(formData.get("accessoryOptionIds") ?? "[]")) as unknown[];
+      const accessoryOptionIds = rawAccessories.slice(0, 8).map(String).filter(id => {
+        const option = group.options.find(item => item.id === id);
+        return option && ["helmet", "goggles", "protective_gear"].includes(option.itemType) && optionAppliesToDay(option, day);
+      });
+      const sourceSelection = { rentalShopId: group.shop.id, equipmentOptionId, clothingOptionId, packageOptionId, accessoryOptionIds };
+      const applyAll = String(formData.get("applyToAllDays") ?? "") === "true";
+      const optionById = new Map(group.options.map(option => [option.id, option]));
+      const equivalentFor = (sourceId: string | null, target: typeof day) => {
+        if (!sourceId) return null;
+        const source = optionById.get(sourceId);
+        if (!source) return null;
+        if (optionAppliesToDay(source, target)) return source.id;
+        return group.options.find(candidate =>
+          candidate.itemType === source.itemType
+          && candidate.rideType === source.rideType
+          && candidate.ageGroup === source.ageGroup
+          && optionAppliesToDay(candidate, target)
+        )?.id ?? null;
+      };
+      const skiPlan: TripSkiPlan = {
+        ...trip.skiPlan,
+        days: trip.skiPlan.days.map(target => {
+          if (target.date !== skiDate && !applyAll) return target;
+          if (target.date === skiDate) return { ...target, ...sourceSelection };
+          return {
+            ...target,
+            rentalShopId: group.shop.id,
+            equipmentOptionId: equivalentFor(equipmentOptionId, target),
+            clothingOptionId: equivalentFor(clothingOptionId, target),
+            packageOptionId: equivalentFor(packageOptionId, target),
+            accessoryOptionIds: accessoryOptionIds.map(id => equivalentFor(id, target)).filter((id): id is string => Boolean(id))
+          };
+        })
+      };
+      patch.skiPlan = skiPlan;
+      const first = skiPlan.days[0];
+      patch.selectedRentalShopId = first.rentalShopId;
+      patch.selectedRentalOptionId = first.packageOptionId ?? first.equipmentOptionId ?? first.clothingOptionId;
+      taskCategory = equipmentOptionId || packageOptionId ? "equipment_rental" : "";
+      if (clothingOptionId || packageOptionId) extraTaskCategories.push("clothing_rental");
+    } else if (decision === "rental") {
       const optionId = String(formData.get("selectedRentalOptionId") ?? "");
       const option = optionId ? getRentalOptionsForResort(trip.resortId).flatMap(group => group.options.map(item => ({ item, shop: group.shop }))).find(entry => entry.item.id === optionId) : null;
       if (!option) throw new AppError("INVALID_INPUT", "선택한 렌탈 상품을 찾을 수 없습니다.");
@@ -434,6 +608,27 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       patch.selectedRentalShopId = shop.id;
       patch.selectedRentalOptionId = null;
       taskCategory = "equipment_rental";
+    } else if (decision === "lift_day") {
+      const skiDate = String(formData.get("skiDate") ?? "");
+      const value = String(formData.get("liftTicketTimeSlot") ?? "") as TimeSlot;
+      if (!["2h", "3h", "4h", "5h", "6h", "7h", "night", "full_day"].includes(value)) throw new AppError("INVALID_INPUT", "리프트권을 다시 선택해 주세요.");
+      const skiPlan: TripSkiPlan = { ...trip.skiPlan, days: trip.skiPlan.days.map(day => day.date === skiDate ? { ...day, timeSlot: value, liftTicketOptionId: null } : day) };
+      if (!skiPlan.days.some(day => day.date === skiDate)) throw new AppError("INVALID_INPUT", "리프트권을 적용할 스키 날짜를 다시 선택해 주세요.");
+      patch.skiPlan = skiPlan;
+      patch.liftTicketTimeSlot = skiPlan.days[0].timeSlot;
+      patch.selectedLiftTicketOptionId = skiPlan.days[0].liftTicketOptionId;
+      taskCategory = "lift_ticket";
+    } else if (decision === "discounted_lift_day") {
+      const skiDate = String(formData.get("skiDate") ?? "");
+      const day = trip.skiPlan.days.find(item => item.date === skiDate);
+      const optionId = String(formData.get("selectedLiftTicketOptionId") ?? "");
+      const option = getRentalOptionsForResort(trip.resortId).flatMap(group => group.options).find(item => item.id === optionId && item.itemType === "lift_ticket");
+      if (!day || !option || !option.timeSlot || !optionAppliesToDay(option, day)) throw new AppError("INVALID_INPUT", "선택한 날짜에 이용할 수 없는 할인 리프트권입니다.");
+      const skiPlan: TripSkiPlan = { ...trip.skiPlan, days: trip.skiPlan.days.map(item => item.date === skiDate ? { ...item, timeSlot: option.timeSlot!, liftTicketOptionId: option.id } : item) };
+      patch.skiPlan = skiPlan;
+      patch.liftTicketTimeSlot = skiPlan.days[0].timeSlot;
+      patch.selectedLiftTicketOptionId = skiPlan.days[0].liftTicketOptionId;
+      taskCategory = "lift_ticket";
     } else if (decision === "lift") {
       const value = String(formData.get("liftTicketTimeSlot") ?? "");
       if (!["2h", "3h", "4h", "6h", "night", "full_day"].includes(value)) throw new AppError("INVALID_INPUT", "리프트권을 다시 선택해 주세요.");
@@ -496,12 +691,15 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
         lodgingCostInput: trip.budgetData.overrides.lodging
       };
       const shuttleRoute = (patch.shuttleRouteId ?? trip.shuttleRouteId) ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === (patch.shuttleRouteId ?? trip.shuttleRouteId)) : undefined;
-      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute, selectedLiftTicketOptionId ?? undefined) : null;
+      const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute, selectedLiftTicketOptionId ?? undefined, patch.skiPlan ?? trip.skiPlan) : null;
       if (cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object") patch.selectedRecommendation = { ...trip.selectedRecommendation, cost };
     }
     await updateTrip(trip.id, patch);
-    const task = trip.tasks.find(item => item.isDefault && item.category === taskCategory && item.status === "needs_check");
-    if (task) await updateTask(task.id, { status: "planned" });
+    const categories = [taskCategory, ...extraTaskCategories].filter(Boolean);
+    await Promise.all(categories.map(async category => {
+      const task = trip.tasks.find(item => item.isDefault && item.category === category && item.status === "needs_check");
+      if (task) await updateTask(task.id, { status: "planned" });
+    }));
     await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_decision_updated", properties: { decision } });
     revalidateTripAccess(formData);
     return actionSuccess("선택을 트립에 저장했어요.");
@@ -697,6 +895,7 @@ export async function duplicateTripAction(formData: FormData) {
     selectedRecommendation: source.selectedRecommendation,
     season: source.season,
     visitDate: source.visitDate,
+    endDate: source.endDate,
     departureLocation: source.departureLocation,
     peopleCount: source.peopleCount,
     skillLevel: source.skillLevel,
@@ -718,6 +917,7 @@ export async function duplicateTripAction(formData: FormData) {
     selectedLiftTicketOptionId: source.selectedLiftTicketOptionId,
     selectedRentalShopId: source.selectedRentalShopId,
     selectedRentalOptionId: source.selectedRentalOptionId,
+    skiPlan: source.skiPlan,
     status: "planning",
     archivedAt: null,
     expiresAt: source.expiresAt,

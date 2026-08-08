@@ -20,6 +20,7 @@ import { getTripByEditTokenHash, getTripDisplayName } from "@/lib/trip-store";
 import { hashToken } from "@/lib/tokens";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
+import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
 
 export const metadata: Metadata = {
   robots: {
@@ -76,7 +77,7 @@ export default async function TripEditPage({
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 md:grid-cols-3">
-                <Info label="방문 날짜" value={new Intl.DateTimeFormat("ko-KR").format(trip.visitDate)} />
+                <Info label="여행 기간" value={skiPlanDateLabel(trip.visitDate, trip.endDate)} />
                 <Info label="인원" value={`${trip.peopleCount}명`} />
                 <Info label="교통" value={trip.transportType} />
               </div>

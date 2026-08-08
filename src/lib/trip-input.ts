@@ -14,6 +14,7 @@ const prioritySchema = z.enum([
 
 export const tripInputSchema = z.object({
   visitDate: z.string().min(1),
+  endDate: z.string().optional(),
   departureLocation: z.string().min(1),
   peopleCount: z.coerce.number().int().min(1).max(20),
   tripDuration: z.enum(["same_day", "overnight"]),
@@ -36,6 +37,7 @@ export function parseTripInput(formData: FormData): TripInput {
   const parsed = tripInputSchema.parse(raw);
   return {
     visitDate: parsed.visitDate,
+    endDate: parsed.endDate || undefined,
     departureLocation: parsed.departureLocation,
     peopleCount: parsed.peopleCount,
     tripDuration: parsed.tripDuration,
@@ -51,4 +53,3 @@ export function parseTripInput(formData: FormData): TripInput {
     lodgingCostInput: parsed.lodgingCostInput || undefined
   };
 }
-

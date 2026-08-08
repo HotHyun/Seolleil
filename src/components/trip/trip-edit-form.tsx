@@ -13,6 +13,7 @@ type TripEditFormData = {
   resortId: string;
   resortNameSnapshot: string;
   visitDate: Date;
+  endDate: Date;
   peopleCount: number;
   transportType: string;
   lodgingCostInput: number | null;
@@ -41,8 +42,11 @@ export function TripEditForm({
         {accessField}
         <input type="hidden" name="tripName" value={trip.tripName?.trim() || `${trip.resortNameSnapshot} 트립`} />
         <div className="grid gap-3 md:grid-cols-2">
-          <Field label="방문 날짜">
+          <Field label="도착 날짜">
             <Input name="visitDate" type="date" defaultValue={trip.visitDate.toISOString().slice(0, 10)} />
+          </Field>
+          <Field label="출발 날짜">
+            <Input name="endDate" type="date" min={trip.visitDate.toISOString().slice(0, 10)} defaultValue={trip.endDate.toISOString().slice(0, 10)} />
           </Field>
           <Field label="인원">
             <Input name="peopleCount" type="number" min={1} defaultValue={trip.peopleCount} />

@@ -10,7 +10,7 @@ import type { TripWorkspaceView } from "@/lib/trip-workspace";
 
 const items = [
   { id: "overview", label: "트립 개요", description: "일정과 준비 현황", icon: LayoutDashboard },
-  { id: "rental_lift", label: "렌탈샵 & 리프트", description: "샵·상품·리프트권", icon: Shirt },
+  { id: "rental_lift", label: "스키 일정 & 렌탈", description: "날짜·장비·의류·리프트", icon: Shirt },
   { id: "lodging", label: "숙박", description: "숙소 비교와 기록", icon: BedDouble },
   { id: "transport", label: "교통", description: "이동수단과 셔틀", icon: BusFront },
   { id: "checklist", label: "준비 체크리스트", description: "예약과 준비 상태", icon: CheckSquare2 },

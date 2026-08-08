@@ -55,6 +55,8 @@ export function TripBuilderForm({
   const [error, setError] = React.useState("");
   const [draftValues, setDraftValues] = React.useState<Record<string, string>>({});
   const [tripDuration, setTripDuration] = React.useState("same_day");
+  const [visitDate, setVisitDate] = React.useState("");
+  const [endDate, setEndDate] = React.useState("");
   const [draftRevision, setDraftRevision] = React.useState(0);
   const formRef = React.useRef<HTMLFormElement>(null);
   const progress = ((step + 1) / steps.length) * 100;
@@ -67,6 +69,8 @@ export function TripBuilderForm({
     if (!draft || draft.values.resortId !== selectedResort.id) return;
     setDraftValues(draft.values);
     setTripDuration(draft.values.tripDuration ?? "same_day");
+    setVisitDate(draft.values.visitDate ?? "");
+    setEndDate(draft.values.endDate ?? "");
     setStep(steps.length - 1);
     setMaxStepReached(steps.length - 1);
     setDraftRevision(1);
@@ -187,7 +191,7 @@ export function TripBuilderForm({
           <div className="relative min-h-[460px]">
             <StepPanel active={step === 0}>
               <Field label="방문 날짜">
-                <DatePicker name="visitDate" required defaultValue={draftValue("visitDate")} />
+                <DatePicker name="visitDate" required value={visitDate || draftValue("visitDate", "")} onValueChange={value => { setVisitDate(value); if (endDate && endDate <= value) setEndDate(""); }} ariaLabel="여행 방문 날짜" />
               </Field>
               <Field label="출발지">
                 <SelectField
@@ -211,8 +215,8 @@ export function TripBuilderForm({
                 />
               </Field>
               {tripDuration === "overnight" ? <Field label="출발 날짜">
-                <div><DatePicker name="endDate" required defaultValue={draftValue("endDate")} /><p className="mt-1 text-xs leading-5 text-muted-foreground">트립을 만든 뒤 실제 스키를 탈 날짜와 날짜별 이용 시간을 정할 수 있어요.</p></div>
-              </Field> : <input type="hidden" name="endDate" value={draftValue("visitDate", "")} />}
+                <div><DatePicker name="endDate" required min={visitDate || draftValue("visitDate", "")} value={endDate || draftValue("endDate", "")} onValueChange={setEndDate} ariaLabel="여행 출발 날짜" /><p className="mt-1 text-xs leading-5 text-muted-foreground">트립을 만든 뒤 실제 스키를 탈 날짜와 날짜별 이용 시간을 정할 수 있어요.</p></div>
+              </Field> : <input type="hidden" name="endDate" value={visitDate || draftValue("visitDate", "")} />}
               <Field label="교통수단">
                 <SelectField
                   name="transportType"

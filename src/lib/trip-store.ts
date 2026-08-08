@@ -230,11 +230,18 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
     selectedLiftTicketOptionId: document.selectedLiftTicketOptionId ?? null,
     skiPlan: parseTripSkiPlan(decodeJson(document.skiPlanData), {
       visitDate,
+      endDate,
       liftTicketTimeSlot: document.liftTicketTimeSlot,
       selectedRentalShopId: document.selectedRentalShopId,
       selectedRentalOptionId: document.selectedRentalOptionId,
       selectedLiftTicketOptionId: document.selectedLiftTicketOptionId,
-      rentalOptions: rentalPriceRules
+      rentalOptions: rentalPriceRules,
+      transportType: document.transportType,
+      shuttleRouteId: document.shuttleRouteId,
+      shuttleStopId: document.shuttleStopId,
+      lodgingName: document.lodgingName,
+      lodgingUrl: document.lodgingUrl,
+      lodgingCostInput: document.lodgingCostInput
     }),
     status: document.status,
     archivedAt: fromDate(document.archivedAt),

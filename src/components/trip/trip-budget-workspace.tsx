@@ -61,6 +61,9 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   const plannedRentalDays = trip.skiPlan.days.filter(day => rentalOptionIds(day).length > 0).length;
   const rentalLabel = plannedRentalDays ? `${trip.skiPlan.days.length}일 중 ${plannedRentalDays}일 선택됨` : "렌탈하지 않음 / 미정";
   const liftLabel = `${trip.skiPlan.days.length}일 · ${[...new Set(trip.skiPlan.days.map(day => timeSlotLabels[day.timeSlot]))].join(" · ")}`;
+  const transportLabel = trip.skiPlan.transportLegs.map(leg => `${leg.direction === "outbound" ? "갈 때" : "올 때"} ${transportLabels[leg.transportType] ?? leg.transportType}`).join(" · ");
+  const lodgingNames = [...new Set(trip.skiPlan.lodgingNights.map(night => night.lodgingName).filter((name): name is string => Boolean(name)))];
+  const lodgingLabel = trip.skiPlan.lodgingNights.length ? `${trip.skiPlan.lodgingNights.length}박 · ${lodgingNames.join(", ") || "미정"}` : "당일치기 · 숙박 없음";
   const addExpense = () => {
     setBudget(current => ({ ...current, extras: [...current.extras, { id: crypto.randomUUID(), category: "meal", title: "", amount: 0 }] }));
     setDirty(true);
@@ -115,8 +118,8 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
             <div className="grid gap-2 sm:grid-cols-2">
               <ChoiceSummary label="리프트권" value={liftLabel} href={`${basePath}?view=rental_lift#lift`} />
               <ChoiceSummary label="렌탈샵·상품" value={rentalLabel} href={`${basePath}?view=rental_lift`} />
-              <ChoiceSummary label="교통" value={transportLabels[trip.transportType] ?? trip.transportType} href={`${basePath}?view=transport`} />
-              <ChoiceSummary label="숙소" value={trip.lodgingName ?? "아직 정하지 않았어요"} href={`${basePath}?view=lodging`} />
+              <ChoiceSummary label="교통" value={transportLabel} href={`${basePath}?view=transport`} />
+              <ChoiceSummary label="숙소" value={lodgingLabel} href={`${basePath}?view=lodging`} />
             </div>
           </section>
 

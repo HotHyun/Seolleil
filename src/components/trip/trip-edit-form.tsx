@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { updateTripDetailsSafeAction, updateTripStatusSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
+import { DatePicker } from "@/components/ui/date-picker";
 
 type TripEditFormData = {
   id: string;
@@ -30,6 +32,8 @@ export function TripEditForm({
   editToken?: string;
 }) {
   const router = useRouter();
+  const [startDate, setStartDate] = useState(trip.visitDate.toISOString().slice(0, 10));
+  const [endDate, setEndDate] = useState(trip.endDate.toISOString().slice(0, 10));
   const accessField = editToken ? (
     <input type="hidden" name="editToken" value={editToken} />
   ) : (
@@ -43,10 +47,10 @@ export function TripEditForm({
         <input type="hidden" name="tripName" value={trip.tripName?.trim() || `${trip.resortNameSnapshot} 트립`} />
         <div className="grid gap-3 md:grid-cols-2">
           <Field label="도착 날짜">
-            <Input name="visitDate" type="date" defaultValue={trip.visitDate.toISOString().slice(0, 10)} />
+            <DatePicker name="visitDate" required value={startDate} onValueChange={value => { setStartDate(value); if (endDate < value) setEndDate(value); }} ariaLabel="트립 도착 날짜" />
           </Field>
           <Field label="출발 날짜">
-            <Input name="endDate" type="date" min={trip.visitDate.toISOString().slice(0, 10)} defaultValue={trip.endDate.toISOString().slice(0, 10)} />
+            <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="트립 출발 날짜" />
           </Field>
           <Field label="인원">
             <Input name="peopleCount" type="number" min={1} defaultValue={trip.peopleCount} />

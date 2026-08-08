@@ -2,12 +2,10 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BedDouble, BusFront, Car, Check, Clock3, ExternalLink, MapPin, Shirt, Sparkles } from "lucide-react";
+import { BedDouble, BusFront, Check, Clock3, ExternalLink, Shirt, Sparkles } from "lucide-react";
 import { updateTripDecisionSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
-import { NoAffiliateShuttleNotice } from "@/components/shuttle-coverage";
-import { ShuttleRouteExplorer } from "@/components/shuttle-route-explorer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/field";
@@ -22,6 +20,8 @@ import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/ren
 import { formatCurrency } from "@/lib/utils";
 import { DailyRentalChoices } from "@/components/trip/daily-rental-choices";
 import { TripSkiPlanEditor } from "@/components/trip/trip-ski-plan-editor";
+import { TripLodgingPlan } from "@/components/trip/trip-lodging-plan";
+import { TripTransportPlan } from "@/components/trip/trip-transport-plan";
 import { timeSlotLabels } from "@/lib/constants";
 import { tripDayTypeLabel, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
@@ -38,11 +38,8 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
   const [activeSkiDate, setActiveSkiDate] = useState(trip.skiPlan.days[0]?.date ?? trip.visitDate.toISOString().slice(0, 10));
   const activeSkiDay = trip.skiPlan.days.find(day => day.date === activeSkiDate) ?? trip.skiPlan.days[0];
   const rentalListRef = useRef<HTMLDivElement | null>(null);
-  const initialLodging = lodgingOptions.find(item => item.name === trip.lodgingName);
-  const [lodgingId, setLodgingId] = useState<string | null>(initialLodging?.id ?? null);
   const filtered = useMemo(() => sortRentalComparisonGroups(rentalGroups
     .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, activeSkiDay?.rentalShopId), [activeSkiDay?.rentalShopId, filter, rentalGroups, sort]);
-  const selectedLodging = lodgingOptions.find(item => item.id === lodgingId);
   const shuttleRoutes = useMemo(() => getSkiShuttleRoutes(trip.resortId), [trip.resortId]);
   const shuttleCoverage = useMemo(() => getSkiShuttleCoverage({ id: trip.resortId, shuttleUrl, lastCheckedAt: "2026-07-17" }, shuttleRoutes), [shuttleRoutes, shuttleUrl, trip.resortId]);
   const workspaceCopy = view === "rental_lift"
@@ -95,12 +92,12 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
     </> : null}
 
     {view === "lodging" ?
-    <DecisionSection id="lodging" title="공식 숙소 비교" description="리조트 공식 숙소의 위치를 비교하고, 실제 확인한 숙박비를 직접 입력하세요." icon={<BedDouble />}>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]"><PlaceComparisonMap candidates={lodgingOptions.map(item => toCandidate(item.id, item.name, undefined, item.latitude, item.longitude, item.mapLinks?.kakao ?? item.mapLinks?.naver))} selectedId={lodgingId} onSelect={setLodgingId} /><div className="space-y-3"><div className="grid max-h-56 gap-2 overflow-y-auto"><button type="button" onClick={() => setLodgingId(null)} className={`rounded-xl border p-3 text-left transition-colors ${lodgingId === null ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">다른 숙소 직접 입력</span><span className="mt-1 block text-xs text-muted-foreground">외부에서 찾은 숙소도 기록할 수 있어요.</span></button>{lodgingOptions.map(item => <button key={item.id} type="button" onClick={() => setLodgingId(item.id)} className={`rounded-xl border p-3 text-left transition-colors ${lodgingId === item.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">{item.name}</span><span className="mt-1 block text-xs text-muted-foreground">공식 숙박 · {item.category === "resort_hotel" ? "호텔" : "콘도"}</span></button>)}</div><form key={lodgingId ?? "custom"} action={save} className="grid gap-3 sm:grid-cols-2"><AccessInput access={access} /><input type="hidden" name="decision" value="lodging" /><Field label="숙소 이름"><Input name="lodgingName" required maxLength={120} defaultValue={selectedLodging?.name ?? trip.lodgingName ?? ""} readOnly={Boolean(selectedLodging)} placeholder="예약하거나 검토 중인 숙소" /></Field><Field label="예상 숙박비 (전체)"><Input name="lodgingCostInput" type="number" min="0" max="100000000" step="1000" defaultValue={trip.lodgingCostInput ?? ""} placeholder="직접 확인한 금액" /></Field><Field label="예약·숙소 링크"><Input name="lodgingUrl" type="url" defaultValue={selectedLodging?.url ?? trip.lodgingUrl ?? ""} readOnly={Boolean(selectedLodging)} placeholder="https://" /></Field><div className="flex flex-wrap items-end gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">검토 중으로 저장</SubmitButton> : null}{selectedLodging?.url ? <ExternalButton href={selectedLodging.url}>공식 원문</ExternalButton> : lodgingSearchUrl ? <ExternalButton href={lodgingSearchUrl}>주변 숙소</ExternalButton> : null}</div><p className="text-xs leading-5 text-muted-foreground sm:col-span-2">저장하면 체크리스트가 ‘선택됨’으로 바뀝니다. 예약·결제 완료는 체크리스트에서 직접 표시하세요.</p></form></div></div>
+    <DecisionSection id="lodging" title="숙박 밤별 계획" description="체크인하는 밤마다 숙소와 실제 확인한 1박 비용을 기록하세요. 같은 숙소는 한 번에 적용할 수 있습니다." icon={<BedDouble />}>
+      <TripLodgingPlan plan={trip.skiPlan} lodgingOptions={lodgingOptions} lodgingSearchUrl={lodgingSearchUrl} access={access} save={save} canEdit={canEdit} />
     </DecisionSection>
     : null}
 
-    {view === "transport" ? <DecisionSection id="transport" title="교통" description="이동 방식을 저장하고 내 출발지와 가까운 제휴 셔틀을 찾아보세요." icon={trip.transportType === "car" ? <Car /> : <BusFront />}><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="transport" /><SelectField name="transportType" ariaLabel="교통수단" defaultValue={trip.transportType} options={[{value:"car",label:"자차"},{value:"shuttle",label:"스키장 제휴 셔틀"},{value:"bus",label:"고속·시외버스"}]} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">저장하기</SubmitButton> : null}</div></form>{shuttleRoutes.length ? <div className="mt-4 border-t pt-4"><ShuttleRouteExplorer routes={shuttleRoutes} compact selectedRouteId={trip.shuttleRouteId} selectedStopId={trip.shuttleStopId} access={access} saveAction={save} canEdit={canEdit} /></div> : <div className="mt-4 border-t pt-4"><NoAffiliateShuttleNotice coverage={shuttleCoverage} compact /></div>}</DecisionSection> : null}
+    {view === "transport" ? <DecisionSection id="transport" title="왕복 교통" description="가는 날과 돌아오는 날의 이동수단을 따로 정하세요. 같은 조건이면 한 번에 적용할 수 있습니다." icon={<BusFront />}><TripTransportPlan plan={trip.skiPlan} routes={shuttleRoutes} coverage={shuttleCoverage} access={access} save={save} canEdit={canEdit} /></DecisionSection> : null}
   </div>;
 }
 

@@ -157,7 +157,7 @@ test.describe("production regression", () => {
       if (response.url().startsWith("https://ski.hothyun.com") && response.status() >= 500) serverErrors.push(`${response.status()} ${response.url()}`);
     });
     try {
-      await page.goto(planQuery, { waitUntil: "networkidle" });
+      await page.goto(`${planQuery.replace("tripDuration=same_day", "tripDuration=overnight")}&endDate=2027-01-12`, { waitUntil: "networkidle" });
       await page.getByRole("button", { name: /이 스키장으로 트립 만들기/ }).first().click();
       await page.getByRole("button", { name: "로그인 없이 링크로 만들기" }).click();
       await expect(page).toHaveURL(/\/trips\/[^?]+/);
@@ -195,14 +195,16 @@ test.describe("production regression", () => {
       const transportDecisions = page.getByTestId("trip-decision-workspace");
       await transportDecisions.locator("#transport").getByRole("combobox").click();
       await page.getByRole("option", { name: "스키장 제휴 셔틀" }).click();
-      await transportDecisions.locator("#transport").getByRole("button", { name: "저장하기" }).click();
+      await transportDecisions.getByText("가는 길과 돌아오는 길에 같이 적용").click();
+      await transportDecisions.locator("#transport").getByRole("button", { name: "이동수단 저장" }).click();
       await page.getByRole("link", { name: /^숙박/ }).first().click();
       const lodgingDecisions = page.getByTestId("trip-decision-workspace");
       await lodgingDecisions.getByRole("button", { name: /다른 숙소 직접 입력/ }).click();
       await lodgingDecisions.getByLabel("숙소 이름").fill("Playwright 테스트 숙소");
       await lodgingDecisions.getByLabel("예약·숙소 링크").fill("https://example.com/test-lodging");
-      await lodgingDecisions.getByLabel("예상 숙박비 (전체)").fill("320000");
-      await lodgingDecisions.getByRole("button", { name: "검토 중으로 저장" }).click();
+      await lodgingDecisions.getByLabel("이 밤의 숙박비").fill("160000");
+      await lodgingDecisions.getByText("모든 숙박 밤에 적용").click();
+      await lodgingDecisions.getByRole("button", { name: /숙박 저장/ }).click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
 
       await page.getByRole("link", { name: /트립 개요/ }).first().click();
@@ -242,7 +244,7 @@ test.describe("production regression", () => {
       await expect(mobileDecisions.getByTestId("trip-place-map").or(mobileDecisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
       await expect(mobileDecisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
       await page.getByRole("link", { name: /^숙박/ }).first().click();
-      await expect(page.getByTestId("trip-decision-workspace").getByRole("heading", { name: "공식 숙소 비교" })).toBeVisible();
+      await expect(page.getByTestId("trip-decision-workspace").getByRole("heading", { name: "숙박 밤별 계획" })).toBeVisible();
       await expectNoHorizontalOverflow(page);
       expect(serverErrors, `Production 5xx responses: ${serverErrors.join("\n")}`).toEqual([]);
     } finally {

@@ -6,7 +6,8 @@ import { CalendarRange, Clock3 } from "lucide-react";
 import { updateTripSkiScheduleSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { Button } from "@/components/ui/button";
-import { Field, Input } from "@/components/ui/field";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Field } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { timeSlotLabels } from "@/lib/constants";
@@ -68,10 +69,10 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
       <input type="hidden" name="skiDays" value="[]" />
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="도착 날짜">
-          <Input name="startDate" type="date" value={startDate} onChange={event => setStartDate(event.target.value)} />
+          <DatePicker name="startDate" required value={startDate} onValueChange={value => { setStartDate(value); if (endDate < value) setEndDate(value); }} ariaLabel="여행 도착 날짜" />
         </Field>
         <Field label="출발 날짜">
-          <Input name="endDate" type="date" min={startDate} value={endDate} onChange={event => setEndDate(event.target.value)} />
+          <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="여행 출발 날짜" />
         </Field>
       </div>
       {!rangeIsComplete ? <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm font-semibold text-destructive">여행 기간은 도착일부터 최대 14일까지 선택해 주세요.</p> : null}
@@ -94,7 +95,7 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
         })}
       </div> : null}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-muted/50 p-3">
-        <p className="text-xs leading-5 text-muted-foreground">선택한 날짜마다 렌탈샵과 장비·의류를 다르게 정할 수 있습니다.</p>
+        <p className="text-xs leading-5 text-muted-foreground">기간을 바꾸면 스키 날짜뿐 아니라 가는 길·돌아오는 길과 숙박 밤도 함께 조정됩니다.</p>
         {canEdit ? <SubmitButton disabled={!rangeIsComplete || !range.some(date => days.has(date))} pendingText="일정 저장 중…">스키 일정 저장</SubmitButton> : null}
       </div>
     </form>

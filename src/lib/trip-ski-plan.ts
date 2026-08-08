@@ -1,6 +1,6 @@
-import type { RentalPriceRule, TimeSlot } from "@/lib/types";
+import type { RentalPriceRule, TimeSlot, TransportType } from "@/lib/types";
 
-export const SKI_PLAN_VERSION = 1 as const;
+export const SKI_PLAN_VERSION = 2 as const;
 export const MAX_TRIP_DAYS = 14;
 
 export type SkiDayPlan = {
@@ -14,9 +14,26 @@ export type SkiDayPlan = {
   liftTicketOptionId: string | null;
 };
 
+export type LodgingNightPlan = {
+  date: string;
+  lodgingName: string | null;
+  lodgingUrl: string | null;
+  cost: number | null;
+};
+
+export type TransportLegPlan = {
+  direction: "outbound" | "return";
+  date: string;
+  transportType: TransportType;
+  shuttleRouteId: string | null;
+  shuttleStopId: string | null;
+};
+
 export type TripSkiPlan = {
   version: typeof SKI_PLAN_VERSION;
   days: SkiDayPlan[];
+  lodgingNights: LodgingNightPlan[];
+  transportLegs: TransportLegPlan[];
 };
 
 export type LegacySkiPlanInput = {
@@ -26,6 +43,13 @@ export type LegacySkiPlanInput = {
   selectedRentalOptionId?: string | null;
   selectedLiftTicketOptionId?: string | null;
   rentalOptions?: RentalPriceRule[];
+  endDate?: Date;
+  transportType?: TransportType;
+  shuttleRouteId?: string | null;
+  shuttleStopId?: string | null;
+  lodgingName?: string | null;
+  lodgingUrl?: string | null;
+  lodgingCostInput?: number | null;
 };
 
 const timeSlots = new Set<TimeSlot>(["2h", "3h", "4h", "5h", "6h", "7h", "night", "full_day", "all"]);
@@ -85,7 +109,28 @@ export function createLegacySkiPlan(input: LegacySkiPlanInput): TripSkiPlan {
   else if (option?.itemType === "clothing") day.clothingOptionId = option.id;
   else if (option?.itemType === "equipment_clothing_package") day.packageOptionId = option.id;
   else if (option && isAccessory(option.itemType)) day.accessoryOptionIds = [option.id];
-  return { version: SKI_PLAN_VERSION, days: [day] };
+  const startDate = toDateOnly(input.visitDate);
+  const endDate = toDateOnly(input.endDate ?? input.visitDate);
+  const nightDates = enumerateTripDates(startDate, endDate).slice(0, -1);
+  const totalLodgingCost = input.lodgingCostInput != null && input.lodgingCostInput >= 0 ? Math.round(input.lodgingCostInput) : null;
+  const lodgingNights = nightDates.map((date, index) => ({
+    date,
+    lodgingName: nullableText(input.lodgingName, 120),
+    lodgingUrl: nullableText(input.lodgingUrl, 2048),
+    cost: totalLodgingCost === null
+      ? null
+      : Math.floor(totalLodgingCost / nightDates.length) + (index === 0 ? totalLodgingCost % nightDates.length : 0)
+  }));
+  const transportType = input.transportType ?? "car";
+  return {
+    version: SKI_PLAN_VERSION,
+    days: [day],
+    lodgingNights,
+    transportLegs: [
+      { direction: "outbound", date: startDate, transportType, shuttleRouteId: input.shuttleRouteId ?? null, shuttleStopId: input.shuttleStopId ?? null },
+      { direction: "return", date: endDate, transportType, shuttleRouteId: input.shuttleRouteId ?? null, shuttleStopId: input.shuttleStopId ?? null }
+    ]
+  };
 }
 
 export function parseTripSkiPlan(value: unknown, fallback: LegacySkiPlanInput): TripSkiPlan {
@@ -114,22 +159,90 @@ export function parseTripSkiPlan(value: unknown, fallback: LegacySkiPlanInput): 
     } satisfies SkiDayPlan];
   }).sort((left, right) => left.date.localeCompare(right.date)).slice(0, MAX_TRIP_DAYS);
 
-  return days.length ? { version: SKI_PLAN_VERSION, days } : createLegacySkiPlan(fallback);
+  if (!days.length) return createLegacySkiPlan(fallback);
+
+  const fallbackPlan = createLegacySkiPlan(fallback);
+  const rawValue = value as Record<string, unknown>;
+  const validNightDates = new Set(enumerateTripDates(toDateOnly(fallback.visitDate), toDateOnly(fallback.endDate ?? fallback.visitDate)).slice(0, -1));
+  const lodgingNights = Array.isArray(rawValue.lodgingNights)
+    ? rawValue.lodgingNights.flatMap(candidate => {
+      if (!candidate || typeof candidate !== "object") return [];
+      const raw = candidate as Record<string, unknown>;
+      const date = String(raw.date ?? "");
+      if (!validNightDates.has(date)) return [];
+      return [{
+        date,
+        lodgingName: nullableText(raw.lodgingName, 120),
+        lodgingUrl: nullableText(raw.lodgingUrl, 2048),
+        cost: nullableCost(raw.cost)
+      } satisfies LodgingNightPlan];
+    })
+    : fallbackPlan.lodgingNights;
+  const nightByDate = new Map(lodgingNights.map(night => [night.date, night]));
+  const normalizedNights = [...validNightDates].map(date => nightByDate.get(date) ?? createEmptyLodgingNight(date));
+
+  const rawLegs = Array.isArray(rawValue.transportLegs) ? rawValue.transportLegs : [];
+  const normalizedLegs = (["outbound", "return"] as const).map(direction => {
+    const raw = rawLegs.find(candidate => candidate && typeof candidate === "object" && (candidate as Record<string, unknown>).direction === direction) as Record<string, unknown> | undefined;
+    const fallbackLeg = fallbackPlan.transportLegs.find(leg => leg.direction === direction)!;
+    if (!raw) return fallbackLeg;
+    return {
+      direction,
+      date: direction === "outbound" ? toDateOnly(fallback.visitDate) : toDateOnly(fallback.endDate ?? fallback.visitDate),
+      transportType: isTransportType(raw.transportType) ? raw.transportType : fallbackLeg.transportType,
+      shuttleRouteId: nullableId(raw.shuttleRouteId),
+      shuttleStopId: nullableId(raw.shuttleStopId)
+    } satisfies TransportLegPlan;
+  });
+
+  return { version: SKI_PLAN_VERSION, days, lodgingNights: normalizedNights, transportLegs: normalizedLegs };
 }
 
 export function rebuildSkiSchedule(
   current: TripSkiPlan,
-  selectedDays: Array<{ date: string; timeSlot: TimeSlot }>
+  selectedDays: Array<{ date: string; timeSlot: TimeSlot }>,
+  startDate = selectedDays[0]?.date,
+  endDate = selectedDays.at(-1)?.date
 ): TripSkiPlan {
   const currentByDate = new Map(current.days.map((day) => [day.date, day]));
+  const dates = startDate && endDate ? enumerateTripDates(startDate, endDate) : [];
+  const currentNights = new Map(current.lodgingNights.map(night => [night.date, night]));
+  const currentLegs = new Map(current.transportLegs.map(leg => [leg.direction, leg]));
   return {
     version: SKI_PLAN_VERSION,
     days: selectedDays
       .filter((day, index, all) => isDateOnly(day.date) && all.findIndex((item) => item.date === day.date) === index)
       .sort((left, right) => left.date.localeCompare(right.date))
       .slice(0, MAX_TRIP_DAYS)
-      .map(({ date, timeSlot }) => ({ ...(currentByDate.get(date) ?? createEmptySkiDay(date, timeSlot)), timeSlot }))
+      .map(({ date, timeSlot }) => ({ ...(currentByDate.get(date) ?? createEmptySkiDay(date, timeSlot)), timeSlot })),
+    lodgingNights: dates.slice(0, -1).map(date => currentNights.get(date) ?? createEmptyLodgingNight(date)),
+    transportLegs: (["outbound", "return"] as const).map(direction => {
+      const previous = currentLegs.get(direction) ?? current.transportLegs[0];
+      return {
+        direction,
+        date: direction === "outbound" ? startDate! : endDate!,
+        transportType: previous?.transportType ?? "car",
+        shuttleRouteId: previous?.shuttleRouteId ?? null,
+        shuttleStopId: previous?.shuttleStopId ?? null
+      };
+    })
   };
+}
+
+export function createEmptyLodgingNight(date: string): LodgingNightPlan {
+  return { date, lodgingName: null, lodgingUrl: null, cost: null };
+}
+
+export function lodgingPlanTotal(plan: TripSkiPlan) {
+  return plan.lodgingNights.reduce((sum, night) => sum + (night.cost ?? 0), 0);
+}
+
+export function lodgingPlanIsComplete(plan: TripSkiPlan) {
+  return plan.lodgingNights.length === 0 || plan.lodgingNights.every(night => Boolean(night.lodgingName));
+}
+
+export function transportPlanIsComplete(plan: TripSkiPlan) {
+  return plan.transportLegs.length === 2 && plan.transportLegs.every(leg => leg.transportType !== "shuttle" || Boolean(leg.shuttleRouteId && leg.shuttleStopId));
 }
 
 export function rentalOptionIds(day: SkiDayPlan) {
@@ -165,6 +278,21 @@ function isTimeSlot(value: unknown): value is TimeSlot {
 function nullableId(value: unknown) {
   const id = typeof value === "string" ? value.trim() : "";
   return id ? id.slice(0, 128) : null;
+}
+
+function nullableText(value: unknown, maxLength: number) {
+  const text = typeof value === "string" ? value.trim() : "";
+  return text ? text.slice(0, maxLength) : null;
+}
+
+function nullableCost(value: unknown) {
+  if (value === null || value === undefined || value === "") return null;
+  const amount = Math.round(Number(value));
+  return Number.isFinite(amount) && amount >= 0 && amount <= 100_000_000 ? amount : null;
+}
+
+function isTransportType(value: unknown): value is TransportType {
+  return value === "car" || value === "shuttle" || value === "bus";
 }
 
 function isAccessory(itemType: RentalPriceRule["itemType"]) {

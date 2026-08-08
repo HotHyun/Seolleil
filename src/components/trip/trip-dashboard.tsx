@@ -7,7 +7,7 @@ import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { isTaskComplete } from "@/lib/checklist";
 import { getTripDashboardNextAction } from "@/lib/trip-workspace";
 import type { TripTaskRecord } from "@/lib/trip-store";
-import { rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
+import { lodgingPlanIsComplete, rentalOptionIds, transportPlanIsComplete, type TripSkiPlan } from "@/lib/trip-ski-plan";
 import { timeSlotLabels } from "@/lib/constants";
 
 type Trip = { resortId: string; skiPlan: TripSkiPlan; selectedRentalOptionId: string | null; selectedLiftTicketOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; shuttleRouteId: string | null; shuttleStopId: string | null; lodgingName: string | null; lodgingUrl: string | null; tasks: TripTaskRecord[] };
@@ -20,8 +20,15 @@ export function TripDashboard({ trip, basePath }: { trip: Trip; basePath: string
   const rentalReady = trip.skiPlan.days.every(day => day.rentalShopId && rentalOptionIds(day).length > 0);
   const liftSummary = [...new Set(trip.skiPlan.days.map(day => timeSlotLabels[day.timeSlot]))].join(" · ");
   const discountedLiftDays = trip.skiPlan.days.filter(day => day.liftTicketOptionId).length;
-  const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : null;
-  const shuttleStop = shuttleRoute?.stops.find(stop => stop.id === trip.shuttleStopId);
+  const shuttleRoutes = getSkiShuttleRoutes(trip.resortId);
+  const transportSummary = trip.skiPlan.transportLegs.map(leg => {
+    const route = shuttleRoutes.find(item => item.id === leg.shuttleRouteId);
+    return `${leg.direction === "outbound" ? "갈 때" : "올 때"} ${route?.name ?? transportLabels[leg.transportType] ?? leg.transportType}`;
+  }).join(" · ");
+  const firstShuttleRoute = shuttleRoutes.find(route => trip.skiPlan.transportLegs.some(leg => leg.shuttleRouteId === route.id));
+  const lodgingNames = [...new Set(trip.skiPlan.lodgingNights.map(night => night.lodgingName).filter((name): name is string => Boolean(name)))];
+  const lodgingReady = lodgingPlanIsComplete(trip.skiPlan);
+  const transportReady = transportPlanIsComplete(trip.skiPlan);
   const relevantTasks = trip.tasks.filter(task => task.status !== "not_needed");
   const rentalRelevant = relevantTasks.some(task => task.category === "equipment_rental" || task.category === "clothing_rental");
   const lodgingRelevant = relevantTasks.some(task => task.category === "lodging");
@@ -29,16 +36,16 @@ export function TripDashboard({ trip, basePath }: { trip: Trip; basePath: string
   const nextAction = getTripDashboardNextAction({
     rentalReady: !rentalRelevant || rentalReady,
     liftReady: !liftTask || isTaskComplete(liftTask.category, liftTask.status),
-    lodgingReady: !lodgingRelevant || Boolean(trip.lodgingName),
-    transportReady: trip.transportType !== "shuttle" || Boolean(shuttleRoute && shuttleStop),
+    lodgingReady: !lodgingRelevant || lodgingReady,
+    transportReady,
     checklistReady: relevantTasks.every(task => isTaskComplete(task.category, task.status))
   });
   return <div className="space-y-4">
     <Card className="overflow-hidden border-primary/20"><CardHeader className="bg-gradient-to-r from-primary/15 via-card to-card"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Trip at a glance</p><CardTitle className="mt-2">이번 여행, 지금 정해진 것</CardTitle></div><Link href={`${basePath}?view=${nextAction.view}`}><Button>{nextAction.label}</Button></Link></div></CardHeader><CardContent className="grid gap-3 p-4 sm:grid-cols-2 sm:p-6">
       <DashboardItem icon={<Shirt />} label="렌탈" value={plannedShopNames.length ? `${trip.skiPlan.days.length}일 · ${plannedShopNames.join(", ")}` : "날짜별 렌탈을 정해 주세요"} detail={rentalReady ? "모든 스키 날짜의 장비·의류 선택됨" : plannedRentalDays.length ? `${plannedRentalDays.length}/${trip.skiPlan.days.length}일 선택됨` : undefined} href={`${basePath}?view=rental_lift#rental`} ready={rentalReady} />
       <DashboardItem icon={<Clock3 />} label="리프트권" value={`${trip.skiPlan.days.length}일 · ${liftSummary}`} detail={[discountedLiftDays ? `${discountedLiftDays}일 할인권` : "공식권 기준", taskState(trip.tasks, "lift_ticket")].filter(Boolean).join(" · ")} href={`${basePath}?view=rental_lift#lift`} ready />
-      <DashboardItem icon={<BusFront />} label="교통" value={shuttleRoute ? `${shuttleRoute.name} · ${shuttleStop?.name ?? "탑승지 재선택"}` : transportLabels[trip.transportType] ?? trip.transportType} detail={[shuttleStop?.departureTime ? `${shuttleStop.departureTime} 출발` : null, taskState(trip.tasks, "transport")].filter(Boolean).join(" · ") || undefined} href={`${basePath}?view=transport`} externalHref={shuttleRoute?.bookingUrl} ready={trip.transportType !== "shuttle" || Boolean(shuttleRoute && shuttleStop)} />
-      <DashboardItem icon={<BedDouble />} label="숙소" value={trip.lodgingName ?? "아직 정하지 않았어요"} detail={taskState(trip.tasks, "lodging")} href={`${basePath}?view=lodging`} externalHref={trip.lodgingUrl ?? undefined} ready={Boolean(trip.lodgingName)} />
+      <DashboardItem icon={<BusFront />} label="교통" value={transportSummary} detail={taskState(trip.tasks, "transport")} href={`${basePath}?view=transport`} externalHref={firstShuttleRoute?.bookingUrl} ready={transportReady} />
+      <DashboardItem icon={<BedDouble />} label="숙소" value={trip.skiPlan.lodgingNights.length ? (lodgingNames.length ? `${trip.skiPlan.lodgingNights.length}박 · ${lodgingNames.join(", ")}` : `${trip.skiPlan.lodgingNights.length}박 숙소를 정해 주세요`) : "당일치기 · 숙박 없음"} detail={trip.skiPlan.lodgingNights.length ? `${trip.skiPlan.lodgingNights.filter(night => night.lodgingName).length}/${trip.skiPlan.lodgingNights.length}박 선택됨` : undefined} href={`${basePath}?view=lodging`} externalHref={trip.skiPlan.lodgingNights.find(night => night.lodgingUrl)?.lodgingUrl ?? undefined} ready={lodgingReady} />
     </CardContent></Card>
   </div>;
 }

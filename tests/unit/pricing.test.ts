@@ -85,11 +85,32 @@ describe("pricing", () => {
     second.rentalShopId = "high1-ski-no1";
     second.equipmentOptionId = "high1-ski-no1-equipment-full-day";
     second.clothingOptionId = "high1-ski-no1-clothing-grade";
-    const plan: TripSkiPlan = { version: 1, days: [first, second] };
+    const plan: TripSkiPlan = { version: 2, days: [first, second], lodgingNights: [], transportLegs: [
+      { direction: "outbound", date: "2026-01-16", transportType: "car", shuttleRouteId: null, shuttleStopId: null },
+      { direction: "return", date: "2026-01-17", transportType: "car", shuttleRouteId: null, shuttleStopId: null }
+    ] };
 
     const estimate = estimateTripCost(high1, tripInput({ visitDate: "2026-01-16", peopleCount: 2 }), undefined, undefined, undefined, plan);
 
     expect(estimate.items.find(item => item.key === "rental")).toMatchObject({ representative: 166000 });
     expect(estimate.items.find(item => item.key === "lift_ticket")?.representative).toBeGreaterThan(0);
+  });
+
+  it("adds nightly lodging and different outbound/return transport choices", () => {
+    const plan: TripSkiPlan = {
+      version: 2,
+      days: [createEmptySkiDay("2026-01-16", "4h")],
+      lodgingNights: [
+        { date: "2026-01-16", lodgingName: "A", lodgingUrl: null, cost: 120000 },
+        { date: "2026-01-17", lodgingName: "B", lodgingUrl: null, cost: 90000 }
+      ],
+      transportLegs: [
+        { direction: "outbound", date: "2026-01-16", transportType: "car", shuttleRouteId: null, shuttleStopId: null },
+        { direction: "return", date: "2026-01-18", transportType: "bus", shuttleRouteId: null, shuttleStopId: null }
+      ]
+    };
+    const estimate = estimateTripCost(konjiam, tripInput({ visitDate: "2026-01-16", endDate: "2026-01-18" }), undefined, undefined, undefined, plan);
+    expect(estimate.items.find(item => item.key === "lodging")).toMatchObject({ representative: 210000, confidence: "confirmed" });
+    expect(estimate.items.find(item => item.key === "transport")?.label).toBe("가는 길·돌아오는 길 교통비");
   });
 });

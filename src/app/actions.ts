@@ -37,9 +37,11 @@ import {
   addDays,
   createLegacySkiPlan,
   enumerateTripDates,
+  lodgingPlanIsComplete,
   optionAppliesToDay,
   rebuildSkiSchedule,
   toDateOnly,
+  transportPlanIsComplete,
   type TripSkiPlan
 } from "@/lib/trip-ski-plan";
 import type { TimeSlot } from "@/lib/types";
@@ -134,10 +136,13 @@ export async function createTripAction(formData: FormData) {
     : undefined;
   const skiPlan = createLegacySkiPlan({
     visitDate,
+    endDate,
     liftTicketTimeSlot: input.liftTicketTimeSlot,
     selectedRentalShopId: selectedRental?.shop.id,
     selectedRentalOptionId,
-    rentalOptions: getRentalOptionsForResort(resortId).flatMap(group => group.options)
+    rentalOptions: getRentalOptionsForResort(resortId).flatMap(group => group.options),
+    transportType: input.transportType,
+    lodgingCostInput: input.lodgingCostInput
   });
   const trip = await createTrip({
       userId: session?.user?.id ?? null,
@@ -276,7 +281,7 @@ export async function createDirectTripAction(formData: FormData) {
       selectedLiftTicketOptionId: null,
       selectedRentalOptionId: null,
       selectedRentalShopId: null,
-      skiPlan: createLegacySkiPlan({ visitDate, liftTicketTimeSlot: input.liftTicketTimeSlot }),
+      skiPlan: createLegacySkiPlan({ visitDate, endDate, liftTicketTimeSlot: input.liftTicketTimeSlot, transportType: input.transportType, lodgingCostInput: input.lodgingCostInput }),
       status: "planning",
       archivedAt: null,
       expiresAt,
@@ -353,7 +358,7 @@ export async function updateTripDetailsAction(formData: FormData) {
   const existingDays = current.skiPlan.days
     .filter(day => day.date >= startDate && day.date <= endDateOnly)
     .map(day => ({ date: day.date, timeSlot: day.timeSlot }));
-  const skiPlan = rebuildSkiSchedule(current.skiPlan, existingDays.length ? existingDays : [{ date: startDate, timeSlot: input.liftTicketTimeSlot }]);
+  const skiPlan = rebuildSkiSchedule(current.skiPlan, existingDays.length ? existingDays : [{ date: startDate, timeSlot: input.liftTicketTimeSlot }], startDate, endDateOnly);
   const resort = getResort(current.resortId);
   const shuttleRoute = current.shuttleRouteId ? getSkiShuttleRoutes(current.resortId).find(route => route.id === current.shuttleRouteId) : undefined;
   const cost = resort ? estimateTripCost(resort, { ...input, endDate: endDateOnly }, selectedRentalOptionId, shuttleRoute, current.selectedLiftTicketOptionId ?? undefined, skiPlan) : recommendation.cost;
@@ -484,7 +489,7 @@ export async function updateTripSkiScheduleSafeAction(formData: FormData) {
       return { date, timeSlot };
     });
     if (!selectedDays.length) throw new AppError("INVALID_INPUT", "스키를 탈 날짜를 하나 이상 선택해 주세요.");
-    const skiPlan = rebuildSkiSchedule(trip.skiPlan, selectedDays);
+    const skiPlan = rebuildSkiSchedule(trip.skiPlan, selectedDays, startDate, endDate);
     const firstDay = skiPlan.days[0];
     const resort = getResort(trip.resortId);
     const input: TripInput = {
@@ -644,6 +649,38 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       patch.selectedLiftTicketOptionId = option.item.id;
       patch.liftTicketTimeSlot = option.item.timeSlot;
       taskCategory = "lift_ticket";
+    } else if (decision === "transport_leg") {
+      const direction = String(formData.get("transportLegDirection") ?? "");
+      const value = String(formData.get("transportType") ?? "");
+      if (!["outbound", "return"].includes(direction) || !["car", "shuttle", "bus"].includes(value)) throw new AppError("INVALID_INPUT", "이동 구간과 교통수단을 다시 선택해 주세요.");
+      const applyAll = String(formData.get("applyToAllLegs") ?? "") === "true";
+      const transportLegs = trip.skiPlan.transportLegs.map(leg => {
+        if (leg.direction !== direction && !applyAll) return leg;
+        return { ...leg, transportType: value as TripInput["transportType"], shuttleRouteId: value === "shuttle" ? leg.shuttleRouteId : null, shuttleStopId: value === "shuttle" ? leg.shuttleStopId : null };
+      });
+      const skiPlan: TripSkiPlan = { ...trip.skiPlan, transportLegs };
+      const outbound = transportLegs.find(leg => leg.direction === "outbound")!;
+      patch.skiPlan = skiPlan;
+      patch.transportType = outbound.transportType;
+      patch.shuttleRouteId = outbound.shuttleRouteId;
+      patch.shuttleStopId = outbound.shuttleStopId;
+      if (transportPlanIsComplete(skiPlan)) taskCategory = "transport";
+    } else if (decision === "shuttle_leg") {
+      const direction = String(formData.get("transportLegDirection") ?? "");
+      const routeId = String(formData.get("shuttleRouteId") ?? "");
+      const stopId = String(formData.get("shuttleStopId") ?? "");
+      const route = getSkiShuttleRoutes(trip.resortId).find(item => item.id === routeId);
+      const stop = route?.stops.find(item => item.id === stopId);
+      if (!["outbound", "return"].includes(direction) || !route || !stop) throw new AppError("INVALID_INPUT", "선택한 이동 구간과 셔틀 탑승지를 다시 확인해 주세요.");
+      const applyAll = String(formData.get("applyToAllLegs") ?? "") === "true";
+      const transportLegs = trip.skiPlan.transportLegs.map(leg => leg.direction === direction || applyAll ? { ...leg, transportType: "shuttle" as const, shuttleRouteId: route.id, shuttleStopId: stop.id } : leg);
+      const skiPlan: TripSkiPlan = { ...trip.skiPlan, transportLegs };
+      const outbound = transportLegs.find(leg => leg.direction === "outbound")!;
+      patch.skiPlan = skiPlan;
+      patch.transportType = outbound.transportType;
+      patch.shuttleRouteId = outbound.shuttleRouteId;
+      patch.shuttleStopId = outbound.shuttleStopId;
+      if (transportPlanIsComplete(skiPlan)) taskCategory = "transport";
     } else if (decision === "transport") {
       const value = String(formData.get("transportType") ?? "");
       if (!["car", "shuttle", "bus"].includes(value)) throw new AppError("INVALID_INPUT", "교통수단을 다시 선택해 주세요.");
@@ -659,6 +696,31 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       patch.shuttleRouteId = route.id;
       patch.shuttleStopId = stop.id;
       taskCategory = "transport";
+    } else if (decision === "lodging_night") {
+      const stayDate = String(formData.get("stayDate") ?? "");
+      if (!trip.skiPlan.lodgingNights.some(night => night.date === stayDate)) throw new AppError("INVALID_INPUT", "숙박할 날짜를 다시 선택해 주세요.");
+      const lodgingName = String(formData.get("lodgingName") ?? "").trim().slice(0, 120);
+      const lodgingUrl = String(formData.get("lodgingUrl") ?? "").trim();
+      if (!lodgingName) throw new AppError("INVALID_INPUT", "예약하거나 검토 중인 숙소 이름을 입력해 주세요.");
+      if (lodgingUrl && !/^https:\/\//i.test(lodgingUrl)) throw new AppError("INVALID_INPUT", "숙소 링크는 https://로 시작해야 합니다.");
+      const lodgingCostValue = String(formData.get("lodgingCostInput") ?? "").trim();
+      const lodgingCost = lodgingCostValue ? Math.round(Number(lodgingCostValue)) : null;
+      if (lodgingCost !== null && (!Number.isFinite(lodgingCost) || lodgingCost < 0 || lodgingCost > 100_000_000)) throw new AppError("INVALID_INPUT", "1박 숙박비를 다시 확인해 주세요.");
+      const applyAll = String(formData.get("applyToAllNights") ?? "") === "true";
+      const lodgingNights = trip.skiPlan.lodgingNights.map(night => night.date === stayDate || applyAll ? { ...night, lodgingName, lodgingUrl: lodgingUrl || null, cost: lodgingCost } : night);
+      const skiPlan: TripSkiPlan = { ...trip.skiPlan, lodgingNights };
+      const total = lodgingNights.reduce((sum, night) => sum + (night.cost ?? 0), 0);
+      const allCostsEntered = lodgingNights.length > 0 && lodgingNights.every(night => night.cost !== null);
+      const budget = parseTripBudget(trip.budgetData);
+      const overrides = { ...budget.overrides };
+      if (allCostsEntered) overrides.lodging = total;
+      else delete overrides.lodging;
+      patch.skiPlan = skiPlan;
+      patch.lodgingName = lodgingNights[0]?.lodgingName ?? null;
+      patch.lodgingUrl = lodgingNights[0]?.lodgingUrl ?? null;
+      patch.lodgingCostInput = allCostsEntered ? total : null;
+      patch.budgetData = { ...budget, overrides };
+      if (lodgingPlanIsComplete(skiPlan)) taskCategory = "lodging";
     } else if (decision === "lodging") {
       const lodgingName = String(formData.get("lodgingName") ?? "").trim().slice(0, 120);
       const lodgingUrl = String(formData.get("lodgingUrl") ?? "").trim();
@@ -679,7 +741,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
     } else {
       throw new AppError("INVALID_INPUT", "저장할 선택 항목을 확인해 주세요.");
     }
-    if (decision !== "lodging" && decision !== "rental_shop") {
+    if (decision !== "rental_shop") {
       const resort = getResort(trip.resortId);
       const selectedRentalOptionId = patch.selectedRentalOptionId === undefined ? trip.selectedRentalOptionId : patch.selectedRentalOptionId;
       const selectedLiftTicketOptionId = patch.selectedLiftTicketOptionId === undefined ? trip.selectedLiftTicketOptionId : patch.selectedLiftTicketOptionId;
@@ -688,9 +750,10 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
         tripDuration: trip.tripDuration, skillLevel: trip.skillLevel, rideType: trip.rideType, ownsEquipment: trip.ownsEquipment,
         ownsClothing: trip.ownsClothing, transportType: patch.transportType ?? trip.transportType, priorities: ["rental"],
         liftTicketTimeSlot: (patch.liftTicketTimeSlot ?? trip.liftTicketTimeSlot) as TripInput["liftTicketTimeSlot"],
-        lodgingCostInput: trip.budgetData.overrides.lodging
+        lodgingCostInput: (patch.budgetData ?? trip.budgetData).overrides.lodging
       };
-      const shuttleRoute = (patch.shuttleRouteId ?? trip.shuttleRouteId) ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === (patch.shuttleRouteId ?? trip.shuttleRouteId)) : undefined;
+      const shuttleRouteId = patch.shuttleRouteId === undefined ? trip.shuttleRouteId : patch.shuttleRouteId;
+      const shuttleRoute = shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === shuttleRouteId) : undefined;
       const cost = resort ? estimateTripCost(resort, input, selectedRentalOptionId ?? undefined, shuttleRoute, selectedLiftTicketOptionId ?? undefined, patch.skiPlan ?? trip.skiPlan) : null;
       if (cost && trip.selectedRecommendation && typeof trip.selectedRecommendation === "object") patch.selectedRecommendation = { ...trip.selectedRecommendation, cost };
     }

@@ -6,6 +6,7 @@ import {
   lodgingPlanIsComplete,
   optionAppliesToDay,
   parseTripSkiPlan,
+  rentalPriceAvailability,
   rebuildSkiSchedule,
   transportPlanIsComplete,
   tripDayTypeLabel
@@ -71,6 +72,13 @@ describe("trip ski plan", () => {
     const option = rentalPriceRules.find(rule => rule.id === "high1-ski-no1-equipment-5h")!;
     expect(optionAppliesToDay(option, { date: "2026-01-16", timeSlot: "5h" })).toBe(true);
     expect(optionAppliesToDay(option, { date: "2026-01-16", timeSlot: "full_day" })).toBe(false);
+  });
+
+  it("distinguishes unavailable future-season pricing from an empty rental catalog", () => {
+    const options = rentalPriceRules.filter(rule => rule.rentalShopId === "high1-ski-no1");
+    expect(rentalPriceAvailability(options, { date: "2026-01-16", timeSlot: "5h" })).toBe("available");
+    expect(rentalPriceAvailability(options, { date: "2026-12-24", timeSlot: "5h" })).toBe("outside_validity");
+    expect(rentalPriceAvailability([], { date: "2026-12-24", timeSlot: "5h" })).toBe("no_catalog");
   });
 
   it("requires every lodging night and every shuttle leg detail before marking plans complete", () => {

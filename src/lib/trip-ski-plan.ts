@@ -249,6 +249,19 @@ export function rentalOptionIds(day: SkiDayPlan) {
   return [day.packageOptionId, day.equipmentOptionId, day.clothingOptionId, ...day.accessoryOptionIds].filter((id): id is string => Boolean(id));
 }
 
+export function rentalPriceAvailability(options: RentalPriceRule[], day: Pick<SkiDayPlan, "date" | "timeSlot">) {
+  const primaryRentalOptions = options.filter(option =>
+    option.itemType === "equipment"
+    || option.itemType === "clothing"
+    || option.itemType === "equipment_clothing_package"
+  );
+  if (!primaryRentalOptions.length) return "no_catalog" as const;
+  if (!primaryRentalOptions.some(option => option.validFrom <= day.date && option.validTo >= day.date)) {
+    return "outside_validity" as const;
+  }
+  return "available" as const;
+}
+
 export function optionAppliesToDay(option: RentalPriceRule, day: Pick<SkiDayPlan, "date" | "timeSlot">) {
   const dayType = tripDayType(day.date);
   const dayMatches = option.dayType === "all"

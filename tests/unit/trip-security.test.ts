@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canEditOwnedTrip, canManageTripSharing, canMutateWithSharePermission } from "@/lib/trip-access";
+import { canEditOwnedTrip, canManageTripSharing, canMutateWithSharePermission, createdTripDestination } from "@/lib/trip-access";
 import { createToken, hashToken } from "@/lib/tokens";
 import { assertShareLinkBelongsToTrip } from "@/lib/trip-store";
 
@@ -22,6 +22,11 @@ describe("trip access security", () => {
     expect(canManageTripSharing("viewer", "owner")).toBe(false);
     expect(canManageTripSharing("editor", "owner")).toBe(false);
     expect(canManageTripSharing(undefined, "owner")).toBe(false);
+  });
+
+  it("sends a newly created owned trip to its canonical account route", () => {
+    expect(createdTripDestination({ tripId: "trip-a", editToken: "secret", userId: "owner" })).toBe("/my-trips/trip-a?notice=%EB%82%B4%20%ED%8A%B8%EB%A6%BD%EC%97%90%20%EC%A0%80%EC%9E%A5%ED%96%88%EC%96%B4%EC%9A%94.");
+    expect(createdTripDestination({ tripId: "trip-a", editToken: "secret", userId: null })).toBe("/trips/secret?notice=%EB%B9%84%EA%B3%B5%EA%B0%9C%20%ED%8A%B8%EB%A6%BD%EC%9D%84%20%EB%A7%8C%EB%93%A4%EC%97%88%EC%96%B4%EC%9A%94.");
   });
 
   it("creates distinct edit/share tokens and stores stable hashes", () => {

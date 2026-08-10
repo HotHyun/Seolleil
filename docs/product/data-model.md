@@ -25,7 +25,7 @@ trip 1 ── * analytics_event
 
 장비·의류 렌탈 선택(`selectedRentalOptionId`)과 렌탈샵 할인 리프트권 선택(`selectedLiftTicketOptionId`)은 독립적으로 저장한다. 할인권을 선택하면 연결된 시간권과 가격을 예상 비용에 반영하며, 공식권으로 바꾸어도 장비·의류 선택은 유지한다.
 
-`skiPlanData` v2는 세 가지 일정 축을 함께 저장한다. `days`는 실제 스키를 타는 날짜별 시간·렌탈·리프트 선택, `lodgingNights`는 도착일부터 출발일 전날까지의 체크인 날짜별 숙소·URL·1박 금액, `transportLegs`는 도착일의 `outbound`와 출발일의 `return` 이동수단·셔틀 노선·탑승지다. 일정 기간이 변경되면 같은 날짜의 선택은 유지하고 범위 밖 선택은 제거한다. v1 또는 단일 snapshot 문서는 읽을 때 v2 형태로 정규화한다.
+`skiPlanData` v2는 세 가지 일정 축을 함께 저장한다. `days`는 실제 스키를 타는 날짜별 시간·렌탈·리프트 선택, `lodgingNights`는 도착일부터 출발일 전날까지의 체크인 날짜별 숙소·URL·1박 금액, `transportLegs`는 도착일의 `outbound`와 출발일의 `return` 이동수단·셔틀 노선·정류장이다. 같은 `shuttleStopId` 필드는 `outbound`에서는 탑승지, `return`에서는 귀가 하차지를 뜻한다. 일정 기간이 변경되면 같은 날짜의 선택은 유지하고 범위 밖 선택은 제거한다. v1 또는 단일 snapshot 문서는 읽을 때 v2 형태로 정규화한다.
 
 ## Tasks
 

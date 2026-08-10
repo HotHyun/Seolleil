@@ -161,8 +161,16 @@ export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, p
     const route = outbound.transportType === "shuttle" && outbound.shuttleRouteId === returning.shuttleRouteId
       ? getSkiShuttleRoutes(resort.id).find(item => item.id === outbound.shuttleRouteId)
       : undefined;
+    const sharedStop = route && outbound.shuttleStopId && outbound.shuttleStopId === returning.shuttleStopId
+      ? route.stops.find(stop => stop.id === outbound.shuttleStopId)
+      : undefined;
+    if (route && sharedStop?.roundTripFareAdult !== undefined) {
+      const total = sharedStop.roundTripFareAdult * input.peopleCount;
+      return { key: "transport", label: "셔틀 왕복 비용", representative: total, min: total, max: total, confidence: "confirmed", sourceName: route.operator, sourceUrl: route.sourceUrl, bookingUrl: route.bookingUrl, lastCheckedAt: route.lastCheckedAt, note: `${sharedStop.name} 왕복 기준` };
+    }
     if (outbound.transportType !== "shuttle" || route) {
-      return estimateTransportCost(resort, { ...input, transportType: outbound.transportType }, route);
+      const hasDifferentPricedStops = Boolean(route && (outbound.shuttleStopId !== returning.shuttleStopId || sharedStop?.oneWayFareAdult !== undefined));
+      if (!hasDifferentPricedStops) return estimateTransportCost(resort, { ...input, transportType: outbound.transportType }, route);
     }
   }
 
@@ -176,10 +184,11 @@ function estimateTransportLegCost(resort: SkiResort, input: TripInput, leg: Trip
     const route = getSkiShuttleRoutes(resort.id).find(item => item.id === leg.shuttleRouteId);
     const fare = route?.fare;
     if (route && fare) {
-      const oneWay = fare.oneWayAdult ?? (fare.roundTripAdult !== undefined ? Math.round(fare.roundTripAdult / 2) : fare.type === "free" ? 0 : undefined);
+      const stop = route.stops.find(item => item.id === leg.shuttleStopId);
+      const oneWay = stop?.oneWayFareAdult ?? fare.oneWayAdult ?? (fare.roundTripAdult !== undefined ? Math.round(fare.roundTripAdult / 2) : fare.type === "free" ? 0 : undefined);
       if (oneWay !== undefined) {
         const total = oneWay * input.peopleCount;
-        return { key: `transport:${leg.direction}`, label: `${leg.date} · ${route.name}`, representative: total, min: total, max: total, confidence: fare.oneWayAdult !== undefined || fare.type === "free" ? "confirmed" : "estimated", sourceName: route.operator, sourceUrl: route.sourceUrl, bookingUrl: route.bookingUrl };
+        return { key: `transport:${leg.direction}`, label: `${leg.date} · ${route.name}`, representative: total, min: total, max: total, confidence: stop?.oneWayFareAdult !== undefined || fare.oneWayAdult !== undefined || fare.type === "free" ? "confirmed" : "estimated", sourceName: route.operator, sourceUrl: route.sourceUrl, bookingUrl: route.bookingUrl };
       }
     }
   }

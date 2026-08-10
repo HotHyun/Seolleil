@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { CheckCircle2, ExternalLink, ShieldAlert } from "lucide-react";
 import { signInWithGoogleAction } from "@/app/auth-actions";
 import { AnalyticsLink } from "@/components/analytics-link";
@@ -21,6 +21,7 @@ import { hashToken } from "@/lib/tokens";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
+import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = {
   robots: {
@@ -36,13 +37,24 @@ export default async function TripEditPage({
   params: Promise<{ editToken: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const { editToken } = await params;
-  const query = await searchParams;
+  const [{ editToken }, query] = await Promise.all([params, searchParams]);
   const shareToken = Array.isArray(query.share) ? query.share[0] : query.share;
   const sharePermission = (Array.isArray(query.sharePermission) ? query.sharePermission[0] : query.sharePermission) === "edit" ? "edit" : "read";
   const activeView = getTripWorkspaceView(query.view);
-  const trip = await getTripByEditTokenHash(hashToken(editToken));
+  const [trip, session] = await Promise.all([
+    getTripByEditTokenHash(hashToken(editToken)),
+    getSession()
+  ]);
   if (!trip) notFound();
+  if (trip.userId && trip.userId === session?.user?.id) {
+    const ownerQuery = new URLSearchParams();
+    for (const key of ["view", "notice", "share", "sharePermission"] as const) {
+      const value = Array.isArray(query[key]) ? query[key]?.[0] : query[key];
+      if (value) ownerQuery.set(key, value);
+    }
+    const suffix = ownerQuery.size ? `?${ownerQuery.toString()}` : "";
+    redirect(`/my-trips/${trip.id}${suffix}`);
+  }
 
   const resort = getResort(trip.resortId);
   const rentalGroups = getRentalOptionsForResort(trip.resortId);

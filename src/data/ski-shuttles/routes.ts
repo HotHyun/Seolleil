@@ -1,6 +1,7 @@
 import type { SkiShuttleRoute } from "@/lib/types";
 
 const checkedAt = "2026-07-17";
+const high1CheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -14,24 +15,27 @@ const vivaldi = "vivaldi";
 const yongpyong = "yongpyong";
 
 export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
-  route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
-  route("kd-myeongdong", "서울", "명동·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]]),
-  route("kd-sinchon", "서울", "홍대·신촌선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]]),
-  route("kd-nowon", "서울", "노원·광나루선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]]),
-  route("kd-mokdong", "서울", "강서·목동선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]]),
-  route("kd-sillim", "서울", "구디·신림선", "대원관광", "02-2201-7710", "주말 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]]),
-  route("kd-cheongnyangni", "서울", "성신여대·청량리선", "대원관광", "02-2201-7710", "토요일 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]]),
-  route("kd-bundang", "경기", "수지·분당선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]]),
-  route("kd-anyang", "경기", "산본·안양선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]),
-  route("kd-suwon", "경기", "수원·영통선", "대원관광", "02-2201-7710", "매일 운행 중심 · 영통 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]),
-  route("kd-ilsan", "경기", "일산선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
-  route("kd-incheon", "인천", "인천·부평선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
-  route("osung-daegu-1", "대구·경북", "경산·대구 1코스", "오성고속관광", undefined, "평일·주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 왕복 4.5만원 · 리무진 5.5만원", [["경산","임당역","04:25"],["경산","정평역","04:30"],["경산","신매역","04:35"],["대구","만촌역","04:45"],["대구","범어","04:50"],["대구","대구은행역","04:55"],["대구","현대백화점","05:00"],["대구","내당 홈플러스","05:10"],["대구","성서 홈플러스","05:20"],["대구","칠곡IC","05:30"]], "16:30"),
-  route("osung-daegu-2", "대구·경북", "대구 동부 2코스", "오성고속관광", undefined, "주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 왕복 4.5만원 · 리무진 5.5만원", [["대구","반야월 이마트","04:30"],["대구","신기역","04:35"],["대구","율하역","04:40"],["대구","현대백화점","05:00"],["대구","내당 홈플러스","05:10"],["대구","성서 홈플러스","05:20"],["대구","칠곡IC","05:30"]], "16:30"),
-  route("eunsung-busan", "부산·경남", "부산·서마산선", "부산은성관광", "051-809-8888", "45인승 의무운행기간 · 우등리무진 별도", "https://www.es365.co.kr/good/tour_list.html?b_uid_s=111&m_uid_s=258", "부산 일반 6만원부터 · 리무진 8만원부터", [["부산","동래역 3번 출구","04:00"],["창원","서마산IC","04:40"]]),
-  route("daewon-honam", "호남·대전", "광주·전주·대전선", "대원여행사", "062-526-7000", "토·일·공휴일 · 최소 12명", "https://www.daewontour.com/fit/14684", "12만원부터", [["광주","염주체육관","03:30"],["광주","문화예술회관","03:40"],["전주","전주 월드컵경기장","04:40"],["대전","대전 월드컵경기장","05:30"]], "16:30"),
-  unconfirmed("garam-east", "경북·울산", "포항·경주·울산 노선", "가람관광여행사", "https://www.garamtour.kr/garam/high1/", [["포항","포항 시내권"],["경주","경주 시내·IC권"],["울산","울산 시내권"]]),
-  unconfirmed("eunsung-gyeongnam", "경남", "마산·창원·김해 노선", "부산은성관광", "https://www.es365.co.kr/good/tour_list.html?b_uid_s=111&m_uid_s=258", [["창원","마산·창원권"],["김해","김해권"]]),
+  route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-myeongdong", "서울", "명동·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-sinchon", "서울", "홍대·신촌선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-nowon", "서울", "노원·광나루선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-mokdong", "서울", "강서·목동선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-sillim", "서울", "구디·신림선", "대원관광", "02-2201-7710", "주말 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-cheongnyangni", "서울", "성신여대·청량리선", "대원관광", "02-2201-7710", "토요일 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-bundang", "경기", "수지·분당선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]], kdHigh1Return()),
+  route("kd-anyang", "경기", "산본·안양선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]], kdHigh1Return()),
+  route("kd-suwon", "경기", "수원·영통선", "대원관광", "02-2201-7710", "매일 운행 중심 · 영통 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]], kdHigh1Return()),
+  route("kd-ilsan", "경기", "일산선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]], kdHigh1Return()),
+  route("kd-incheon", "인천", "인천·부평선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]], kdHigh1Return()),
+  route("osung-daegu-1", "대구·경북", "경산·대구 1코스", "오성고속관광", undefined, "평일·주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 편도 3.8만원 · 왕복 4.5만원", [["경산","임당역 1번 출구","04:25"],["경산","정평역 1번 출구","04:30"],["경산","신매역 1번 출구","04:35"],["대구","만촌역 1번 출구","04:45"],["대구","하나은행 대구범어금융센터","04:50"],["대구","대구은행역 1번 출구","04:55"],["대구","현대백화점 앞","05:00"],["대구","내당 홈플러스 앞","05:10"],["대구","성서 홈플러스 앞","05:20"],["대구","칠곡IC 신전뮤지엄","05:30"]], osungReturn()),
+  route("osung-daegu-2", "대구·경북", "대구 동부 2코스", "오성고속관광", undefined, "주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 편도 3.8만원 · 왕복 4.5만원", [["대구","반야월 이마트","04:30"],["대구","신기역 1번 출구","04:35"],["대구","율하역 5번 출구","04:40"],["대구","동구청 앞","04:55"],["대구","영진전문대 복현소방서 앞","05:00"],["대구","경대북문 스타벅스 앞","05:05"],["대구","칠성 이마트 건너편","05:15"],["대구","칠곡IC 신전뮤지엄","05:30"]], osungReturn()),
+  route("osung-daegu-3", "대구·경북", "대구 남부 3코스", "오성고속관광", undefined, "주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 편도 3.8만원 · 왕복 4.5만원", [["대구","범물역 3번 출구","05:00"],["대구","상인역 7번 출구","05:10"],["대구","월성네거리 월성2주공 버스정류장","05:15"],["대구","칠곡IC 신전뮤지엄","05:30"]], osungReturn()),
+  route("eunsung-busan", "부산·경남", "부산·서마산선", "부산은성관광", "051-809-8888", "45인승 의무운행기간 · 우등리무진 별도", "https://www.es365.co.kr/good/tour_list.html?b_uid_s=111&m_uid_s=258&s_uid_s=248", "부산 일반 6만원부터 · 리무진 8만원부터", [["부산","동래역 3번 출구","04:00"],["창원","서마산IC","04:40"]], { departureName: "하이원 예약 화면 지정 승차지", stopOrder: "same_stops", note: "왕복 또는 하이원→부산·경남 편도를 선택할 수 있으며 귀가 시간은 예약일별로 재확인" }),
+  route("daewon-honam", "호남·대전", "광주·전주·대전선", "대원여행사", "062-526-7000", "토·일·공휴일 · 최소 12명", "https://www.daewontour.com/fit/14684", "편도 5만~7만원 · 왕복 8만~12만원", [["광주","염주체육관 주차장","03:30",70000,120000],["광주","문화예술회관 정문 육교 밑","03:40",70000,120000],["전주","전주 월드컵경기장 제3주차장","04:40",60000,100000],["대전","대전 월드컵경기장 제4주차장","05:30",50000,80000]], { departureName: "하이원 하늘주차장", departureTime: "16:30", stopOrder: "reverse", note: "16:00부터 버스 대기 · 광주 염주체육관 21:30 도착 예정" }),
+  unconfirmed("garam-pohang-1", "경북", "포항·영덕·울진 1코스", "가람관광여행사", "https://www.garamtour.kr/garam/high1/route_map/", [["포항","문덕 농협사거리","04:20"],["포항","해병대서문사거리","04:24"],["포항","이마트 건너편 남구보건소 맞은편","04:28"],["포항","포스코육교 앞 동촌생활관","04:30"],["포항","연일삼도 한솔타운 3차","04:34"],["포항","패밀리온천 앞","04:36"],["포항","경북운전학원 버스정류장","04:40"],["포항","종합운동장 경비실 앞","04:45"],["포항","상공회의소 앞","04:50"],["포항","양학육교 버스정류장","04:54"],["포항","쌍용아파트 건너 사격장 앞","04:57"],["포항","우현사거리 하이마트","05:00"],["포항","창포사거리 버스정류장","05:03"],["포항","아이파크아파트 버스정류장","05:04"],["포항","부산프라자 건너편","05:05"],["포항","두산위브 건너 현대오일뱅크","05:08"],["포항","포항온천 앞","05:13"],["포항","LH아파트 101동 앞","05:15"],["포항","흥해초등학교","05:20"],["영덕","오십천 휴게소","05:40"],["울진","울진의료원 입구 연호교차로","06:20"]], garamReturn()),
+  unconfirmed("garam-gyeongju-2", "경북", "경주·포항 2코스", "가람관광여행사", "https://www.garamtour.kr/garam/high1/route_map/", [["경주","황성공원 시계탑","04:30"],["경주","근화여고 앞 육교","04:32"],["경주","강동지하도 밑 버스정류장","04:50"],["포항","지곡인재개발원","05:00"],["포항","롯데마트 건너편","05:05"],["포항","이동대구은행","05:10"],["포항","흥해초등학교","05:20"]], garamReturn()),
+  unconfirmed("garam-ulsan-3", "울산", "울산 3코스", "가람관광여행사", "https://www.garamtour.kr/garam/high1/route_map/", [["울산","동구청 앞","03:45"],["울산","동천체육관 큰대로변","04:00"],["울산","태화로터리 다리 밑","04:10"],["울산","신복로터리 고속도로 입구","04:20"],["포항","흥해초등학교","05:20"]], garamReturn()),
+  unconfirmed("eunsung-gyeongnam", "경남", "마산·창원·김해 노선", "부산은성관광", "https://www.es365.co.kr/good/tour_list.html?b_uid_s=111&m_uid_s=258", [["창원","마산·창원권"],["김해","김해권"]], { departureName: "하이원 예약 화면 지정 승차지", stopOrder: "same_stops", note: "하이원→경남 편도 선택 가능 · 귀가 시간과 정확한 하차지는 예약 화면에서 재확인" }),
   phoenixRoute("phoenix-kd-sadang", "서울", "사당·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
   phoenixRoute("phoenix-kd-myeongdong", "서울", "명동·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]]),
   phoenixRoute("phoenix-kd-sinchon", "서울", "홍대·신촌선", "성수기 매일, 비수기 주말 중심", [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]]),
@@ -67,13 +71,25 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   ...kdPyeongchangRoutes(yongpyong, "모나용평 드래곤프라자")
 ];
 
-type StopInput = [city: string, name: string, departureTime?: string];
-function route(id: string, region: string, name: string, operator: string, operatorPhone: string | undefined, operationNote: string, url: string, priceLabel: string | undefined, stops: StopInput[], returnTime?: string): SkiShuttleRoute {
+type StopInput = [city: string, name: string, departureTime?: string, oneWayFareAdult?: number, roundTripFareAdult?: number];
+function route(id: string, region: string, name: string, operator: string, operatorPhone: string | undefined, operationNote: string, url: string, priceLabel: string | undefined, stops: StopInput[], returnService?: SkiShuttleRoute["returnService"]): SkiShuttleRoute {
   const details = high1RouteDetails(id);
-  return { id, resortId: high1, season: "25/26", operator, operatorPhone, region, name, operationNote, arrivalName: "하이원 밸리하우스", returnTime, priceLabel, ...details, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id, resortId: high1, season: "25/26", operator, operatorPhone, region, name, operationNote, arrivalName: "하이원 밸리하우스", returnTime: returnService?.departureTime, returnService, priceLabel, ...details, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime, oneWayFareAdult, roundTripFareAdult], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime, oneWayFareAdult, roundTripFareAdult })), dataStatus: "confirmed_25_26", lastCheckedAt: high1CheckedAt };
 }
-function unconfirmed(id: string, region: string, name: string, operator: string, url: string, stops: StopInput[]): SkiShuttleRoute {
-  return { id, resortId: high1, season: "25/26", operator, region, name, operationNote: "25/26 운행 확인 · 세부 시간은 운영사에 재확인", arrivalName: "하이원", fare: { type: "unknown", note: "운영사에 편도·왕복 요금 문의" }, service: { bookingRequirement: "시간·운행일·예약 조건 재확인" }, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+function unconfirmed(id: string, region: string, name: string, operator: string, url: string, stops: StopInput[], returnService?: SkiShuttleRoute["returnService"]): SkiShuttleRoute {
+  return { id, resortId: high1, season: "25/26", operator, region, name, operationNote: "25/26 운행 확인 · 귀가 시간은 운영사에 재확인", arrivalName: "하이원", returnService, fare: { type: "unknown", note: "운영사에 편도·왕복 요금 문의" }, service: { bookingRequirement: "귀가 시간·운행일·예약 조건 재확인" }, bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "route_only_25_26", lastCheckedAt: high1CheckedAt };
+}
+
+function kdHigh1Return(): NonNullable<SkiShuttleRoute["returnService"]> {
+  return { departureName: "하이원 예약 화면 지정 승차지", stopOrder: "same_stops", note: "귀가일·승차 위치·출발 시간은 대원관광 예약 화면에서 재확인" };
+}
+
+function osungReturn(): NonNullable<SkiShuttleRoute["returnService"]> {
+  return { departureName: "하이원 밸리 스키하우스 주차장", departureTime: "16:30", stopOrder: "reverse", note: "귀가행은 가는 노선의 역순 · 인원에 따라 합류·환승 가능" };
+}
+
+function garamReturn(): NonNullable<SkiShuttleRoute["returnService"]> {
+  return { departureName: "하이원 예약 화면 지정 승차지", stopOrder: "same_stops", note: "25/26 왕복 교통패스 노선 · 귀가 시간과 하차 순서는 운영사에 재확인" };
 }
 function phoenixRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
@@ -138,7 +154,7 @@ function kdService(): NonNullable<SkiShuttleRoute["service"]> {
 function high1RouteDetails(id: string): Pick<SkiShuttleRoute, "fare" | "service"> {
   if (id.startsWith("kd-")) return { fare: { type: "season_pass", seasonPassAdult: 300000 }, service: kdService() };
   if (id.startsWith("osung-")) return { fare: { type: "single_ride", oneWayAdult: 38000, roundTripAdult: 45000, note: "45석 일반버스 성인 기준" }, service: { period: "2025-12-24 ~ 2026-02-28 지정 운행일", days: id.endsWith("-1") ? "평일·주말" : "주말", reservationDeadline: "출발 1일 전 15:00 · 휴일 12:00", bookingRequirement: "15시 이후 잔여석 전화 예약", minimumPassengers: 10 } };
-  if (id === "eunsung-busan") return { fare: { type: "single_ride", roundTripAdult: 60000, note: "부산 일반버스 기준 · 리무진 별도" }, service: { days: "의무운행일", bookingRequirement: "운영사 사전 예약" } };
-  if (id === "daewon-honam") return { fare: { type: "tour_package", roundTripAdult: 120000, note: "당일 왕복 상품 시작가" }, service: { days: "토·일·공휴일", reservationDeadline: "출발 3일 전 15:00", minimumPassengers: 12, bookingRequirement: "최소 인원 미달 시 취소·전액 환불" } };
+  if (id === "eunsung-busan") return { fare: { type: "single_ride", note: "45인승 6만원부터 · 우등리무진 8만원부터 · 왕복/편도 옵션별 예약 화면 확인" }, service: { days: "의무운행일", bookingRequirement: "운영사 사전 예약 · 왕복 또는 편도 선택" } };
+  if (id === "daewon-honam") return { fare: { type: "tour_package", oneWayAdult: 50000, roundTripAdult: 80000, note: "대전 출발 기준 최저가 · 전주·광주는 선택한 하차지별 요금 적용" }, service: { days: "토·일·공휴일", reservationDeadline: "출발 3일 전 15:00", minimumPassengers: 12, bookingRequirement: "최소 인원 미달 시 취소·전액 환불" } };
   return { fare: { type: "unknown" }, service: { bookingRequirement: "운영사에 세부 조건 재확인" } };
 }

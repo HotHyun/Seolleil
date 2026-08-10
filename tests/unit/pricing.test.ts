@@ -113,4 +113,20 @@ describe("pricing", () => {
     expect(estimate.items.find(item => item.key === "lodging")).toMatchObject({ representative: 210000, confidence: "confirmed" });
     expect(estimate.items.find(item => item.key === "transport")?.label).toBe("가는 길·돌아오는 길 교통비");
   });
+
+  it("uses High1 stop-specific one-way fares when outbound and return destinations differ", () => {
+    const high1 = resorts.find((resort) => resort.id === "high1")!;
+    const plan: TripSkiPlan = {
+      version: 2,
+      days: [createEmptySkiDay("2026-01-16", "4h")],
+      lodgingNights: [],
+      transportLegs: [
+        { direction: "outbound", date: "2026-01-16", transportType: "shuttle", shuttleRouteId: "daewon-honam", shuttleStopId: "daewon-honam-4" },
+        { direction: "return", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: "daewon-honam", shuttleStopId: "daewon-honam-1" }
+      ]
+    };
+    const estimate = estimateTripCost(high1, tripInput({ visitDate: "2026-01-16", endDate: "2026-01-17", peopleCount: 2, transportType: "shuttle" }), undefined, undefined, undefined, plan);
+
+    expect(estimate.items.find(item => item.key === "transport")).toMatchObject({ representative: 240000, confidence: "confirmed" });
+  });
 });

@@ -46,7 +46,7 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
     ? { eyebrow: "Daily gear plan", title: "날짜마다 필요한 장비만 골라요", description: "스키를 탈 날짜와 시간을 먼저 정한 뒤, 장비·의류·리프트권을 날짜별로 비교하세요." }
     : view === "lodging"
       ? { eyebrow: "Stay", title: "머무를 곳에만 집중해요", description: "공식 숙소의 위치를 비교하고 실제 확인한 숙박 정보와 비용을 기록하세요." }
-      : { eyebrow: "Getting there", title: "가는 방법을 구체적으로 정해요", description: "이동수단을 고르고 이용 가능한 셔틀 노선과 탑승지를 차분히 확인하세요." };
+      : { eyebrow: "Getting there", title: "가는 방법을 구체적으로 정해요", description: "가는 길의 탑승지와 돌아오는 길의 귀가 하차지를 구간별로 확인하세요." };
   const selectRentalFromMap = useCallback((id: string) => {
     setRentalId(id);
     window.requestAnimationFrame(() => {

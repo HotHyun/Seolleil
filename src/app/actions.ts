@@ -5,11 +5,11 @@ import { redirect } from "next/navigation";
 import { buildDefaultTasks, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
-import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
+import { getShuttleStopsForDirection, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
-import { canEditOwnedTrip, canManageTripSharing, canMutateWithSharePermission } from "@/lib/trip-access";
+import { canEditOwnedTrip, canManageTripSharing, canMutateWithSharePermission, createdTripDestination } from "@/lib/trip-access";
 import { parseTripInput } from "@/lib/trip-input";
 import {
   createTask,
@@ -214,7 +214,7 @@ export async function createTripAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?created=${trip.id}&notice=${encodeURIComponent("비공개 트립을 만들었어요.")}`);
+  redirect(createdTripDestination({ tripId: trip.id, editToken, userId: session?.user?.id }));
 }
 
 export async function createDirectTripAction(formData: FormData) {
@@ -312,7 +312,7 @@ export async function createDirectTripAction(formData: FormData) {
     }
   });
 
-  redirect(`/trips/${editToken}?created=${trip.id}&notice=${encodeURIComponent("비공개 트립을 만들었어요.")}`);
+  redirect(createdTripDestination({ tripId: trip.id, editToken, userId: session?.user?.id }));
 }
 
 export async function updateTripDetailsAction(formData: FormData) {
@@ -670,8 +670,8 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       const routeId = String(formData.get("shuttleRouteId") ?? "");
       const stopId = String(formData.get("shuttleStopId") ?? "");
       const route = getSkiShuttleRoutes(trip.resortId).find(item => item.id === routeId);
-      const stop = route?.stops.find(item => item.id === stopId);
-      if (!["outbound", "return"].includes(direction) || !route || !stop) throw new AppError("INVALID_INPUT", "선택한 이동 구간과 셔틀 탑승지를 다시 확인해 주세요.");
+      const stop = route && (direction === "outbound" || direction === "return") ? getShuttleStopsForDirection(route, direction).find(item => item.id === stopId) : undefined;
+      if (!route || !stop) throw new AppError("INVALID_INPUT", "선택한 이동 구간과 셔틀 정류장을 다시 확인해 주세요.");
       const applyAll = String(formData.get("applyToAllLegs") ?? "") === "true";
       const transportLegs = trip.skiPlan.transportLegs.map(leg => leg.direction === direction || applyAll ? { ...leg, transportType: "shuttle" as const, shuttleRouteId: route.id, shuttleStopId: stop.id } : leg);
       const skiPlan: TripSkiPlan = { ...trip.skiPlan, transportLegs };

@@ -16,6 +16,17 @@ export type SkiShuttleStop = {
   city: string;
   name: string;
   departureTime?: string;
+  arrivalTime?: string;
+  oneWayFareAdult?: number;
+  roundTripFareAdult?: number;
+};
+
+export type SkiShuttleReturnService = {
+  departureName: string;
+  departureTime?: string;
+  stopOrder: "reverse" | "listed" | "same_stops";
+  stops?: SkiShuttleStop[];
+  note?: string;
 };
 
 export type SkiShuttleRoute = {
@@ -29,6 +40,7 @@ export type SkiShuttleRoute = {
   operationNote: string;
   arrivalName: string;
   returnTime?: string;
+  returnService?: SkiShuttleReturnService;
   priceLabel?: string;
   fare?: {
     type: ShuttleFareType;

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getShuttleRegions, getSkiShuttleCoverage, getSkiShuttleRoutes, searchShuttleRoutes, skiShuttleOperators, skiShuttleRoutes2526, skiShuttleSeasons, skiShuttleStops } from "@/data/ski-shuttles";
+import { getShuttleRegions, getShuttleStopsForDirection, getSkiShuttleCoverage, getSkiShuttleRoutes, searchShuttleRoutes, skiShuttleOperators, skiShuttleRoutes2526, skiShuttleSeasons, skiShuttleStops } from "@/data/ski-shuttles";
 import { resorts } from "@/data/resorts";
 
 describe("25/26 ski shuttle data", () => {
@@ -8,6 +8,19 @@ describe("25/26 ski shuttle data", () => {
     const operators = new Set(routes.map(route => route.operator));
     expect(operators).toEqual(new Set(["대원관광", "오성고속관광", "부산은성관광", "대원여행사", "가람관광여행사"]));
     expect(routes.every(route => route.sourceUrl && route.bookingUrl && route.stops.length > 0)).toBe(true);
+    expect(routes.every(route => route.returnService && getShuttleStopsForDirection(route, "return").length > 0)).toBe(true);
+  });
+
+  it("models High1 return trips separately from outbound pickup times", () => {
+    const osung = getSkiShuttleRoutes("high1").find(route => route.id === "osung-daegu-3");
+    expect(osung).toMatchObject({ returnService: { departureName: "하이원 밸리 스키하우스 주차장", departureTime: "16:30", stopOrder: "reverse" } });
+    expect(getShuttleStopsForDirection(osung!, "return").map(stop => stop.name)).toEqual(["칠곡IC 신전뮤지엄", "월성네거리 월성2주공 버스정류장", "상인역 7번 출구", "범물역 3번 출구"]);
+
+    const honam = getSkiShuttleRoutes("high1").find(route => route.id === "daewon-honam");
+    expect(honam?.stops.map(stop => [stop.city, stop.oneWayFareAdult, stop.roundTripFareAdult])).toEqual([
+      ["광주", 70000, 120000], ["광주", 70000, 120000], ["전주", 60000, 100000], ["대전", 50000, 80000]
+    ]);
+    expect(searchShuttleRoutes([honam!], "광주", "all", "return")).toHaveLength(1);
   });
 
   it("covers the confirmed Phoenix Seoul and Gyeonggi network", () => {
@@ -97,7 +110,7 @@ describe("25/26 ski shuttle data", () => {
 
   it("summarizes confirmed, recheck, and no-service coverage explicitly", () => {
     const high1Routes = getSkiShuttleRoutes("high1");
-    expect(getSkiShuttleCoverage({ id: "high1", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, high1Routes)).toMatchObject({ status: "needs_recheck", confirmedRouteCount: 16, recheckRouteCount: 2 });
+    expect(getSkiShuttleCoverage({ id: "high1", shuttleUrl: "https://example.com", lastCheckedAt: "2026-08-10" }, high1Routes)).toMatchObject({ status: "needs_recheck", confirmedRouteCount: 17, recheckRouteCount: 4 });
     expect(getSkiShuttleCoverage({ id: "jisan", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, getSkiShuttleRoutes("jisan"))).toMatchObject({ status: "confirmed_schedule", confirmedRouteCount: 2, recheckRouteCount: 0 });
     expect(getSkiShuttleCoverage({ id: "muju", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, [])).toMatchObject({ status: "no_affiliate_service", confirmedRouteCount: 0, recheckRouteCount: 0 });
   });
@@ -118,7 +131,7 @@ describe("25/26 ski shuttle data", () => {
   it("filters by operating region without losing search", () => {
     const regions = getShuttleRegions(skiShuttleRoutes2526);
     expect(regions).toContain("부산·경남");
-    expect(searchShuttleRoutes(skiShuttleRoutes2526, "대구", "대구·경북")).toHaveLength(2);
+    expect(searchShuttleRoutes(skiShuttleRoutes2526, "대구", "대구·경북")).toHaveLength(3);
     expect(searchShuttleRoutes(skiShuttleRoutes2526, "대구", "서울")).toHaveLength(0);
   });
 });

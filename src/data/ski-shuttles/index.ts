@@ -1,6 +1,6 @@
 import { skiShuttleRoutes2526 } from "./routes";
 
-export { getShuttleRegions, searchShuttleRoutes, skiShuttleOperators, skiShuttleSeasons, skiShuttleStops } from "./catalog";
+export { getShuttleRegions, getShuttleStopsForDirection, searchShuttleRoutes, skiShuttleOperators, skiShuttleSeasons, skiShuttleStops } from "./catalog";
 export { getSkiShuttleCoverage } from "./coverage";
 export type { ShuttleCoverageStatus, SkiShuttleCoverage } from "./coverage";
 export { skiShuttleRoutes2526 } from "./routes";

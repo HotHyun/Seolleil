@@ -5,6 +5,7 @@ const high1CheckedAt = "2026-08-10";
 const phoenixOakCheckedAt = "2026-08-10";
 const yongpyongVivaldiCheckedAt = "2026-08-10";
 const wellihilliAlpensiaCheckedAt = "2026-08-10";
+const elysianJisanCheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -54,12 +55,11 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   phoenixRoute("phoenix-kd-afternoon", "서울", "오후 종합운동장선", "성수기 월~토 · 비수기 이후 운행 없음", [["서울","종합운동장","14:30"]]),
   phoenixRoute("phoenix-kd-night", "서울", "야간 종합운동장선", "성수기 금요일 · 웰리힐리 또는 휘닉스 경유", [["서울","종합운동장","20:00"]]),
   ...phoenixReturnRoutes(),
-  jisanRoute("jisan-cityhall", "서울시청선", "시청역 2번 출구"),
-  jisanRoute("jisan-jamsil", "잠실선", "종합운동장역 1번 출구"),
+  ...jisanRoutes(),
   ...wellihilliRoutes(),
   o2Route(),
   ...oakvalleyRoutes(),
-  elysianRoute(),
+  ...elysianRoutes(),
   edenvalleyRoute(),
   ...alpensiaRoutes(),
   ...vivaldiRoutes(),
@@ -133,8 +133,37 @@ function phoenixReturnRoutes(): SkiShuttleRoute[] {
     lastCheckedAt: phoenixOakCheckedAt
   }));
 }
-function jisanRoute(id: string, name: string, stopName: string): SkiShuttleRoute {
-  return { id, resortId: jisan, season: "25/26", operator: "투어윈도우글로벌", operatorPhone: "02-2039-7728", region: "서울", name, operationNote: "25/26 시즌 · 사전 예약 필수", arrivalName: "지산리조트 제1주차장", returnTime: "12:00 / 18:00 선택", priceLabel: "편도 2만원 · 왕복 3.8만원", fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { days: "운영일 캘린더 기준", bookingRequirement: "사전 예약 필수" }, bookingUrl: "https://jisan.allthatlimo.net/", sourceUrl: "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski", stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime: "07:30 / 13:30" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+function jisanRoutes(): SkiShuttleRoute[] {
+  const bookingUrl = "https://jisan.allthatlimo.net/";
+  const sourceUrl = "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski";
+  const common = {
+    resortId: jisan,
+    season: "25/26",
+    operator: "투어윈도우글로벌",
+    operatorPhone: "02-2039-7728",
+    region: "서울",
+    arrivalName: "지산리조트 제1주차장",
+    priceLabel: "편도 2만원 · 왕복 3.8만원",
+    fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 } as const,
+    service: { period: "25/26 스키 시즌", days: "예약 캘린더 운영일", bookingRequirement: "온라인 또는 전화 사전 예약" },
+    bookingUrl,
+    sourceUrl,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: elysianJisanCheckedAt
+  };
+  const stops: [suffix: string, routeName: string, stopName: string][] = [
+    ["cityhall", "서울시청선", "시청역 2번 출구"],
+    ["jamsil", "종합운동장선", "종합운동장역 1번 출구"]
+  ];
+  const outbound = stops.flatMap(([suffix, routeName, stopName]) => [["0730", "07:30"], ["1330", "13:30"]].map(([timeSuffix, departureTime]): SkiShuttleRoute => {
+    const id = timeSuffix === "0730" ? `jisan-${suffix}` : `jisan-${suffix}-${timeSuffix}`;
+    return { ...common, id, name: `${departureTime} ${routeName}`, operationNote: `${departureTime} 출발 · 지산리조트 제1주차장행`, directions: ["outbound"], stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime }] };
+  }));
+  const returning = stops.flatMap(([suffix, routeName, stopName]) => [["1200", "12:00"], ["1800", "18:00"]].map(([timeSuffix, departureTime]): SkiShuttleRoute => {
+    const id = `jisan-return-${suffix}-${timeSuffix}`;
+    return { ...common, id, name: `${departureTime} ${routeName} 귀가편`, operationNote: `지산리조트 ${departureTime} 출발`, directions: ["return"], returnTime: departureTime, returnService: { departureName: "지산리조트 제1주차장 셔틀 승차장", departureTime, stopOrder: "same_stops", note: `${stopName}행 · 예약일 운행 여부 재확인` }, stops: [{ id: `${id}-1`, city: "서울", name: stopName }] };
+  }));
+  return [...outbound, ...returning];
 }
 function wellihilliRoutes(): SkiShuttleRoute[] {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
@@ -246,10 +275,49 @@ function oakvalleyRoutes(): SkiShuttleRoute[] {
   }));
   return [...outboundRoutes, ...returnRoutes];
 }
-function elysianRoute(): SkiShuttleRoute {
-  const bookingUrl = "https://www.elysian.co.kr/shuttle-bus-reservation";
-  const sourceUrl = "https://www.elysian.co.kr/about-gangchon/way-to-come";
-  return { id: "elysian-baegyangri", resortId: elysian, season: "25/26", operator: "엘리시안 강촌", operatorPhone: "033-260-2345", region: "강원 춘천", name: "백양리역 무료 순환선", operationNote: "25/26 주말·공휴일 약 20분 간격 · 정확한 시간 재확인", arrivalName: "엘리시안 강촌 리조트", priceLabel: "무료 내부 순환셔틀", fare: { type: "free", roundTripAdult: 0 }, service: { days: "주말·공휴일", bookingRequirement: "탑승 전 운영 시간 재확인" }, bookingUrl, sourceUrl, stops: [{ id: "elysian-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+function elysianRoutes(): SkiShuttleRoute[] {
+  const url = "https://www.elysian.co.kr/shuttle-bus-reservation";
+  const metroSpecs: [suffix: string, region: string, name: string, period: string, days: string, returnTime: string, stops: StopInput[]][] = [
+    ["offpeak-dawn-gangnam", "서울", "비수기 새벽 강남선", "2025-12-13~12-31 · 2026-02-28~03-01", "주말·공휴일", "17:30", [["서울","영등포역","06:30"],["서울","신림역","06:50"],["서울","사당역","07:05"],["서울","강남역","07:20"],["서울","잠실역","07:45"],["서울","천호역","07:55"]]],
+    ["offpeak-dawn-gangbuk", "서울·경기", "비수기 새벽 강북선", "2025-12-13~12-31 · 2026-02-28~03-01", "주말·공휴일", "17:30", [["서울","신촌역","06:55"],["서울","서울역","07:05"],["서울","동대문역","07:15"],["서울","청량리역","07:25"],["서울","상봉역","07:40"],["구리","구리역","07:55"]]],
+    ["peak-dawn-gangnam1", "서울·경기", "성수기 새벽 강남1선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["광명","철산역","06:30"],["서울","신림역","06:50"],["서울","서울대입구역","06:57"],["서울","사당역","07:05"],["서울","양재역","07:15"],["서울","강남역","07:20"],["서울","신사역","07:25"]]],
+    ["peak-dawn-gangnam2", "서울", "성수기 새벽 강남2선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["서울","신반포","06:55"],["서울","압구정로데오역","07:05"],["서울","청담역","07:10"],["서울","학여울역","07:25"],["서울","송파역","07:35"],["서울","잠실역","07:45"],["서울","천호역","07:55"]]],
+    ["peak-dawn-sinchon", "서울", "성수기 새벽 신촌선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["서울","공덕역","06:50"],["서울","신촌역","06:55"],["서울","서울역","07:05"],["서울","동대문역","07:15"],["서울","청량리역","07:25"],["서울","건대입구역","07:45"]]],
+    ["peak-dawn-balsan", "서울", "성수기 새벽 발산역선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["서울","발산역","06:35"],["서울","화곡역","06:41"],["서울","목동역","06:53"],["서울","신도림역","07:05"],["서울","영등포역","07:10"],["서울","여의도역","07:15"],["서울","흑석역","07:30"]]],
+    ["peak-dawn-hapjeong", "서울·경기", "성수기 새벽 합정역선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["서울","합정역","06:50"],["서울","홍대입구역","06:55"],["서울","디지털미디어시티역","07:05"],["서울","응암역","07:15"],["서울","연신내역","07:25"],["서울","구파발역","07:35"],["고양","삼송역","07:40"]]],
+    ["peak-dawn-uijeongbu", "서울·경기", "성수기 새벽 의정부선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["의정부","의정부역","06:30"],["의정부","회룡역","06:35"],["서울","노원역","06:55"],["서울","수유역","07:07"],["서울","미아사거리역","07:15"],["서울","태릉입구역","07:35"],["서울","상봉역","07:50"],["구리","구리역","08:05"]]],
+    ["peak-dawn-west-gyeonggi", "인천·경기", "성수기 새벽 부천·김포·일산선", "2026-01-01~02-22", "주말·공휴일", "17:30", [["인천","부평역","06:30"],["부천","상동역","06:45"],["김포","고촌역","07:05"],["고양","마두역","07:20"],["고양","일산자이 4단지","07:35"]]],
+    ["peak-morning-gangnam", "서울", "성수기 오전 강남선", "2026-01-01~02-22", "주말·공휴일", "13:30", [["서울","영등포역","09:40"],["서울","사당역","10:15"],["서울","잠실역","10:50"]]],
+    ["peak-morning-gangbuk", "서울·경기", "성수기 오전 강북선", "2026-01-01~02-22", "주말·공휴일", "13:30", [["서울","신촌역","09:50"],["서울","동대문역","10:10"],["서울","상봉역","10:35"],["구리","구리역","10:50"]]]
+  ];
+  const common = {
+    resortId: elysian,
+    season: "25/26",
+    operator: "엘리시안 강촌",
+    operatorPhone: "033-260-2345",
+    arrivalName: "엘리시안 강촌 스키하우스",
+    priceLabel: "무료 셔틀",
+    fare: { type: "free", roundTripAdult: 0 } as const,
+    bookingUrl: url,
+    sourceUrl: url,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: elysianJisanCheckedAt
+  };
+  const metropolitan = metroSpecs.flatMap(([suffix, region, name, period, days, returnTime, stops]): SkiShuttleRoute[] => {
+    const outboundId = `elysian-metro-${suffix}`;
+    const returnId = `elysian-return-${suffix}`;
+    const service = { period, days, bookingRequirement: "비예약제 · 노선별 1대 · 만차 시 탑승 불가 · 2026-02-17 전 노선 미운행" };
+    return [
+      { ...common, id: outboundId, region, name, operationNote: `${period} ${days} · 수도권 무료 셔틀`, directions: ["outbound"], service, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${outboundId}-${index + 1}`, city, name: stopName, departureTime })) },
+      { ...common, id: returnId, region, name: `${returnTime} ${name} 귀가편`, operationNote: `리조트 ${returnTime} 출발 · 가는 편 탑승객이 없으면 귀가편 미운행`, directions: ["return"], returnTime, returnService: { departureName: "스키하우스 뒤편 안내센터 앞", departureTime: returnTime, stopOrder: "reverse", note: `${name} 역순 하차 · 가는 편 탑승객이 없으면 귀가편 미운행` }, service, stops: stops.map(([city, stopName], index) => ({ id: `${returnId}-${index + 1}`, city, name: stopName })) }
+    ];
+  });
+  const stationService = { period: "2025-12-12~2026-02-22", days: "25/26 동계 운영일", bookingRequirement: "백양리역·콘도·스키하우스·챌린지하우스 순환 · 운영 상황에 따라 변경 가능" };
+  const stationRoutes: SkiShuttleRoute[] = [
+    { ...common, id: "elysian-baegyangri", region: "강원 춘천", name: "백양리역 무료 순환선", operationNote: "백양리역 07:40부터 약 20분 간격", directions: ["outbound"], service: stationService, stops: [{ id: "elysian-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장", departureTime: "07:40부터 약 20분 간격" }] },
+    { ...common, id: "elysian-return-baegyangri", region: "강원 춘천", name: "백양리역 무료 귀가 순환선", operationNote: "스키하우스·챌린지하우스에서 백양리역 순환", directions: ["return"], returnTime: "07:45부터 약 20분 간격", returnService: { departureName: "스키하우스·챌린지하우스 셔틀 승강장", departureTime: "07:45부터 약 20분 간격", stopOrder: "same_stops", note: "백양리역행 · 시즌 구간과 당일 운영표 재확인" }, service: stationService, stops: [{ id: "elysian-return-baegyangri-1", city: "춘천", name: "백양리역 앞 셔틀 승강장" }] }
+  ];
+  return [...metropolitan, ...stationRoutes];
 }
 function edenvalleyRoute(): SkiShuttleRoute {
   const url = "https://www.kkday.com/ko/product/29058";

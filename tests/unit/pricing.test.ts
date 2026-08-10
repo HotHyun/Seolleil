@@ -69,6 +69,19 @@ describe("pricing", () => {
     expect(estimate.items.find(item => item.key === "transport")).toMatchObject({ label: "셔틀 왕복 비용", representative: 114000, confidence: "confirmed", sourceName: "투어윈도우글로벌" });
   });
 
+  it("applies Jisan's round-trip discount across direction-specific routes", () => {
+    const jisan = resorts.find((resort) => resort.id === "jisan")!;
+    const routes = getSkiShuttleRoutes("jisan");
+    const outbound = routes.find(route => route.id === "jisan-cityhall")!;
+    const returning = routes.find(route => route.id === "jisan-return-cityhall-1800")!;
+    const plan: TripSkiPlan = { version: 2, days: [createEmptySkiDay("2026-01-17")], lodgingNights: [], transportLegs: [
+      { direction: "outbound", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: outbound.id, shuttleStopId: outbound.stops[0].id },
+      { direction: "return", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: returning.id, shuttleStopId: returning.stops[0].id }
+    ] };
+
+    expect(estimateTransportPlanCost(jisan, tripInput({ transportType: "shuttle", peopleCount: 2 }), plan)).toMatchObject({ label: "셔틀 왕복 비용", representative: 76000, confidence: "confirmed", sourceName: "투어윈도우글로벌" });
+  });
+
   it("keeps a confirmed zero cost for a selected free resort shuttle", () => {
     const o2 = resorts.find((resort) => resort.id === "o2")!;
     const route = getSkiShuttleRoutes("o2")[0];

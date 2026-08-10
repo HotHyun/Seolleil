@@ -168,8 +168,6 @@ export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, p
     }
     const roundTripAdult = outboundRoute?.fare?.roundTripAdult;
     const hasLegOrStopFare = Boolean(
-      outboundRoute?.fare?.oneWayAdult !== undefined ||
-      returnRoute?.fare?.oneWayAdult !== undefined ||
       outboundRoute?.stops.some(stop => stop.oneWayFareAdult !== undefined || stop.roundTripFareAdult !== undefined) ||
       returnRoute?.stops.some(stop => stop.oneWayFareAdult !== undefined || stop.roundTripFareAdult !== undefined)
     );

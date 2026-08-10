@@ -37,12 +37,15 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.find(route => route.id === "phoenix-return-2130-jamsil")).toMatchObject({ directions: ["return"], returnService: { departureTime: "21:30" } });
   });
 
-  it("covers the confirmed Jisan paid shuttle", () => {
+  it("separates Jisan's four outbound and four return paid shuttle choices", () => {
     const routes = getSkiShuttleRoutes("jisan");
-    expect(routes.map(route => route.id)).toEqual(["jisan-cityhall", "jisan-jamsil"]);
+    expect(searchShuttleRoutes(routes, "", "all", "outbound")).toHaveLength(4);
+    expect(searchShuttleRoutes(routes, "", "all", "return")).toHaveLength(4);
     expect(routes.every(route => route.operator === "투어윈도우글로벌" && route.priceLabel === "편도 2만원 · 왕복 3.8만원")).toBe(true);
-    expect(searchShuttleRoutes(routes, "종합운동장").map(route => route.id)).toEqual(["jisan-jamsil"]);
-    expect(routes[0]).toMatchObject({ fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { bookingRequirement: "사전 예약 필수" } });
+    expect(searchShuttleRoutes(routes, "종합운동장", "all", "outbound").map(route => route.id)).toEqual(["jisan-jamsil", "jisan-jamsil-1330"]);
+    expect(searchShuttleRoutes(routes, "시청", "all", "return").map(route => route.id)).toEqual(["jisan-return-cityhall-1200", "jisan-return-cityhall-1800"]);
+    expect(routes.find(route => route.id === "jisan-cityhall")).toMatchObject({ directions: ["outbound"], fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { bookingRequirement: "온라인 또는 전화 사전 예약" } });
+    expect(routes.find(route => route.id === "jisan-return-jamsil-1800")).toMatchObject({ directions: ["return"], returnService: { departureTime: "18:00" } });
   });
 
   it("separates Welli Hilli's 16 outbound and 4 return schedule choices", () => {
@@ -76,12 +79,17 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.find(route => route.id === "oakvalley-return-evening")).toMatchObject({ fare: { type: "free", roundTripAdult: 0 }, service: { days: "토·일" }, returnService: { departureTime: "17:35" } });
   });
 
-  it("keeps Elysian's confirmed station link without inventing an archived timetable", () => {
+  it("separates Elysian's 11 metropolitan and station shuttles by direction", () => {
     const routes = getSkiShuttleRoutes("elysian");
-    expect(routes.map(route => route.id)).toEqual(["elysian-baegyangri"]);
-    expect(routes[0]).toMatchObject({ operator: "엘리시안 강촌", priceLabel: "무료 내부 순환셔틀", dataStatus: "route_only_25_26" });
-    expect(routes[0].stops[0].departureTime).toBeUndefined();
-    expect(searchShuttleRoutes(routes, "백양리역").map(route => route.id)).toEqual(["elysian-baegyangri"]);
+    expect(searchShuttleRoutes(routes, "", "all", "outbound")).toHaveLength(12);
+    expect(searchShuttleRoutes(routes, "", "all", "return")).toHaveLength(12);
+    expect(routes.every(route => route.operator === "엘리시안 강촌" && route.priceLabel === "무료 셔틀" && route.dataStatus === "confirmed_25_26")).toBe(true);
+    expect(routes.find(route => route.id === "elysian-metro-peak-dawn-gangnam1")?.stops.map(stop => stop.departureTime)).toEqual(["06:30", "06:50", "06:57", "07:05", "07:15", "07:20", "07:25"]);
+    expect(searchShuttleRoutes(routes, "삼송", "all", "outbound").map(route => route.id)).toEqual(["elysian-metro-peak-dawn-hapjeong"]);
+    expect(searchShuttleRoutes(routes, "철산", "all", "return").map(route => route.id)).toEqual(["elysian-return-peak-dawn-gangnam1"]);
+    expect(routes.find(route => route.id === "elysian-return-peak-morning-gangbuk")).toMatchObject({ directions: ["return"], returnService: { departureTime: "13:30", stopOrder: "reverse" } });
+    expect(searchShuttleRoutes(routes, "백양리역", "all", "outbound").map(route => route.id)).toEqual(["elysian-baegyangri"]);
+    expect(searchShuttleRoutes(routes, "백양리역", "all", "return").map(route => route.id)).toEqual(["elysian-return-baegyangri"]);
   });
 
   it("covers Eden Valley's documented Daegu winter tour without presenting a sold-out timetable as active", () => {
@@ -141,7 +149,7 @@ describe("25/26 ski shuttle data", () => {
   it("summarizes confirmed, recheck, and no-service coverage explicitly", () => {
     const high1Routes = getSkiShuttleRoutes("high1");
     expect(getSkiShuttleCoverage({ id: "high1", shuttleUrl: "https://example.com", lastCheckedAt: "2026-08-10" }, high1Routes)).toMatchObject({ status: "needs_recheck", confirmedRouteCount: 17, recheckRouteCount: 4 });
-    expect(getSkiShuttleCoverage({ id: "jisan", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, getSkiShuttleRoutes("jisan"))).toMatchObject({ status: "confirmed_schedule", confirmedRouteCount: 2, recheckRouteCount: 0 });
+    expect(getSkiShuttleCoverage({ id: "jisan", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, getSkiShuttleRoutes("jisan"))).toMatchObject({ status: "confirmed_schedule", confirmedRouteCount: 4, recheckRouteCount: 0 });
     expect(getSkiShuttleCoverage({ id: "muju", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, [])).toMatchObject({ status: "no_affiliate_service", confirmedRouteCount: 0, recheckRouteCount: 0 });
   });
 

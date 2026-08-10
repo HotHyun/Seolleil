@@ -72,7 +72,7 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
   - disabled state
 - Select uses Radix/shadcn-style `Select`, including styled option content.
 - Date selection uses a shadcn-style popover date picker.
-- Calendar month navigation exposes the full 44×44px previous/next button as its click and touch target; the caption must not intercept pointer input.
+- Calendar month navigation keeps previous button, month caption, and next button aligned in one horizontal row. Both buttons expose their full 44×44px area as the click and touch target, and the caption must not intercept pointer input.
 
 ### Badges
 

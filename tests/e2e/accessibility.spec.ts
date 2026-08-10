@@ -31,13 +31,23 @@ test.describe("accessibility smoke checks", () => {
     await page.goto("/plan");
     await page.getByRole("button", { name: "여행 방문 날짜" }).click();
 
-    const caption = page.locator(".rdp-caption_label");
-    const nextMonth = page.locator(".rdp-button_next");
+    const caption = page.locator(".calendar-caption");
+    const previousMonth = page.locator(".calendar-previous");
+    const nextMonth = page.locator(".calendar-next");
     const previousCaption = await caption.textContent();
-    const box = await nextMonth.boundingBox();
+    const [captionBox, previousBox, nextBox] = await Promise.all([
+      caption.boundingBox(),
+      previousMonth.boundingBox(),
+      nextMonth.boundingBox()
+    ]);
 
-    expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
-    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(previousBox?.width ?? 0).toBeGreaterThanOrEqual(44);
+    expect(previousBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(nextBox?.width ?? 0).toBeGreaterThanOrEqual(44);
+    expect(nextBox?.height ?? 0).toBeGreaterThanOrEqual(44);
+    expect(Math.abs((previousBox?.y ?? 0) - (nextBox?.y ?? 0))).toBeLessThanOrEqual(1);
+    expect(previousBox?.x ?? 0).toBeLessThan(captionBox?.x ?? 0);
+    expect(nextBox?.x ?? 0).toBeGreaterThan((captionBox?.x ?? 0) + (captionBox?.width ?? 0));
     await nextMonth.click({ position: { x: 2, y: 2 } });
     await expect(caption).not.toHaveText(previousCaption ?? "");
   });

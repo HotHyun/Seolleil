@@ -7,6 +7,7 @@ const yongpyongVivaldiCheckedAt = "2026-08-10";
 const wellihilliAlpensiaCheckedAt = "2026-08-10";
 const elysianJisanCheckedAt = "2026-08-10";
 const o2EdenCheckedAt = "2026-08-10";
+const finalResortsCheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -16,6 +17,7 @@ const oakvalley = "oakvalley";
 const elysian = "elysian";
 const edenvalley = "edenvalley";
 const alpensia = "alpensia";
+const muju = "muju";
 const vivaldi = "vivaldi";
 const yongpyong = "yongpyong";
 
@@ -61,6 +63,7 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   ...o2Routes(),
   ...oakvalleyRoutes(),
   ...elysianRoutes(),
+  ...mujuRoutes(),
   ...edenvalleyRoutes(),
   ...alpensiaRoutes(),
   ...vivaldiRoutes(),
@@ -438,6 +441,86 @@ function edenvalleyRoutes(): SkiShuttleRoute[] {
     }
   ];
   return [...officialRoutes, ...tourRoutes];
+}
+function mujuRoutes(): SkiShuttleRoute[] {
+  const bookingUrl = "http://www.mujuro.co.kr/costbus/03_costbus_05.php";
+  const sourceUrl = "http://www.mujuro.co.kr/costbus/03_costbus_05.php";
+  const common = {
+    resortId: muju,
+    season: "25/26",
+    operator: "무주레져투어",
+    operatorPhone: "063-231-8801 · 063-231-8777",
+    region: "전북",
+    arrivalName: "무주 덕유산리조트 설천하우스",
+    priceLabel: "성인 전주 왕복 4만원 · 익산 5.2만원 · 군산 6.4만원",
+    fare: { type: "single_ride", note: "성인 기준 · 소인 요금과 패키지 결합가는 운영사 원문 확인" } as const,
+    service: { period: "25/26 동계시즌", days: "PKG 8명 이상 예약 운행", bookingRequirement: "사전 예약 필수 · 당일 운행 여부 전화 확인" },
+    bookingUrl,
+    sourceUrl,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: finalResortsCheckedAt
+  };
+  const fareByCity: Record<string, [oneWay: number, roundTrip: number]> = {
+    전주: [20000, 40000],
+    익산: [26000, 52000],
+    군산: [32000, 64000]
+  };
+  const earlyStops: [city: string, name: string, departureTime: string][] = [
+    ["군산", "수송동 롯데마트 건너편 동양생명 앞", "06:00"],
+    ["익산", "원광대 체육관 건너편 맥도널드 앞", "06:30"],
+    ["전주", "스타벅스 앞·덕진광장 앞", "07:20"],
+    ["전주", "전북일보사 건너편 기아자동차 앞", "07:22"],
+    ["전주", "안골사거리 국민은행 인후동지점 앞", "07:30"],
+    ["전주", "고려병원 건너편 버스정류장 앞", "07:35"]
+  ];
+  const morningStops: [city: string, name: string, departureTime: string][] = [
+    ["전주", "스타벅스 앞·덕진광장 앞", "09:45"],
+    ["전주", "전북일보사 건너편 기아자동차 앞", "09:50"],
+    ["전주", "안골사거리 국민은행 인후동지점 앞", "09:57"],
+    ["전주", "고려병원 건너편 버스정류장 앞", "10:00"]
+  ];
+  const createStops = (id: string, stops: [city: string, name: string, departureTime?: string][]) => stops.map(([city, name, departureTime], index) => {
+    const [oneWayFareAdult, roundTripFareAdult] = fareByCity[city];
+    return { id: `${id}-${index + 1}`, city, name, departureTime, oneWayFareAdult, roundTripFareAdult };
+  });
+  const outbound: SkiShuttleRoute[] = [
+    {
+      ...common,
+      id: "muju-mujuro-early",
+      name: "군산·익산·전주 새벽선",
+      operationNote: "군산 06:00 · 익산 06:30 · 전주 07:20부터",
+      directions: ["outbound"],
+      stops: createStops("muju-mujuro-early", earlyStops)
+    },
+    {
+      ...common,
+      id: "muju-mujuro-morning",
+      name: "전주 오전선",
+      operationNote: "전주 덕진광장 09:45부터 · 8명 이상 예약 운행",
+      directions: ["outbound"],
+      stops: createStops("muju-mujuro-morning", morningStops)
+    }
+  ];
+  const returnStops: [city: string, name: string][] = [
+    ["전주", "고려병원 건너편 버스정류장 인근"],
+    ["전주", "안골사거리 국민은행 인후동지점 인근"],
+    ["전주", "전북일보사·기아자동차 인근"],
+    ["전주", "덕진광장·스타벅스 인근"],
+    ["익산", "원광대 체육관·맥도널드 인근"],
+    ["군산", "수송동 롯데마트·동양생명 인근"]
+  ];
+  const returning = [["muju-mujuro-return-1300", "13시 귀가편", "13:00", "8명 이상 예약 시 운행"], ["muju-mujuro-return-1630", "16시 30분 귀가편", "16:30", "예약 시 운행"]].map(([id, name, departureTime, condition]): SkiShuttleRoute => ({
+    ...common,
+    id,
+    name,
+    operationNote: `설천하우스 ${departureTime} 출발 · ${condition}`,
+    directions: ["return"],
+    returnTime: departureTime,
+    returnService: { departureName: "무주 덕유산리조트 설천하우스", departureTime, stopOrder: "same_stops", note: `${condition} · 하차 순서와 정확한 위치는 운영사 확인` },
+    service: { ...common.service, bookingRequirement: `${condition} · 당일 운행 여부 전화 확인` },
+    stops: createStops(id, returnStops)
+  }));
+  return [...outbound, ...returning];
 }
 function alpensiaRoutes(): SkiShuttleRoute[] {
   const sourceUrl = "https://www.alpensia.com/guide/directions-public.do";

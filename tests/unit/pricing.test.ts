@@ -88,6 +88,21 @@ describe("pricing", () => {
     expect(estimateTransportCost(o2, tripInput({ transportType: "shuttle" }), route)).toMatchObject({ label: "무료 셔틀", representative: 0, min: 0, max: 0, confidence: "confirmed" });
   });
 
+  it("adds Muju's city-specific one-way fares across separate direction routes", () => {
+    const muju = resorts.find((resort) => resort.id === "muju")!;
+    const routes = getSkiShuttleRoutes("muju");
+    const outbound = routes.find(route => route.id === "muju-mujuro-early")!;
+    const returning = routes.find(route => route.id === "muju-mujuro-return-1630")!;
+    const outboundStop = outbound.stops.find(stop => stop.city === "군산")!;
+    const returnStop = returning.stops.find(stop => stop.city === "군산")!;
+    const plan: TripSkiPlan = { version: 2, days: [createEmptySkiDay("2026-01-17")], lodgingNights: [], transportLegs: [
+      { direction: "outbound", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: outbound.id, shuttleStopId: outboundStop.id },
+      { direction: "return", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: returning.id, shuttleStopId: returnStop.id }
+    ] };
+
+    expect(estimateTransportPlanCost(muju, tripInput({ transportType: "shuttle", peopleCount: 2 }), plan)).toMatchObject({ representative: 128000, min: 128000, max: 128000, confidence: "confirmed" });
+  });
+
   it("counts one shared season pass across direction-specific Phoenix routes", () => {
     const phoenix = resorts.find((resort) => resort.id === "phoenix")!;
     const routes = getSkiShuttleRoutes("phoenix");

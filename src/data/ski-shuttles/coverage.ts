@@ -14,12 +14,12 @@ export type SkiShuttleCoverage = {
   lastCheckedAt: string;
 };
 
-const noAffiliateServiceResortIds = new Set(["konjiam", "muju"]);
+const noAffiliateServiceLastCheckedAt = new Map([["konjiam", "2026-08-10"]]);
 
 export function getSkiShuttleCoverage(resort: Pick<SkiResort, "id" | "shuttleUrl" | "lastCheckedAt">, routes: SkiShuttleRoute[]): SkiShuttleCoverage {
   const outboundRoutes = routes.filter(route => routeSupportsShuttleDirection(route, "outbound"));
   const confirmedRouteCount = outboundRoutes.filter(route => route.dataStatus === "confirmed_25_26").length;
   const recheckRouteCount = outboundRoutes.length - confirmedRouteCount;
-  const status = noAffiliateServiceResortIds.has(resort.id) ? "no_affiliate_service" : recheckRouteCount > 0 ? "needs_recheck" : "confirmed_schedule";
-  return { resortId: resort.id, season: "25/26", status, confirmedRouteCount, recheckRouteCount, officialTransportUrl: resort.shuttleUrl, lastCheckedAt: routes[0]?.lastCheckedAt ?? resort.lastCheckedAt };
+  const status = noAffiliateServiceLastCheckedAt.has(resort.id) ? "no_affiliate_service" : recheckRouteCount > 0 ? "needs_recheck" : "confirmed_schedule";
+  return { resortId: resort.id, season: "25/26", status, confirmedRouteCount, recheckRouteCount, officialTransportUrl: resort.shuttleUrl, lastCheckedAt: routes[0]?.lastCheckedAt ?? noAffiliateServiceLastCheckedAt.get(resort.id) ?? resort.lastCheckedAt };
 }

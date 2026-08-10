@@ -73,6 +73,25 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.every(route => route.fare?.type === "free" && route.fare.roundTripAdult === 0)).toBe(true);
   });
 
+  it("separates Muju Leisure Tour's two outbound and two return reservation shuttles", () => {
+    const routes = getSkiShuttleRoutes("muju");
+    expect(searchShuttleRoutes(routes, "", "all", "outbound").map(route => route.id)).toEqual(["muju-mujuro-early", "muju-mujuro-morning"]);
+    expect(searchShuttleRoutes(routes, "", "all", "return").map(route => route.id)).toEqual(["muju-mujuro-return-1300", "muju-mujuro-return-1630"]);
+    expect(routes.every(route => route.operator === "무주레져투어" && route.dataStatus === "confirmed_25_26")).toBe(true);
+    expect(routes.find(route => route.id === "muju-mujuro-early")?.stops.map(stop => [stop.city, stop.departureTime, stop.oneWayFareAdult, stop.roundTripFareAdult])).toEqual([
+      ["군산", "06:00", 32000, 64000],
+      ["익산", "06:30", 26000, 52000],
+      ["전주", "07:20", 20000, 40000],
+      ["전주", "07:22", 20000, 40000],
+      ["전주", "07:30", 20000, 40000],
+      ["전주", "07:35", 20000, 40000]
+    ]);
+    expect(routes.find(route => route.id === "muju-mujuro-morning")?.stops.map(stop => stop.departureTime)).toEqual(["09:45", "09:50", "09:57", "10:00"]);
+    expect(routes.find(route => route.id === "muju-mujuro-return-1300")).toMatchObject({ directions: ["return"], returnService: { departureName: "무주 덕유산리조트 설천하우스", departureTime: "13:00" } });
+    expect(routes.find(route => route.id === "muju-mujuro-return-1630")).toMatchObject({ returnService: { departureTime: "16:30" }, service: { period: "25/26 동계시즌" } });
+    expect(searchShuttleRoutes(routes, "군산", "all", "return").map(route => route.id)).toEqual(["muju-mujuro-return-1300", "muju-mujuro-return-1630"]);
+  });
+
   it("separates Oak Valley's two outbound and two return weekend shuttles", () => {
     const routes = getSkiShuttleRoutes("oakvalley");
     expect(searchShuttleRoutes(routes, "", "all", "outbound").map(route => route.id)).toEqual(["oakvalley-wonju-weekend", "oakvalley-wonju-weekend-afternoon"]);
@@ -144,8 +163,7 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.find(route => route.id === "vivaldi-foreign-return-1700-hongdae")).toMatchObject({ returnService: { departureTime: "17:00" } });
   });
 
-  it("does not invent public 25/26 affiliate routes for Muju or Konjiam", () => {
-    expect(getSkiShuttleRoutes("muju")).toEqual([]);
+  it("does not turn Konjiam's public transit or event buses into a 25/26 affiliate shuttle", () => {
     expect(getSkiShuttleRoutes("konjiam")).toEqual([]);
   });
 
@@ -162,13 +180,14 @@ describe("25/26 ski shuttle data", () => {
     const high1Routes = getSkiShuttleRoutes("high1");
     expect(getSkiShuttleCoverage({ id: "high1", shuttleUrl: "https://example.com", lastCheckedAt: "2026-08-10" }, high1Routes)).toMatchObject({ status: "needs_recheck", confirmedRouteCount: 17, recheckRouteCount: 4 });
     expect(getSkiShuttleCoverage({ id: "jisan", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, getSkiShuttleRoutes("jisan"))).toMatchObject({ status: "confirmed_schedule", confirmedRouteCount: 4, recheckRouteCount: 0 });
-    expect(getSkiShuttleCoverage({ id: "muju", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, [])).toMatchObject({ status: "no_affiliate_service", confirmedRouteCount: 0, recheckRouteCount: 0 });
+    expect(getSkiShuttleCoverage({ id: "muju", shuttleUrl: "https://example.com", lastCheckedAt: "2026-07-17" }, getSkiShuttleRoutes("muju"))).toMatchObject({ status: "confirmed_schedule", confirmedRouteCount: 2, recheckRouteCount: 0 });
+    expect(getSkiShuttleCoverage({ id: "konjiam", shuttleUrl: "https://example.com", lastCheckedAt: "2026-05-13" }, [])).toMatchObject({ status: "no_affiliate_service", confirmedRouteCount: 0, recheckRouteCount: 0, lastCheckedAt: "2026-08-10" });
   });
 
   it("assigns an explicit shuttle coverage state to every registered resort", () => {
     const coverage = resorts.map(resort => getSkiShuttleCoverage(resort, getSkiShuttleRoutes(resort.id)));
     expect(coverage).toHaveLength(resorts.length);
-    expect(coverage.filter(item => item.status === "no_affiliate_service").map(item => item.resortId)).toEqual(["konjiam", "muju"]);
+    expect(coverage.filter(item => item.status === "no_affiliate_service").map(item => item.resortId)).toEqual(["konjiam"]);
     expect(coverage.every(item => item.status === "no_affiliate_service" || item.confirmedRouteCount + item.recheckRouteCount > 0)).toBe(true);
   });
 

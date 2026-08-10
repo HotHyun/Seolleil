@@ -45,12 +45,17 @@ describe("25/26 ski shuttle data", () => {
     expect(routes[0]).toMatchObject({ fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { bookingRequirement: "사전 예약 필수" } });
   });
 
-  it("covers the confirmed Welli Hilli Seoul and weekend Gyeonggi network", () => {
+  it("separates Welli Hilli's 16 outbound and 4 return schedule choices", () => {
     const routes = getSkiShuttleRoutes("wellihilli");
-    expect(routes).toHaveLength(12);
+    expect(searchShuttleRoutes(routes, "", "all", "outbound")).toHaveLength(16);
+    expect(searchShuttleRoutes(routes, "", "all", "return")).toHaveLength(4);
     expect(routes.every(route => route.operator === "대원관광" && route.priceLabel === "웰리힐리 교통시즌권 25만원")).toBe(true);
-    expect(routes.filter(route => route.region !== "서울").every(route => route.operationNote.includes("주말"))).toBe(true);
-    expect(searchShuttleRoutes(routes, "인덕원").map(route => route.id)).toEqual(["wellihilli-kd-anyang"]);
+    expect(routes.find(route => route.id === "wellihilli-kd-sadang")?.stops.map(stop => stop.departureTime)).toEqual(["05:55", "06:10", "06:12", "06:15", "06:40"]);
+    expect(routes.find(route => route.id === "wellihilli-kd-sadang-morning")?.stops.map(stop => stop.departureTime)).toEqual(["09:00", "09:20", "09:25", "09:30", "10:00"]);
+    expect(searchShuttleRoutes(routes, "인덕원", "all", "outbound").map(route => route.id)).toEqual(["wellihilli-kd-anyang"]);
+    expect(searchShuttleRoutes(routes, "송내", "all", "return").map(route => route.id)).toEqual(["wellihilli-return-1700-gyeonggi"]);
+    expect(routes.find(route => route.id === "wellihilli-return-1100-jamsil")).toMatchObject({ directions: ["return"], returnService: { departureTime: "11:00" } });
+    expect(routes.some(route => route.id === "wellihilli-kd-suwon")).toBe(false);
   });
 
   it("covers only O2's current official Taebaek Station connection", () => {
@@ -86,14 +91,17 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "반월당").map(route => route.id)).toEqual(["edenvalley-daegu-tour"]);
   });
 
-  it("covers the complete KD Seoul and Gyeonggi network for alpensia", () => {
-    const resortId = "alpensia";
-    const arrivalName = "알펜시아 스키700";
-    const routes = getSkiShuttleRoutes(resortId);
-    expect(routes).toHaveLength(12);
-    expect(routes.every(route => route.operator === "대원관광" && route.arrivalName === arrivalName && route.priceLabel === "용평·알펜시아 교통시즌권 29만원")).toBe(true);
-    expect(searchShuttleRoutes(routes, "수원역")).toHaveLength(1);
-    expect(searchShuttleRoutes(routes, "인천터미널")).toHaveLength(1);
+  it("uses Alpensia's official direct and Jinbu Station schedules instead of copied Yongpyong routes", () => {
+    const routes = getSkiShuttleRoutes("alpensia");
+    expect(searchShuttleRoutes(routes, "", "all", "outbound")).toHaveLength(3);
+    expect(searchShuttleRoutes(routes, "", "all", "return")).toHaveLength(3);
+    expect(routes.every(route => route.arrivalName === "알펜시아 웰컴센터 앞" && route.dataStatus === "confirmed_25_26")).toBe(true);
+    expect(routes.find(route => route.id === "alpensia-kd-myeongdong")).toMatchObject({ operator: "경기대원고속관광", fare: { roundTripAdult: 34000 }, directions: ["outbound"] });
+    expect(routes.find(route => route.id === "alpensia-kd-myeongdong")?.stops.map(stop => stop.departureTime)).toEqual(["09:30", "10:00"]);
+    expect(routes.find(route => route.id === "alpensia-kd-return-1310")).toMatchObject({ returnService: { departureTime: "13:10" } });
+    expect(routes.find(route => route.id === "alpensia-jinbu-1410")).toMatchObject({ fare: { type: "free", roundTripAdult: 0 } });
+    expect(searchShuttleRoutes(routes, "진부", "all", "return").map(route => route.id)).toEqual(["alpensia-return-jinbu-1030", "alpensia-return-jinbu-1340"]);
+    expect(searchShuttleRoutes(routes, "수원역")).toHaveLength(0);
   });
 
   it("separates Yongpyong's 18 outbound and 10 return schedule choices", () => {
@@ -123,7 +131,8 @@ describe("25/26 ski shuttle data", () => {
 
   it("builds normalized season, operator, and stop catalogs from the route source", () => {
     expect(skiShuttleSeasons).toEqual(["25/26"]);
-    expect(skiShuttleOperators.find(operator => operator.name === "대원관광")?.resortIds).toEqual(expect.arrayContaining(["high1", "phoenix", "wellihilli", "alpensia", "yongpyong"]));
+    expect(skiShuttleOperators.find(operator => operator.name === "대원관광")?.resortIds).toEqual(expect.arrayContaining(["high1", "phoenix", "wellihilli", "yongpyong"]));
+    expect(skiShuttleOperators.find(operator => operator.name === "경기대원고속관광")?.resortIds).toEqual(["alpensia"]);
     expect(skiShuttleStops).toHaveLength(skiShuttleRoutes2526.reduce((count, route) => count + route.stops.length, 0));
     expect(skiShuttleStops.find(stop => stop.name === "동래역 3번 출구")).toMatchObject({ resortId: "high1", season: "25/26" });
     expect(skiShuttleRoutes2526.every(route => route.fare && route.service)).toBe(true);

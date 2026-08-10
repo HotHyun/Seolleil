@@ -88,6 +88,19 @@ describe("pricing", () => {
     expect(estimateTransportPlanCost(phoenix, tripInput({ transportType: "shuttle", peopleCount: 3 }), plan)).toMatchObject({ label: "셔틀 교통시즌권", representative: 825000, confidence: "confirmed" });
   });
 
+  it("counts Alpensia's direction-specific direct routes as one round-trip product", () => {
+    const alpensia = resorts.find((resort) => resort.id === "alpensia")!;
+    const routes = getSkiShuttleRoutes("alpensia");
+    const outbound = routes.find(route => route.id === "alpensia-kd-myeongdong")!;
+    const returning = routes.find(route => route.id === "alpensia-kd-return-1310")!;
+    const plan: TripSkiPlan = { version: 2, days: [createEmptySkiDay("2026-01-17")], lodgingNights: [], transportLegs: [
+      { direction: "outbound", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: outbound.id, shuttleStopId: outbound.stops[0].id },
+      { direction: "return", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: returning.id, shuttleStopId: returning.stops[0].id }
+    ] };
+
+    expect(estimateTransportPlanCost(alpensia, tripInput({ transportType: "shuttle", peopleCount: 2 }), plan)).toMatchObject({ label: "셔틀 왕복 비용", representative: 68000, confidence: "confirmed", sourceName: "경기대원고속관광" });
+  });
+
   it("adds Vivaldi foreign shuttle one-way fares across separate direction routes", () => {
     const vivaldi = resorts.find((resort) => resort.id === "vivaldi")!;
     const routes = getSkiShuttleRoutes("vivaldi");

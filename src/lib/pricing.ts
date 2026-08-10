@@ -166,6 +166,17 @@ export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, p
       const total = seasonPassAdult * input.peopleCount;
       return { key: "transport", label: "셔틀 교통시즌권", representative: total, min: total, max: total, confidence: "confirmed", sourceName: outboundRoute.operator, sourceUrl: outboundRoute.sourceUrl, bookingUrl: outboundRoute.bookingUrl, lastCheckedAt: outboundRoute.lastCheckedAt, note: `${outboundRoute.operator} 동일 교통시즌권으로 선택한 가는 편·오는 편 이용` };
     }
+    const roundTripAdult = outboundRoute?.fare?.roundTripAdult;
+    const hasLegOrStopFare = Boolean(
+      outboundRoute?.fare?.oneWayAdult !== undefined ||
+      returnRoute?.fare?.oneWayAdult !== undefined ||
+      outboundRoute?.stops.some(stop => stop.oneWayFareAdult !== undefined || stop.roundTripFareAdult !== undefined) ||
+      returnRoute?.stops.some(stop => stop.oneWayFareAdult !== undefined || stop.roundTripFareAdult !== undefined)
+    );
+    if (outboundRoute && returnRoute && !hasLegOrStopFare && roundTripAdult !== undefined && returnRoute.fare?.roundTripAdult === roundTripAdult && returnRoute.operator === outboundRoute.operator && returnRoute.sourceUrl === outboundRoute.sourceUrl) {
+      const total = roundTripAdult * input.peopleCount;
+      return { key: "transport", label: roundTripAdult === 0 ? "무료 셔틀" : "셔틀 왕복 비용", representative: total, min: total, max: total, confidence: "confirmed", sourceName: outboundRoute.operator, sourceUrl: outboundRoute.sourceUrl, bookingUrl: outboundRoute.bookingUrl, lastCheckedAt: outboundRoute.lastCheckedAt, note: `${outboundRoute.operator} 동일 왕복 상품으로 선택한 가는 편·오는 편 이용` };
+    }
   }
   if (outbound.transportType === returning.transportType) {
     const route = outbound.transportType === "shuttle" && outbound.shuttleRouteId === returning.shuttleRouteId

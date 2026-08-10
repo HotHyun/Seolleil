@@ -4,6 +4,7 @@ const checkedAt = "2026-07-17";
 const high1CheckedAt = "2026-08-10";
 const phoenixOakCheckedAt = "2026-08-10";
 const yongpyongVivaldiCheckedAt = "2026-08-10";
+const wellihilliAlpensiaCheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -55,23 +56,12 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   ...phoenixReturnRoutes(),
   jisanRoute("jisan-cityhall", "서울시청선", "시청역 2번 출구"),
   jisanRoute("jisan-jamsil", "잠실선", "종합운동장역 1번 출구"),
-  wellihilliRoute("wellihilli-kd-sadang", "서울", "사당·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-myeongdong", "서울", "명동·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-sinchon", "서울", "홍대·신촌선", "성수기 매일, 비수기 주말 중심", [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-nowon", "서울", "노원·광나루선", "성수기 매일, 비수기 주말 중심", [["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-mokdong", "서울", "강서·목동선", "성수기 매일, 비수기 주말 중심", [["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-sillim", "서울", "구디·신림선", "주말 중심 · 종합운동장 합류", [["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-cheongnyangni", "서울", "성신여대·청량리선", "토요일 중심 · 종합운동장 합류", [["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]]),
-  wellihilliRoute("wellihilli-kd-bundang", "경기", "수지·분당선", "경기권 주말 운행 · 서현 합류", [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]]),
-  wellihilliRoute("wellihilli-kd-anyang", "경기", "산본·안양선", "경기권 주말 운행 · 서현 합류", [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]),
-  wellihilliRoute("wellihilli-kd-suwon", "경기", "수원·영통선", "경기권 주말 운행 · 영통 합류", [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]),
-  wellihilliRoute("wellihilli-kd-ilsan", "경기", "일산선", "경기권 주말 운행 · 송내 합류", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
-  wellihilliRoute("wellihilli-kd-incheon", "인천", "인천·부평선", "경기권 주말 운행 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
+  ...wellihilliRoutes(),
   o2Route(),
   ...oakvalleyRoutes(),
   elysianRoute(),
   edenvalleyRoute(),
-  ...kdPyeongchangRoutes(alpensia, "알펜시아 스키700"),
+  ...alpensiaRoutes(),
   ...vivaldiRoutes(),
   ...yongpyongRoutes()
 ];
@@ -146,9 +136,68 @@ function phoenixReturnRoutes(): SkiShuttleRoute[] {
 function jisanRoute(id: string, name: string, stopName: string): SkiShuttleRoute {
   return { id, resortId: jisan, season: "25/26", operator: "투어윈도우글로벌", operatorPhone: "02-2039-7728", region: "서울", name, operationNote: "25/26 시즌 · 사전 예약 필수", arrivalName: "지산리조트 제1주차장", returnTime: "12:00 / 18:00 선택", priceLabel: "편도 2만원 · 왕복 3.8만원", fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { days: "운영일 캘린더 기준", bookingRequirement: "사전 예약 필수" }, bookingUrl: "https://jisan.allthatlimo.net/", sourceUrl: "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski", stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime: "07:30 / 13:30" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
-function wellihilliRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
+function wellihilliRoutes(): SkiShuttleRoute[] {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
-  return { id, resortId: wellihilli, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "웰리힐리파크 서관 앞 버스주차장", priceLabel: "웰리힐리 교통시즌권 25만원", fare: { type: "season_pass", seasonPassAdult: 250000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  const outboundSpecs: [id: string, region: string, name: string, days: string, stops: StopInput[]][] = [
+    ["wellihilli-kd-sadang", "서울", "사당·강남선", "성수기·비수기·3월 3일부터 매일", [["서울","사당역","05:55"],["서울","양재역","06:10"],["서울","도곡역","06:12"],["서울","대치역","06:15"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-sinchon", "서울", "홍대·신촌선", "성수기·비수기 매일 · 3월 3일부터 토·일", [["서울","홍대입구","05:40"],["서울","신촌역","05:45"],["서울","광흥창역","05:50"],["서울","마포역","05:55"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-myeongdong", "서울", "명동·강남선", "성수기·비수기 매일", [["서울","명동역","05:45"],["서울","동대문","05:55"],["서울","강남역","06:07"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-nowon", "서울", "노원·광나루선", "성수기 매일 · 비수기 토·일", [["서울","노원역","05:35"],["서울","석계역","05:45"],["서울","군자역","06:00"],["서울","광나루역","06:05"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-mokdong", "서울", "강서·목동선", "성수기 매일 · 비수기 토·일", [["서울","강서","05:35"],["서울","목동역","05:45"],["서울","여의도","06:00"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-sillim", "서울", "구디·신림선", "성수기 토·일", [["서울","구로디지털단지역","05:45"],["서울","신림역","05:55"],["서울","서울대입구역","06:00"],["서울","이수역","06:10"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-cheongnyangni", "서울", "성신여대·청량리선", "성수기 토요일", [["서울","성신여대입구역","05:40"],["서울","길음역","05:45"],["서울","청량리역","06:00"],["서울","회기역","06:05"],["서울","종합운동장","06:40"]]],
+    ["wellihilli-kd-bundang", "경기", "수지·분당선", "성수기·비수기 토·일", [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]]],
+    ["wellihilli-kd-anyang", "경기", "산본·안양선", "성수기·비수기 토·일", [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]],
+    ["wellihilli-kd-ilsan", "경기", "일산선", "성수기·비수기 토·일", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]],
+    ["wellihilli-kd-incheon", "인천", "인천·부평선", "성수기·비수기 토·일", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]],
+    ["wellihilli-kd-sadang-morning", "서울", "오전 사당·강남선", "성수기·비수기·3월 3일부터 매일", [["서울","사당역","09:00"],["서울","양재역","09:20"],["서울","도곡역","09:25"],["서울","대치역","09:30"],["서울","종합운동장","10:00"]]],
+    ["wellihilli-kd-sinchon-morning", "서울", "오전 홍대·신촌선", "성수기·비수기 매일", [["서울","홍대입구","08:50"],["서울","신촌역","08:55"],["서울","광흥창역","09:00"],["서울","마포역","09:10"],["서울","종합운동장","10:00"]]],
+    ["wellihilli-kd-myeongdong-morning", "서울", "오전 명동·강남선", "성수기·비수기 매일", [["서울","명동역","08:45"],["서울","동대문","08:55"],["서울","강남역","09:25"],["서울","종합운동장","10:00"]]],
+    ["wellihilli-kd-nowon-morning", "서울", "오전 노원·광나루선", "성수기 토·일", [["서울","노원역","08:55"],["서울","석계역","09:05"],["서울","군자역","09:25"],["서울","광나루역","09:30"],["서울","종합운동장","10:00"]]],
+    ["wellihilli-kd-night", "서울", "야간 종합운동장선", "성수기 금요일", [["서울","종합운동장","20:00"]]]
+  ];
+  const common = {
+    resortId: wellihilli,
+    season: "25/26",
+    operator: "대원관광",
+    operatorPhone: "02-2201-7710",
+    arrivalName: "웰리힐리파크 서관 앞 버스주차장",
+    priceLabel: "웰리힐리 교통시즌권 25만원",
+    fare: { type: "season_pass", seasonPassAdult: 250000 } as const,
+    bookingUrl: url,
+    sourceUrl: url,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: wellihilliAlpensiaCheckedAt
+  };
+  const outbound = outboundSpecs.map(([id, region, name, days, stops]): SkiShuttleRoute => ({
+    ...common,
+    id,
+    region,
+    name,
+    operationNote: days,
+    directions: ["outbound"],
+    service: wellihilliService(days),
+    stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime }))
+  }));
+  const returnSpecs: [id: string, region: string, name: string, departureTime: string, days: string, stops: [city: string, name: string][]][] = [
+    ["wellihilli-return-1100-jamsil", "서울", "11시 잠실선", "11:00", "성수기 매일 · 용평 경유", [["서울","잠실역"],["서울","종합운동장역"]]],
+    ["wellihilli-return-1300-central", "서울", "13시 도심선", "13:00", "성수기·비수기·3월 3일부터 매일", [["서울","잠실역"],["서울","종합운동장역"],["서울","명동역"],["서울","신촌역"]]],
+    ["wellihilli-return-1700-central", "서울", "17시 도심선", "17:00", "성수기 매일 · 비수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","명동역"],["서울","신촌역"]]],
+    ["wellihilli-return-1700-gyeonggi", "경기", "17시 경기선", "17:00", "성수기·비수기 토·일", [["성남","서현역"],["부천","송내역"]]]
+  ];
+  const returning = returnSpecs.map(([id, region, name, departureTime, days, stops]): SkiShuttleRoute => ({
+    ...common,
+    id,
+    region,
+    name,
+    operationNote: `${days} · 25/26 귀가편`,
+    directions: ["return"],
+    returnTime: departureTime,
+    returnService: { departureName: "웰리힐리파크 서관 앞 버스주차장", departureTime, stopOrder: "same_stops", note: `${days} · 구정 연휴(2026-02-13~02-19)는 단축 운행 별도 공지` },
+    service: wellihilliService(days),
+    stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName }))
+  }));
+  return [...outbound, ...returning];
 }
 function o2Route(): SkiShuttleRoute {
   const url = "https://www.o2resort.com/mobile/traffic";
@@ -205,6 +254,79 @@ function elysianRoute(): SkiShuttleRoute {
 function edenvalleyRoute(): SkiShuttleRoute {
   const url = "https://www.kkday.com/ko/product/29058";
   return { id: "edenvalley-daegu-tour", resortId: edenvalley, season: "25/26", operator: "KKday 제휴 현지 운영사", region: "대구", name: "대구 도심 왕복 스키투어 셔틀", operationNote: "겨울 한정 제휴 상품 · 25/26 판매 종료, 다음 시즌 일정 재확인", arrivalName: "에덴밸리 스키리조트", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진", fare: { type: "tour_package", note: "교통 단독 옵션 가격은 판매 원문 재확인" }, service: { days: "겨울 한정", bookingRequirement: "현재 판매 종료 · 다음 시즌 재확인" }, bookingUrl: url, sourceUrl: url, stops: [["대구","반월당역 21번 출구","08:30"],["대구","동대구역 3번 출구","09:00"]].map(([city, name, departureTime], index) => ({ id: `edenvalley-daegu-tour-${index + 1}`, city, name, departureTime })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+}
+function alpensiaRoutes(): SkiShuttleRoute[] {
+  const sourceUrl = "https://www.alpensia.com/guide/directions-public.do";
+  const directBookingUrl = "https://skibus.purplebus.co.kr/Ap/";
+  const directCommon = {
+    resortId: alpensia,
+    season: "25/26",
+    operator: "경기대원고속관광",
+    operatorPhone: "02-2201-7710",
+    region: "서울",
+    arrivalName: "알펜시아 웰컴센터 앞",
+    priceLabel: "알펜시아 정기노선 왕복 3.4만원",
+    fare: { type: "single_ride", roundTripAdult: 34000, note: "온라인 왕복 구매가 · 편도 이용 불가" } as const,
+    service: { days: "공식 예약 화면 운행일", reservationDeadline: "가는 편 전일 17:00 · 오는 편 출발 4시간 전", bookingRequirement: "모바일 사전 예약 필수 · 편도 및 미예약 현장 이용 불가" },
+    bookingUrl: directBookingUrl,
+    sourceUrl,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: wellihilliAlpensiaCheckedAt
+  };
+  const directRoutes: SkiShuttleRoute[] = [
+    {
+      ...directCommon,
+      id: "alpensia-kd-myeongdong",
+      name: "명동·종합운동장 정기노선",
+      operationNote: "명동 09:30 · 종합운동장 10:00",
+      directions: ["outbound"],
+      stops: [["명동역 1번 출구 한전 앞", "09:30"], ["종합운동장역 7번 출구 대로변", "10:00"]].map(([name, departureTime], index) => ({ id: `alpensia-kd-myeongdong-${index + 1}`, city: "서울", name, departureTime }))
+    },
+    {
+      ...directCommon,
+      id: "alpensia-kd-return-1310",
+      name: "13시 10분 서울 귀가 정기노선",
+      operationNote: "알펜시아 웰컴센터 13:10 출발 · 하차 순서 재확인",
+      directions: ["return"],
+      returnTime: "13:10",
+      returnService: { departureName: "알펜시아 웰컴센터 정문 앞", departureTime: "13:10", stopOrder: "same_stops", note: "명동·종합운동장 하차 순서는 예약 화면에서 재확인" },
+      stops: [["서울","명동역"],["서울","종합운동장역"]].map(([city, name], index) => ({ id: `alpensia-kd-return-1310-${index + 1}`, city, name }))
+    }
+  ];
+  const stationCommon = {
+    resortId: alpensia,
+    season: "25/26",
+    operator: "알펜시아 리조트",
+    operatorPhone: "033-339-0000",
+    region: "강원 평창",
+    arrivalName: "알펜시아 웰컴센터 앞",
+    priceLabel: "KTX 진부역 무료 셔틀",
+    fare: { type: "free", roundTripAdult: 0 } as const,
+    service: { period: "별도 안내일까지", days: "공식 운행일", bookingRequirement: "알펜시아 이용객 전용 · 예약 문자 확인 · 단체 이용 불가 · 선착순 좌석" },
+    bookingUrl: sourceUrl,
+    sourceUrl,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: wellihilliAlpensiaCheckedAt
+  };
+  const stationOutbound = [["alpensia-jinbu-1100", "11시 진부역선", "11:00"], ["alpensia-jinbu-1410", "14시 10분 진부역선", "14:10"]].map(([id, name, departureTime]): SkiShuttleRoute => ({
+    ...stationCommon,
+    id,
+    name,
+    operationNote: `진부(오대산)역 ${departureTime} 출발`,
+    directions: ["outbound"],
+    stops: [{ id: `${id}-1`, city: "평창", name: "KTX 진부(오대산)역", departureTime }]
+  }));
+  const stationReturn = [["alpensia-return-jinbu-1030", "10시 30분 진부역 귀가선", "10:30"], ["alpensia-return-jinbu-1340", "13시 40분 진부역 귀가선", "13:40"]].map(([id, name, departureTime]): SkiShuttleRoute => ({
+    ...stationCommon,
+    id,
+    name,
+    operationNote: `알펜시아 웰컴센터 ${departureTime} 출발`,
+    directions: ["return"],
+    returnTime: departureTime,
+    returnService: { departureName: "알펜시아 웰컴센터 앞", departureTime, stopOrder: "same_stops", note: "KTX 진부(오대산)역행 무료 셔틀 · 도로·열차 상황에 따라 변경 가능" },
+    stops: [{ id: `${id}-1`, city: "평창", name: "KTX 진부(오대산)역" }]
+  }));
+  return [...directRoutes, ...stationOutbound, ...stationReturn];
 }
 function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleRoute[] {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
@@ -346,6 +468,10 @@ function vivaldiRoutes(): SkiShuttleRoute[] {
 
 function kdService(): NonNullable<SkiShuttleRoute["service"]> {
   return { period: "스키장 개장 주말 ~ 2026-03-02", days: "노선별 매일 또는 주말", bookingRequirement: "대원관광 홈페이지 사전 예약 · 전화 예약 불가" };
+}
+
+function wellihilliService(days: string): NonNullable<SkiShuttleRoute["service"]> {
+  return { period: "2025-12-01 ~ 2026-03-02 · 일부 노선 3월 이후", days, bookingRequirement: "대원관광 홈페이지 사전 예약 · 구정 연휴 단축 운행 별도 공지 · 전화 예약 불가" };
 }
 
 function phoenixService(days: string): NonNullable<SkiShuttleRoute["service"]> {

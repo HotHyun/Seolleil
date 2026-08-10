@@ -26,4 +26,19 @@ test.describe("accessibility smoke checks", () => {
       expect(unnamedControls, `${path} has unnamed interactive controls`).toEqual([]);
     }
   });
+
+  test("calendar month navigation uses its full touch target", async ({ page }) => {
+    await page.goto("/plan");
+    await page.getByRole("button", { name: "여행 방문 날짜" }).click();
+
+    const caption = page.locator(".rdp-caption_label");
+    const nextMonth = page.locator(".rdp-button_next");
+    const previousCaption = await caption.textContent();
+    const box = await nextMonth.boundingBox();
+
+    expect(box?.width ?? 0).toBeGreaterThanOrEqual(44);
+    expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
+    await nextMonth.click({ position: { x: 2, y: 2 } });
+    await expect(caption).not.toHaveText(previousCaption ?? "");
+  });
 });

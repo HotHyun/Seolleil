@@ -68,6 +68,7 @@ export function DatePicker({
       <PopoverContent align="start" className="w-auto max-w-[calc(100vw-2rem)] p-3">
         <DayPicker
           mode="single"
+          navLayout="around"
           selected={date}
           onSelect={selectDate}
           disabled={minDate || maxDate ? [
@@ -78,12 +79,13 @@ export function DatePicker({
           weekStartsOn={0}
           fixedWeeks
           classNames={{
-            root: "p-0",
-            month_caption: "relative flex h-11 items-center justify-center",
-            caption_label: "text-sm font-black",
-            nav: "absolute inset-x-0 top-3 flex items-center justify-between px-3",
-            button_previous: "inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-background hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            button_next: "inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border bg-background hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            root: "relative p-0 [--rdp-nav_button-height:2.75rem] [--rdp-nav_button-width:2.75rem]",
+            month: "relative",
+            month_caption: "relative flex h-11 items-center justify-center px-11",
+            caption_label: "pointer-events-none text-sm font-black",
+            nav: "pointer-events-none absolute inset-x-0 top-0 z-10 flex h-11 items-center justify-between",
+            button_previous: "pointer-events-auto inline-flex h-11 w-11 touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            button_next: "pointer-events-auto inline-flex h-11 w-11 touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             month_grid: "w-full border-collapse",
             weekdays: "flex",
             weekday: "w-11 py-2 text-center text-xs font-bold text-muted-foreground",

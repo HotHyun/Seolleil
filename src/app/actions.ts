@@ -9,7 +9,7 @@ import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
-import { canEditOwnedTrip, canMutateWithSharePermission } from "@/lib/trip-access";
+import { canEditOwnedTrip, canManageTripSharing, canMutateWithSharePermission } from "@/lib/trip-access";
 import { parseTripInput } from "@/lib/trip-input";
 import {
   createTask,
@@ -1088,22 +1088,12 @@ async function findOwnedManagementTrip(formData: FormData) {
   if (!session?.user?.id) throw new AppError("AUTH_REQUIRED");
   const trip = await getTripById(tripId);
   if (!trip) throw new AppError("NOT_FOUND");
-  if (trip.userId !== session.user.id) throw new AppError("FORBIDDEN");
+  if (!canManageTripSharing(session.user.id, trip.userId)) throw new AppError("FORBIDDEN");
   return trip;
 }
 
 async function findShareManageableTrip(formData: FormData) {
-  const session = await getSession();
-  const tripId = String(formData.get("tripId") ?? "");
-  if (!session?.user?.id || !tripId) throw new AppError("AUTH_REQUIRED");
-  const trip = await getTripById(tripId);
-  if (!trip) throw new AppError("NOT_FOUND");
-  if (trip.userId === session.user.id) return trip;
-  const sessionSecret = await getSessionSecret();
-  if (!sessionSecret || !trip.teamId || !await getTripTeamPermission(sessionSecret, trip.teamId, session.user.id)) {
-    throw new AppError("FORBIDDEN", "초대된 사용자와 트립 소유자만 공유를 관리할 수 있습니다.");
-  }
-  return trip;
+  return findOwnedManagementTrip(formData);
 }
 
 export async function revokeShareLinkAction(formData: FormData) {

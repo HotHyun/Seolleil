@@ -5,11 +5,14 @@ import Link from "next/link";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
+import { ReadOnlyAccessBanner } from "@/components/trip/read-only-access-banner";
 import { TaskList } from "@/components/trip/task-list";
+import { TripChecklistReadOnly } from "@/components/trip/trip-checklist-read-only";
 import { TripCostDisclosure } from "@/components/trip/trip-cost-disclosure";
 import { TripBudgetWorkspace } from "@/components/trip/trip-budget-workspace";
 import { TripCompanions } from "@/components/trip/trip-companions";
 import { TripDashboard } from "@/components/trip/trip-dashboard";
+import { TripDecisionReadOnly } from "@/components/trip/trip-decision-read-only";
 import { TripDecisionWorkspace } from "@/components/trip/trip-decision-workspace";
 import { TripIdentityEditor } from "@/components/trip/trip-identity-editor";
 import { TripManagementMenu } from "@/components/trip/trip-management-menu";
@@ -57,7 +60,7 @@ export default async function MyTripDetailPage({
   if (!isOwner && !collaborationPermission) notFound();
   const canEdit = isOwner || collaborationPermission === "edit";
   const [shareLinks, members] = await Promise.all([
-    listTripShareLinks(trip.id),
+    isOwner ? listTripShareLinks(trip.id) : Promise.resolve([]),
     trip.teamId && sessionSecret ? listTripMemberships(sessionSecret, trip.teamId) : Promise.resolve([])
   ]);
 
@@ -72,6 +75,7 @@ export default async function MyTripDetailPage({
       <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks}>
         <div className="space-y-4">
           <Link href="/my-trips" className="inline-flex"><Button variant="ghost" className="-ml-2 h-10 px-2 text-muted-foreground"><ArrowLeft className="h-4 w-4" /> 내 트립으로 돌아가기</Button></Link>
+          {!canEdit ? <ReadOnlyAccessBanner compact={activeView !== "overview"} /> : null}
           {activeView === "overview" ? <Card>
             <CardHeader>
               <div className="flex items-start justify-between gap-3">
@@ -82,7 +86,7 @@ export default async function MyTripDetailPage({
                 </div>
                 <div className="flex flex-wrap justify-end gap-2">
                   {!isOwner ? <StatusBadge>{collaborationPermission === "edit" ? "초대됨 · 편집" : "초대됨 · 보기"}</StatusBadge> : null}
-                  <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} members={members} canManageTrip={isOwner} canManageSharing allowAccountInvites={isOwner} />
+                  {isOwner ? <TripManagementMenu trip={trip} shareUrl={shareUrl} sharePermission={sharePermission} shareLinks={shareLinks} members={members} canManageTrip canManageSharing allowAccountInvites /> : null}
                 </div>
               </div>
             </CardHeader>
@@ -121,18 +125,14 @@ export default async function MyTripDetailPage({
               </div>
             </CardContent>
           </Card> : null}
-              {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
-              {isTripDecisionView(activeView) ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit={canEdit} /> : null}
-              {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <WorkspaceIntro title="보기 전용 트립" description="이 트립의 체크리스트를 수정할 권한이 없습니다." />) : null}
+              {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} canEdit={canEdit} /><ProgressSummary tasks={trip.tasks} /></div> : null}
+              {isTripDecisionView(activeView) ? (canEdit ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit /> : <TripDecisionReadOnly view={activeView} trip={trip} rentalGroups={rentalGroups} />) : null}
+              {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <TripChecklistReadOnly tasks={trip.tasks} />) : null}
               {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} basePath={`/my-trips/${trip.id}`} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
         </div>
       </TripWorkspaceNav>
     </main>
   );
-}
-
-function WorkspaceIntro({ title, description }: { title: string; description: string }) {
-  return <Card><CardHeader><h1 data-trip-workspace-title tabIndex={-1} className="text-xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{title}</h1></CardHeader><CardContent><p className="text-sm leading-6 text-muted-foreground">{description}</p></CardContent></Card>;
 }
 
 function Info({ label, value }: { label: string; value: string }) {

@@ -2,6 +2,7 @@ import type { SkiShuttleRoute } from "@/lib/types";
 
 const checkedAt = "2026-07-17";
 const high1CheckedAt = "2026-08-10";
+const phoenixOakCheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -36,18 +37,21 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   unconfirmed("garam-gyeongju-2", "경북", "경주·포항 2코스", "가람관광여행사", "https://www.garamtour.kr/garam/high1/route_map/", [["경주","황성공원 시계탑","04:30"],["경주","근화여고 앞 육교","04:32"],["경주","강동지하도 밑 버스정류장","04:50"],["포항","지곡인재개발원","05:00"],["포항","롯데마트 건너편","05:05"],["포항","이동대구은행","05:10"],["포항","흥해초등학교","05:20"]], garamReturn()),
   unconfirmed("garam-ulsan-3", "울산", "울산 3코스", "가람관광여행사", "https://www.garamtour.kr/garam/high1/route_map/", [["울산","동구청 앞","03:45"],["울산","동천체육관 큰대로변","04:00"],["울산","태화로터리 다리 밑","04:10"],["울산","신복로터리 고속도로 입구","04:20"],["포항","흥해초등학교","05:20"]], garamReturn()),
   unconfirmed("eunsung-gyeongnam", "경남", "마산·창원·김해 노선", "부산은성관광", "https://www.es365.co.kr/good/tour_list.html?b_uid_s=111&m_uid_s=258", [["창원","마산·창원권"],["김해","김해권"]], { departureName: "하이원 예약 화면 지정 승차지", stopOrder: "same_stops", note: "하이원→경남 편도 선택 가능 · 귀가 시간과 정확한 하차지는 예약 화면에서 재확인" }),
-  phoenixRoute("phoenix-kd-sadang", "서울", "사당·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-myeongdong", "서울", "명동·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-sinchon", "서울", "홍대·신촌선", "성수기 매일, 비수기 주말 중심", [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-nowon", "서울", "노원·광나루선", "성수기 매일, 비수기 주말 중심", [["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-mokdong", "서울", "강서·목동선", "성수기 매일, 비수기 주말 중심", [["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-sillim", "서울", "구디·신림선", "주말 중심 · 종합운동장 합류", [["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-cheongnyangni", "서울", "성신여대·청량리선", "토요일 중심 · 종합운동장 합류", [["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]]),
-  phoenixRoute("phoenix-kd-bundang", "경기", "수지·분당선", "주말 중심 · 서현 합류", [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]]),
-  phoenixRoute("phoenix-kd-anyang", "경기", "산본·안양선", "주말 중심 · 서현 합류", [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]),
-  phoenixRoute("phoenix-kd-suwon", "경기", "수원·영통선", "매일 운행 중심 · 영통 합류", [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]),
-  phoenixRoute("phoenix-kd-ilsan", "경기", "일산선", "주말 중심 · 송내 합류", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
-  phoenixRoute("phoenix-kd-incheon", "인천", "인천·부평선", "주말 중심 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
+  phoenixRoute("phoenix-kd-sadang", "서울", "사당·강남선", "성수기·비수기·3월 3일부터 매일", [["서울","사당역","05:55"],["서울","양재역","06:10"],["서울","도곡역","06:12"],["서울","대치역","06:15"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-myeongdong", "서울", "명동·강남선", "성수기·비수기 매일 · 3월 3일부터 운행 없음", [["서울","명동역","05:45"],["서울","동대문","05:55"],["서울","강남역","06:07"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-sinchon", "서울", "홍대·신촌선", "성수기·비수기 매일 · 3월 3일부터 토·일", [["서울","홍대입구","05:40"],["서울","신촌역","05:45"],["서울","광흥창역","05:50"],["서울","마포역","05:55"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-nowon", "서울", "노원·광나루선", "성수기 매일 · 비수기 토·일", [["서울","노원역","05:35"],["서울","석계역","05:45"],["서울","군자역","06:00"],["서울","광나루역","06:05"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-mokdong", "서울", "강서·목동선", "성수기 매일 · 비수기 토·일", [["서울","강서","05:35"],["서울","목동역","05:45"],["서울","여의도","06:00"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-sillim", "서울", "구디·신림선", "성수기 토·일", [["서울","구로디지털단지역","05:45"],["서울","신림역","05:55"],["서울","서울대입구역","06:00"],["서울","이수역","06:10"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-cheongnyangni", "서울", "성신여대·청량리선", "성수기 토요일", [["서울","성신여대입구역","05:40"],["서울","길음역","05:45"],["서울","청량리역","06:00"],["서울","회기역","06:05"],["서울","종합운동장","06:40"]]),
+  phoenixRoute("phoenix-kd-bundang", "경기", "수지·분당선", "성수기 매일 · 비수기 토·일", [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]]),
+  phoenixRoute("phoenix-kd-anyang", "경기", "산본·안양선", "성수기 매일 · 비수기 토·일", [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]]),
+  phoenixRoute("phoenix-kd-suwon", "경기", "수원·영통선", "성수기 매일 · 비수기 토·일", [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]]),
+  phoenixRoute("phoenix-kd-ilsan", "경기", "일산선", "성수기 매일 · 비수기 토·일", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
+  phoenixRoute("phoenix-kd-incheon", "인천", "인천·부평선", "성수기 매일 · 비수기 토·일", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
+  phoenixRoute("phoenix-kd-afternoon", "서울", "오후 종합운동장선", "성수기 월~토 · 비수기 이후 운행 없음", [["서울","종합운동장","14:30"]]),
+  phoenixRoute("phoenix-kd-night", "서울", "야간 종합운동장선", "성수기 금요일 · 웰리힐리 또는 휘닉스 경유", [["서울","종합운동장","20:00"]]),
+  ...phoenixReturnRoutes(),
   jisanRoute("jisan-cityhall", "서울시청선", "시청역 2번 출구"),
   jisanRoute("jisan-jamsil", "잠실선", "종합운동장역 1번 출구"),
   wellihilliRoute("wellihilli-kd-sadang", "서울", "사당·강남선", "매일 운행 중심 · 종합운동장 합류", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]),
@@ -63,7 +67,7 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   wellihilliRoute("wellihilli-kd-ilsan", "경기", "일산선", "경기권 주말 운행 · 송내 합류", [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]]),
   wellihilliRoute("wellihilli-kd-incheon", "인천", "인천·부평선", "경기권 주말 운행 · 송내 합류", [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]]),
   o2Route(),
-  oakvalleyRoute(),
+  ...oakvalleyRoutes(),
   elysianRoute(),
   edenvalleyRoute(),
   ...kdPyeongchangRoutes(alpensia, "알펜시아 스키700"),
@@ -93,7 +97,50 @@ function garamReturn(): NonNullable<SkiShuttleRoute["returnService"]> {
 }
 function phoenixRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
   const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
-  return { id, resortId: phoenix, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "휘닉스 스노우파크", priceLabel: "휘닉스 교통시즌권 27.5만원", fare: { type: "season_pass", seasonPassAdult: 275000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+  return { id, resortId: phoenix, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "휘닉스 스노우파크", directions: ["outbound"], priceLabel: "휘닉스 교통시즌권 27.5만원", fare: { type: "season_pass", seasonPassAdult: 275000 }, service: phoenixService(operationNote), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: phoenixOakCheckedAt };
+}
+function phoenixReturnRoutes(): SkiShuttleRoute[] {
+  const specs: [id: string, region: string, name: string, departureTime: string, days: string, stops: [city: string, name: string][]][] = [
+    ["phoenix-return-1000-jamsil", "서울", "10시 잠실선", "10:00", "성수기 매일", [["서울","잠실역"],["서울","종합운동장역"]]],
+    ["phoenix-return-1300-central", "서울", "13시 도심선", "13:00", "성수기·비수기·3월 4일부터 매일", [["서울","잠실역"],["서울","종합운동장역"],["서울","강남역"],["서울","명동역"],["서울","신촌역"]]],
+    ["phoenix-return-1300-sadang", "서울", "13시 사당선", "13:00", "성수기 일요일", [["서울","잠실역"],["서울","종합운동장역"],["서울","사당역"]]],
+    ["phoenix-return-1500-jamsil", "서울", "15시 잠실선", "15:00", "성수기 토·일", [["서울","잠실역"],["서울","종합운동장역"]]],
+    ["phoenix-return-1700-central", "서울", "17시 도심선", "17:00", "성수기·비수기 매일", [["서울","잠실역"],["서울","종합운동장역"],["서울","강남역"],["서울","신촌역"]]],
+    ["phoenix-return-1700-nowon", "서울", "17시 노원선", "17:00", "성수기 매일 · 비수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","석계역"],["서울","노원역"]]],
+    ["phoenix-return-1700-mokdong", "서울", "17시 사당·목동선", "17:00", "성수기 매일 · 비수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","사당역"],["서울","목동역"]]],
+    ["phoenix-return-1700-guro", "서울", "17시 신림·구디선", "17:00", "성수기·비수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","신림역"],["서울","구로디지털단지역"]]],
+    ["phoenix-return-1700-west-gyeonggi", "경기", "17시 서부 경기선", "17:00", "성수기 매일 · 비수기 토·일", [["성남","서현역"],["부천","송내역"],["고양","백석역"]]],
+    ["phoenix-return-1700-south-gyeonggi", "경기", "17시 남부 경기선", "17:00", "성수기 매일 · 비수기 토·일", [["안양","범계역"],["수원","영통"]]],
+    ["phoenix-return-2130-jamsil", "서울", "21시 30분 잠실선", "21:30", "성수기 토·일", [["서울","잠실역"],["서울","종합운동장역"]]]
+  ];
+  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  return specs.map(([id, region, name, departureTime, days, stops]) => ({
+    id,
+    resortId: phoenix,
+    season: "25/26",
+    operator: "대원관광",
+    operatorPhone: "02-2201-7710",
+    region,
+    name,
+    operationNote: `${days} · 25/26 귀가편`,
+    arrivalName: "휘닉스 스노우파크",
+    directions: ["return"],
+    returnTime: departureTime,
+    returnService: {
+      departureName: "휘닉스파크 예약 화면 지정 승차지",
+      departureTime,
+      stopOrder: "same_stops",
+      note: `${days} · 구정 연휴(2026-02-13~02-19)는 단축 운행 별도 공지`
+    },
+    priceLabel: "휘닉스 교통시즌권 27.5만원",
+    fare: { type: "season_pass", seasonPassAdult: 275000 },
+    service: phoenixService(days),
+    bookingUrl: url,
+    sourceUrl: url,
+    stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })),
+    dataStatus: "confirmed_25_26",
+    lastCheckedAt: phoenixOakCheckedAt
+  }));
 }
 function jisanRoute(id: string, name: string, stopName: string): SkiShuttleRoute {
   return { id, resortId: jisan, season: "25/26", operator: "투어윈도우글로벌", operatorPhone: "02-2039-7728", region: "서울", name, operationNote: "25/26 시즌 · 사전 예약 필수", arrivalName: "지산리조트 제1주차장", returnTime: "12:00 / 18:00 선택", priceLabel: "편도 2만원 · 왕복 3.8만원", fare: { type: "single_ride", oneWayAdult: 20000, roundTripAdult: 38000 }, service: { days: "운영일 캘린더 기준", bookingRequirement: "사전 예약 필수" }, bookingUrl: "https://jisan.allthatlimo.net/", sourceUrl: "https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski", stops: [{ id: `${id}-1`, city: "서울", name: stopName, departureTime: "07:30 / 13:30" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
@@ -106,10 +153,48 @@ function o2Route(): SkiShuttleRoute {
   const url = "https://www.o2resort.com/mobile/traffic";
   return { id: "o2-taebaek-station", resortId: o2, season: "25/26", operator: "오투리조트", region: "강원 태백", name: "태백역 연계선", operationNote: "공식 동계 구내셔틀 · 야간편은 야간 스키 운영일만 운행", arrivalName: "오투리조트 스키하우스", returnTime: "12:45 / 21:50", fare: { type: "free", roundTripAdult: 0 }, service: { days: "동계 운영일 · 야간편은 야간 스키 운영일", bookingRequirement: "공식 운행표 재확인" }, bookingUrl: url, sourceUrl: url, stops: [{ id: "o2-taebaek-station-1", city: "태백", name: "태백역 앞 시티투어 버스정류장", departureTime: "09:00 / 12:55" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
 }
-function oakvalleyRoute(): SkiShuttleRoute {
-  const bookingUrl = "https://www.oakvalley.co.kr/";
-  const sourceUrl = "https://japanese.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=250737";
-  return { id: "oakvalley-wonju-weekend", resortId: oakvalley, season: "25/26", operator: "오크밸리", region: "강원 원주", name: "원주시내 주말 고객 셔틀", operationNote: "토·일 무료 운행 · 2026년 2월 22일까지", arrivalName: "오크밸리 스키장", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀", fare: { type: "free", roundTripAdult: 0 }, service: { period: "~ 2026-02-22", days: "토·일", bookingRequirement: "고객 셔틀 운행 여부 재확인" }, bookingUrl, sourceUrl, stops: [["원주","원주역","08:00 / 15:50"],["원주","원주종합버스터미널","08:10 / 16:00"],["원주","만종역","08:20 / 16:10"]].map(([city, name, departureTime], index) => ({ id: `oakvalley-wonju-weekend-${index + 1}`, city, name, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+function oakvalleyRoutes(): SkiShuttleRoute[] {
+  const bookingUrl = "https://oakvalley.co.kr/overview/location";
+  const sourceUrl = "https://oakvalley.co.kr/customer-service/notice/1432674";
+  const outboundSpecs: [id: string, name: string, times: string[]][] = [
+    ["oakvalley-wonju-weekend", "오전 원주 고객 셔틀", ["08:00", "08:10", "08:20"]],
+    ["oakvalley-wonju-weekend-afternoon", "오후 원주 고객 셔틀", ["15:50", "16:00", "16:10"]]
+  ];
+  const stopSpecs: [city: string, name: string][] = [["원주","원주역"],["원주","원주종합버스터미널"],["원주","만종역"]];
+  const common = {
+    resortId: oakvalley,
+    season: "25/26",
+    operator: "오크밸리",
+    operatorPhone: "033-763-1005",
+    region: "강원 원주",
+    arrivalName: "오크밸리 스키장",
+    priceLabel: "25/26 주말 무료 고객 셔틀",
+    fare: { type: "free", roundTripAdult: 0 } as const,
+    service: { period: "~ 2026-02-22", days: "토·일", bookingRequirement: "탑승 전 공식 공지에서 운행 여부 재확인" },
+    bookingUrl,
+    sourceUrl,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: phoenixOakCheckedAt
+  };
+  const outboundRoutes: SkiShuttleRoute[] = outboundSpecs.map(([id, name, times]) => ({
+    ...common,
+    id,
+    name,
+    operationNote: `토·일 무료 운행 · 원주역 ${times[0]} 출발`,
+    directions: ["outbound"],
+    stops: stopSpecs.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime: times[index] }))
+  }));
+  const returnRoutes: SkiShuttleRoute[] = [["oakvalley-return-morning", "오전 귀가 셔틀", "10:45"], ["oakvalley-return-evening", "오후 귀가 셔틀", "17:35"]].map(([id, name, departureTime]) => ({
+    ...common,
+    id,
+    name,
+    operationNote: `토·일 무료 운행 · 오크밸리 ${departureTime} 출발`,
+    directions: ["return"],
+    returnTime: departureTime,
+    returnService: { departureName: "오크밸리 스키장 고객 셔틀 승차장", departureTime, stopOrder: "reverse", note: "토·일 운행 · 만종역, 원주종합버스터미널, 원주역 순 하차" },
+    stops: stopSpecs.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName }))
+  }));
+  return [...outboundRoutes, ...returnRoutes];
 }
 function elysianRoute(): SkiShuttleRoute {
   const bookingUrl = "https://www.elysian.co.kr/shuttle-bus-reservation";
@@ -149,6 +234,10 @@ function vivaldiRoutes(): SkiShuttleRoute[] {
 
 function kdService(): NonNullable<SkiShuttleRoute["service"]> {
   return { period: "스키장 개장 주말 ~ 2026-03-02", days: "노선별 매일 또는 주말", bookingRequirement: "대원관광 홈페이지 사전 예약 · 전화 예약 불가" };
+}
+
+function phoenixService(days: string): NonNullable<SkiShuttleRoute["service"]> {
+  return { period: "2025-12-01 ~ 2026-03-02 · 일부 노선 3월 이후", days, bookingRequirement: "대원관광 홈페이지 사전 예약 · 구정 연휴 단축 운행 별도 공지 · 전화 예약 불가" };
 }
 
 function high1RouteDetails(id: string): Pick<SkiShuttleRoute, "fare" | "service"> {

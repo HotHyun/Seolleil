@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resorts } from "@/data/resorts";
 import { rentalPriceRules } from "@/data/prices";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
-import { estimateTransportCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings } from "@/lib/pricing";
+import { estimateTransportCost, estimateTransportPlanCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings } from "@/lib/pricing";
 import { tripInput } from "../fixtures/trip-input";
 import { createEmptySkiDay, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
@@ -73,6 +73,19 @@ describe("pricing", () => {
     const o2 = resorts.find((resort) => resort.id === "o2")!;
     const route = getSkiShuttleRoutes("o2")[0];
     expect(estimateTransportCost(o2, tripInput({ transportType: "shuttle" }), route)).toMatchObject({ label: "무료 셔틀", representative: 0, min: 0, max: 0, confidence: "confirmed" });
+  });
+
+  it("counts one shared season pass across direction-specific Phoenix routes", () => {
+    const phoenix = resorts.find((resort) => resort.id === "phoenix")!;
+    const routes = getSkiShuttleRoutes("phoenix");
+    const outbound = routes.find(route => route.id === "phoenix-kd-sadang")!;
+    const returning = routes.find(route => route.id === "phoenix-return-1700-central")!;
+    const plan: TripSkiPlan = { version: 2, days: [createEmptySkiDay("2026-01-17")], lodgingNights: [], transportLegs: [
+      { direction: "outbound", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: outbound.id, shuttleStopId: outbound.stops[0].id },
+      { direction: "return", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: returning.id, shuttleStopId: returning.stops[0].id }
+    ] };
+
+    expect(estimateTransportPlanCost(phoenix, tripInput({ transportType: "shuttle", peopleCount: 3 }), plan)).toMatchObject({ label: "셔틀 교통시즌권", representative: 825000, confidence: "confirmed" });
   });
 
   it("adds lift and split rental selections across multiple ski dates", () => {

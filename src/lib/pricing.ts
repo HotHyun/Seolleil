@@ -157,6 +157,16 @@ export function estimateTransportCost(resort: SkiResort, input: TripInput, shutt
 export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, plan: TripSkiPlan): CostItem {
   const [outbound, returning] = plan.transportLegs;
   if (!outbound || !returning) return estimateTransportCost(resort, input);
+  if (outbound.transportType === "shuttle" && returning.transportType === "shuttle") {
+    const routes = getSkiShuttleRoutes(resort.id);
+    const outboundRoute = routes.find(item => item.id === outbound.shuttleRouteId);
+    const returnRoute = routes.find(item => item.id === returning.shuttleRouteId);
+    const seasonPassAdult = outboundRoute?.fare?.seasonPassAdult;
+    if (outboundRoute && returnRoute && seasonPassAdult !== undefined && returnRoute.fare?.seasonPassAdult === seasonPassAdult && returnRoute.operator === outboundRoute.operator && returnRoute.sourceUrl === outboundRoute.sourceUrl) {
+      const total = seasonPassAdult * input.peopleCount;
+      return { key: "transport", label: "셔틀 교통시즌권", representative: total, min: total, max: total, confidence: "confirmed", sourceName: outboundRoute.operator, sourceUrl: outboundRoute.sourceUrl, bookingUrl: outboundRoute.bookingUrl, lastCheckedAt: outboundRoute.lastCheckedAt, note: `${outboundRoute.operator} 동일 교통시즌권으로 선택한 가는 편·오는 편 이용` };
+    }
+  }
   if (outbound.transportType === returning.transportType) {
     const route = outbound.transportType === "shuttle" && outbound.shuttleRouteId === returning.shuttleRouteId
       ? getSkiShuttleRoutes(resort.id).find(item => item.id === outbound.shuttleRouteId)

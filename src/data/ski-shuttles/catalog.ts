@@ -1,4 +1,4 @@
-import type { SkiShuttleRoute, SkiShuttleStop } from "@/lib/types";
+import type { ShuttleDirection, SkiShuttleRoute, SkiShuttleStop } from "@/lib/types";
 import { skiShuttleRoutes2526 } from "./routes";
 
 export type SkiShuttleOperator = {
@@ -30,7 +30,11 @@ export function getShuttleRegions(routes: SkiShuttleRoute[]) {
   return [...new Set(routes.map(route => route.region))];
 }
 
-export function getShuttleStopsForDirection(route: SkiShuttleRoute, direction: "outbound" | "return" = "outbound") {
+export function routeSupportsShuttleDirection(route: SkiShuttleRoute, direction: ShuttleDirection) {
+  return !route.directions || route.directions.includes(direction);
+}
+
+export function getShuttleStopsForDirection(route: SkiShuttleRoute, direction: ShuttleDirection = "outbound") {
   if (direction === "outbound") return route.stops;
   // Legacy 25/26 routes did not split return metadata. Keep their known local
   // stops selectable while the UI marks the return boarding details for recheck.
@@ -40,9 +44,10 @@ export function getShuttleStopsForDirection(route: SkiShuttleRoute, direction: "
   return [...route.stops].reverse();
 }
 
-export function searchShuttleRoutes(routes: SkiShuttleRoute[], query: string, region = "all", direction: "outbound" | "return" = "outbound") {
+export function searchShuttleRoutes(routes: SkiShuttleRoute[], query: string, region = "all", direction: ShuttleDirection = "outbound") {
   const normalized = query.trim().toLocaleLowerCase("ko-KR");
   return routes.filter(route => {
+    if (!routeSupportsShuttleDirection(route, direction)) return false;
     const stops = getShuttleStopsForDirection(route, direction);
     return (region === "all" || route.region === region) && (!normalized || [route.name, route.operator, route.region, ...stops.flatMap(stop => [stop.city, stop.name])].some(value => value.toLocaleLowerCase("ko-KR").includes(normalized)));
   });

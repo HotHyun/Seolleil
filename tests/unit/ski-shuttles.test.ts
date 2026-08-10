@@ -23,12 +23,18 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes([honam!], "광주", "all", "return")).toHaveLength(1);
   });
 
-  it("covers the confirmed Phoenix Seoul and Gyeonggi network", () => {
+  it("separates Phoenix outbound and return schedules by selectable departure", () => {
     const routes = getSkiShuttleRoutes("phoenix");
-    expect(routes).toHaveLength(12);
+    const outbound = searchShuttleRoutes(routes, "", "all", "outbound");
+    const returning = searchShuttleRoutes(routes, "", "all", "return");
+    expect(outbound).toHaveLength(14);
+    expect(returning).toHaveLength(11);
     expect(new Set(routes.map(route => route.operator))).toEqual(new Set(["대원관광"]));
     expect(routes.every(route => route.dataStatus === "confirmed_25_26" && route.priceLabel === "휘닉스 교통시즌권 27.5만원")).toBe(true);
-    expect(searchShuttleRoutes(routes, "수원").map(route => route.id)).toContain("phoenix-kd-suwon");
+    expect(searchShuttleRoutes(routes, "수원", "all", "outbound").map(route => route.id)).toContain("phoenix-kd-suwon");
+    expect(routes.find(route => route.id === "phoenix-kd-sadang")?.stops.map(stop => stop.departureTime)).toEqual(["05:55", "06:10", "06:12", "06:15", "06:40"]);
+    expect(searchShuttleRoutes(routes, "목동", "all", "return").map(route => route.id)).toEqual(["phoenix-return-1700-mokdong"]);
+    expect(routes.find(route => route.id === "phoenix-return-2130-jamsil")).toMatchObject({ directions: ["return"], returnService: { departureTime: "21:30" } });
   });
 
   it("covers the confirmed Jisan paid shuttle", () => {
@@ -55,13 +61,14 @@ describe("25/26 ski shuttle data", () => {
     expect(routes[0].fare).toEqual({ type: "free", roundTripAdult: 0 });
   });
 
-  it("covers Oak Valley's free weekend Wonju connection", () => {
+  it("separates Oak Valley's two outbound and two return weekend shuttles", () => {
     const routes = getSkiShuttleRoutes("oakvalley");
-    expect(routes.map(route => route.id)).toEqual(["oakvalley-wonju-weekend"]);
-    expect(routes[0]).toMatchObject({ operator: "오크밸리", returnTime: "10:45 / 17:35", priceLabel: "주말 무료 고객 셔틀" });
-    expect(routes[0].stops).toHaveLength(3);
-    expect(searchShuttleRoutes(routes, "만종역").map(route => route.id)).toEqual(["oakvalley-wonju-weekend"]);
-    expect(routes[0]).toMatchObject({ fare: { type: "free", roundTripAdult: 0 }, service: { days: "토·일" } });
+    expect(searchShuttleRoutes(routes, "", "all", "outbound").map(route => route.id)).toEqual(["oakvalley-wonju-weekend", "oakvalley-wonju-weekend-afternoon"]);
+    expect(searchShuttleRoutes(routes, "", "all", "return").map(route => route.id)).toEqual(["oakvalley-return-morning", "oakvalley-return-evening"]);
+    expect(routes[0]).toMatchObject({ operator: "오크밸리", directions: ["outbound"], priceLabel: "25/26 주말 무료 고객 셔틀" });
+    expect(routes[0].stops.map(stop => stop.departureTime)).toEqual(["08:00", "08:10", "08:20"]);
+    expect(getShuttleStopsForDirection(routes.find(route => route.id === "oakvalley-return-evening")!, "return").map(stop => stop.name)).toEqual(["만종역", "원주종합버스터미널", "원주역"]);
+    expect(routes.find(route => route.id === "oakvalley-return-evening")).toMatchObject({ fare: { type: "free", roundTripAdult: 0 }, service: { days: "토·일" }, returnService: { departureTime: "17:35" } });
   });
 
   it("keeps Elysian's confirmed station link without inventing an archived timetable", () => {

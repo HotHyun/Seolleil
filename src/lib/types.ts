@@ -10,6 +10,7 @@ export type RideType = "ski" | "snowboard";
 export type TransportType = "car" | "shuttle" | "bus";
 export type ShuttleDataStatus = "confirmed_25_26" | "route_only_25_26";
 export type ShuttleFareType = "single_ride" | "season_pass" | "free" | "tour_package" | "unknown";
+export type ShuttleDirection = "outbound" | "return";
 
 export type SkiShuttleStop = {
   id: string;
@@ -39,6 +40,7 @@ export type SkiShuttleRoute = {
   name: string;
   operationNote: string;
   arrivalName: string;
+  directions?: ShuttleDirection[];
   returnTime?: string;
   returnService?: SkiShuttleReturnService;
   priceLabel?: string;

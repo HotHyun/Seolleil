@@ -88,6 +88,19 @@ describe("pricing", () => {
     expect(estimateTransportPlanCost(phoenix, tripInput({ transportType: "shuttle", peopleCount: 3 }), plan)).toMatchObject({ label: "셔틀 교통시즌권", representative: 825000, confidence: "confirmed" });
   });
 
+  it("adds Vivaldi foreign shuttle one-way fares across separate direction routes", () => {
+    const vivaldi = resorts.find((resort) => resort.id === "vivaldi")!;
+    const routes = getSkiShuttleRoutes("vivaldi");
+    const outbound = routes.find(route => route.id === "vivaldi-hongdae")!;
+    const returning = routes.find(route => route.id === "vivaldi-foreign-return-1700-hongdae")!;
+    const plan: TripSkiPlan = { version: 2, days: [createEmptySkiDay("2026-01-17")], lodgingNights: [], transportLegs: [
+      { direction: "outbound", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: outbound.id, shuttleStopId: outbound.stops[0].id },
+      { direction: "return", date: "2026-01-17", transportType: "shuttle", shuttleRouteId: returning.id, shuttleStopId: returning.stops[0].id }
+    ] };
+
+    expect(estimateTransportPlanCost(vivaldi, tripInput({ transportType: "shuttle", peopleCount: 2 }), plan)).toMatchObject({ representative: 40000, min: 40000, max: 40000, confidence: "confirmed" });
+  });
+
   it("adds lift and split rental selections across multiple ski dates", () => {
     const high1 = resorts.find((resort) => resort.id === "high1")!;
     const first = createEmptySkiDay("2026-01-16", "5h");

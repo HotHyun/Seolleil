@@ -3,6 +3,7 @@ import type { SkiShuttleRoute } from "@/lib/types";
 const checkedAt = "2026-07-17";
 const high1CheckedAt = "2026-08-10";
 const phoenixOakCheckedAt = "2026-08-10";
+const yongpyongVivaldiCheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -72,7 +73,7 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   edenvalleyRoute(),
   ...kdPyeongchangRoutes(alpensia, "알펜시아 스키700"),
   ...vivaldiRoutes(),
-  ...kdPyeongchangRoutes(yongpyong, "모나용평 드래곤프라자")
+  ...yongpyongRoutes()
 ];
 
 type StopInput = [city: string, name: string, departureTime?: string, oneWayFareAdult?: number, roundTripFareAdult?: number];
@@ -223,13 +224,124 @@ function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleR
   ];
   return specs.map(([suffix, region, name, operationNote, stops]) => ({ id: `${resortId}-kd-${suffix}`, resortId, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName, priceLabel: "용평·알펜시아 교통시즌권 29만원", fare: { type: "season_pass", seasonPassAdult: 290000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${resortId}-kd-${suffix}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt }));
 }
-function vivaldiRoutes(): SkiShuttleRoute[] {
-  const bookingUrl = "https://vivabus.net/";
-  const sourceUrl = "https://www.sonohotelsresorts.com/skiboard/info";
-  return [
-    { id: "vivaldi-hongdae", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "홍대·동대문·건대선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", fare: { type: "unknown", note: "날짜·출발지별 예약 화면에서 확인" }, service: { period: "2025-12-05 ~ 2026-03-02", bookingRequirement: "사전 예약" }, bookingUrl, sourceUrl, stops: ["홍대입구역","동대문역사문화공원역","건대입구역"].map((name, index) => ({ id: `vivaldi-hongdae-${index + 1}`, city: "서울", name })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt },
-    { id: "vivaldi-jamsil", resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name: "종합운동장 직행선", operationNote: "25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", arrivalName: "비발디파크", fare: { type: "unknown", note: "날짜별 예약 화면에서 확인" }, service: { period: "2025-12-05 ~ 2026-03-02", bookingRequirement: "사전 예약" }, bookingUrl, sourceUrl, stops: [{ id: "vivaldi-jamsil-1", city: "서울", name: "종합운동장역" }], dataStatus: "route_only_25_26", lastCheckedAt: checkedAt }
+function yongpyongRoutes(): SkiShuttleRoute[] {
+  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const daysById: Record<string, string> = {
+    "yongpyong-kd-sadang": "성수기·비수기·3월 3일부터 매일",
+    "yongpyong-kd-sinchon": "성수기·비수기 매일 · 3월 3일부터 토·일",
+    "yongpyong-kd-myeongdong": "성수기·비수기·3월 3일부터 매일",
+    "yongpyong-kd-nowon": "성수기 매일 · 비수기 토·일",
+    "yongpyong-kd-mokdong": "성수기 매일 · 비수기 토·일",
+    "yongpyong-kd-sillim": "성수기 토·일",
+    "yongpyong-kd-cheongnyangni": "성수기 토요일",
+    "yongpyong-kd-bundang": "성수기 매일 · 비수기 토·일",
+    "yongpyong-kd-anyang": "성수기 매일 · 비수기 토·일",
+    "yongpyong-kd-ilsan": "성수기 매일 · 비수기 토·일",
+    "yongpyong-kd-incheon": "성수기 매일 · 비수기 토·일",
+    "yongpyong-kd-suwon": "성수기 매일 · 비수기 토·일"
+  };
+  const earlyRoutes = kdPyeongchangRoutes(yongpyong, "모나용평 드래곤프라자").map((route): SkiShuttleRoute => ({
+    ...route,
+    directions: ["outbound"],
+    operationNote: daysById[route.id],
+    priceLabel: "용평 교통시즌권 29만원",
+    service: yongpyongService(daysById[route.id]),
+    lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+  const extraOutboundSpecs: [id: string, name: string, days: string, stops: StopInput[]][] = [
+    ["yongpyong-kd-sadang-morning", "오전 사당·강남선", "성수기·비수기 매일", [["서울","사당역","09:00"],["서울","양재역","09:20"],["서울","도곡역","09:25"],["서울","대치역","09:30"],["서울","종합운동장","10:00"]]],
+    ["yongpyong-kd-sinchon-morning", "오전 홍대·신촌선", "성수기·비수기 매일", [["서울","홍대입구","08:50"],["서울","신촌역","08:55"],["서울","광흥창역","09:00"],["서울","마포역","09:10"],["서울","종합운동장","10:00"]]],
+    ["yongpyong-kd-myeongdong-morning", "오전 명동·강남선", "성수기·비수기·3월 3일부터 매일", [["서울","명동역","08:45"],["서울","동대문","08:55"],["서울","강남역","09:25"],["서울","종합운동장","10:00"]]],
+    ["yongpyong-kd-nowon-morning", "오전 노원·광나루선", "성수기 토·일", [["서울","노원역","08:55"],["서울","석계역","09:05"],["서울","군자역","09:25"],["서울","광나루역","09:30"],["서울","종합운동장","10:00"]]],
+    ["yongpyong-kd-afternoon", "오후 종합운동장선", "성수기 월~토 · 휘닉스 경유", [["서울","종합운동장","14:30"]]],
+    ["yongpyong-kd-night", "야간 종합운동장선", "성수기 금요일 · 웰리힐리 또는 휘닉스 경유", [["서울","종합운동장","20:00"]]]
   ];
+  const extraOutbound = extraOutboundSpecs.map(([id, name, days, stops]): SkiShuttleRoute => ({
+    id, resortId: yongpyong, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region: "서울", name, operationNote: days, arrivalName: "모나용평 드래곤프라자", directions: ["outbound"], priceLabel: "용평 교통시즌권 29만원", fare: { type: "season_pass", seasonPassAdult: 290000 }, service: yongpyongService(days), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+  const returnSpecs: [id: string, region: string, name: string, departureTime: string, days: string, stops: [city: string, name: string][]][] = [
+    ["yongpyong-return-1000-jamsil", "서울", "10시 잠실선", "10:00", "성수기 매일", [["서울","잠실역"],["서울","종합운동장역"]]],
+    ["yongpyong-return-1300-central", "서울", "13시 도심선", "13:00", "성수기·비수기·3월 3일부터 매일", [["서울","잠실역"],["서울","종합운동장역"],["서울","명동역"],["서울","신촌역"]]],
+    ["yongpyong-return-1300-sadang", "서울", "13시 사당선", "13:00", "성수기·비수기 토·일", [["서울","잠실역"],["서울","사당역"]]],
+    ["yongpyong-return-1420-jamsil", "서울", "14시 20분 잠실선", "14:20", "성수기 토·일 · 웰리힐리 또는 휘닉스 경유", [["서울","잠실역"],["서울","종합운동장역"]]],
+    ["yongpyong-return-1700-central", "서울", "17시 도심선", "17:00", "성수기·비수기·3월 3일부터 매일", [["서울","잠실역"],["서울","종합운동장역"],["서울","명동역"],["서울","신촌역"]]],
+    ["yongpyong-return-1700-nowon", "서울", "17시 노원선", "17:00", "성수기 매일 · 비수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","노원역"]]],
+    ["yongpyong-return-1700-mokdong", "서울", "17시 사당·목동선", "17:00", "성수기 매일 · 비수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","사당역"],["서울","목동역"]]],
+    ["yongpyong-return-1700-sillim", "서울", "17시 신림선", "17:00", "성수기 토·일", [["서울","잠실역"],["서울","종합운동장역"],["서울","신림역"]]],
+    ["yongpyong-return-1700-west-gyeonggi", "경기", "17시 서현·범계·송내선", "17:00", "성수기 매일 · 비수기 토·일", [["성남","서현역"],["안양","범계역"],["부천","송내역"]]],
+    ["yongpyong-return-1700-south-gyeonggi", "경기", "17시 영통·백석선", "17:00", "성수기 매일 · 비수기 토·일", [["수원","영통"],["고양","백석역"]]]
+  ];
+  const returnRoutes = returnSpecs.map(([id, region, name, departureTime, days, stops]): SkiShuttleRoute => ({
+    id, resortId: yongpyong, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote: `${days} · 25/26 귀가편`, arrivalName: "모나용평 드래곤프라자", directions: ["return"], returnTime: departureTime, returnService: { departureName: "모나용평 예약 화면 지정 승차지", departureTime, stopOrder: "same_stops", note: `${days} · 구정 연휴(2026-02-13~02-19)는 단축 운행 별도 공지` }, priceLabel: "용평 교통시즌권 29만원", fare: { type: "season_pass", seasonPassAdult: 290000 }, service: yongpyongService(days), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })), dataStatus: "confirmed_25_26", lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+  return [...earlyRoutes, ...extraOutbound, ...returnRoutes];
+}
+function vivaldiRoutes(): SkiShuttleRoute[] {
+  const domesticBookingUrl = "https://www.busline.co.kr/page/vivaldipark";
+  const domesticSourceUrl = "https://vivaldipark.rideus.net/vivaldipark/page/1";
+  const domesticOutboundSpecs: [id: string, name: string, schedule: string, stops: StopInput[]][] = [
+    ["vivaldi-domestic-sinchon-early", "새벽 신촌·건대선", "새벽 노선", [["서울","신촌역","06:10"],["서울","광화문","06:30"],["서울","동대문역사문화공원역","06:40"],["서울","왕십리역","06:50"],["서울","건대입구역","07:05"]]],
+    ["vivaldi-domestic-mokdong-early", "새벽 목동·여의도선", "새벽 노선", [["서울","목동역","06:10"],["서울","대림역","06:25"],["서울","영등포역","06:35"],["서울","여의도역","06:45"]]],
+    ["vivaldi-domestic-sadang-early", "새벽 서울대·압구정선", "새벽 노선", [["서울","서울대입구역","06:10"],["서울","사당역","06:30"],["서울","반포","06:45"],["서울","압구정","06:55"]]],
+    ["vivaldi-domestic-sinchon-morning", "오전 신촌·건대선", "오전 노선", [["서울","신촌역","08:00"],["서울","광화문","08:30"],["서울","동대문역사문화공원역","08:50"],["서울","건대입구역","09:20"]]],
+    ["vivaldi-domestic-sinchon-late-morning", "오전 신촌·광나루선", "오전 노선", [["서울","신촌역","09:20"],["서울","광화문","09:40"],["서울","군자역","10:10"],["서울","광나루역","10:20"]]],
+    ["vivaldi-domestic-nowon-morning", "오전 노원·구리선", "오전 노선", [["서울","노원역","07:50"],["서울","태릉입구역","08:20"],["구리","구리","08:50"]]],
+    ["vivaldi-domestic-jamsil-afternoon", "오후 종합운동장선", "야간 스키 운영일 오후 노선", [["서울","종합운동장역","15:00"]]],
+    ["vivaldi-domestic-sinchon-afternoon", "오후 신촌선", "야간 스키 운영일 오후 노선", [["서울","신촌역","16:30"]]],
+    ["vivaldi-domestic-sadang-afternoon", "오후 사당선", "야간 스키 운영일 오후 노선", [["서울","사당역","15:30"]]],
+    ["vivaldi-domestic-nowon-afternoon", "오후 노원선", "야간 스키 운영일 오후 노선", [["서울","노원역","15:30"]]],
+    ["vivaldi-domestic-sinchon-night", "야간 신촌·광화문선", "야간 스키 운영일", [["서울","신촌역","19:00"],["서울","광화문","19:30"]]],
+    ["vivaldi-domestic-mokdong-night", "야간 목동선", "야간 스키 운영일", [["서울","목동역","19:30"]]],
+    ["vivaldi-domestic-nowon-night", "야간 노원선", "야간 스키 운영일", [["서울","노원역","19:30"]]],
+    ["vivaldi-domestic-sinchon-overnight", "밤샘 신촌·광화문선", "밤샘 스키 운영일", [["서울","신촌역","21:00"],["서울","광화문","21:30"]]],
+    ["vivaldi-domestic-dongdaemun-overnight", "밤샘 동대문·건대선", "밤샘 스키 운영일", [["서울","동대문역사문화공원역","21:00"],["서울","건대입구역","21:30"]]],
+    ["vivaldi-domestic-mokdong-overnight", "밤샘 목동·여의도선", "밤샘 스키 운영일", [["서울","목동역","20:40"],["서울","여의도역","21:10"]]]
+  ];
+  const domesticOutbound = domesticOutboundSpecs.map(([id, name, schedule, stops]): SkiShuttleRoute => ({
+    id, resortId: vivaldi, season: "25/26", operator: "라이더스(그레이스트래블)", operatorPhone: "033-439-7695", region: "서울", name, operationNote: `25/26 ${schedule} · 예약 인원이 없으면 미운행`, arrivalName: "비발디파크", directions: ["outbound"], fare: { type: "unknown", note: "국내 노선 요금은 예약 화면에서 확인" }, service: vivaldiDomesticService(schedule), bookingUrl: domesticBookingUrl, sourceUrl: domesticSourceUrl, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+  const domesticReturnSpecs: [id: string, name: string, departureTime: string, schedule: string, stops: [city: string, name: string][]][] = [
+    ["vivaldi-domestic-return-0830-jamsil", "08시 30분 종합운동장행", "08:30", "오전 귀가편", [["서울","종합운동장역"]]],
+    ["vivaldi-domestic-return-1300-jamsil", "13시 종합운동장행", "13:00", "오후 귀가편", [["서울","종합운동장역"]]],
+    ["vivaldi-domestic-return-1300-sinchon", "13시 신촌행", "13:00", "오후 귀가편", [["서울","신촌역"]]],
+    ["vivaldi-domestic-return-1300-sadang", "13시 사당행", "13:00", "오후 귀가편", [["서울","사당역"]]],
+    ["vivaldi-domestic-return-1300-nowon", "13시 노원행", "13:00", "오후 귀가편", [["서울","노원역"]]],
+    ["vivaldi-domestic-return-1730-jamsil", "17시 30분 종합운동장행", "17:30", "저녁 귀가편", [["서울","종합운동장역"]]],
+    ["vivaldi-domestic-return-1730-sinchon", "17시 30분 신촌행", "17:30", "저녁 귀가편", [["서울","신촌역"]]],
+    ["vivaldi-domestic-return-1730-sadang", "17시 30분 사당행", "17:30", "저녁 귀가편", [["서울","사당역"]]],
+    ["vivaldi-domestic-return-1730-nowon", "17시 30분 노원행", "17:30", "저녁 귀가편", [["서울","노원역"]]],
+    ["vivaldi-domestic-return-2230-sinchon", "22시 30분 신촌행", "22:30", "야간 스키 운영일", [["서울","신촌역"]]],
+    ["vivaldi-domestic-return-2230-jamsil", "22시 30분 잠실행", "22:30", "야간 스키 운영일", [["서울","잠실역"]]],
+    ["vivaldi-domestic-return-0530-sinchon", "05시 30분 신촌행", "05:30", "밤샘 스키 운영일", [["서울","신촌역"]]],
+    ["vivaldi-domestic-return-0530-jamsil", "05시 30분 잠실행", "05:30", "밤샘 스키 운영일", [["서울","잠실역"]]],
+    ["vivaldi-domestic-return-0100", "01시 잠실행", "01:00", "심야 스키 운영일", [["서울","잠실역"]]],
+    ["vivaldi-domestic-return-0300", "03시 잠실행", "03:00", "심야 스키 운영일", [["서울","잠실역"]]]
+  ];
+  const domesticReturn = domesticReturnSpecs.map(([id, name, departureTime, schedule, stops]): SkiShuttleRoute => ({
+    id, resortId: vivaldi, season: "25/26", operator: "라이더스(그레이스트래블)", operatorPhone: "033-439-7695", region: "서울", name, operationNote: `25/26 ${schedule} · 예약 인원이 없으면 미운행`, arrivalName: "비발디파크", directions: ["return"], returnTime: departureTime, returnService: { departureName: "비발디파크 버스주차장", departureTime, stopOrder: "same_stops", note: `${schedule} · 실제 하차 노선은 예약 화면에서 재확인` }, fare: { type: "unknown", note: "국내 노선 요금은 예약 화면에서 확인" }, service: vivaldiDomesticService(schedule), bookingUrl: domesticBookingUrl, sourceUrl: domesticSourceUrl, stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })), dataStatus: "confirmed_25_26", lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+
+  const foreignBookingUrl = "https://vivabus.net/";
+  const foreignSourceUrl = "https://vivabus.net/en/vivabus/page/vivaldi-timetable";
+  const foreignOutboundSpecs: [id: string, name: string, period: string, stops: StopInput[]][] = [
+    ["vivaldi-hongdae", "외국인 전용 06시 30분 홍대선", "2025-12-05 ~ 2026-03-02", [["서울","홍대입구역","06:30"],["서울","동대문역사문화공원역","07:00"],["서울","건대입구역","07:20"]]],
+    ["vivaldi-foreign-hongdae-0900", "외국인 전용 09시 홍대선", "2025-12-06 ~ 2026-02-15", [["서울","홍대입구역","09:00"],["서울","건대입구역","10:00"]]],
+    ["vivaldi-jamsil", "외국인 전용 07시 20분 종합운동장선", "2025-12-05 ~ 2026-03-02", [["서울","종합운동장역","07:20"]]],
+    ["vivaldi-foreign-jamsil-1030", "외국인 전용 10시 30분 종합운동장선", "2025-12-06 ~ 2026-02-15", [["서울","종합운동장역","10:30"]]]
+  ];
+  const foreignOutbound = foreignOutboundSpecs.map(([id, name, period, stops]): SkiShuttleRoute => ({
+    id, resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name, operationNote: `${period} · 외국인 전용 유료 셔틀`, arrivalName: "비발디파크", directions: ["outbound"], priceLabel: "외국인 전용 편도 1만원 · 왕복 2만원", fare: { type: "single_ride", oneWayAdult: 10000, roundTripAdult: 20000, note: "외국인 전용 서비스 수수료 포함" }, service: vivaldiForeignService(period), bookingUrl: foreignBookingUrl, sourceUrl: foreignSourceUrl, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+  const foreignReturnSpecs: [id: string, name: string, departureTime: string, period: string, stops: [city: string, name: string][]][] = [
+    ["vivaldi-foreign-return-1300-jamsil", "외국인 전용 13시 종합운동장행", "13:00", "2025-12-05 ~ 2026-03-02", [["서울","종합운동장역"]]],
+    ["vivaldi-foreign-return-1300-hongdae", "외국인 전용 13시 홍대행", "13:00", "2025-12-25 ~ 2026-02-15", [["서울","홍대입구역"]]],
+    ["vivaldi-foreign-return-1700-jamsil", "외국인 전용 17시 종합운동장행", "17:00", "2025-12-05 ~ 2026-03-02", [["서울","종합운동장역"]]],
+    ["vivaldi-foreign-return-1700-hongdae", "외국인 전용 17시 홍대행", "17:00", "2025-12-05 ~ 2026-03-02", [["서울","건대입구역"],["서울","동대문역사문화공원역"],["서울","홍대입구역"]]]
+  ];
+  const foreignReturn = foreignReturnSpecs.map(([id, name, departureTime, period, stops]): SkiShuttleRoute => ({
+    id, resortId: vivaldi, season: "25/26", operator: "대명투어", operatorPhone: "031-765-7965", region: "서울", name, operationNote: `${period} · 외국인 전용 유료 셔틀`, arrivalName: "비발디파크", directions: ["return"], returnTime: departureTime, returnService: { departureName: "비발디파크 외국인 셔틀 승차장", departureTime, stopOrder: "same_stops", note: `${period} · 하차 위치는 교통 상황에 따라 변경 가능` }, priceLabel: "외국인 전용 편도 1만원 · 왕복 2만원", fare: { type: "single_ride", oneWayAdult: 10000, roundTripAdult: 20000, note: "외국인 전용 서비스 수수료 포함" }, service: vivaldiForeignService(period), bookingUrl: foreignBookingUrl, sourceUrl: foreignSourceUrl, stops: stops.map(([city, stopName], index) => ({ id: `${id}-${index + 1}`, city, name: stopName })), dataStatus: "confirmed_25_26", lastCheckedAt: yongpyongVivaldiCheckedAt
+  }));
+  return [...domesticOutbound, ...domesticReturn, ...foreignOutbound, ...foreignReturn];
 }
 
 function kdService(): NonNullable<SkiShuttleRoute["service"]> {
@@ -238,6 +350,18 @@ function kdService(): NonNullable<SkiShuttleRoute["service"]> {
 
 function phoenixService(days: string): NonNullable<SkiShuttleRoute["service"]> {
   return { period: "2025-12-01 ~ 2026-03-02 · 일부 노선 3월 이후", days, bookingRequirement: "대원관광 홈페이지 사전 예약 · 구정 연휴 단축 운행 별도 공지 · 전화 예약 불가" };
+}
+
+function yongpyongService(days: string): NonNullable<SkiShuttleRoute["service"]> {
+  return { period: "2025-12-01 ~ 2026-03-02 · 일부 노선 3월 이후", days, bookingRequirement: "대원관광 홈페이지 사전 예약 · 구정 연휴 단축 운행 별도 공지 · 전화 예약 불가" };
+}
+
+function vivaldiDomesticService(days: string): NonNullable<SkiShuttleRoute["service"]> {
+  return { period: "25/26 동계 스키 시즌", days, reservationDeadline: "이용 전일 16:30", bookingRequirement: "선착순 사전 예약 · 예약자가 없는 탑승지는 미운행 · 야간/밤샘편은 해당 스키 운영일만 운행" };
+}
+
+function vivaldiForeignService(period: string): NonNullable<SkiShuttleRoute["service"]> {
+  return { period, days: "예약 캘린더 기준", bookingRequirement: "외국인 전용 유료 셔틀 · 사전 예약 · 취소는 탑승 전일 16:00 이전" };
 }
 
 function high1RouteDetails(id: string): Pick<SkiShuttleRoute, "fare" | "service"> {

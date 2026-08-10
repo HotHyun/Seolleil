@@ -6,6 +6,7 @@ const phoenixOakCheckedAt = "2026-08-10";
 const yongpyongVivaldiCheckedAt = "2026-08-10";
 const wellihilliAlpensiaCheckedAt = "2026-08-10";
 const elysianJisanCheckedAt = "2026-08-10";
+const o2EdenCheckedAt = "2026-08-10";
 const high1 = "high1";
 const phoenix = "phoenix";
 const jisan = "jisan";
@@ -57,10 +58,10 @@ export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
   ...phoenixReturnRoutes(),
   ...jisanRoutes(),
   ...wellihilliRoutes(),
-  o2Route(),
+  ...o2Routes(),
   ...oakvalleyRoutes(),
   ...elysianRoutes(),
-  edenvalleyRoute(),
+  ...edenvalleyRoutes(),
   ...alpensiaRoutes(),
   ...vivaldiRoutes(),
   ...yongpyongRoutes()
@@ -228,9 +229,52 @@ function wellihilliRoutes(): SkiShuttleRoute[] {
   }));
   return [...outbound, ...returning];
 }
-function o2Route(): SkiShuttleRoute {
-  const url = "https://www.o2resort.com/mobile/traffic";
-  return { id: "o2-taebaek-station", resortId: o2, season: "25/26", operator: "오투리조트", region: "강원 태백", name: "태백역 연계선", operationNote: "공식 동계 구내셔틀 · 야간편은 야간 스키 운영일만 운행", arrivalName: "오투리조트 스키하우스", returnTime: "12:45 / 21:50", fare: { type: "free", roundTripAdult: 0 }, service: { days: "동계 운영일 · 야간편은 야간 스키 운영일", bookingRequirement: "공식 운행표 재확인" }, bookingUrl: url, sourceUrl: url, stops: [{ id: "o2-taebaek-station-1", city: "태백", name: "태백역 앞 시티투어 버스정류장", departureTime: "09:00 / 12:55" }], dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt };
+function o2Routes(): SkiShuttleRoute[] {
+  const url = "https://www.o2resort.com/mobile/traffic/";
+  const common = {
+    resortId: o2,
+    season: "25/26",
+    operator: "오투리조트",
+    operatorPhone: "033-580-7000",
+    region: "강원 태백",
+    arrivalName: "오투리조트 스키하우스",
+    priceLabel: "무료 구내셔틀",
+    fare: { type: "free", roundTripAdult: 0 } as const,
+    bookingUrl: url,
+    sourceUrl: url,
+    dataStatus: "confirmed_25_26" as const,
+    lastCheckedAt: o2EdenCheckedAt
+  };
+  const outboundService = { days: "동계 운영일", bookingRequirement: "교통·기상에 따라 약 5분 변동 가능 · 출발 5분 전 대기" };
+  const outboundSpecs: [id: string, name: string, departureTime: string][] = [
+    ["o2-taebaek-station", "09시 태백역 연계선", "09:00"],
+    ["o2-taebaek-station-1255", "12시 55분 태백역 연계선", "12:55"]
+  ];
+  const outbound = outboundSpecs.map(([id, name, departureTime]): SkiShuttleRoute => ({
+    ...common,
+    id,
+    name,
+    operationNote: `태백역 ${departureTime} 출발 · 공식 동계 구내셔틀`,
+    directions: ["outbound"],
+    service: outboundService,
+    stops: [{ id: `${id}-1`, city: "태백", name: "태백역 앞 시티투어 버스정류장", departureTime }]
+  }));
+  const returnSpecs: [id: string, name: string, departureTime: string, days: string][] = [
+    ["o2-return-taebaek-1245", "12시 45분 태백역 귀가편", "12:45", "동계 운영일"],
+    ["o2-return-taebaek-2150", "21시 50분 태백역 귀가편", "21:50", "야간 스키 운영일만"]
+  ];
+  const returning = returnSpecs.map(([id, name, departureTime, days]): SkiShuttleRoute => ({
+    ...common,
+    id,
+    name,
+    operationNote: `스키하우스 ${departureTime} 출발 · ${days}`,
+    directions: ["return"],
+    returnTime: departureTime,
+    returnService: { departureName: "오투리조트 스키하우스 정문 도로변", departureTime, stopOrder: "same_stops", note: `${days} · 교통·기상에 따라 약 5분 변동 가능` },
+    service: { days, bookingRequirement: departureTime === "21:50" ? "출발 5분 전 대기 · 당일 야간 스키 운영 여부 확인" : "교통·기상에 따라 약 5분 변동 가능 · 출발 5분 전 대기" },
+    stops: [{ id: `${id}-1`, city: "태백", name: "태백역 앞 시티투어 버스정류장" }]
+  }));
+  return [...outbound, ...returning];
 }
 function oakvalleyRoutes(): SkiShuttleRoute[] {
   const bookingUrl = "https://oakvalley.co.kr/overview/location";
@@ -319,9 +363,81 @@ function elysianRoutes(): SkiShuttleRoute[] {
   ];
   return [...metropolitan, ...stationRoutes];
 }
-function edenvalleyRoute(): SkiShuttleRoute {
-  const url = "https://www.kkday.com/ko/product/29058";
-  return { id: "edenvalley-daegu-tour", resortId: edenvalley, season: "25/26", operator: "KKday 제휴 현지 운영사", region: "대구", name: "대구 도심 왕복 스키투어 셔틀", operationNote: "겨울 한정 제휴 상품 · 25/26 판매 종료, 다음 시즌 일정 재확인", arrivalName: "에덴밸리 스키리조트", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진", fare: { type: "tour_package", note: "교통 단독 옵션 가격은 판매 원문 재확인" }, service: { days: "겨울 한정", bookingRequirement: "현재 판매 종료 · 다음 시즌 재확인" }, bookingUrl: url, sourceUrl: url, stops: [["대구","반월당역 21번 출구","08:30"],["대구","동대구역 3번 출구","09:00"]].map(([city, name, departureTime], index) => ({ id: `edenvalley-daegu-tour-${index + 1}`, city, name, departureTime })), dataStatus: "route_only_25_26", lastCheckedAt: checkedAt };
+function edenvalleyRoutes(): SkiShuttleRoute[] {
+  const officialUrl = "https://www.edenvalley.co.kr/CS/View.asp?location=06";
+  const officialCommon = {
+    resortId: edenvalley,
+    season: "25/26",
+    operator: "에덴밸리 공식 안내",
+    region: "부산·경남",
+    arrivalName: "에덴밸리리조트",
+    priceLabel: "시간·요금 운영사 재확인",
+    fare: { type: "unknown", note: "공식 교통 페이지에 요금이 게시되지 않음" } as const,
+    service: { bookingRequirement: "공식 페이지의 시간표 칸이 비어 있어 운행일·시간·요금을 리조트에 확인" },
+    bookingUrl: officialUrl,
+    sourceUrl: officialUrl,
+    dataStatus: "route_only_25_26" as const,
+    lastCheckedAt: o2EdenCheckedAt
+  };
+  const officialRoutes: SkiShuttleRoute[] = [
+    {
+      ...officialCommon,
+      id: "edenvalley-nopo-yangsan",
+      name: "노포·양산 정기 상행선",
+      operationNote: "공식 경유지는 확인 · 25/26 운행 시간 미게시",
+      directions: ["outbound"],
+      stops: ["노포역", "양산역", "새양산병원", "영광복국", "삼성파크빌"].map((name, index) => ({ id: `edenvalley-nopo-yangsan-${index + 1}`, city: index === 0 ? "부산" : "양산", name }))
+    },
+    {
+      ...officialCommon,
+      id: "edenvalley-return-nopo-yangsan",
+      name: "노포·양산 정기 하행선",
+      operationNote: "공식 하차지는 확인 · 25/26 운행 시간 미게시",
+      directions: ["return"],
+      returnService: { departureName: "에덴밸리리조트 정기버스 승차장", stopOrder: "same_stops", note: "25/26 리조트 출발 시간 미게시 · 운영사 재확인" },
+      stops: ["삼성파크빌", "영광복국", "운동장", "양산역", "노포역"].map((name, index) => ({ id: `edenvalley-return-nopo-yangsan-${index + 1}`, city: index === 4 ? "부산" : "양산", name }))
+    }
+  ];
+
+  const tourUrl = "https://www.kkday.com/ko/product/29058";
+  const tourCommon = {
+    resortId: edenvalley,
+    season: "25/26",
+    operator: "KKday 제휴 현지 운영사",
+    region: "대구·부산",
+    arrivalName: "에덴밸리 스키리조트",
+    priceLabel: "왕복 교통만 선택 가능 · 현재 매진",
+    fare: { type: "tour_package", note: "교통 단독 옵션 가격은 판매 원문 재확인" } as const,
+    service: { days: "겨울 한정", bookingRequirement: "현재 판매 종료 · 다음 시즌 일정·가격 재확인" },
+    bookingUrl: tourUrl,
+    sourceUrl: tourUrl,
+    dataStatus: "route_only_25_26" as const,
+    lastCheckedAt: o2EdenCheckedAt
+  };
+  const tourRoutes: SkiShuttleRoute[] = [
+    {
+      ...tourCommon,
+      id: "edenvalley-daegu-tour",
+      name: "대구 출발 겨울 스키투어",
+      operationNote: "반월당 08:30 · 동대구역 09:00 · 약 11시간 일정",
+      directions: ["outbound"],
+      stops: [["반월당역 21번 출구", "08:30"], ["동대구역 3번 출구", "09:00"]].map(([name, departureTime], index) => ({ id: `edenvalley-daegu-tour-${index + 1}`, city: "대구", name, departureTime }))
+    },
+    {
+      ...tourCommon,
+      id: "edenvalley-daegu-tour-return",
+      name: "대구·부산 귀환 스키투어",
+      operationNote: "대구 또는 부산 귀환 선택 · 리조트 출발 시각은 바우처 확인",
+      directions: ["return"],
+      returnTime: "대구 약 19:30 · 부산 약 19:20 도착",
+      returnService: { departureName: "에덴밸리 스키리조트 운영사 지정 승차지", stopOrder: "same_stops", note: "약 11시간 일정 · 리조트 출발 시각과 정확한 하차지는 바우처 확인" },
+      stops: [
+        { id: "edenvalley-daegu-tour-return-1", city: "대구", name: "대구 지정 하차지", arrivalTime: "약 19:30" },
+        { id: "edenvalley-daegu-tour-return-2", city: "부산", name: "부산 지정 하차지", arrivalTime: "약 19:20" }
+      ]
+    }
+  ];
+  return [...officialRoutes, ...tourRoutes];
 }
 function alpensiaRoutes(): SkiShuttleRoute[] {
   const sourceUrl = "https://www.alpensia.com/guide/directions-public.do";

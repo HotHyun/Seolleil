@@ -61,12 +61,16 @@ describe("25/26 ski shuttle data", () => {
     expect(routes.some(route => route.id === "wellihilli-kd-suwon")).toBe(false);
   });
 
-  it("covers only O2's current official Taebaek Station connection", () => {
+  it("separates O2's two Taebaek Station departures and returns", () => {
     const routes = getSkiShuttleRoutes("o2");
-    expect(routes.map(route => route.id)).toEqual(["o2-taebaek-station"]);
-    expect(routes[0]).toMatchObject({ operator: "오투리조트", returnTime: "12:45 / 21:50", dataStatus: "confirmed_25_26" });
-    expect(searchShuttleRoutes(routes, "태백역").map(route => route.id)).toEqual(["o2-taebaek-station"]);
-    expect(routes[0].fare).toEqual({ type: "free", roundTripAdult: 0 });
+    expect(searchShuttleRoutes(routes, "", "all", "outbound").map(route => route.id)).toEqual(["o2-taebaek-station", "o2-taebaek-station-1255"]);
+    expect(searchShuttleRoutes(routes, "", "all", "return").map(route => route.id)).toEqual(["o2-return-taebaek-1245", "o2-return-taebaek-2150"]);
+    expect(routes.every(route => route.operator === "오투리조트" && route.dataStatus === "confirmed_25_26")).toBe(true);
+    expect(routes.find(route => route.id === "o2-taebaek-station")?.stops[0]).toMatchObject({ name: "태백역 앞 시티투어 버스정류장", departureTime: "09:00" });
+    expect(routes.find(route => route.id === "o2-taebaek-station-1255")?.stops[0].departureTime).toBe("12:55");
+    expect(routes.find(route => route.id === "o2-return-taebaek-1245")).toMatchObject({ directions: ["return"], returnService: { departureName: "오투리조트 스키하우스 정문 도로변", departureTime: "12:45" } });
+    expect(routes.find(route => route.id === "o2-return-taebaek-2150")).toMatchObject({ returnService: { departureTime: "21:50" }, service: { days: "야간 스키 운영일만" } });
+    expect(routes.every(route => route.fare?.type === "free" && route.fare.roundTripAdult === 0)).toBe(true);
   });
 
   it("separates Oak Valley's two outbound and two return weekend shuttles", () => {
@@ -92,10 +96,18 @@ describe("25/26 ski shuttle data", () => {
     expect(searchShuttleRoutes(routes, "백양리역", "all", "return").map(route => route.id)).toEqual(["elysian-return-baegyangri"]);
   });
 
-  it("covers Eden Valley's documented Daegu winter tour without presenting a sold-out timetable as active", () => {
+  it("separates Eden Valley's route-only official corridor and sold-out winter tour by direction", () => {
     const routes = getSkiShuttleRoutes("edenvalley");
-    expect(routes.map(route => route.id)).toEqual(["edenvalley-daegu-tour"]);
-    expect(routes[0]).toMatchObject({ dataStatus: "route_only_25_26", returnTime: "대구 약 19:30", priceLabel: "왕복 교통만 선택 가능 · 현재 매진" });
+    expect(searchShuttleRoutes(routes, "", "all", "outbound").map(route => route.id)).toEqual(["edenvalley-nopo-yangsan", "edenvalley-daegu-tour"]);
+    expect(searchShuttleRoutes(routes, "", "all", "return").map(route => route.id)).toEqual(["edenvalley-return-nopo-yangsan", "edenvalley-daegu-tour-return"]);
+    expect(routes.every(route => route.dataStatus === "route_only_25_26")).toBe(true);
+    expect(routes.find(route => route.id === "edenvalley-nopo-yangsan")?.stops.map(stop => stop.name)).toEqual(["노포역", "양산역", "새양산병원", "영광복국", "삼성파크빌"]);
+    const officialReturn = routes.find(route => route.id === "edenvalley-return-nopo-yangsan");
+    expect(officialReturn).toMatchObject({ returnService: { departureName: "에덴밸리리조트 정기버스 승차장" } });
+    expect(officialReturn?.returnService?.departureTime).toBeUndefined();
+    expect(routes.find(route => route.id === "edenvalley-daegu-tour")?.stops.map(stop => stop.departureTime)).toEqual(["08:30", "09:00"]);
+    expect(routes.find(route => route.id === "edenvalley-daegu-tour-return")).toMatchObject({ returnTime: "대구 약 19:30 · 부산 약 19:20 도착", priceLabel: "왕복 교통만 선택 가능 · 현재 매진" });
+    expect(searchShuttleRoutes(routes, "부산", "all", "return").map(route => route.id)).toEqual(["edenvalley-return-nopo-yangsan", "edenvalley-daegu-tour-return"]);
     expect(searchShuttleRoutes(routes, "반월당").map(route => route.id)).toEqual(["edenvalley-daegu-tour"]);
   });
 

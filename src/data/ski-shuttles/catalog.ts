@@ -1,5 +1,5 @@
 import type { ShuttleDirection, SkiShuttleRoute, SkiShuttleStop } from "@/lib/types";
-import { skiShuttleRoutes2526 } from "./routes";
+import { skiShuttleRoutes } from "./all-routes";
 
 export type SkiShuttleOperator = {
   name: string;
@@ -14,9 +14,9 @@ export type SkiShuttleStopRecord = SkiShuttleStop & {
   season: string;
 };
 
-export const skiShuttleSeasons = [...new Set(skiShuttleRoutes2526.map(route => route.season))];
+export const skiShuttleSeasons = [...new Set(skiShuttleRoutes.map(route => route.season))];
 
-export const skiShuttleOperators: SkiShuttleOperator[] = [...skiShuttleRoutes2526.reduce((operators, route) => {
+export const skiShuttleOperators: SkiShuttleOperator[] = [...skiShuttleRoutes.reduce((operators, route) => {
   const current = operators.get(route.operator) ?? { name: route.operator, phone: route.operatorPhone, routeIds: [], resortIds: [] };
   current.routeIds.push(route.id);
   if (!current.resortIds.includes(route.resortId)) current.resortIds.push(route.resortId);
@@ -24,7 +24,7 @@ export const skiShuttleOperators: SkiShuttleOperator[] = [...skiShuttleRoutes252
   return operators;
 }, new Map<string, SkiShuttleOperator>()).values()];
 
-export const skiShuttleStops: SkiShuttleStopRecord[] = skiShuttleRoutes2526.flatMap(route => route.stops.map(stop => ({ ...stop, routeId: route.id, resortId: route.resortId, season: route.season })));
+export const skiShuttleStops: SkiShuttleStopRecord[] = skiShuttleRoutes.flatMap(route => route.stops.map(stop => ({ ...stop, routeId: route.id, resortId: route.resortId, season: route.season })));
 
 export function getShuttleRegions(routes: SkiShuttleRoute[]) {
   return [...new Set(routes.map(route => route.region))];
@@ -32,6 +32,10 @@ export function getShuttleRegions(routes: SkiShuttleRoute[]) {
 
 export function routeSupportsShuttleDirection(route: SkiShuttleRoute, direction: ShuttleDirection) {
   return !route.directions || route.directions.includes(direction);
+}
+
+export function isConfirmedShuttleRoute(route: SkiShuttleRoute) {
+  return route.dataStatus === "confirmed" || route.dataStatus.startsWith("confirmed_");
 }
 
 export function getShuttleStopsForDirection(route: SkiShuttleRoute, direction: ShuttleDirection = "outbound") {

@@ -1,8 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { getShuttleRegions, getShuttleStopsForDirection, getSkiShuttleCoverage, getSkiShuttleRoutes, searchShuttleRoutes, skiShuttleOperators, skiShuttleRoutes2526, skiShuttleSeasons, skiShuttleStops } from "@/data/ski-shuttles";
+import { getShuttleRegions, getShuttleStopsForDirection, getSkiShuttleCoverage, getSkiShuttleRoutes, isConfirmedShuttleRoute, searchShuttleRoutes, skiShuttleOperators, skiShuttleRoutes2526, skiShuttleSeasons, skiShuttleStops } from "@/data/ski-shuttles";
 import { resorts } from "@/data/resorts";
 
 describe("25/26 ski shuttle data", () => {
+  it("recognizes legacy and season-neutral confirmed route states", () => {
+    const route = skiShuttleRoutes2526[0];
+
+    expect(isConfirmedShuttleRoute(route)).toBe(true);
+    expect(isConfirmedShuttleRoute({ ...route, dataStatus: "confirmed", season: "26/27" })).toBe(true);
+    expect(isConfirmedShuttleRoute({ ...route, dataStatus: "route_only", season: "26/27" })).toBe(false);
+  });
+
   it("covers the confirmed High1 operating networks", () => {
     const routes = getSkiShuttleRoutes("high1");
     const operators = new Set(routes.map(route => route.operator));

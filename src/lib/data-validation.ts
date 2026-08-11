@@ -1,11 +1,19 @@
 import { priceRules, rentalPriceRules } from "@/data/prices";
 import { departureLocations, rentalShops, resorts } from "@/data/resorts";
-import { CURRENT_SEASON } from "@/lib/constants";
-import type { PriceConfidence, TimeSlot } from "@/lib/types";
+import { getAllSkiShuttleRoutes, isConfirmedShuttleRoute, routeSupportsShuttleDirection, skiShuttleRoutes } from "@/data/ski-shuttles";
+import {
+  CURRENT_SEASON,
+  CURRENT_SHUTTLE_SEASON,
+  seasonRefreshPriority,
+  SUPPORTED_PRICE_SEASONS,
+  UPCOMING_SEASON,
+  UPCOMING_SHUTTLE_SEASON
+} from "@/lib/constants";
+import type { PriceConfidence, PriceRule, RentalPriceRule, SkiShuttleRoute, TimeSlot } from "@/lib/types";
 
 export type ValidationIssue = {
   severity: "error" | "warning";
-  scope: "resort" | "rental_shop" | "price_rule" | "rental_price_rule" | "departure" | "season";
+  scope: "resort" | "rental_shop" | "price_rule" | "rental_price_rule" | "shuttle_route" | "departure" | "season";
   id: string;
   message: string;
 };
@@ -22,6 +30,46 @@ export type ResortDataQuality = {
   estimatedRentalRuleCount: number;
   latestCheckedAt?: string;
   missingTimeSlots: TimeSlot[];
+  seasonTransition: ResortSeasonTransition;
+};
+
+export type SeasonPublicationStatus = "not_published" | "in_review" | "confirmed" | "unavailable";
+export type SeasonRefreshPriority = 1 | 2 | 3;
+
+export type SeasonCategoryProgress = {
+  status: SeasonPublicationStatus;
+  sourceCount: number;
+  targetCount: number;
+  confirmedTargetCount: number;
+  unavailableTargetCount: number;
+  completedTargetCount: number;
+  replacementTargetCount: number;
+  progressPercent: number;
+};
+
+export type ResortSeasonTransition = {
+  resortId: string;
+  resortName: string;
+  priority: SeasonRefreshPriority;
+  lift: SeasonCategoryProgress;
+  rental: SeasonCategoryProgress;
+  shuttle: SeasonCategoryProgress;
+  replacementTargetCount: number;
+  completedTargetCount: number;
+  progressPercent: number;
+  nextAction: string;
+};
+
+export type SeasonTransitionReport = {
+  sourceSeason: string;
+  targetSeason: string;
+  sourceShuttleSeason: string;
+  targetShuttleSeason: string;
+  replacementTargetCount: number;
+  completedTargetCount: number;
+  progressPercent: number;
+  statusCounts: Record<SeasonPublicationStatus, number>;
+  resorts: ResortSeasonTransition[];
 };
 
 export type StaticDataReport = {
@@ -36,16 +84,19 @@ export type StaticDataReport = {
   estimatedPriceCount: number;
   staleItemCount: number;
   replacementTargetCount: number;
+  seasonTransition: SeasonTransitionReport;
   resorts: ResortDataQuality[];
   issues: ValidationIssue[];
   estimatedItems: Array<{ id: string; scope: "price_rule" | "rental_price_rule"; resortId: string; sourceName?: string; lastCheckedAt: string }>;
   staleItems: Array<{ id: string; scope: "resort" | "rental_shop" | "price_rule" | "rental_price_rule"; lastCheckedAt: string }>;
-  replacementTargets: Array<{ id: string; scope: "price_rule" | "rental_price_rule"; season: string }>;
+  replacementTargets: Array<{ id: string; scope: "price_rule" | "rental_price_rule"; season: string; resortId: string; replacementKey: string }>;
 };
 
 const pricedConfidences: PriceConfidence[] = ["confirmed", "estimated", "phone_confirmed"];
 const requiredTimeSlots: TimeSlot[] = ["2h", "3h", "4h", "6h", "night", "full_day"];
 const staleAfterDays = 120;
+const supportedPriceSeasonSet = new Set<string>(SUPPORTED_PRICE_SEASONS);
+const supportedShuttleSeasonSet = new Set([CURRENT_SHUTTLE_SEASON, UPCOMING_SHUTTLE_SEASON]);
 
 function pushIf(issues: ValidationIssue[], condition: boolean, issue: ValidationIssue) {
   if (condition) issues.push(issue);
@@ -69,6 +120,135 @@ function hasDuplicate(values: string[]) {
   return new Set(values).size !== values.length;
 }
 
+export function getPriceReplacementKey(rule: PriceRule) {
+  return rule.replacementKey ?? [rule.resortId, rule.itemType, rule.timeSlot ?? "all", rule.dayType, rule.label].join("|");
+}
+
+export function getRentalReplacementKey(rule: RentalPriceRule) {
+  return rule.replacementKey ?? [
+    rule.resortId,
+    rule.rentalShopId ?? rule.providerType,
+    rule.itemType,
+    rule.timeSlot ?? "all",
+    rule.dayType,
+    rule.rideType ?? "all",
+    rule.ageGroup ?? "all",
+    rule.label
+  ].join("|");
+}
+
+export function getShuttleReplacementKey(route: SkiShuttleRoute) {
+  return route.replacementKey ?? [route.resortId, route.operator, route.name].join("|");
+}
+
+export function classifySeasonCategory(
+  sourceKeys: string[],
+  targetItems: Array<{ replacementKey: string; confirmed: boolean; unavailable: boolean }>
+): SeasonCategoryProgress {
+  const terminalKeys = new Set(
+    targetItems
+      .filter(item => item.confirmed || item.unavailable)
+      .map(item => item.replacementKey)
+  );
+  const completedTargetCount = sourceKeys.filter(key => terminalKeys.has(key)).length;
+  const replacementTargetCount = Math.max(0, sourceKeys.length - completedTargetCount);
+  const confirmedTargetCount = targetItems.filter(item => item.confirmed).length;
+  const unavailableTargetCount = targetItems.filter(item => item.unavailable).length;
+  const status: SeasonPublicationStatus = targetItems.length === 0
+    ? "not_published"
+    : replacementTargetCount === 0 && unavailableTargetCount === targetItems.length
+      ? "unavailable"
+      : replacementTargetCount === 0
+        ? "confirmed"
+        : "in_review";
+  const progressPercent = sourceKeys.length
+    ? Math.round((completedTargetCount / sourceKeys.length) * 100)
+    : targetItems.length && status !== "in_review" ? 100 : 0;
+
+  return {
+    status,
+    sourceCount: sourceKeys.length,
+    targetCount: targetItems.length,
+    confirmedTargetCount,
+    unavailableTargetCount,
+    completedTargetCount,
+    replacementTargetCount,
+    progressPercent
+  };
+}
+
+function seasonRefreshPriorityFor(resortId: string): SeasonRefreshPriority {
+  const index = seasonRefreshPriority.findIndex(group => (group as readonly string[]).includes(resortId));
+  return index === 0 ? 1 : index === 1 ? 2 : 3;
+}
+
+function nextSeasonAction(lift: SeasonCategoryProgress, rental: SeasonCategoryProgress, shuttle: SeasonCategoryProgress) {
+  if (lift.status === "not_published") return "26/27 공식 리프트 요금 확인";
+  if (rental.status === "not_published") return "공식·외부 렌탈 장비/의류 가격 확인";
+  if (shuttle.status === "not_published") return "26/27 셔틀 운행 공지 확인";
+  if ([lift, rental, shuttle].some(category => category.status === "in_review")) return "등록 항목의 출처·기간·신뢰도 확정";
+  return "전환 완료 · 기준 시즌 전환 대기";
+}
+
+function buildSeasonTransitionReport(): SeasonTransitionReport {
+  const transitions = resorts.map(resort => {
+    const sourceLift = priceRules.filter(rule => rule.resortId === resort.id && rule.itemType === "lift_ticket" && rule.season === CURRENT_SEASON);
+    const targetLift = priceRules.filter(rule => rule.resortId === resort.id && rule.itemType === "lift_ticket" && rule.season === UPCOMING_SEASON);
+    const sourceRental = rentalPriceRules.filter(rule => rule.resortId === resort.id && rule.season === CURRENT_SEASON);
+    const targetRental = rentalPriceRules.filter(rule => rule.resortId === resort.id && rule.season === UPCOMING_SEASON);
+    const shuttleRoutes = getAllSkiShuttleRoutes(resort.id).filter(route => routeSupportsShuttleDirection(route, "outbound"));
+    const sourceShuttle = shuttleRoutes.filter(route => route.season === CURRENT_SHUTTLE_SEASON);
+    const targetShuttle = shuttleRoutes.filter(route => route.season === UPCOMING_SHUTTLE_SEASON);
+    const lift = classifySeasonCategory(
+      sourceLift.map(getPriceReplacementKey),
+      targetLift.map(rule => ({ replacementKey: getPriceReplacementKey(rule), confirmed: rule.confidence === "confirmed" || rule.confidence === "phone_confirmed", unavailable: rule.confidence === "unavailable" }))
+    );
+    const rental = classifySeasonCategory(
+      sourceRental.map(getRentalReplacementKey),
+      targetRental.map(rule => ({ replacementKey: getRentalReplacementKey(rule), confirmed: rule.confidence === "confirmed" || rule.confidence === "phone_confirmed", unavailable: rule.confidence === "unavailable" }))
+    );
+    const shuttle = classifySeasonCategory(
+      sourceShuttle.map(getShuttleReplacementKey),
+      targetShuttle.map(route => ({ replacementKey: getShuttleReplacementKey(route), confirmed: isConfirmedShuttleRoute(route), unavailable: route.dataStatus === "unavailable" }))
+    );
+    const replacementTargetCount = lift.sourceCount + rental.sourceCount + shuttle.sourceCount;
+    const completedTargetCount = lift.completedTargetCount + rental.completedTargetCount + shuttle.completedTargetCount;
+
+    return {
+      resortId: resort.id,
+      resortName: resort.name,
+      priority: seasonRefreshPriorityFor(resort.id),
+      lift,
+      rental,
+      shuttle,
+      replacementTargetCount,
+      completedTargetCount,
+      progressPercent: replacementTargetCount ? Math.round((completedTargetCount / replacementTargetCount) * 100) : 0,
+      nextAction: nextSeasonAction(lift, rental, shuttle)
+    } satisfies ResortSeasonTransition;
+  }).sort((left, right) => left.priority - right.priority || right.replacementTargetCount - left.replacementTargetCount || left.resortName.localeCompare(right.resortName, "ko"));
+  const replacementTargetCount = transitions.reduce((sum, transition) => sum + transition.replacementTargetCount, 0);
+  const completedTargetCount = transitions.reduce((sum, transition) => sum + transition.completedTargetCount, 0);
+  const statusCounts: Record<SeasonPublicationStatus, number> = { not_published: 0, in_review: 0, confirmed: 0, unavailable: 0 };
+  for (const transition of transitions) {
+    statusCounts[transition.lift.status] += 1;
+    statusCounts[transition.rental.status] += 1;
+    statusCounts[transition.shuttle.status] += 1;
+  }
+
+  return {
+    sourceSeason: CURRENT_SEASON,
+    targetSeason: UPCOMING_SEASON,
+    sourceShuttleSeason: CURRENT_SHUTTLE_SEASON,
+    targetShuttleSeason: UPCOMING_SHUTTLE_SEASON,
+    replacementTargetCount,
+    completedTargetCount,
+    progressPercent: replacementTargetCount ? Math.round((completedTargetCount / replacementTargetCount) * 100) : 0,
+    statusCounts,
+    resorts: transitions
+  };
+}
+
 function assertScore(
   issues: ValidationIssue[],
   resortId: string,
@@ -89,6 +269,9 @@ export function validateStaticData(): ValidationIssue[] {
   const resortIdSet = new Set(resortIds);
   const rentalShopIds = rentalShops.map((shop) => shop.id);
   const rentalShopIdSet = new Set(rentalShopIds);
+  const priceRuleIds = priceRules.map(rule => rule.id);
+  const rentalPriceRuleIds = rentalPriceRules.map(rule => rule.id);
+  const shuttleRouteIds = skiShuttleRoutes.map(route => route.id);
 
   pushIf(issues, hasDuplicate(resortIds), {
     scope: "resort",
@@ -102,6 +285,27 @@ export function validateStaticData(): ValidationIssue[] {
     severity: "error",
     id: "all",
     message: "rental shop ids must be unique"
+  });
+
+  pushIf(issues, hasDuplicate(priceRuleIds), {
+    scope: "price_rule",
+    severity: "error",
+    id: "all",
+    message: "price rule ids must be unique across seasons"
+  });
+
+  pushIf(issues, hasDuplicate(rentalPriceRuleIds), {
+    scope: "rental_price_rule",
+    severity: "error",
+    id: "all",
+    message: "rental price rule ids must be unique across seasons"
+  });
+
+  pushIf(issues, hasDuplicate(shuttleRouteIds), {
+    scope: "shuttle_route",
+    severity: "error",
+    id: "all",
+    message: "shuttle route ids must be unique across seasons"
   });
 
   for (const resort of resorts) {
@@ -150,7 +354,7 @@ export function validateStaticData(): ValidationIssue[] {
     assertScore(issues, resort.id, "rentalConvenienceScore", resort.rentalConvenienceScore);
 
     if (resort.operationStatus === "operating") {
-      pushIf(issues, !priceRules.some((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket"), {
+      pushIf(issues, !priceRules.some((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket" && rule.season === CURRENT_SEASON), {
         scope: "price_rule",
         severity: "error",
         id: resort.id,
@@ -162,7 +366,7 @@ export function validateStaticData(): ValidationIssue[] {
         id: resort.id,
         message: "operating resort must have rental shops"
       });
-      pushIf(issues, !rentalPriceRules.some((rule) => rule.resortId === resort.id), {
+      pushIf(issues, !rentalPriceRules.some((rule) => rule.resortId === resort.id && rule.season === CURRENT_SEASON), {
         scope: "rental_price_rule",
         severity: "error",
         id: resort.id,
@@ -179,7 +383,7 @@ export function validateStaticData(): ValidationIssue[] {
       });
       const resortSlots = new Set(
         priceRules
-          .filter((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket")
+          .filter((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket" && rule.season === CURRENT_SEASON)
           .map((rule) => rule.timeSlot)
       );
       for (const slot of requiredTimeSlots) {
@@ -259,6 +463,12 @@ export function validateStaticData(): ValidationIssue[] {
       id: rule.id,
       message: "season, validFrom, and validTo are required"
     });
+    pushIf(issues, rule.validFrom > rule.validTo, {
+      scope: "price_rule",
+      severity: "error",
+      id: rule.id,
+      message: "validFrom must be on or before validTo"
+    });
     pushIf(issues, pricedConfidences.includes(rule.confidence) && !rule.adultPrice && !rule.priceMin && !rule.priceMax, {
       scope: "price_rule",
       severity: "error",
@@ -270,6 +480,12 @@ export function validateStaticData(): ValidationIssue[] {
       severity: "error",
       id: rule.id,
       message: "non-phone price rule must include sourceUrl"
+    });
+    pushIf(issues, !rule.sourceName, {
+      scope: "price_rule",
+      severity: "error",
+      id: rule.id,
+      message: "price rule must include sourceName"
     });
     pushIf(issues, !isDateString(rule.lastCheckedAt), {
       scope: "price_rule",
@@ -295,11 +511,11 @@ export function validateStaticData(): ValidationIssue[] {
       id: rule.id,
       message: `price rule lastCheckedAt is older than ${staleAfterDays} days`
     });
-    pushIf(issues, rule.season !== CURRENT_SEASON, {
+    pushIf(issues, !supportedPriceSeasonSet.has(rule.season), {
       scope: "season",
-      severity: "warning",
+      severity: "error",
       id: rule.id,
-      message: `price rule season ${rule.season} differs from CURRENT_SEASON ${CURRENT_SEASON}`
+      message: `price rule season ${rule.season} is not a supported transition season`
     });
   }
 
@@ -322,6 +538,12 @@ export function validateStaticData(): ValidationIssue[] {
       id: rule.id,
       message: "season, validFrom, and validTo are required"
     });
+    pushIf(issues, rule.validFrom > rule.validTo, {
+      scope: "rental_price_rule",
+      severity: "error",
+      id: rule.id,
+      message: "validFrom must be on or before validTo"
+    });
     pushIf(
       issues,
       pricedConfidences.includes(rule.confidence) &&
@@ -340,6 +562,12 @@ export function validateStaticData(): ValidationIssue[] {
       severity: "error",
       id: rule.id,
       message: "non-phone rental price rule must include sourceUrl"
+    });
+    pushIf(issues, !rule.sourceName, {
+      scope: "rental_price_rule",
+      severity: "error",
+      id: rule.id,
+      message: "rental price rule must include sourceName"
     });
     pushIf(issues, !isDateString(rule.lastCheckedAt), {
       scope: "rental_price_rule",
@@ -365,11 +593,50 @@ export function validateStaticData(): ValidationIssue[] {
       id: rule.id,
       message: `rental price rule lastCheckedAt is older than ${staleAfterDays} days`
     });
-    pushIf(issues, rule.season !== CURRENT_SEASON, {
+    pushIf(issues, !supportedPriceSeasonSet.has(rule.season), {
       scope: "season",
-      severity: "warning",
+      severity: "error",
       id: rule.id,
-      message: `rental price rule season ${rule.season} differs from CURRENT_SEASON ${CURRENT_SEASON}`
+      message: `rental price rule season ${rule.season} is not a supported transition season`
+    });
+  }
+
+  for (const route of skiShuttleRoutes) {
+    pushIf(issues, !resortIdSet.has(route.resortId), {
+      scope: "shuttle_route",
+      severity: "error",
+      id: route.id,
+      message: "shuttle route references an unknown resort"
+    });
+    pushIf(issues, !supportedShuttleSeasonSet.has(route.season), {
+      scope: "season",
+      severity: "error",
+      id: route.id,
+      message: `shuttle season ${route.season} is not a supported transition season`
+    });
+    pushIf(issues, !isUrl(route.sourceUrl) || !isUrl(route.bookingUrl), {
+      scope: "shuttle_route",
+      severity: "error",
+      id: route.id,
+      message: "shuttle route must include sourceUrl and bookingUrl"
+    });
+    pushIf(issues, !isDateString(route.lastCheckedAt), {
+      scope: "shuttle_route",
+      severity: "error",
+      id: route.id,
+      message: "shuttle route lastCheckedAt must be YYYY-MM-DD"
+    });
+    pushIf(issues, route.season === UPCOMING_SHUTTLE_SEASON && !route.service?.period, {
+      scope: "shuttle_route",
+      severity: "error",
+      id: route.id,
+      message: "26/27 shuttle route must include an operating period"
+    });
+    pushIf(issues, route.season === UPCOMING_SHUTTLE_SEASON && route.dataStatus.endsWith("_25_26"), {
+      scope: "shuttle_route",
+      severity: "error",
+      id: route.id,
+      message: "26/27 shuttle route must use a season-neutral data status"
     });
   }
 
@@ -395,6 +662,7 @@ export function validateStaticData(): ValidationIssue[] {
 
 export function getStaticDataReport(now = new Date()): StaticDataReport {
   const issues = validateStaticData();
+  const seasonTransition = buildSeasonTransitionReport();
   const warnings = issues.filter((issue) => issue.severity === "warning");
   const estimatedItems = [
     ...priceRules
@@ -430,18 +698,21 @@ export function getStaticDataReport(now = new Date()): StaticDataReport {
       .filter((item) => daysSince(item.lastCheckedAt, now) > staleAfterDays)
       .map((item) => ({ id: item.id, scope: "rental_price_rule" as const, lastCheckedAt: item.lastCheckedAt }))
   ];
+  const targetPriceKeys = new Set(priceRules.filter(rule => rule.season === UPCOMING_SEASON).map(getPriceReplacementKey));
+  const targetRentalKeys = new Set(rentalPriceRules.filter(rule => rule.season === UPCOMING_SEASON).map(getRentalReplacementKey));
   const replacementTargets = [
     ...priceRules
-      .filter((rule) => rule.season === "2025-2026")
-      .map((rule) => ({ id: rule.id, scope: "price_rule" as const, season: rule.season })),
+      .filter(rule => rule.season === CURRENT_SEASON && !targetPriceKeys.has(getPriceReplacementKey(rule)))
+      .map(rule => ({ id: rule.id, scope: "price_rule" as const, season: rule.season, resortId: rule.resortId, replacementKey: getPriceReplacementKey(rule) })),
     ...rentalPriceRules
-      .filter((rule) => rule.season === "2025-2026")
-      .map((rule) => ({ id: rule.id, scope: "rental_price_rule" as const, season: rule.season }))
+      .filter(rule => rule.season === CURRENT_SEASON && !targetRentalKeys.has(getRentalReplacementKey(rule)))
+      .map(rule => ({ id: rule.id, scope: "rental_price_rule" as const, season: rule.season, resortId: rule.resortId, replacementKey: getRentalReplacementKey(rule) }))
   ];
+  const transitionByResort = new Map(seasonTransition.resorts.map(transition => [transition.resortId, transition]));
 
   const resortReports = resorts.map((resort) => {
-    const liftRules = priceRules.filter((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket");
-    const rentalRules = rentalPriceRules.filter((rule) => rule.resortId === resort.id);
+    const liftRules = priceRules.filter((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket" && rule.season === CURRENT_SEASON);
+    const rentalRules = rentalPriceRules.filter((rule) => rule.resortId === resort.id && rule.season === CURRENT_SEASON);
     const externalRentalShopCount = rentalShops.filter(
       (shop) => shop.resortId === resort.id && !shop.id.endsWith("official-rental")
     ).length;
@@ -462,7 +733,8 @@ export function getStaticDataReport(now = new Date()): StaticDataReport {
       confirmedRentalRuleCount: rentalRules.filter((rule) => rule.confidence === "confirmed").length,
       estimatedRentalRuleCount: rentalRules.filter((rule) => rule.confidence === "estimated").length,
       latestCheckedAt,
-      missingTimeSlots: requiredTimeSlots.filter((slot) => !availableSlots.has(slot))
+      missingTimeSlots: requiredTimeSlots.filter((slot) => !availableSlots.has(slot)),
+      seasonTransition: transitionByResort.get(resort.id)!
     };
   });
 
@@ -478,6 +750,7 @@ export function getStaticDataReport(now = new Date()): StaticDataReport {
     estimatedPriceCount: estimatedItems.length,
     staleItemCount: staleItems.length,
     replacementTargetCount: replacementTargets.length,
+    seasonTransition,
     resorts: resortReports,
     issues,
     estimatedItems,

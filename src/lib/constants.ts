@@ -1,7 +1,17 @@
 import type { Priority, TimeSlot } from "@/lib/types";
 
 export const CURRENT_SEASON = "2025-2026";
+export const UPCOMING_SEASON = "2026-2027";
 export const REFERENCE_PRICE_SEASON = "25/26 시즌";
+export const CURRENT_SHUTTLE_SEASON = "25/26";
+export const UPCOMING_SHUTTLE_SEASON = "26/27";
+export const SUPPORTED_PRICE_SEASONS = [CURRENT_SEASON, UPCOMING_SEASON] as const;
+
+export const seasonRefreshPriority = [
+  ["high1", "vivaldi", "yongpyong", "phoenix"],
+  ["konjiam", "jisan", "elysian", "wellihilli", "alpensia"],
+  ["oakvalley", "o2", "muju", "edenvalley"]
+] as const;
 
 export const priorityLabels: Record<Priority, string> = {
   close: "가까움",

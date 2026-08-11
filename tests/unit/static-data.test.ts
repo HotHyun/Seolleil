@@ -3,7 +3,7 @@ import { rentalPriceRules } from "@/data/prices";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { getResortStory } from "@/data/resort-content";
 import { getRentalShopsForResort, rentalShops, resorts } from "@/data/resorts";
-import { getStaticDataReport, validateStaticData } from "@/lib/data-validation";
+import { classifySeasonCategory, getStaticDataReport, validateStaticData } from "@/lib/data-validation";
 
 describe("static data validation", () => {
   it("separates verified High1 data from listing-only candidates", () => {
@@ -178,6 +178,42 @@ describe("static data validation", () => {
     expect(report.resorts.every((resort) => resort.externalRentalShopCount >= 1)).toBe(true);
     expect(report.resorts.every((resort) => resort.missingTimeSlots.length === 0)).toBe(true);
     expect(report.estimatedPriceCount).toBeGreaterThan(0);
+  });
+
+  it("tracks the 26/27 transition without replacing 25/26 source data", () => {
+    const report = getStaticDataReport(new Date("2026-08-11T00:00:00Z"));
+    const priorityOneIds = report.seasonTransition.resorts
+      .filter(resort => resort.priority === 1)
+      .map(resort => resort.resortId);
+
+    expect(report.seasonTransition).toMatchObject({
+      sourceSeason: "2025-2026",
+      targetSeason: "2026-2027",
+      sourceShuttleSeason: "25/26",
+      targetShuttleSeason: "26/27",
+      completedTargetCount: 0,
+      progressPercent: 0
+    });
+    expect(new Set(priorityOneIds)).toEqual(new Set(["high1", "vivaldi", "yongpyong", "phoenix"]));
+    expect(report.seasonTransition.resorts.every(resort =>
+      resort.lift.status === "not_published" &&
+      resort.rental.status === "not_published" &&
+      resort.shuttle.status === "not_published"
+    )).toBe(true);
+  });
+
+  it("derives every season publication state from replacement evidence", () => {
+    expect(classifySeasonCategory(["a"], [])).toMatchObject({ status: "not_published", progressPercent: 0 });
+    expect(classifySeasonCategory(["a", "b"], [
+      { replacementKey: "a", confirmed: true, unavailable: false },
+      { replacementKey: "b", confirmed: false, unavailable: false }
+    ])).toMatchObject({ status: "in_review", completedTargetCount: 1, progressPercent: 50 });
+    expect(classifySeasonCategory(["a"], [
+      { replacementKey: "a", confirmed: true, unavailable: false }
+    ])).toMatchObject({ status: "confirmed", progressPercent: 100 });
+    expect(classifySeasonCategory(["a"], [
+      { replacementKey: "a", confirmed: false, unavailable: true }
+    ])).toMatchObject({ status: "unavailable", progressPercent: 100 });
   });
 
   it("keeps verified rental coordinates and exact Kakao place links together", () => {

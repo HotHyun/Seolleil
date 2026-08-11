@@ -13,7 +13,25 @@ console.log(`Errors: ${report.issueCount}`);
 console.log(`Warnings: ${report.warningCount}`);
 console.log(`Estimated price items: ${report.estimatedPriceCount}`);
 console.log(`Stale items: ${report.staleItemCount}`);
-console.log(`26/27 replacement targets: ${report.replacementTargetCount}`);
+console.log(`26/27 price/rental rules not yet registered: ${report.replacementTargetCount}`);
+console.log(
+  `26/27 transition: ${report.seasonTransition.completedTargetCount}/${report.seasonTransition.replacementTargetCount} (${report.seasonTransition.progressPercent}%)`
+);
+console.log("");
+
+console.table(
+  report.seasonTransition.resorts.map((resort) => ({
+    priority: `P${resort.priority}`,
+    resort: resort.resortName,
+    lift: `${resort.lift.status} ${resort.lift.completedTargetCount}/${resort.lift.sourceCount}`,
+    rental: `${resort.rental.status} ${resort.rental.completedTargetCount}/${resort.rental.sourceCount}`,
+    shuttle: `${resort.shuttle.status} ${resort.shuttle.completedTargetCount}/${resort.shuttle.sourceCount}`,
+    progress: `${resort.progressPercent}%`,
+    remaining: resort.replacementTargetCount - resort.completedTargetCount,
+    nextAction: resort.nextAction
+  }))
+);
+
 console.log("");
 
 console.table(

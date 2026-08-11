@@ -44,6 +44,8 @@ export function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate
       (rule) =>
         rule.resortId === resortId &&
         rule.itemType === "lift_ticket" &&
+        rule.validFrom <= visitDate &&
+        rule.validTo >= visitDate &&
         (rule.timeSlot === timeSlot || rule.timeSlot === "all") &&
         dayTypeScore(rule.dayType, visitDayType) > 0
     )
@@ -57,10 +59,16 @@ function resolveRentalPrice(
   resortId: string,
   input: TripInput,
   selectedRentalOptionId?: string,
-  strictDate = false
+  strictDate = true
 ): RentalPriceRule | undefined {
   if (selectedRentalOptionId) {
-    return rentalPriceRules.find((rule) => rule.id === selectedRentalOptionId && rule.itemType !== "lift_ticket");
+    const selected = rentalPriceRules.find(
+      (rule) => rule.id === selectedRentalOptionId && rule.resortId === resortId && rule.itemType !== "lift_ticket"
+    );
+    return selected && (!strictDate || optionAppliesToDay(selected, {
+      date: input.visitDate,
+      timeSlot: input.liftTicketTimeSlot
+    })) ? selected : undefined;
   }
 
   const needEquipment = !input.ownsEquipment || input.priorities.includes("rental");
@@ -90,6 +98,7 @@ function resolveRentalPrice(
 
 export function liftTicketSavings(option: RentalPriceRule, visitDate: string) {
   if (option.itemType !== "lift_ticket" || !option.timeSlot || !option.representativePrice) return null;
+  if (!optionAppliesToDay(option, { date: visitDate, timeSlot: option.timeSlot })) return null;
   const official = resolveLiftPrice(option.resortId, option.timeSlot, visitDate);
   const officialPrice = official?.adultPrice ?? official?.priceMin;
   if (!officialPrice || officialPrice <= option.representativePrice) return null;
@@ -230,7 +239,12 @@ export function estimateTripCost(
     items.push(...estimateSkiPlanItems(resort, input, skiPlan, people));
   } else {
   const discountedLift = selectedLiftTicketOptionId
-    ? rentalPriceRules.find(rule => rule.id === selectedLiftTicketOptionId && rule.resortId === resort.id && rule.itemType === "lift_ticket")
+    ? rentalPriceRules.find(rule =>
+        rule.id === selectedLiftTicketOptionId &&
+        rule.resortId === resort.id &&
+        rule.itemType === "lift_ticket" &&
+        optionAppliesToDay(rule, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot })
+      )
     : undefined;
   const lift = discountedLift ?? resolveLiftPrice(resort.id, input.liftTicketTimeSlot, input.visitDate);
 

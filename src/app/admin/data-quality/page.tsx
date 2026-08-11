@@ -3,7 +3,12 @@ import Link from "next/link";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getStaticDataReport } from "@/lib/data-validation";
+import {
+  getStaticDataReport,
+  type SeasonCategoryProgress,
+  type SeasonPublicationStatus,
+  type SeasonRefreshPriority
+} from "@/lib/data-validation";
 import { resorts } from "@/data/resorts";
 import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 
@@ -15,7 +20,15 @@ export const metadata: Metadata = {
   }
 };
 
-export default async function AdminDataQualityPage() {
+type PageProps = {
+  searchParams: Promise<{ priority?: string }>;
+};
+
+export default async function AdminDataQualityPage({ searchParams }: PageProps) {
+  const { priority: priorityParam } = await searchParams;
+  const selectedPriority = priorityParam === "1" || priorityParam === "2" || priorityParam === "3"
+    ? Number(priorityParam) as SeasonRefreshPriority
+    : "all";
   const report = getStaticDataReport();
   const errors = report.issues.filter((issue) => issue.severity === "error");
   const warnings = report.issues.filter((issue) => issue.severity === "warning");
@@ -28,6 +41,9 @@ export default async function AdminDataQualityPage() {
   const shuttleRows = resorts.map(resort => { const routes = getSkiShuttleRoutes(resort.id); return { resort, routes, coverage: getSkiShuttleCoverage(resort, routes), stopCount: routes.reduce((sum, route) => sum + route.stops.length, 0), missingSourceCount: routes.filter(route => !route.sourceUrl || !route.bookingUrl).length }; });
   const shuttleConfirmed = shuttleRows.reduce((sum, row) => sum + row.coverage.confirmedRouteCount, 0);
   const shuttleRecheck = shuttleRows.reduce((sum, row) => sum + row.coverage.recheckRouteCount, 0);
+  const transitionRows = report.seasonTransition.resorts.filter(
+    resort => selectedPriority === "all" || resort.priority === selectedPriority
+  );
 
   return (
     <main className="page-shell py-8">
@@ -47,10 +63,106 @@ export default async function AdminDataQualityPage() {
         <Metric label="경고" value={report.warningCount} />
         <Metric label="confirmed 비율" value={`${confirmedRate}%`} />
         <Metric label="estimated" value={report.estimatedPriceCount} />
-        <Metric label="26/27 교체 대상" value={report.replacementTargetCount} />
+        <Metric label="26/27 가격·렌탈 미등록" value={report.replacementTargetCount} />
         <Metric label="셔틀 링크" value={`${shuttleCoverage}/${resorts.length}`} />
         <Metric label="숙소 링크" value={`${lodgingCoverage}/${resorts.length}`} tone={lodgingCoverage < resorts.length ? "warn" : "good"} />
       </section>
+
+      <Card className="mt-6 overflow-hidden" data-testid="season-transition-board">
+        <div className="border-b border-border bg-zinc-950 px-4 py-5 text-white md:px-6">
+          <div className="flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <p className="text-xs font-black tracking-[0.16em] text-lime-300">SEASON TRANSITION</p>
+              <CardTitle className="mt-2 text-xl font-black md:text-2xl">
+                25/26 → 26/27 전환 보드
+              </CardTitle>
+              <p className="mt-2 max-w-2xl text-sm text-zinc-300">
+                리프트·렌탈·셔틀을 기존 시즌과 나란히 유지하며, 출처와 유효 기간이 확정된 항목만 완료로 집계합니다.
+              </p>
+            </div>
+            <div className="text-right">
+              <div className="font-mono text-4xl font-black tabular-nums">{report.seasonTransition.progressPercent}%</div>
+              <div className="mt-1 text-xs text-zinc-400">
+                {report.seasonTransition.completedTargetCount.toLocaleString("ko-KR")} / {report.seasonTransition.replacementTargetCount.toLocaleString("ko-KR")} 항목 완료
+              </div>
+            </div>
+          </div>
+          <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/15" aria-label={`26/27 시즌 전환 ${report.seasonTransition.progressPercent}%`}>
+            <div className="h-full rounded-full bg-lime-300 transition-[width]" style={{ width: `${report.seasonTransition.progressPercent}%` }} />
+          </div>
+        </div>
+
+        <CardContent className="pt-4 md:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-2" aria-label="시즌 전환 상태 요약">
+              <StatusBadge>미공개 {report.seasonTransition.statusCounts.not_published}</StatusBadge>
+              <StatusBadge tone="warn">확인 중 {report.seasonTransition.statusCounts.in_review}</StatusBadge>
+              <StatusBadge tone="good">확정 {report.seasonTransition.statusCounts.confirmed}</StatusBadge>
+              <StatusBadge tone="dark">이용 불가 {report.seasonTransition.statusCounts.unavailable}</StatusBadge>
+            </div>
+            <nav className="flex flex-wrap gap-1 rounded-xl bg-muted p-1" aria-label="조사 우선순위 필터">
+              {([
+                ["all", "전체"],
+                ["1", "P1 핵심"],
+                ["2", "P2 수도권·강원"],
+                ["3", "P3 장거리"]
+              ] as const).map(([value, label]) => {
+                const active = String(selectedPriority) === value;
+                return (
+                  <Link
+                    key={value}
+                    href={value === "all" ? "/admin/data-quality" : `/admin/data-quality?priority=${value}`}
+                    aria-current={active ? "page" : undefined}
+                    className={active
+                      ? "rounded-lg bg-background px-3 py-2 text-xs font-black text-foreground shadow-sm"
+                      : "rounded-lg px-3 py-2 text-xs font-bold text-muted-foreground hover:text-foreground"}
+                  >
+                    {label}
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="mt-4 overflow-x-auto">
+            <table className="w-full min-w-[1040px] text-left text-sm">
+              <thead className="text-xs text-muted-foreground">
+                <tr className="border-b">
+                  <th className="py-2">우선</th>
+                  <th>스키장</th>
+                  <th>리프트</th>
+                  <th>렌탈</th>
+                  <th>셔틀</th>
+                  <th className="w-36">전체 진행</th>
+                  <th>남음</th>
+                  <th>다음 조치</th>
+                </tr>
+              </thead>
+              <tbody>
+                {transitionRows.map((resort) => (
+                  <tr key={resort.resortId} className="border-b last:border-0">
+                    <td className="py-3"><StatusBadge tone={resort.priority === 1 ? "dark" : "neutral"}>P{resort.priority}</StatusBadge></td>
+                    <td className="font-black">{resort.resortName}</td>
+                    <td><CategoryProgress category={resort.lift} /></td>
+                    <td><CategoryProgress category={resort.rental} /></td>
+                    <td><CategoryProgress category={resort.shuttle} /></td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                          <div className="h-full rounded-full bg-primary" style={{ width: `${resort.progressPercent}%` }} />
+                        </div>
+                        <span className="w-9 text-right font-mono text-xs font-bold tabular-nums">{resort.progressPercent}%</span>
+                      </div>
+                    </td>
+                    <td className="font-mono text-xs tabular-nums">{resort.replacementTargetCount - resort.completedTargetCount}</td>
+                    <td className="text-xs text-muted-foreground">{resort.nextAction}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
 
       <Card className="mt-6">
         <CardHeader>
@@ -115,6 +227,25 @@ export default async function AdminDataQualityPage() {
         </CardContent>
       </Card>
     </main>
+  );
+}
+
+const seasonStatusPresentation: Record<SeasonPublicationStatus, { label: string; tone: "neutral" | "good" | "warn" | "dark" }> = {
+  not_published: { label: "미공개", tone: "neutral" },
+  in_review: { label: "확인 중", tone: "warn" },
+  confirmed: { label: "확정", tone: "good" },
+  unavailable: { label: "이용 불가", tone: "dark" }
+};
+
+function CategoryProgress({ category }: { category: SeasonCategoryProgress }) {
+  const presentation = seasonStatusPresentation[category.status];
+  return (
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <StatusBadge tone={presentation.tone}>{presentation.label}</StatusBadge>
+      <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+        {category.completedTargetCount}/{category.sourceCount}
+      </span>
+    </div>
   );
 }
 

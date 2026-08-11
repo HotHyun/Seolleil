@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resorts } from "@/data/resorts";
 import { rentalPriceRules } from "@/data/prices";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
-import { estimateTransportCost, estimateTransportPlanCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings } from "@/lib/pricing";
+import { estimateTransportCost, estimateTransportPlanCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings, resolveLiftPrice } from "@/lib/pricing";
 import { tripInput } from "../fixtures/trip-input";
 import { createEmptySkiDay, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
@@ -50,6 +50,30 @@ describe("pricing", () => {
 
     expect(weekday.items.find((item) => item.key === "lift_ticket")?.representative).toBe(162000);
     expect(weekend.items.find((item) => item.key === "lift_ticket")?.representative).toBe(192000);
+  });
+
+  it("does not apply expired 25/26 prices to a 26/27 trip date", () => {
+    const high1 = resorts.find((resort) => resort.id === "high1")!;
+    const liftOption = rentalPriceRules.find(rule => rule.id === "high1-myski-lift-peak-7h")!;
+    const rentalOption = rentalPriceRules.find(rule => rule.resortId === "konjiam" && rule.itemType !== "lift_ticket")!;
+    const estimate = estimateTripCost(
+      konjiam,
+      tripInput({ visitDate: "2027-01-16", liftTicketTimeSlot: "4h" }),
+      rentalOption.id
+    );
+    const selectedLiftEstimate = estimateTripCost(
+      high1,
+      tripInput({ visitDate: "2027-01-16", liftTicketTimeSlot: "7h" }),
+      undefined,
+      undefined,
+      liftOption.id
+    );
+
+    expect(resolveLiftPrice("konjiam", "4h", "2027-01-16")).toBeUndefined();
+    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "unavailable" });
+    expect(estimate.items.find(item => item.key === "rental")).toBeUndefined();
+    expect(selectedLiftEstimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "unavailable" });
+    expect(liftTicketSavings(liftOption, "2027-01-16")).toBeNull();
   });
 
   it("prices a rental-shop lift ticket independently and reports verified savings", () => {

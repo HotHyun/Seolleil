@@ -2,7 +2,7 @@ import type { TripInput } from "@/lib/types";
 
 export function tripInput(overrides: Partial<TripInput> = {}): TripInput {
   return {
-    visitDate: "2027-01-10",
+    visitDate: "2026-01-10",
     departureLocation: "seoul-gangnam",
     peopleCount: 2,
     tripDuration: "same_day",
@@ -18,4 +18,3 @@ export function tripInput(overrides: Partial<TripInput> = {}): TripInput {
     ...overrides
   };
 }
-

@@ -8,7 +8,12 @@ export type OperationStatus =
 export type SkillLevel = "first_time" | "beginner" | "intermediate" | "advanced";
 export type RideType = "ski" | "snowboard";
 export type TransportType = "car" | "shuttle" | "bus";
-export type ShuttleDataStatus = "confirmed_25_26" | "route_only_25_26";
+export type ShuttleDataStatus =
+  | "confirmed"
+  | "route_only"
+  | "unavailable"
+  | "confirmed_25_26"
+  | "route_only_25_26";
 export type ShuttleFareType = "single_ride" | "season_pass" | "free" | "tour_package" | "unknown";
 export type ShuttleDirection = "outbound" | "return";
 
@@ -32,6 +37,7 @@ export type SkiShuttleReturnService = {
 
 export type SkiShuttleRoute = {
   id: string;
+  replacementKey?: string;
   resortId: string;
   season: string;
   operator: string;
@@ -167,6 +173,7 @@ export type TimeSlot = "2h" | "3h" | "4h" | "5h" | "6h" | "7h" | "night" | "full
 
 export type PriceRule = {
   id: string;
+  replacementKey?: string;
   resortId: string;
   season: string;
   itemType: "lift_ticket" | "shuttle_bus";
@@ -192,6 +199,7 @@ export type PriceRule = {
 
 export type RentalPriceRule = {
   id: string;
+  replacementKey?: string;
   rentalShopId?: string;
   resortId: string;
   providerType: "resort_official" | "external_shop";

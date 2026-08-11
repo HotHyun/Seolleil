@@ -186,6 +186,12 @@ describe("static data validation", () => {
     const priorityOneIds = report.seasonTransition.resorts
       .filter(resort => resort.priority === 1)
       .map(resort => resort.resortId);
+    const priorityTwoIds = report.seasonTransition.resorts
+      .filter(resort => resort.priority === 2)
+      .map(resort => resort.resortId);
+    const priorityThreeIds = report.seasonTransition.resorts
+      .filter(resort => resort.priority === 3)
+      .map(resort => resort.resortId);
 
     expect(report.seasonTransition).toMatchObject({
       sourceSeason: "2025-2026",
@@ -194,12 +200,16 @@ describe("static data validation", () => {
       targetShuttleSeason: "26/27",
       completedTargetCount: 0,
       progressPercent: 0,
-      researchRecordCount: 12,
+      researchRecordCount: 39,
       priorityOneResearchCount: 12,
-      preliminaryResearchCount: 2,
+      priorityTwoResearchCount: 15,
+      priorityThreeResearchCount: 12,
+      preliminaryResearchCount: 3,
       latestResearchAt: "2026-08-11"
     });
     expect(new Set(priorityOneIds)).toEqual(new Set(["high1", "vivaldi", "yongpyong", "phoenix"]));
+    expect(new Set(priorityTwoIds)).toEqual(new Set(["konjiam", "jisan", "elysian", "wellihilli", "alpensia"]));
+    expect(new Set(priorityThreeIds)).toEqual(new Set(["oakvalley", "o2", "muju", "edenvalley"]));
     expect(report.seasonTransition.resorts.every(resort =>
       resort.lift.status === "not_published" &&
       resort.rental.status === "not_published" &&
@@ -207,12 +217,14 @@ describe("static data validation", () => {
     )).toBe(true);
   });
 
-  it("records official P1 research without treating preliminary notices as trip prices", () => {
+  it("records official all-resort research without treating preliminary notices as trip prices", () => {
     const phoenixLift = seasonResearchRecords.find(record => record.resortId === "phoenix" && record.category === "lift");
+    const alpensiaLift = seasonResearchRecords.find(record => record.resortId === "alpensia" && record.category === "lift");
     const report = getStaticDataReport(new Date("2026-08-11T00:00:00Z"));
     const phoenixTransition = report.seasonTransition.resorts.find(resort => resort.resortId === "phoenix");
+    const alpensiaTransition = report.seasonTransition.resorts.find(resort => resort.resortId === "alpensia");
 
-    expect(seasonResearchRecords).toHaveLength(12);
+    expect(seasonResearchRecords).toHaveLength(39);
     expect(phoenixLift).toMatchObject({
       targetSeason: "2026-2027",
       status: "preliminary",
@@ -227,6 +239,18 @@ describe("static data validation", () => {
       research: { status: "preliminary" }
     });
     expect(phoenixTransition?.nextAction).toContain("일일 리프트권");
+    expect(alpensiaLift).toMatchObject({
+      targetSeason: "2026-2027",
+      status: "preliminary",
+      announcedFacts: expect.arrayContaining([
+        { label: "시즌권 상태", value: "26/27 시즌 준비중" }
+      ])
+    });
+    expect(alpensiaTransition?.lift).toMatchObject({
+      status: "not_published",
+      completedTargetCount: 0,
+      research: { status: "preliminary" }
+    });
   });
 
   it("derives every season publication state from replacement evidence", () => {

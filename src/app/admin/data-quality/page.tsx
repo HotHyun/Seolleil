@@ -105,6 +105,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
               <StatusBadge tone="good">확정 {report.seasonTransition.statusCounts.confirmed}</StatusBadge>
               <StatusBadge tone="dark">이용 불가 {report.seasonTransition.statusCounts.unavailable}</StatusBadge>
               <StatusBadge tone="good">P1 조사 {report.seasonTransition.priorityOneResearchCount}/12</StatusBadge>
+              <StatusBadge tone="good">P2 조사 {report.seasonTransition.priorityTwoResearchCount}/15</StatusBadge>
+              <StatusBadge tone="good">P3 조사 {report.seasonTransition.priorityThreeResearchCount}/12</StatusBadge>
               <StatusBadge tone="warn">사전 공지 {report.seasonTransition.preliminaryResearchCount}</StatusBadge>
             </div>
             <nav className="flex flex-wrap gap-1 rounded-xl bg-muted p-1" aria-label="조사 우선순위 필터">

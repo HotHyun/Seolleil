@@ -73,6 +73,8 @@ export type SeasonTransitionReport = {
   statusCounts: Record<SeasonPublicationStatus, number>;
   researchRecordCount: number;
   priorityOneResearchCount: number;
+  priorityTwoResearchCount: number;
+  priorityThreeResearchCount: number;
   preliminaryResearchCount: number;
   latestResearchAt?: string;
   resorts: ResortSeasonTransition[];
@@ -267,6 +269,8 @@ function buildSeasonTransitionReport(): SeasonTransitionReport {
     statusCounts,
     researchRecordCount: seasonResearchRecords.length,
     priorityOneResearchCount: seasonResearchRecords.filter(record => (seasonRefreshPriority[0] as readonly string[]).includes(record.resortId)).length,
+    priorityTwoResearchCount: seasonResearchRecords.filter(record => (seasonRefreshPriority[1] as readonly string[]).includes(record.resortId)).length,
+    priorityThreeResearchCount: seasonResearchRecords.filter(record => (seasonRefreshPriority[2] as readonly string[]).includes(record.resortId)).length,
     preliminaryResearchCount: seasonResearchRecords.filter(record => record.status === "preliminary").length,
     latestResearchAt: seasonResearchRecords.map(record => record.lastCheckedAt).sort().at(-1),
     resorts: transitions
@@ -711,14 +715,16 @@ export function validateStaticData(): ValidationIssue[] {
     });
   }
 
-  for (const resortId of seasonRefreshPriority[0]) {
-    for (const category of ["lift", "rental", "shuttle"] as const) {
-      pushIf(issues, !seasonResearchRecords.some(record => record.resortId === resortId && record.category === category), {
-        scope: "season_research",
-        severity: "error",
-        id: `${resortId}:${category}`,
-        message: "P1 resorts require a current 26/27 research record for every category"
-      });
+  for (const [priorityIndex, resortIds] of seasonRefreshPriority.entries()) {
+    for (const resortId of resortIds) {
+      for (const category of ["lift", "rental", "shuttle"] as const) {
+        pushIf(issues, !seasonResearchRecords.some(record => record.resortId === resortId && record.category === category), {
+          scope: "season_research",
+          severity: "error",
+          id: `${resortId}:${category}`,
+          message: `P${priorityIndex + 1} resorts require a current 26/27 research record for every category`
+        });
+      }
     }
   }
 

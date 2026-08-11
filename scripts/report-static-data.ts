@@ -18,6 +18,8 @@ console.log(
   `26/27 transition: ${report.seasonTransition.completedTargetCount}/${report.seasonTransition.replacementTargetCount} (${report.seasonTransition.progressPercent}%)`
 );
 console.log(`P1 research records: ${report.seasonTransition.priorityOneResearchCount}/12`);
+console.log(`P2 research records: ${report.seasonTransition.priorityTwoResearchCount}/15`);
+console.log(`P3 research records: ${report.seasonTransition.priorityThreeResearchCount}/12`);
 console.log(`Official preliminary notices: ${report.seasonTransition.preliminaryResearchCount}`);
 console.log("");
 

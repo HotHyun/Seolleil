@@ -25,6 +25,45 @@ P1 하이원·비발디·모나용평·휘닉스의 리프트·렌탈·셔틀 12
 - 대원관광 25/26 교통시즌권: https://skibus.purplebus.co.kr/Shop/YpSeason25/
 - 비발디 외국인 셔틀: https://vivabus.net/en/vivabus/page/vivaldi-timetable
 
+## 26/27 P2·P3 공식 공지 조사 — 2026-08-11
+
+P2 곤지암·지산·엘리시안 강촌·웰리힐리·알펜시아 15개 범주와 P3 오크밸리·오투·무주·에덴밸리 12개 범주를 공식 리조트 또는 공식 운영사 화면에서 순서대로 확인했다. 이로써 P1~P3 전체 13개 리조트의 리프트·렌탈·셔틀 39개 범주에 현재 조사 기록과 2026-09-01 재확인 날짜가 있다.
+
+- 곤지암: 공식 판매 공지는 25/26 4·6시간 리프트·렌탈 패키지만 제공한다. 공식 교통 안내는 전철·광역버스·마을버스만 남아 있고 기존 무료 셔틀 페이지는 삭제됐다.
+- 지산: 공식 종합요금이 명시적으로 25/26 리프트·장비 렌탈 표이며, FAQ와 예약처도 25/26 유료 셔틀만 안내한다.
+- 엘리시안 강촌: 공식 스키 화면의 운영·성수기 날짜가 2025년 12월~2026년 3월이다. 공식 셔틀 예약 경로에도 26/27 기간·시간표가 없다.
+- 웰리힐리: 현재 공식 메인은 여름 운영과 스노우파크 휴장을 안내한다. 수도권 스키셔틀은 대원관광 운영만 명시되고 운영사 화면은 25/26 시즌이다.
+- 알펜시아: 공식 시즌권 데이터에서 `26/27 시즌 준비중`을 확인했다. 가격이 없으므로 리프트 사전 공지로만 기록했고, 기존 시즌 날짜만 남은 렌탈과 셔틀은 미발표로 유지했다.
+- 오크밸리: 공식 공지에 26/27 판매 정보가 없고 고객센터는 렌탈 문의처만 제공한다. 확인 가능한 고객 셔틀 공지는 25/26 시즌이다.
+- 오투: 리프트·렌탈 표와 태백역 연계 셔틀 시간은 있지만 26/27 유효 기간이 없다. `26/27` 장비 시승회 공지는 모델 체험 행사이며 일반 렌탈 가격이 아니므로 전환 데이터로 사용하지 않았다.
+- 무주: 공식 시즌권은 25/26 판매와 2026년 폐장일까지의 이용 기간만 안내한다. 무주레져투어도 25/26 스키버스 화면을 유지한다.
+- 에덴밸리: 공식 공지는 25/26 시즌이 2026-03-01 종료됐음을 안내하고, 리프트·렌탈 자료와 약관도 25/26 기준이다. 26/27 제휴 셔틀 공지는 없다.
+
+알펜시아의 준비 상태를 포함한 사전 공지는 상품 가격으로 변환하지 않는다. 일일 리프트권, 일반 장비·의류 렌탈, 시즌이 명시된 셔틀 운행표가 공식 발표될 때만 26/27 대응 규칙을 생성한다.
+
+P2·P3 공식 확인 경로:
+
+- 곤지암 25/26 판매 공지: https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603
+- 곤지암 대중교통: https://m.konjiamresort.co.kr/contact/Directions3.dev
+- 지산 종합요금: https://www.jisanresort.co.kr/w/ski/use/rental.asp
+- 지산 스키 FAQ: https://www.jisanresort.co.kr/m/member/customer.asp?schCate=ski
+- 엘리시안 강촌 스키: https://www.elysian.co.kr/about-gangchon/ski
+- 엘리시안 강촌 셔틀: https://www.elysian.co.kr/shuttle-bus-reservation
+- 웰리힐리 스노우파크: https://www.wellihillipark.com/snowpark
+- 웰리힐리 수도권 셔틀: https://www.wellihillipark.com/home/guide/map/shuttle
+- 알펜시아 시즌권: https://m.alpensia.com/ski/use-season.do
+- 알펜시아 종합 스키 요금: https://www.alpensia.com/guide/total-use-cost-ski.do
+- 오크밸리 공지: https://oakvalley.co.kr/customer-service/notice
+- 오크밸리 고객센터: https://oakvalley.co.kr/customer-service/service
+- 오투 리프트 요금: https://www.o2resort.com/GDE/totalPrice_skiLift.jsp
+- 오투 렌탈 요금: https://www.o2resort.com/GDE/totalPrice_skiRental.jsp
+- 오투 교통·셔틀: https://o2resort.com/mobile/traffic/
+- 무주 시즌권: https://www.mdysresort.com/ski/buy_season_pass04.asp
+- 무주 공식 셔틀: https://www.mdysresort.com/guide/shuttle_bus.asp
+- 무주레져투어 스키버스: http://www.mujuro.co.kr/costbus/03_costbus_05.php
+- 에덴밸리 스키 공지: https://www.edenvalley.co.kr/Inc_board/inc_list.asp?ConfigPID=1&Find=&GotoPage=25&Search=
+- 에덴밸리 교통 안내: https://www.edenvalley.co.kr/CS/View.asp?location=06
+
 ## 신뢰도 기준
 
 - `confirmed`: 공식 페이지 또는 렌탈샵 페이지에서 텍스트 가격을 확인한 값.
@@ -66,7 +105,7 @@ P1 하이원·비발디·모나용평·휘닉스의 리프트·렌탈·셔틀 12
 
 ## 26/27 시즌 교체 체크리스트
 
-1. `/admin/data-quality`에서 P1 하이원·비발디·용평·휘닉스부터 조사한다.
+1. `/admin/data-quality`에서 P1 → P2 → P3 순으로 조사하며, 현재 전체 39개 범주의 다음 재확인은 2026-09-01이다.
 2. 각 리조트 공식 리프트/렌탈 페이지와 셔틀 운영사의 26/27 공지 여부를 확인한다.
 3. 25/26 규칙을 삭제하지 않고 시즌이 `2026-2027`인 가격 규칙과 시즌이 `26/27`인 셔틀 노선을 추가한다.
 4. 예약처 가격이 정상가인지 할인/얼리버드/패키지 가격인지 구분한다.

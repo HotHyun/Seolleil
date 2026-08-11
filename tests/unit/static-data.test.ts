@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { rentalPriceRules } from "@/data/prices";
+import { seasonResearchRecords } from "@/data/season-research";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { getResortStory } from "@/data/resort-content";
 import { getRentalShopsForResort, rentalShops, resorts } from "@/data/resorts";
@@ -192,7 +193,11 @@ describe("static data validation", () => {
       sourceShuttleSeason: "25/26",
       targetShuttleSeason: "26/27",
       completedTargetCount: 0,
-      progressPercent: 0
+      progressPercent: 0,
+      researchRecordCount: 12,
+      priorityOneResearchCount: 12,
+      preliminaryResearchCount: 2,
+      latestResearchAt: "2026-08-11"
     });
     expect(new Set(priorityOneIds)).toEqual(new Set(["high1", "vivaldi", "yongpyong", "phoenix"]));
     expect(report.seasonTransition.resorts.every(resort =>
@@ -200,6 +205,28 @@ describe("static data validation", () => {
       resort.rental.status === "not_published" &&
       resort.shuttle.status === "not_published"
     )).toBe(true);
+  });
+
+  it("records official P1 research without treating preliminary notices as trip prices", () => {
+    const phoenixLift = seasonResearchRecords.find(record => record.resortId === "phoenix" && record.category === "lift");
+    const report = getStaticDataReport(new Date("2026-08-11T00:00:00Z"));
+    const phoenixTransition = report.seasonTransition.resorts.find(resort => resort.resortId === "phoenix");
+
+    expect(seasonResearchRecords).toHaveLength(12);
+    expect(phoenixLift).toMatchObject({
+      targetSeason: "2026-2027",
+      status: "preliminary",
+      announcedFacts: expect.arrayContaining([
+        { label: "BASIC PASS", value: "549,000원" },
+        { label: "폐장 예정", value: "2027-03-14" }
+      ])
+    });
+    expect(phoenixTransition?.lift).toMatchObject({
+      status: "not_published",
+      completedTargetCount: 0,
+      research: { status: "preliminary" }
+    });
+    expect(phoenixTransition?.nextAction).toContain("일일 리프트권");
   });
 
   it("derives every season publication state from replacement evidence", () => {

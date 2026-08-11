@@ -1,5 +1,6 @@
 import { priceRules, rentalPriceRules } from "@/data/prices";
 import { departureLocations, rentalShops, resorts } from "@/data/resorts";
+import { seasonResearchRecords } from "@/data/season-research";
 import { getAllSkiShuttleRoutes, isConfirmedShuttleRoute, routeSupportsShuttleDirection, skiShuttleRoutes } from "@/data/ski-shuttles";
 import {
   CURRENT_SEASON,
@@ -9,11 +10,11 @@ import {
   UPCOMING_SEASON,
   UPCOMING_SHUTTLE_SEASON
 } from "@/lib/constants";
-import type { PriceConfidence, PriceRule, RentalPriceRule, SkiShuttleRoute, TimeSlot } from "@/lib/types";
+import type { PriceConfidence, PriceRule, RentalPriceRule, SeasonResearchRecord, SkiShuttleRoute, TimeSlot } from "@/lib/types";
 
 export type ValidationIssue = {
   severity: "error" | "warning";
-  scope: "resort" | "rental_shop" | "price_rule" | "rental_price_rule" | "shuttle_route" | "departure" | "season";
+  scope: "resort" | "rental_shop" | "price_rule" | "rental_price_rule" | "shuttle_route" | "season_research" | "departure" | "season";
   id: string;
   message: string;
 };
@@ -45,6 +46,7 @@ export type SeasonCategoryProgress = {
   completedTargetCount: number;
   replacementTargetCount: number;
   progressPercent: number;
+  research?: SeasonResearchRecord;
 };
 
 export type ResortSeasonTransition = {
@@ -69,6 +71,10 @@ export type SeasonTransitionReport = {
   completedTargetCount: number;
   progressPercent: number;
   statusCounts: Record<SeasonPublicationStatus, number>;
+  researchRecordCount: number;
+  priorityOneResearchCount: number;
+  preliminaryResearchCount: number;
+  latestResearchAt?: string;
   resorts: ResortSeasonTransition[];
 };
 
@@ -183,8 +189,13 @@ function seasonRefreshPriorityFor(resortId: string): SeasonRefreshPriority {
 }
 
 function nextSeasonAction(lift: SeasonCategoryProgress, rental: SeasonCategoryProgress, shuttle: SeasonCategoryProgress) {
+  if (lift.status === "not_published" && lift.research?.status === "preliminary") return "사전 공지 확인 · 일일 리프트권 가격표 대기";
+  if (lift.status === "not_published" && lift.research) return `${lift.research.nextCheckAfter.slice(5)} 재확인 · 리프트 가격표 대기`;
   if (lift.status === "not_published") return "26/27 공식 리프트 요금 확인";
+  if (rental.status === "not_published" && rental.research?.status === "preliminary") return "사전 공지 확인 · 일반 렌탈 가격표 대기";
+  if (rental.status === "not_published" && rental.research) return `${rental.research.nextCheckAfter.slice(5)} 재확인 · 렌탈 가격표 대기`;
   if (rental.status === "not_published") return "공식·외부 렌탈 장비/의류 가격 확인";
+  if (shuttle.status === "not_published" && shuttle.research) return `${shuttle.research.nextCheckAfter.slice(5)} 재확인 · 셔틀 운행 공지 대기`;
   if (shuttle.status === "not_published") return "26/27 셔틀 운행 공지 확인";
   if ([lift, rental, shuttle].some(category => category.status === "in_review")) return "등록 항목의 출처·기간·신뢰도 확정";
   return "전환 완료 · 기준 시즌 전환 대기";
@@ -199,18 +210,27 @@ function buildSeasonTransitionReport(): SeasonTransitionReport {
     const shuttleRoutes = getAllSkiShuttleRoutes(resort.id).filter(route => routeSupportsShuttleDirection(route, "outbound"));
     const sourceShuttle = shuttleRoutes.filter(route => route.season === CURRENT_SHUTTLE_SEASON);
     const targetShuttle = shuttleRoutes.filter(route => route.season === UPCOMING_SHUTTLE_SEASON);
-    const lift = classifySeasonCategory(
-      sourceLift.map(getPriceReplacementKey),
-      targetLift.map(rule => ({ replacementKey: getPriceReplacementKey(rule), confirmed: rule.confidence === "confirmed" || rule.confidence === "phone_confirmed", unavailable: rule.confidence === "unavailable" }))
-    );
-    const rental = classifySeasonCategory(
-      sourceRental.map(getRentalReplacementKey),
-      targetRental.map(rule => ({ replacementKey: getRentalReplacementKey(rule), confirmed: rule.confidence === "confirmed" || rule.confidence === "phone_confirmed", unavailable: rule.confidence === "unavailable" }))
-    );
-    const shuttle = classifySeasonCategory(
-      sourceShuttle.map(getShuttleReplacementKey),
-      targetShuttle.map(route => ({ replacementKey: getShuttleReplacementKey(route), confirmed: isConfirmedShuttleRoute(route), unavailable: route.dataStatus === "unavailable" }))
-    );
+    const lift = {
+      ...classifySeasonCategory(
+        sourceLift.map(getPriceReplacementKey),
+        targetLift.map(rule => ({ replacementKey: getPriceReplacementKey(rule), confirmed: rule.confidence === "confirmed" || rule.confidence === "phone_confirmed", unavailable: rule.confidence === "unavailable" }))
+      ),
+      research: seasonResearchRecords.find(record => record.resortId === resort.id && record.category === "lift")
+    };
+    const rental = {
+      ...classifySeasonCategory(
+        sourceRental.map(getRentalReplacementKey),
+        targetRental.map(rule => ({ replacementKey: getRentalReplacementKey(rule), confirmed: rule.confidence === "confirmed" || rule.confidence === "phone_confirmed", unavailable: rule.confidence === "unavailable" }))
+      ),
+      research: seasonResearchRecords.find(record => record.resortId === resort.id && record.category === "rental")
+    };
+    const shuttle = {
+      ...classifySeasonCategory(
+        sourceShuttle.map(getShuttleReplacementKey),
+        targetShuttle.map(route => ({ replacementKey: getShuttleReplacementKey(route), confirmed: isConfirmedShuttleRoute(route), unavailable: route.dataStatus === "unavailable" }))
+      ),
+      research: seasonResearchRecords.find(record => record.resortId === resort.id && record.category === "shuttle")
+    };
     const replacementTargetCount = lift.sourceCount + rental.sourceCount + shuttle.sourceCount;
     const completedTargetCount = lift.completedTargetCount + rental.completedTargetCount + shuttle.completedTargetCount;
 
@@ -245,6 +265,10 @@ function buildSeasonTransitionReport(): SeasonTransitionReport {
     completedTargetCount,
     progressPercent: replacementTargetCount ? Math.round((completedTargetCount / replacementTargetCount) * 100) : 0,
     statusCounts,
+    researchRecordCount: seasonResearchRecords.length,
+    priorityOneResearchCount: seasonResearchRecords.filter(record => (seasonRefreshPriority[0] as readonly string[]).includes(record.resortId)).length,
+    preliminaryResearchCount: seasonResearchRecords.filter(record => record.status === "preliminary").length,
+    latestResearchAt: seasonResearchRecords.map(record => record.lastCheckedAt).sort().at(-1),
     resorts: transitions
   };
 }
@@ -272,6 +296,7 @@ export function validateStaticData(): ValidationIssue[] {
   const priceRuleIds = priceRules.map(rule => rule.id);
   const rentalPriceRuleIds = rentalPriceRules.map(rule => rule.id);
   const shuttleRouteIds = skiShuttleRoutes.map(route => route.id);
+  const seasonResearchIds = seasonResearchRecords.map(record => `${record.resortId}:${record.targetSeason}:${record.category}`);
 
   pushIf(issues, hasDuplicate(resortIds), {
     scope: "resort",
@@ -306,6 +331,13 @@ export function validateStaticData(): ValidationIssue[] {
     severity: "error",
     id: "all",
     message: "shuttle route ids must be unique across seasons"
+  });
+
+  pushIf(issues, hasDuplicate(seasonResearchIds), {
+    scope: "season_research",
+    severity: "error",
+    id: "all",
+    message: "season research records must be unique by resort, season, and category"
   });
 
   for (const resort of resorts) {
@@ -638,6 +670,56 @@ export function validateStaticData(): ValidationIssue[] {
       id: route.id,
       message: "26/27 shuttle route must use a season-neutral data status"
     });
+  }
+
+  for (const record of seasonResearchRecords) {
+    pushIf(issues, !resortIdSet.has(record.resortId), {
+      scope: "season_research",
+      severity: "error",
+      id: `${record.resortId}:${record.category}`,
+      message: "season research references an unknown resort"
+    });
+    pushIf(issues, record.targetSeason !== UPCOMING_SEASON, {
+      scope: "season_research",
+      severity: "error",
+      id: `${record.resortId}:${record.category}`,
+      message: `season research must target ${UPCOMING_SEASON}`
+    });
+    pushIf(issues, !isDateString(record.lastCheckedAt) || !isDateString(record.nextCheckAfter), {
+      scope: "season_research",
+      severity: "error",
+      id: `${record.resortId}:${record.category}`,
+      message: "season research dates must be YYYY-MM-DD"
+    });
+    pushIf(issues, record.nextCheckAfter < record.lastCheckedAt, {
+      scope: "season_research",
+      severity: "error",
+      id: `${record.resortId}:${record.category}`,
+      message: "nextCheckAfter must be on or after lastCheckedAt"
+    });
+    pushIf(issues, !record.sources.length || record.sources.some(source => !source.name || !isUrl(source.url)), {
+      scope: "season_research",
+      severity: "error",
+      id: `${record.resortId}:${record.category}`,
+      message: "season research must include named official sources"
+    });
+    pushIf(issues, record.status === "preliminary" && !record.announcedFacts?.length, {
+      scope: "season_research",
+      severity: "error",
+      id: `${record.resortId}:${record.category}`,
+      message: "preliminary research must include announced facts"
+    });
+  }
+
+  for (const resortId of seasonRefreshPriority[0]) {
+    for (const category of ["lift", "rental", "shuttle"] as const) {
+      pushIf(issues, !seasonResearchRecords.some(record => record.resortId === resortId && record.category === category), {
+        scope: "season_research",
+        severity: "error",
+        id: `${resortId}:${category}`,
+        message: "P1 resorts require a current 26/27 research record for every category"
+      });
+    }
   }
 
   for (const departure of departureLocations) {

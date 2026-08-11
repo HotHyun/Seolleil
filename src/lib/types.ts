@@ -16,6 +16,20 @@ export type ShuttleDataStatus =
   | "route_only_25_26";
 export type ShuttleFareType = "single_ride" | "season_pass" | "free" | "tour_package" | "unknown";
 export type ShuttleDirection = "outbound" | "return";
+export type SeasonResearchCategory = "lift" | "rental" | "shuttle";
+export type SeasonResearchStatus = "checked_unpublished" | "preliminary" | "published";
+
+export type SeasonResearchRecord = {
+  resortId: string;
+  targetSeason: string;
+  category: SeasonResearchCategory;
+  status: SeasonResearchStatus;
+  sources: Array<{ name: string; url: string }>;
+  lastCheckedAt: string;
+  note: string;
+  nextCheckAfter: string;
+  announcedFacts?: Array<{ label: string; value: string }>;
+};
 
 export type SkiShuttleStop = {
   id: string;

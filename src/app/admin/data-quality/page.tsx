@@ -44,6 +44,11 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
   const transitionRows = report.seasonTransition.resorts.filter(
     resort => selectedPriority === "all" || resort.priority === selectedPriority
   );
+  const preliminaryResearch = transitionRows.flatMap(resort => [
+    { resortName: resort.resortName, category: "리프트", research: resort.lift.research },
+    { resortName: resort.resortName, category: "렌탈", research: resort.rental.research },
+    { resortName: resort.resortName, category: "셔틀", research: resort.shuttle.research }
+  ]).filter(item => item.research?.status === "preliminary");
 
   return (
     <main className="page-shell py-8">
@@ -99,6 +104,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
               <StatusBadge tone="warn">확인 중 {report.seasonTransition.statusCounts.in_review}</StatusBadge>
               <StatusBadge tone="good">확정 {report.seasonTransition.statusCounts.confirmed}</StatusBadge>
               <StatusBadge tone="dark">이용 불가 {report.seasonTransition.statusCounts.unavailable}</StatusBadge>
+              <StatusBadge tone="good">P1 조사 {report.seasonTransition.priorityOneResearchCount}/12</StatusBadge>
+              <StatusBadge tone="warn">사전 공지 {report.seasonTransition.preliminaryResearchCount}</StatusBadge>
             </div>
             <nav className="flex flex-wrap gap-1 rounded-xl bg-muted p-1" aria-label="조사 우선순위 필터">
               {([
@@ -123,6 +130,38 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
               })}
             </nav>
           </div>
+
+          {preliminaryResearch.length ? (
+            <div className="mt-4 grid gap-3 md:grid-cols-2" aria-label="26/27 공식 사전 공지">
+              {preliminaryResearch.map(({ resortName, category, research }) => (
+                <article key={`${resortName}-${category}`} className="rounded-xl border border-amber-500/25 bg-amber-500/8 p-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <p className="text-[11px] font-black tracking-[0.12em] text-amber-700 dark:text-amber-300">OFFICIAL EARLY SIGNAL</p>
+                      <h3 className="mt-1 font-black">{resortName} · {category}</h3>
+                    </div>
+                    <StatusBadge tone="warn">사전 공지</StatusBadge>
+                  </div>
+                  <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                    {research?.announcedFacts?.map(fact => (
+                      <div key={fact.label} className="rounded-lg bg-background/75 p-2.5">
+                        <dt className="text-muted-foreground">{fact.label}</dt>
+                        <dd className="mt-1 font-black">{fact.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <p className="mt-3 text-xs leading-5 text-muted-foreground">{research?.note}</p>
+                  <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                    {research?.sources.map(source => (
+                      <a key={source.url} href={source.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-primary hover:underline">
+                        {source.name}
+                      </a>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : null}
 
           <div className="mt-4 overflow-x-auto">
             <table className="w-full min-w-[1040px] text-left text-sm">
@@ -240,11 +279,25 @@ const seasonStatusPresentation: Record<SeasonPublicationStatus, { label: string;
 function CategoryProgress({ category }: { category: SeasonCategoryProgress }) {
   const presentation = seasonStatusPresentation[category.status];
   return (
-    <div className="flex items-center gap-2 whitespace-nowrap">
-      <StatusBadge tone={presentation.tone}>{presentation.label}</StatusBadge>
-      <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
-        {category.completedTargetCount}/{category.sourceCount}
-      </span>
+    <div className="whitespace-nowrap">
+      <div className="flex items-center gap-2">
+        <StatusBadge tone={presentation.tone}>{presentation.label}</StatusBadge>
+        <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+          {category.completedTargetCount}/{category.sourceCount}
+        </span>
+      </div>
+      {category.research ? (
+        <a
+          href={category.research.sources[0]?.url}
+          target="_blank"
+          rel="noreferrer"
+          className={category.research.status === "preliminary"
+            ? "mt-1.5 block text-[10px] font-black text-amber-600 hover:underline dark:text-amber-300"
+            : "mt-1.5 block text-[10px] font-bold text-muted-foreground hover:text-foreground"}
+        >
+          {category.research.status === "preliminary" ? "공식 사전 공지" : `${category.research.lastCheckedAt.slice(5)} 확인`}
+        </a>
+      ) : null}
     </div>
   );
 }

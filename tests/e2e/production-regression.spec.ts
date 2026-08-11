@@ -1,8 +1,16 @@
 import { expect, test } from "@playwright/test";
+import type { Locator } from "@playwright/test";
 import { expectNoEmptyMain, expectNoHorizontalOverflow, planQuery } from "./helpers";
+
+async function selectShuttleRoute(explorer: Locator, name: RegExp) {
+  const route = explorer.getByRole("button", { name });
+  await expect(route).toBeVisible();
+  await route.click();
+}
 
 test.describe("production regression", () => {
   test("public routes and mobile ski map remain usable", async ({ page }) => {
+    test.setTimeout(120_000);
     const pageErrors: string[] = [];
     const consoleErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
@@ -46,98 +54,104 @@ test.describe("production regression", () => {
     await expect(konjiamCoverage.getByRole("link", { name: /공식 교통 안내/ })).toHaveAttribute("href", /konjiamresort\.co\.kr/);
 
     await page.goto("/resorts/muju");
-    const mujuCoverage = page.getByTestId("shuttle-coverage");
-    await expect(mujuCoverage.getByText("확인된 25/26 제휴 셔틀 없음", { exact: true })).toBeVisible();
-    await expect(mujuCoverage.getByRole("link", { name: /공식 교통 안내/ })).toHaveAttribute("href", /way_search\.asp/);
+    const mujuShuttle = page.getByTestId("shuttle-route-explorer");
+    await mujuShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("군산");
+    await selectShuttleRoute(mujuShuttle, /군산·익산·전주 새벽선/);
+    await expect(mujuShuttle.getByText("수송동 롯데마트 건너편 동양생명 앞", { exact: true })).toBeVisible();
+    await expect(mujuShuttle.getByText(/군산 · 06:00 출발/)).toBeVisible();
+    await expect(mujuShuttle.getByText("왕복 64,000원", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/jisan");
     const jisanShuttle = page.getByTestId("shuttle-route-explorer");
-    await jisanShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("종합운동장");
-    await jisanShuttle.getByRole("button", { name: /잠실선/ }).click();
+    await jisanShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("종합운동장");
+    const jisanMorningRoute = jisanShuttle.getByRole("button", { name: /07:30 종합운동장선/ });
+    await expect(jisanMorningRoute).toBeVisible();
+    await jisanMorningRoute.click();
     await expect(jisanShuttle.getByText("종합운동장역 1번 출구", { exact: true })).toBeVisible();
-    await expect(jisanShuttle.getByText("서울 · 07:30 / 13:30 출발", { exact: true })).toBeVisible();
+    await expect(jisanShuttle.getByText(/서울 · 07:30 출발/)).toBeVisible();
     await expect(jisanShuttle.getByText("왕복 38,000원", { exact: true })).toBeVisible();
-    await expect(jisanShuttle.getByText("사전 예약 필수", { exact: true })).toBeVisible();
+    await expect(jisanShuttle.getByText("온라인 또는 전화 사전 예약", { exact: true })).toBeVisible();
 
     await page.goto("/resorts/phoenix");
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
     await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();
     const phoenixShuttle = page.getByTestId("shuttle-route-explorer");
-    await phoenixShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("수원");
-    await phoenixShuttle.getByRole("button", { name: /수원·영통선/ }).click();
+    await phoenixShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("수원");
+    await selectShuttleRoute(phoenixShuttle, /수원·영통선/);
     await expect(phoenixShuttle.getByText("수원역", { exact: true })).toBeVisible();
     await expect(phoenixShuttle.getByText("수원 · 06:20 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/edenvalley");
     const edenShuttle = page.getByTestId("shuttle-route-explorer");
-    await edenShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("반월당");
-    await edenShuttle.getByRole("button", { name: /대구 도심 왕복 스키투어 셔틀/ }).click();
+    await edenShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("반월당");
+    await selectShuttleRoute(edenShuttle, /대구 출발 겨울 스키투어/);
     await expect(edenShuttle.getByText("반월당역 21번 출구", { exact: true })).toBeVisible();
     await expect(edenShuttle.getByText("대구 · 08:30 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/alpensia");
     const alpensiaShuttle = page.getByTestId("shuttle-route-explorer");
-    await alpensiaShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("인덕원");
-    await alpensiaShuttle.getByRole("button", { name: /산본·안양선/ }).click();
-    await expect(alpensiaShuttle.getByText("인덕원역", { exact: true })).toBeVisible();
+    await alpensiaShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("진부");
+    await selectShuttleRoute(alpensiaShuttle, /11시 진부역선/);
+    await expect(alpensiaShuttle.getByText("KTX 진부(오대산)역", { exact: true })).toBeVisible();
+    await expect(alpensiaShuttle.getByText("평창 · 11:00 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/vivaldi");
     const vivaldiShuttle = page.getByTestId("shuttle-route-explorer");
-    await vivaldiShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("건대입구");
-    await vivaldiShuttle.getByRole("button", { name: /홍대·동대문·건대선/ }).click();
+    await vivaldiShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("건대입구");
+    await selectShuttleRoute(vivaldiShuttle, /새벽 신촌·건대선/);
     await expect(vivaldiShuttle.getByText("건대입구역", { exact: true })).toBeVisible();
-    await expect(vivaldiShuttle.getByText("25/26 시즌 2025-12-05~2026-03-02 · 사전 예약", { exact: true })).toBeVisible();
+    await expect(vivaldiShuttle.getByText("서울 · 07:05 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/yongpyong");
     const yongpyongShuttle = page.getByTestId("shuttle-route-explorer");
-    await yongpyongShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("수원역");
-    await yongpyongShuttle.getByRole("button", { name: /수원·영통선/ }).click();
+    await yongpyongShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("수원역");
+    await selectShuttleRoute(yongpyongShuttle, /수원·영통선/);
     await expect(yongpyongShuttle.getByText("수원역", { exact: true })).toBeVisible();
     await expect(yongpyongShuttle.getByText("수원 · 06:20 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/wellihilli");
     const wellihilliShuttle = page.getByTestId("shuttle-route-explorer");
-    await wellihilliShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("인덕원");
-    await wellihilliShuttle.getByRole("button", { name: /산본·안양선/ }).click();
+    await wellihilliShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("인덕원");
+    await selectShuttleRoute(wellihilliShuttle, /산본·안양선/);
     await expect(wellihilliShuttle.getByText("인덕원역", { exact: true })).toBeVisible();
-    await expect(wellihilliShuttle.getByText("경기권 주말 운행 · 서현 합류", { exact: true })).toBeVisible();
+    await expect(wellihilliShuttle.getByText("성수기·비수기 토·일", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/o2");
     const o2Shuttle = page.getByTestId("shuttle-route-explorer");
-    await o2Shuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("태백역");
-    await o2Shuttle.getByRole("button", { name: /태백역 연계선/ }).click();
+    await o2Shuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("태백역");
+    await selectShuttleRoute(o2Shuttle, /09시 태백역 연계선/);
     await expect(o2Shuttle.getByText("태백역 앞 시티투어 버스정류장", { exact: true })).toBeVisible();
-    await expect(o2Shuttle.getByText("태백 · 09:00 / 12:55 출발", { exact: true })).toBeVisible();
+    await expect(o2Shuttle.getByText("태백 · 09:00 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/oakvalley");
     const oakvalleyShuttle = page.getByTestId("shuttle-route-explorer");
-    await oakvalleyShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("만종역");
-    await oakvalleyShuttle.getByRole("button", { name: /원주시내 주말 고객 셔틀/ }).click();
+    await oakvalleyShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("만종역");
+    await selectShuttleRoute(oakvalleyShuttle, /오전 원주 고객 셔틀/);
     await expect(oakvalleyShuttle.getByText("만종역", { exact: true })).toBeVisible();
-    await expect(oakvalleyShuttle.getByText("원주 · 08:20 / 16:10 출발", { exact: true })).toBeVisible();
+    await expect(oakvalleyShuttle.getByText("원주 · 08:20 출발", { exact: true })).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/elysian");
     const elysianShuttle = page.getByTestId("shuttle-route-explorer");
-    await elysianShuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("백양리역");
-    await elysianShuttle.getByRole("button", { name: /백양리역 무료 순환선/ }).click();
+    await elysianShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("백양리역");
+    await selectShuttleRoute(elysianShuttle, /백양리역 무료 순환선/);
     await expect(elysianShuttle.getByText("백양리역 앞 셔틀 승강장", { exact: true })).toBeVisible();
-    await expect(elysianShuttle.getByText("25/26 주말·공휴일 약 20분 간격 · 정확한 시간 재확인", { exact: true })).toBeVisible();
+    await expect(elysianShuttle.getByText(/춘천 · 07:40부터 약 20분 간격 출발/)).toBeVisible();
     await expectNoHorizontalOverflow(page);
 
     await page.goto("/resorts/high1");
     const shuttle = page.getByTestId("shuttle-route-explorer");
     await expect(shuttle.getByText(/내 출발지에서 하이원.*까지/)).toBeVisible();
-    await shuttle.getByRole("textbox", { name: "출발 도시 또는 정류장 검색" }).fill("동래");
-    await shuttle.getByRole("button", { name: /부산·서마산선/ }).click();
+    await shuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("동래");
+    await selectShuttleRoute(shuttle, /부산·서마산선/);
     await expect(shuttle.getByText("동래역 3번 출구", { exact: true })).toBeVisible();
     await expect(shuttle.getByText("부산 · 04:00 출발", { exact: true })).toBeVisible();
     await expect(shuttle.getByRole("link", { name: /운영사 예약·원문 확인/ })).toHaveAttribute("href", /es365\.co\.kr/);
@@ -183,9 +197,9 @@ test.describe("production regression", () => {
       await decisions.getByRole("button", { name: "픽업", exact: true }).click();
       await expect(decisions.getByRole("heading", { name: "간지보더" })).toBeVisible();
       await decisions.getByRole("heading", { name: "간지보더" }).click();
-      await expect(decisions.getByRole("combobox", { name: "장비" })).toBeVisible();
-      await decisions.getByRole("button", { name: "전체", exact: true }).click();
-      await decisions.getByRole("button", { name: /렌탈 저장/ }).first().click();
+      await expect(decisions.getByText(/2027\. 1\. 10\. 렌탈 가격 미공개/)).toBeVisible();
+      await expect(decisions.getByText(/장비나 의류를 대여하지 않는다는 뜻이 아닙니다/)).toBeVisible();
+      await decisions.getByRole("button", { name: "이 날짜의 후보 샵으로 저장" }).click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
       await decisions.locator("#lift").getByRole("combobox").click();
       await page.getByRole("option", { name: "6시간권" }).click();

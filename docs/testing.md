@@ -15,6 +15,8 @@ pnpm data:validate
 pnpm test
 ```
 
+GitHub Actions의 `CI` workflow는 `main` 대상 pull request와 `main` push에서 같은 routine validation을 실행한다. Node.js 22와 `pnpm` 9.15.0을 사용하고 lockfile 고정 설치 후 타입 검사, Vitest, 정적 데이터 검증을 각각 실행한다. 로컬 브라우저 E2E와 production 회귀는 이 기본 CI에서 분리한다.
+
 Do not use a local development server for OCI-agent UI verification. When `E2E_BASE_URL` is set, Playwright skips its local web server.
 
 ## Production Regression

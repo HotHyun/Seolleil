@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+umask 077
+
+readonly BACKUP_LIB="${APPWRITE_BACKUP_LIB:-/usr/local/lib/appwrite-backup/common.sh}"
+[[ -r "$BACKUP_LIB" ]] || { echo "ERROR: Missing backup library: $BACKUP_LIB" >&2; exit 1; }
+# shellcheck source=../lib/common.sh
+source "$BACKUP_LIB"
+
+dry_run=0
+forget_args=()
+
+if [[ "${1:-}" == '--dry-run' ]]; then
+  dry_run=1
+  forget_args+=(--dry-run)
+elif [[ $# -ne 0 ]]; then
+  echo "Usage: $0 [--dry-run]" >&2
+  exit 2
+fi
+
+backup_require_root
+backup_load_config
+backup_load_restic_env
+backup_acquire_lock
+
+echo 'Applying MariaDB retention policy.'
+
+"$RESTIC_BIN" forget \
+  --host "$RESTIC_HOST" \
+  --tag "$DB_SNAPSHOT_TAG" \
+  --keep-daily "$DB_KEEP_DAILY" \
+  --keep-weekly "$DB_KEEP_WEEKLY" \
+  --keep-monthly "$DB_KEEP_MONTHLY" \
+  "${forget_args[@]}"
+
+echo 'Applying full-backup retention policy.'
+
+"$RESTIC_BIN" forget \
+  --host "$RESTIC_HOST" \
+  --tag "$FULL_SNAPSHOT_TAG" \
+  --keep-weekly "$FULL_KEEP_WEEKLY" \
+  --keep-monthly "$FULL_KEEP_MONTHLY" \
+  "${forget_args[@]}"
+
+if [[ "$dry_run" == '1' ]]; then
+  echo 'Dry run completed. Nothing was deleted.'
+  exit 0
+fi
+
+"$RESTIC_BIN" prune
+"$RESTIC_BIN" check
+
+echo 'Monthly backup maintenance completed successfully.'

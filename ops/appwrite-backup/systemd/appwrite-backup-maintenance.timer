@@ -1,0 +1,12 @@
+[Unit]
+Description=Run monthly Appwrite backup maintenance
+
+[Timer]
+OnCalendar=*-*-03 19:30:00 UTC
+RandomizedDelaySec=10m
+AccuracySec=1m
+Persistent=true
+Unit=appwrite-backup-maintenance.service
+
+[Install]
+WantedBy=timers.target

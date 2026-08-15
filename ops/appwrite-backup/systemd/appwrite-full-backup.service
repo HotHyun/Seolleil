@@ -1,0 +1,14 @@
+[Unit]
+Description=Create the weekly full Appwrite backup
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bash /usr/local/sbin/appwrite-full-backup
+User=root
+Group=root
+Nice=10
+IOSchedulingClass=idle
+TimeoutStartSec=4h

@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+umask 077
+
+readonly BACKUP_LIB="${APPWRITE_BACKUP_LIB:-/usr/local/lib/appwrite-backup/common.sh}"
+[[ -r "$BACKUP_LIB" ]] || { echo "ERROR: Missing backup library: $BACKUP_LIB" >&2; exit 1; }
+# shellcheck source=../lib/common.sh
+source "$BACKUP_LIB"
+
+initialize_repository=0
+enable_timers=0
+repository_created=0
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --initialize-repository)
+      initialize_repository=1
+      ;;
+    --enable-timers)
+      enable_timers=1
+      ;;
+    -h|--help)
+      echo "Usage: $0 [--initialize-repository] [--enable-timers]"
+      exit 0
+      ;;
+    *)
+      echo "Unknown argument: $1" >&2
+      exit 2
+      ;;
+  esac
+  shift
+done
+
+backup_require_root
+backup_require_command docker
+backup_require_command systemctl
+backup_load_config
+backup_load_restic_env
+
+install -d -o root -g root -m 0700 "$BACKUP_STAGING_ROOT"
+
+if "$RESTIC_BIN" snapshots >/dev/null 2>&1; then
+  echo 'Restic repository is already initialized and accessible.'
+elif [[ "$initialize_repository" == '1' ]]; then
+  echo 'Initializing the configured Restic repository.'
+  "$RESTIC_BIN" init
+  repository_created=1
+else
+  backup_die 'Restic repository is not accessible. Fix configuration or rerun with --initialize-repository for a new repository.'
+fi
+
+systemctl daemon-reload
+
+if [[ "$enable_timers" == '1' ]]; then
+  systemctl enable --now \
+    appwrite-db-backup.timer \
+    appwrite-full-backup.timer \
+    appwrite-backup-maintenance.timer
+fi
+
+echo 'Initialization checks completed.'
+
+if [[ "$enable_timers" == '1' && "$repository_created" == '0' ]]; then
+  /usr/local/sbin/appwrite-backup-status
+elif [[ "$enable_timers" == '1' ]]; then
+  systemctl list-timers \
+    appwrite-db-backup.timer \
+    appwrite-full-backup.timer \
+    appwrite-backup-maintenance.timer \
+    --all \
+    --no-pager
+  echo 'The new repository has no snapshots yet. Run the DB and full services once, then run appwrite-backup-status.'
+else
+  echo 'Timers were not changed. Use --enable-timers when ready.'
+fi

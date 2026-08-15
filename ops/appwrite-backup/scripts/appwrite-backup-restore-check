@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+umask 077
+
+readonly BACKUP_LIB="${APPWRITE_BACKUP_LIB:-/usr/local/lib/appwrite-backup/common.sh}"
+[[ -r "$BACKUP_LIB" ]] || { echo "ERROR: Missing backup library: $BACKUP_LIB" >&2; exit 1; }
+# shellcheck source=../lib/common.sh
+source "$BACKUP_LIB"
+
+backup_require_root
+backup_require_command tar
+backup_load_config
+backup_load_restic_env
+backup_acquire_lock
+
+install -d -o root -g root -m 0700 "$BACKUP_STAGING_ROOT"
+
+echo 'Checking the latest raw MariaDB backup stream.'
+
+"$RESTIC_BIN" dump \
+  --host "$RESTIC_HOST" \
+  --path "$DB_SNAPSHOT_PATH" \
+  latest \
+  "${DB_SNAPSHOT_PATH#/}" \
+  | tail -n 20 \
+  | grep -- '-- Dump completed on' >/dev/null
+
+restore_root="$(mktemp -d "$BACKUP_STAGING_ROOT/restore-check.XXXXXX")"
+
+cleanup() {
+  rm -rf -- "$restore_root"
+}
+
+trap cleanup EXIT INT TERM
+
+echo 'Restoring the latest full snapshot into an isolated temporary directory.'
+
+"$RESTIC_BIN" restore \
+  --host "$RESTIC_HOST" \
+  --path "$BACKUP_STAGING_ROOT/full" \
+  latest \
+  --target "$restore_root"
+
+restored_full_dir="$restore_root$BACKUP_STAGING_ROOT/full"
+
+[[ -s "$restored_full_dir/all-databases.sql" ]] || backup_die 'Restored full backup is missing all-databases.sql.'
+[[ -s "$restored_full_dir/appwrite-volumes.tar" ]] || backup_die 'Restored full backup is missing appwrite-volumes.tar.'
+[[ -s "$restored_full_dir/coolify-appwrite-config.tar" ]] || backup_die 'Restored full backup is missing coolify-appwrite-config.tar.'
+
+tail -n 20 "$restored_full_dir/all-databases.sql" | grep -- '-- Dump completed on' >/dev/null
+tar -tf "$restored_full_dir/appwrite-volumes.tar" >/dev/null
+tar -tf "$restored_full_dir/coolify-appwrite-config.tar" \
+  | grep -- "$APPWRITE_COMPOSE_PROJECT/docker-compose.yml" >/dev/null
+
+echo 'Restore smoke check: OK'
+echo 'No data was written to the running Appwrite instance.'

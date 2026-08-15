@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+umask 077
+
+readonly BACKUP_LIB="${APPWRITE_BACKUP_LIB:-/usr/local/lib/appwrite-backup/common.sh}"
+[[ -r "$BACKUP_LIB" ]] || { echo "ERROR: Missing backup library: $BACKUP_LIB" >&2; exit 1; }
+# shellcheck source=../lib/common.sh
+source "$BACKUP_LIB"
+
+backup_require_root
+backup_require_command docker
+backup_load_config
+backup_load_restic_env
+backup_acquire_lock
+
+backup_container_running "$APPWRITE_DB_CONTAINER" || backup_die "MariaDB container is not running: $APPWRITE_DB_CONTAINER"
+
+install -d -o root -g root -m 0700 "$BACKUP_STAGING_ROOT"
+dump_file="$(mktemp "$BACKUP_STAGING_ROOT/mariadb.XXXXXX.sql")"
+
+cleanup() {
+  rm -f -- "$dump_file"
+}
+
+trap cleanup EXIT INT TERM
+
+docker exec "$APPWRITE_DB_CONTAINER" sh -lc \
+  'exec mariadb-dump \
+    --all-databases \
+    --add-drop-database \
+    --single-transaction \
+    --routines \
+    --triggers \
+    --events \
+    -uroot \
+    -p"$MYSQL_ROOT_PASSWORD"' \
+  > "$dump_file"
+
+[[ -s "$dump_file" ]] || backup_die 'MariaDB dump is empty.'
+
+"$RESTIC_BIN" backup \
+  --stdin \
+  --stdin-filename "${DB_SNAPSHOT_PATH#/}" \
+  --tag "$DB_SNAPSHOT_TAG" \
+  --host "$RESTIC_HOST" \
+  < "$dump_file"
+
+echo 'Appwrite MariaDB backup completed successfully.'

@@ -1,0 +1,31 @@
+# Non-secret Appwrite backup configuration for hothyun-vnic.
+# Installed as /etc/appwrite-backup/appwrite-backup.conf.
+
+APPWRITE_COMPOSE_PROJECT='eocccws40gogcockggcgw88k'
+APPWRITE_COMPOSE_DIR='/data/coolify/services/eocccws40gogcockggcgw88k'
+APPWRITE_COMPOSE_FILE='/data/coolify/services/eocccws40gogcockggcgw88k/docker-compose.yml'
+
+APPWRITE_DB_CONTAINER='appwrite-mariadb-eocccws40gogcockggcgw88k'
+APPWRITE_API_CONTAINER='appwrite-eocccws40gogcockggcgw88k'
+APPWRITE_VOLUME_PREFIX='eocccws40gogcockggcgw88k'
+APPWRITE_VOLUME_SUFFIXES='functions imports sites uploads builds certificates config'
+
+RESTIC_HOST='hothyun-vnic'
+RESTIC_BIN='/usr/local/bin/restic'
+RESTIC_ENV_FILE='/etc/appwrite-backup/restic.env'
+
+BACKUP_STAGING_ROOT='/var/lib/appwrite-backup'
+BACKUP_LOCK_FILE='/run/lock/appwrite-backup.lock'
+
+DB_SNAPSHOT_PATH='/appwrite/mariadb/all-databases.sql'
+DB_SNAPSHOT_TAG='appwrite-db'
+FULL_SNAPSHOT_TAG='appwrite-full'
+
+DB_KEEP_DAILY='7'
+DB_KEEP_WEEKLY='4'
+DB_KEEP_MONTHLY='3'
+FULL_KEEP_WEEKLY='4'
+FULL_KEEP_MONTHLY='3'
+
+DB_MAX_AGE_HOURS='30'
+FULL_MAX_AGE_HOURS='192'

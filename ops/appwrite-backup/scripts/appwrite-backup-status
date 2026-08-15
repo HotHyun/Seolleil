@@ -1,0 +1,211 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+umask 077
+
+readonly BACKUP_LIB="${APPWRITE_BACKUP_LIB:-/usr/local/lib/appwrite-backup/common.sh}"
+[[ -r "$BACKUP_LIB" ]] || { echo "ERROR: Missing backup library: $BACKUP_LIB" >&2; exit 1; }
+# shellcheck source=../lib/common.sh
+source "$BACKUP_LIB"
+
+run_repository_check=0
+
+if [[ "${1:-}" == '--check-repository' ]]; then
+  run_repository_check=1
+elif [[ $# -ne 0 ]]; then
+  echo "Usage: $0 [--check-repository]" >&2
+  exit 2
+fi
+
+backup_require_root
+backup_require_command docker
+backup_require_command python3
+backup_require_command systemctl
+backup_load_config
+backup_load_restic_env
+
+failures=0
+
+check_timer() {
+  local timer="$1"
+
+  if systemctl is-enabled --quiet "$timer" && systemctl is-active --quiet "$timer"; then
+    echo "OK timer: $timer"
+  else
+    echo "ERROR timer: $timer is not both enabled and active" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+check_container() {
+  local container="$1"
+
+  if backup_container_running "$container"; then
+    echo "OK container: $container"
+  else
+    echo "ERROR container: $container is not running" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+check_mode() {
+  local path="$1"
+  local expected="$2"
+  local actual
+
+  actual="$(stat -c '%a' "$path" 2>/dev/null || true)"
+
+  if [[ "$actual" == "$expected" ]]; then
+    echo "OK permissions: $path ($actual)"
+  else
+    echo "ERROR permissions: $path is ${actual:-missing}, expected $expected" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+check_owner() {
+  local path="$1"
+  local actual
+
+  actual="$(stat -c '%U:%G' "$path" 2>/dev/null || true)"
+
+  if [[ "$actual" == 'root:root' ]]; then
+    echo "OK ownership: $path ($actual)"
+  else
+    echo "ERROR ownership: $path is ${actual:-missing}, expected root:root" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+check_snapshot_age() {
+  local tag="$1"
+  local maximum_hours="$2"
+  local label="$3"
+  local snapshot_json
+  local snapshot_epoch
+  local now_epoch
+  local age_hours
+
+  if ! snapshot_json="$("$RESTIC_BIN" snapshots --host "$RESTIC_HOST" --tag "$tag" --latest 1 --json)"; then
+    echo "ERROR snapshot age: unable to read $label snapshots" >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  if ! snapshot_epoch="$(python3 -c '
+import datetime
+import json
+import sys
+
+snapshots = json.load(sys.stdin)
+if not snapshots:
+    raise SystemExit(1)
+stamp = snapshots[-1]["time"].replace("Z", "+00:00")
+print(int(datetime.datetime.fromisoformat(stamp).timestamp()))
+' <<<"$snapshot_json")"; then
+    echo "ERROR snapshot age: no $label snapshot found" >&2
+    failures=$((failures + 1))
+    return
+  fi
+
+  now_epoch="$(date +%s)"
+  age_hours=$(((now_epoch - snapshot_epoch) / 3600))
+
+  if ((age_hours <= maximum_hours)); then
+    echo "OK snapshot age: $label is ${age_hours}h old (limit ${maximum_hours}h)"
+  else
+    echo "ERROR snapshot age: $label is ${age_hours}h old (limit ${maximum_hours}h)" >&2
+    failures=$((failures + 1))
+  fi
+}
+
+echo '== Configuration security =='
+check_mode "$(dirname "$BACKUP_CONFIG_FILE")" 700
+check_mode "$BACKUP_CONFIG_FILE" 600
+check_mode "$RESTIC_ENV_FILE" 600
+check_mode "$RESTIC_PASSWORD_FILE" 600
+check_owner "$(dirname "$BACKUP_CONFIG_FILE")"
+check_owner "$BACKUP_CONFIG_FILE"
+check_owner "$RESTIC_ENV_FILE"
+check_owner "$RESTIC_PASSWORD_FILE"
+"$RESTIC_BIN" version
+
+echo
+echo '== Appwrite backup timers =='
+check_timer appwrite-db-backup.timer
+check_timer appwrite-full-backup.timer
+check_timer appwrite-backup-maintenance.timer
+
+systemctl list-timers \
+  appwrite-db-backup.timer \
+  appwrite-full-backup.timer \
+  appwrite-backup-maintenance.timer \
+  --all \
+  --no-pager
+
+echo
+echo '== Required containers =='
+check_container "$APPWRITE_DB_CONTAINER"
+check_container "$APPWRITE_API_CONTAINER"
+
+if docker compose version >/dev/null 2>&1; then
+  echo 'OK command: docker compose'
+else
+  echo 'ERROR command: docker compose is unavailable' >&2
+  failures=$((failures + 1))
+fi
+
+if docker exec "$APPWRITE_DB_CONTAINER" sh -lc 'command -v mariadb-dump >/dev/null 2>&1'; then
+  echo "OK command in container: mariadb-dump ($APPWRITE_DB_CONTAINER)"
+else
+  echo "ERROR command in container: mariadb-dump is unavailable ($APPWRITE_DB_CONTAINER)" >&2
+  failures=$((failures + 1))
+fi
+
+if [[ -f "$APPWRITE_COMPOSE_FILE" ]]; then
+  echo "OK compose file: $APPWRITE_COMPOSE_FILE"
+else
+  echo "ERROR compose file not found: $APPWRITE_COMPOSE_FILE" >&2
+  failures=$((failures + 1))
+fi
+
+echo
+echo '== Failed backup units =='
+failed_units="$(systemctl --failed --no-legend --plain 2>/dev/null | grep -E 'appwrite-(db|full)-backup|appwrite-backup-maintenance' || true)"
+
+if [[ -n "$failed_units" ]]; then
+  echo "$failed_units" >&2
+  failures=$((failures + 1))
+else
+  echo 'OK: no failed backup units'
+fi
+
+echo
+echo '== Latest MariaDB snapshots =='
+check_snapshot_age "$DB_SNAPSHOT_TAG" "$DB_MAX_AGE_HOURS" 'MariaDB backup'
+if ! "$RESTIC_BIN" snapshots --host "$RESTIC_HOST" --tag "$DB_SNAPSHOT_TAG" --latest 3; then
+  failures=$((failures + 1))
+fi
+
+echo
+echo '== Latest full snapshots =='
+check_snapshot_age "$FULL_SNAPSHOT_TAG" "$FULL_MAX_AGE_HOURS" 'full backup'
+if ! "$RESTIC_BIN" snapshots --host "$RESTIC_HOST" --tag "$FULL_SNAPSHOT_TAG" --latest 3; then
+  failures=$((failures + 1))
+fi
+
+if [[ "$run_repository_check" == '1' ]]; then
+  echo
+  echo '== Restic repository check =='
+  if ! "$RESTIC_BIN" check; then
+    failures=$((failures + 1))
+  fi
+fi
+
+if [[ "$failures" -ne 0 ]]; then
+  echo "Backup status completed with $failures failure(s)." >&2
+  exit 1
+fi
+
+echo
+echo 'Backup status: OK'

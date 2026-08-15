@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+set -Eeuo pipefail
+umask 077
+
+readonly BACKUP_LIB="${APPWRITE_BACKUP_LIB:-/usr/local/lib/appwrite-backup/common.sh}"
+[[ -r "$BACKUP_LIB" ]] || { echo "ERROR: Missing backup library: $BACKUP_LIB" >&2; exit 1; }
+# shellcheck source=../lib/common.sh
+source "$BACKUP_LIB"
+
+backup_require_root
+backup_require_command docker
+backup_require_command tar
+backup_load_config
+backup_load_restic_env
+backup_acquire_lock
+
+docker compose version >/dev/null 2>&1 || backup_die 'docker compose is unavailable.'
+
+readonly VOLUME_ROOT='/var/lib/docker/volumes'
+readonly FULL_STAGING_DIR="$BACKUP_STAGING_ROOT/full"
+readonly DB_DUMP="$FULL_STAGING_DIR/all-databases.sql"
+readonly VOLUME_ARCHIVE="$FULL_STAGING_DIR/appwrite-volumes.tar"
+readonly CONFIG_ARCHIVE="$FULL_STAGING_DIR/coolify-appwrite-config.tar"
+
+[[ -f "$APPWRITE_COMPOSE_FILE" ]] || backup_die "Compose file not found: $APPWRITE_COMPOSE_FILE"
+
+install -d -o root -g root -m 0700 "$FULL_STAGING_DIR"
+rm -f -- "$DB_DUMP" "$VOLUME_ARCHIVE" "$CONFIG_ARCHIVE"
+
+stack_stopped=0
+
+cleanup() {
+  exit_code=$?
+  trap - EXIT INT TERM
+
+  if [[ "$stack_stopped" == '1' ]]; then
+    echo 'Attempting to restart Appwrite after an interrupted backup.'
+    if ! backup_compose start; then
+      echo 'ERROR: Appwrite restart failed.' >&2
+      exit_code=1
+    fi
+  fi
+
+  rm -f -- "$DB_DUMP" "$VOLUME_ARCHIVE" "$CONFIG_ARCHIVE"
+  exit "$exit_code"
+}
+
+trap cleanup EXIT INT TERM
+
+backup_container_running "$APPWRITE_DB_CONTAINER" || backup_die "MariaDB container is not running: $APPWRITE_DB_CONTAINER"
+
+echo 'Creating logical MariaDB dump.'
+
+docker exec "$APPWRITE_DB_CONTAINER" sh -lc \
+  'exec mariadb-dump \
+    --all-databases \
+    --add-drop-database \
+    --single-transaction \
+    --routines \
+    --triggers \
+    --events \
+    -uroot \
+    -p"$MYSQL_ROOT_PASSWORD"' \
+  > "$DB_DUMP"
+
+[[ -s "$DB_DUMP" ]] || backup_die 'MariaDB dump is empty.'
+
+read -r -a volume_suffixes <<<"$APPWRITE_VOLUME_SUFFIXES"
+volume_paths=()
+
+for suffix in "${volume_suffixes[@]}"; do
+  [[ "$suffix" =~ ^[a-zA-Z0-9_.-]+$ ]] || backup_die "Unsupported volume suffix: $suffix"
+  volume_path="${APPWRITE_VOLUME_PREFIX}_appwrite-${suffix}/_data"
+  [[ -d "$VOLUME_ROOT/$volume_path" ]] || backup_die "Appwrite volume not found: $volume_path"
+  volume_paths+=("$volume_path")
+done
+
+echo 'Stopping Appwrite briefly for a consistent volume snapshot.'
+stack_stopped=1
+backup_compose stop --timeout 30
+
+tar \
+  --numeric-owner \
+  --acls \
+  --xattrs \
+  --xattrs-include='*' \
+  -cpf "$VOLUME_ARCHIVE" \
+  -C "$VOLUME_ROOT" \
+  "${volume_paths[@]}"
+
+tar \
+  --numeric-owner \
+  --acls \
+  --xattrs \
+  --xattrs-include='*' \
+  -cpf "$CONFIG_ARCHIVE" \
+  -C "$(dirname "$APPWRITE_COMPOSE_DIR")" \
+  "$(basename "$APPWRITE_COMPOSE_DIR")"
+
+echo 'Local snapshot completed. Restarting Appwrite.'
+backup_compose start
+stack_stopped=0
+
+echo 'Uploading the full snapshot to Backblaze B2.'
+
+"$RESTIC_BIN" backup \
+  "$FULL_STAGING_DIR" \
+  --tag "$FULL_SNAPSHOT_TAG" \
+  --host "$RESTIC_HOST"
+
+health=''
+
+for ((attempt = 1; attempt <= 40; attempt++)); do
+  health="$(backup_appwrite_health)"
+
+  if [[ "$health" == 'healthy' || "$health" == 'running' ]]; then
+    break
+  fi
+
+  sleep 3
+done
+
+if [[ "$health" != 'healthy' && "$health" != 'running' ]]; then
+  backup_die "Appwrite did not recover successfully. Current state: ${health:-unknown}"
+fi
+
+echo 'Weekly Appwrite full backup completed successfully.'

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run the lightweight daily Appwrite MariaDB backup
+
+[Timer]
+OnCalendar=*-*-* 18:30:00 UTC
+RandomizedDelaySec=5m
+AccuracySec=1m
+Persistent=true
+Unit=appwrite-db-backup.service
+
+[Install]
+WantedBy=timers.target

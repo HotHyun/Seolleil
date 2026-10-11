@@ -1,19 +1,26 @@
 import { UPCOMING_SEASON } from "@/lib/constants";
 import type { SeasonResearchRecord } from "@/lib/types";
 
-const checkedAt = "2026-08-11";
-const nextCheckAfter = "2026-09-01";
+const checkedAt = "2026-10-11";
+const nextCheckAfter = "2026-11-01";
 
 export const seasonResearchRecords: SeasonResearchRecord[] = [
   {
     resortId: "high1",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "하이원리조트 스키 이용요금", url: "https://www.high1.com/ski/contents.do?key=750" }],
+    status: "preliminary",
+    sources: [
+      { name: "하이원리조트 스키 이용요금", url: "https://www.high1.com/ski/contents.do?key=750" },
+      { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 이용요금 화면의 3·4·5·7시간권과 종일권 가격이 25/26과 동일하며 26/27 시즌 표기나 신규 공지가 없습니다."
+    note: "26/27 X6+ 통합 시즌패스 판매는 확인했지만, 공식 일일 리프트 요금은 아직 없습니다. 시즌패스는 일일권 가격으로 변환하지 않았습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+    ]
   },
   {
     resortId: "high1",
@@ -43,7 +50,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     sources: [{ name: "비발디파크 스키&보드 공지", url: "https://www.sonohotelsresorts.com/skiboard/notice" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 스키&보드 공지 목록에 26/27 일일 리프트권 또는 시즌패스 가격 공지가 없습니다."
+    note: "공식 요금 페이지의 리프트 요금은 준비 중이고 운영 정보는 25/26 기간입니다. 26/27 일일권·시즌패스 가격 공지는 확인되지 않았습니다."
   },
   {
     resortId: "vivaldi",
@@ -72,11 +79,18 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "yongpyong",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "모나용평 리프트&렌탈요금", url: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do" }],
+    status: "preliminary",
+    sources: [
+      { name: "모나용평 리프트&렌탈요금", url: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do" },
+      { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 페이지가 여전히 25/26 시즌 리프트 요금으로 표시되어 26/27 규칙을 생성하지 않았습니다."
+    note: "공식 페이지는 26/27 일일 요금을 추후 공지한다고 표시하며 25/26 요금만 제공합니다. X6+ 시즌패스는 판매 공지가 확인됐지만 일일권 가격으로 변환하지 않았습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+    ]
   },
   {
     resortId: "yongpyong",
@@ -104,17 +118,17 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "lift",
     status: "preliminary",
     sources: [
-      { name: "휘닉스 26/27 시즌패스 슈퍼 얼리버드", url: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047000" },
+      { name: "휘닉스 26/27 시즌패스 판매 안내", url: "https://phoenixhnr.co.kr/page/board/event/190000047134" },
       { name: "휘닉스 26/27 스키학교 운영 공고", url: "https://phoenixhnr.co.kr/page/customer/notice/14488" }
     ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "시즌패스와 동계 운영 준비 일정은 공식 발표됐지만 트립 계산에 필요한 일일 4시간·7시간권 가격은 아직 없습니다.",
+    note: "26/27 시즌패스 2차 판매와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 일일 리프트 가격표는 아직 없습니다. 시즌패스 가격·혜택은 일일권 가격으로 변환하지 않았습니다.",
     announcedFacts: [
-      { label: "BASIC PASS", value: "549,000원" },
-      { label: "얼리버드 판매", value: "2026-07-23 ~ 07-29" },
-      { label: "폐장 예정", value: "2027-03-14" },
-      { label: "스키학교 운영 계약 기간", value: "2026-11-20 ~ 2027-03-14" }
+      { label: "BASIC PASS", value: "1차 549,000원 · 2차 599,000원" },
+      { label: "판매 기간", value: "1차 2026-08-27 ~ 09-30 · 2차 2026-10-01 ~ 11-30" },
+      { label: "리프트 혜택", value: "7시간권 2매 포함" },
+      { label: "운영 기간", value: "개장일 ~ 2027-03-14 예정" }
     ]
   },
   {
@@ -145,11 +159,19 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "konjiam",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "곤지암리조트 25/26 얼리버드 리프트권", url: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603" }],
+    status: "preliminary",
+    sources: [
+      { name: "곤지암리조트 공지사항", url: "https://reservation.konjiamresort.co.kr/view/customerNotice.do" },
+      { name: "NOL 26/27 곤지암 시간권 판매", url: "https://leisure-web.yanolja.com/leisure/10365890" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 판매 공지는 25/26 시즌 4·6시간권만 안내하며 26/27 일일 리프트권 또는 시즌권 가격은 게시되지 않았습니다."
+    note: "26/27 시즌패스와 20·30·40시간 누적 시간권 판매는 확인했습니다. 이는 일반 방문용 2·4·6시간 일일권과 상품 구조가 달라 가격 규칙에는 반영하지 않았습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "선착순 한정 판매" },
+      { label: "누적 시간권", value: "20시간 330,000원 · 30시간 430,000원 · 40시간 490,000원" },
+      { label: "이용 기준", value: "구매 총 시간에서 2·4·6시간 단위 차감" }
+    ]
   },
   {
     resortId: "konjiam",
@@ -178,11 +200,18 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "jisan",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "지산리조트 리프트·렌탈 종합요금", url: "https://www.jisanresort.co.kr/w/ski/use/rental.asp" }],
+    status: "preliminary",
+    sources: [
+      { name: "지산리조트 리프트·렌탈 종합요금", url: "https://www.jisanresort.co.kr/w/ski/use/rental.asp" },
+      { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 표는 명시적으로 25/26 시즌 2·3·4·6시간 리프트 요금이며 26/27 가격표는 아직 없습니다."
+    note: "공식 요금표는 25/26으로 표시됩니다. 26/27 X6+ 통합 시즌패스 판매는 확인했지만 일일 리프트 요금은 아직 없습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+    ]
   },
   {
     resortId: "jisan",
@@ -211,11 +240,18 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "elysian",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "엘리시안 강촌 스키 이용안내", url: "https://www.elysian.co.kr/about-gangchon/ski" }],
+    status: "preliminary",
+    sources: [
+      { name: "엘리시안 강촌 스키 이용안내", url: "https://www.elysian.co.kr/about-gangchon/ski" },
+      { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 화면의 운영 기간과 성수기 구간이 2025년 12월~2026년 3월로 남아 있어 26/27 SMART 리프트 요금은 미발표 상태입니다."
+    note: "공식 이용안내는 25/26 운영기간·요금 기준입니다. 26/27 X6+ 시즌패스는 판매 공지가 확인됐지만 SMART 일일 리프트 요금은 아직 없습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+    ]
   },
   {
     resortId: "elysian",
@@ -241,11 +277,19 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "wellihilli",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "웰리힐리파크 스노우파크", url: "https://www.wellihillipark.com/snowpark" }],
+    status: "preliminary",
+    sources: [
+      { name: "웰리힐리파크 공지사항", url: "https://www.wellihillipark.com/" },
+      { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 사이트는 여름 운영과 스노우파크 휴장을 안내하고 있으며 26/27 일일 리프트권 또는 시즌권 가격은 공개하지 않았습니다."
+    note: "26/27 X6+ 시즌패스 및 리조트 회원용 시즌권 판매는 공지됐지만 일반 고객용 일일 리프트 가격은 아직 없습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "1차 판매", value: "2026-09-09 ~ 09-27" },
+      { label: "리조트 단독 시즌권", value: "회원 대상 판매 공지 확인" }
+    ]
   },
   {
     resortId: "wellihilli",
@@ -275,13 +319,16 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     targetSeason: UPCOMING_SEASON,
     category: "lift",
     status: "preliminary",
-    sources: [{ name: "알펜시아 공식 시즌권 안내", url: "https://m.alpensia.com/ski/use-season.do" }],
+    sources: [
+      { name: "알펜시아 공식 시즌권 안내", url: "https://m.alpensia.com/ski/use-season.do" },
+      { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 시즌권 데이터에 26/27 시즌 준비중 상태가 표시됐지만 판매 가격과 일일 리프트권 가격은 아직 없습니다.",
+    note: "26/27 X6+ 시즌패스 판매는 확인했지만, 알펜시아 단독 시즌권 가격과 일일 리프트 요금은 공식 페이지에 게시되지 않았습니다.",
     announcedFacts: [
-      { label: "시즌권 상태", value: "26/27 시즌 준비중" },
-      { label: "판매 가격", value: "미게시" }
+      { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
     ]
   },
   {
@@ -311,11 +358,15 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "oakvalley",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "오크밸리 공식 공지", url: "https://oakvalley.co.kr/customer-service/notice" }],
+    status: "preliminary",
+    sources: [{ name: "오크밸리 26/27 시즌권 판매 공지", url: "https://oakvalley.co.kr/customer-service/notice/1393866" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 공지 목록에 26/27 시즌권 또는 일일 리프트권 판매 공지가 없습니다."
+    note: "26/27 스키·눈놀이동산 시즌권 1차 판매 공지는 확인했지만, 일반 방문용 일일 리프트권 가격표는 아직 없습니다.",
+    announcedFacts: [
+      { label: "시즌권", value: "26/27 1차 판매 공지 · 2026-09-09" },
+      { label: "일일 리프트 요금", value: "미게시" }
+    ]
   },
   {
     resortId: "oakvalley",
@@ -344,11 +395,18 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "o2",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "오투리조트 스키 리프트 요금", url: "https://www.o2resort.com/GDE/totalPrice_skiLift.jsp" }],
+    status: "preliminary",
+    sources: [
+      { name: "오투리조트 스키 리프트 요금", url: "https://www.o2resort.com/GDE/totalPrice_skiLift.jsp" },
+      { name: "무주 덕유산리조트 26/27 시즌권 안내", url: "https://www.mdysresort.com/ski/buy_season_pass04.asp" }
+    ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 리프트 요금표에 시즌 유효 기간이 없고 26/27 표기도 없어 다음 시즌 가격으로 등록하지 않았습니다."
+    note: "오투 단독 리프트 요금표에는 시즌 표기가 없습니다. 무주·오투 통합 시즌권 판매는 확인했지만 26/27 일일권 가격으로 보지 않았습니다.",
+    announcedFacts: [
+      { label: "26/27 시즌패스", value: "무주·오투 통합권 I·II 판매" },
+      { label: "이용 기간", value: "2026년 개장일 ~ 2027년 폐장일" }
+    ]
   },
   {
     resortId: "o2",
@@ -377,14 +435,19 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "muju",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
+    status: "preliminary",
     sources: [
       { name: "무주 덕유산리조트 스키 요금안내", url: "https://www.mdysresort.com/ski/charge.asp" },
       { name: "무주 덕유산리조트 시즌권", url: "https://www.mdysresort.com/ski/buy_season_pass04.asp" }
     ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 시즌권 화면은 25/26 판매요금과 2026년 폐장일까지의 이용 기간만 표시하며 26/27 일일권·시즌권은 미발표입니다."
+    note: "26/27 무주 통합 시즌권과 무주·오투 통합 시즌권 판매 및 2차 할인 가격표를 확인했습니다. 일일 리프트 요금은 26/27로 갱신되지 않았습니다.",
+    announcedFacts: [
+      { label: "시즌패스", value: "무주 통합권 I·II 및 무주·오투 통합권 I·II" },
+      { label: "이용 기간", value: "2026년 개장일 ~ 2027년 폐장일" },
+      { label: "2차 할인", value: "공식 시즌권 가격표 게시" }
+    ]
   },
   {
     resortId: "muju",

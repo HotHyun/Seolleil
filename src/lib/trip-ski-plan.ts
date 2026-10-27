@@ -1,4 +1,5 @@
-import type { RentalPriceRule, TimeSlot, TransportType } from "@/lib/types";
+import type { LegacyTransportType, RentalPriceRule, TimeSlot } from "@/lib/types";
+import { normalizeTransportType } from "@/lib/transport";
 
 export const SKI_PLAN_VERSION = 2 as const;
 export const MAX_TRIP_DAYS = 14;
@@ -24,7 +25,7 @@ export type LodgingNightPlan = {
 export type TransportLegPlan = {
   direction: "outbound" | "return";
   date: string;
-  transportType: TransportType;
+  transportType: LegacyTransportType;
   shuttleRouteId: string | null;
   shuttleStopId: string | null;
 };
@@ -44,7 +45,7 @@ export type LegacySkiPlanInput = {
   selectedLiftTicketOptionId?: string | null;
   rentalOptions?: RentalPriceRule[];
   endDate?: Date;
-  transportType?: TransportType;
+  transportType?: LegacyTransportType;
   shuttleRouteId?: string | null;
   shuttleStopId?: string | null;
   lodgingName?: string | null;
@@ -121,14 +122,14 @@ export function createLegacySkiPlan(input: LegacySkiPlanInput): TripSkiPlan {
       ? null
       : Math.floor(totalLodgingCost / nightDates.length) + (index === 0 ? totalLodgingCost % nightDates.length : 0)
   }));
-  const transportType = input.transportType ?? "car";
+  const transportType = normalizeTransportType(input.transportType);
   return {
     version: SKI_PLAN_VERSION,
     days: [day],
     lodgingNights,
     transportLegs: [
-      { direction: "outbound", date: startDate, transportType, shuttleRouteId: input.shuttleRouteId ?? null, shuttleStopId: input.shuttleStopId ?? null },
-      { direction: "return", date: endDate, transportType, shuttleRouteId: input.shuttleRouteId ?? null, shuttleStopId: input.shuttleStopId ?? null }
+      { direction: "outbound", date: startDate, transportType, shuttleRouteId: transportType === "public_transit" ? input.shuttleRouteId ?? null : null, shuttleStopId: transportType === "public_transit" ? input.shuttleStopId ?? null : null },
+      { direction: "return", date: endDate, transportType, shuttleRouteId: transportType === "public_transit" ? input.shuttleRouteId ?? null : null, shuttleStopId: transportType === "public_transit" ? input.shuttleStopId ?? null : null }
     ]
   };
 }
@@ -186,12 +187,13 @@ export function parseTripSkiPlan(value: unknown, fallback: LegacySkiPlanInput): 
     const raw = rawLegs.find(candidate => candidate && typeof candidate === "object" && (candidate as Record<string, unknown>).direction === direction) as Record<string, unknown> | undefined;
     const fallbackLeg = fallbackPlan.transportLegs.find(leg => leg.direction === direction)!;
     if (!raw) return fallbackLeg;
+    const transportType = normalizeTransportType(raw.transportType, normalizeTransportType(fallbackLeg.transportType));
     return {
       direction,
       date: direction === "outbound" ? toDateOnly(fallback.visitDate) : toDateOnly(fallback.endDate ?? fallback.visitDate),
-      transportType: isTransportType(raw.transportType) ? raw.transportType : fallbackLeg.transportType,
-      shuttleRouteId: nullableId(raw.shuttleRouteId),
-      shuttleStopId: nullableId(raw.shuttleStopId)
+      transportType,
+      shuttleRouteId: transportType === "public_transit" ? nullableId(raw.shuttleRouteId) : null,
+      shuttleStopId: transportType === "public_transit" ? nullableId(raw.shuttleStopId) : null
     } satisfies TransportLegPlan;
   });
 
@@ -242,7 +244,7 @@ export function lodgingPlanIsComplete(plan: TripSkiPlan) {
 }
 
 export function transportPlanIsComplete(plan: TripSkiPlan) {
-  return plan.transportLegs.length === 2 && plan.transportLegs.every(leg => leg.transportType !== "shuttle" || Boolean(leg.shuttleRouteId && leg.shuttleStopId));
+  return plan.transportLegs.length === 2 && plan.transportLegs.some(leg => leg.direction === "outbound") && plan.transportLegs.some(leg => leg.direction === "return");
 }
 
 export function rentalOptionIds(day: SkiDayPlan) {
@@ -302,10 +304,6 @@ function nullableCost(value: unknown) {
   if (value === null || value === undefined || value === "") return null;
   const amount = Math.round(Number(value));
   return Number.isFinite(amount) && amount >= 0 && amount <= 100_000_000 ? amount : null;
-}
-
-function isTransportType(value: unknown): value is TransportType {
-  return value === "car" || value === "shuttle" || value === "bus";
 }
 
 function isAccessory(itemType: RentalPriceRule["itemType"]) {

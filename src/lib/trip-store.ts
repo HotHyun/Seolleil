@@ -3,6 +3,7 @@ import { decryptShareToken, encryptShareToken } from "@/lib/token-vault";
 import type { RideType, SkillLevel, TransportType, TripDuration } from "@/lib/types";
 import { EMPTY_TRIP_BUDGET, parseTripBudget, type TripBudgetState } from "@/lib/trip-budget";
 import { parseTripSkiPlan, type TripSkiPlan } from "@/lib/trip-ski-plan";
+import { normalizeTransportType } from "@/lib/transport";
 import { rentalPriceRules } from "@/data/prices";
 
 export type TripStatus = "planning" | "ready" | "completed" | "archived" | "deleted";
@@ -205,7 +206,7 @@ function mapTrip(document: FirebaseDocument<TripDocument>, tasks: TripTaskRecord
     peopleCount: document.peopleCount,
     skillLevel: document.skillLevel,
     rideType: document.rideType,
-    transportType: document.transportType,
+    transportType: normalizeTransportType(document.transportType),
     shuttleRouteId: document.shuttleRouteId ?? null,
     shuttleStopId: document.shuttleStopId ?? null,
     tripDuration: document.tripDuration,
@@ -232,7 +233,7 @@ function mapTrip(document: FirebaseDocument<TripDocument>, tasks: TripTaskRecord
       selectedRentalOptionId: document.selectedRentalOptionId,
       selectedLiftTicketOptionId: document.selectedLiftTicketOptionId,
       rentalOptions: rentalPriceRules,
-      transportType: document.transportType,
+      transportType: normalizeTransportType(document.transportType),
       shuttleRouteId: document.shuttleRouteId,
       shuttleStopId: document.shuttleStopId,
       lodgingName: document.lodgingName,

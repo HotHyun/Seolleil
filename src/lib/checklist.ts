@@ -1,6 +1,7 @@
 import { rentalPriceRules } from "@/data/prices";
 import { getRentalShopsForResort, getResort } from "@/data/resorts";
 import type { TripInput } from "@/lib/types";
+import { normalizeTransportType } from "@/lib/transport";
 
 export type DefaultTask = {
   category:
@@ -22,7 +23,7 @@ export function buildDefaultTasks(input: TripInput): DefaultTask[] {
   const needsEquipment = !input.ownsEquipment;
   const needsClothing = !input.ownsClothing;
   const overnight = input.tripDuration === "overnight";
-  const car = input.transportType === "car";
+  const car = normalizeTransportType(input.transportType) === "car";
   const tasks: DefaultTask[] = [
     task("lift_ticket", "리프트권 확인", "needs_check", -3, 10),
     task("lift_ticket", "리프트권 구매/예매", "planned", -2, 20),
@@ -33,7 +34,7 @@ export function buildDefaultTasks(input: TripInput): DefaultTask[] {
     task("lodging", "숙박 예약", overnight ? "planned" : "not_needed", -7, 70),
     task("transport", "이동 수단 확정", "needs_check", -3, 80),
     task("transport", "자차 경로/주차 확인", car ? "needs_check" : "not_needed", -1, 90),
-    task("transport", "셔틀/버스 예약", car ? "not_needed" : "planned", -3, 100),
+    task("transport", "대중교통편 확인/예약", car ? "not_needed" : "planned", -3, 100),
     task("transport", "출발 시간 확인", "needs_check", -1, 110),
     task("operation_status", "공식 운영현황 확인", "needs_check", -1, 120),
     task("operation_status", "슬로프/리프트 운영 확인", "needs_check", -1, 130),
@@ -98,5 +99,6 @@ export function externalUrlForTask({
   }
   if (category === "operation_status") return resort?.slopeStatusUrl ?? resort?.officialUrl;
   if (category === "transport" && title.includes("경로")) return resort?.mapLinks.naver ?? resort?.mapLinks.kakao;
+  if (category === "transport" && title.includes("대중교통")) return resort?.shuttleUrl ?? resort?.officialUrl;
   return undefined;
 }

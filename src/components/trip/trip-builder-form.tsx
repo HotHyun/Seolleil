@@ -11,6 +11,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { departureLocations } from "@/data/resorts";
 import { priorityLabels, timeSlotLabels } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { normalizeTransportType } from "@/lib/transport";
 import { currentPathWithSearch, readPendingTripDraft } from "@/lib/pending-trip-draft";
 import type { SkiResort } from "@/lib/types";
 
@@ -216,15 +217,17 @@ export function TripBuilderForm({
                 <div><DatePicker name="endDate" required min={visitDate || draftValue("visitDate", "")} value={endDate || draftValue("endDate", "")} onValueChange={setEndDate} ariaLabel="여행 출발 날짜" /><p className="mt-1 text-xs leading-5 text-muted-foreground">트립을 만든 뒤 실제 스키를 탈 날짜와 날짜별 이용 시간을 정할 수 있어요.</p></div>
               </Field> : <input type="hidden" name="endDate" value={visitDate || draftValue("visitDate", "")} />}
               <Field label="교통수단">
-                <SelectField
-                  name="transportType"
-                  defaultValue={draftValue("transportType", "car")}
-                  options={[
-                    { value: "car", label: "자차" },
-                    { value: "shuttle", label: "셔틀" },
-                    { value: "bus", label: "버스" }
-                  ]}
-                />
+                <div>
+                  <SelectField
+                    name="transportType"
+                    defaultValue={normalizeTransportType(draftValue("transportType", "car"))}
+                    options={[
+                      { value: "car", label: "자차" },
+                      { value: "public_transit", label: "대중교통" }
+                    ]}
+                  />
+                  <p className="mt-1 text-xs leading-5 text-muted-foreground">버스·기차와 스키장 제휴 셔틀을 포함해요.</p>
+                </div>
               </Field>
             </StepPanel>
 

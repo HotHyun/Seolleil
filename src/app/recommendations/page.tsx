@@ -13,6 +13,7 @@ import { getRecommendations } from "@/lib/recommendation";
 import { optionAppliesToDay } from "@/lib/trip-ski-plan";
 import { departureLocations } from "@/data/departure-locations";
 import { getSession } from "@/lib/session";
+import { normalizeTransportType } from "@/lib/transport";
 import type { CostEstimate, CostItem, PriceConfidence, Priority, RentalPriceRule, RentalShop, SkiResort, TimeSlot, TripDuration, TripInput } from "@/lib/types";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
 
@@ -431,7 +432,7 @@ function parseParams(params: Record<string, string | string[] | undefined>): Tri
     rideType: value("rideType", "ski") as TripInput["rideType"],
     ownsEquipment: value("ownsEquipment", "false") === "true",
     ownsClothing: value("ownsClothing", "false") === "true",
-    transportType: value("transportType", "car") as TripInput["transportType"],
+    transportType: normalizeTransportType(value("transportType", "car")),
     budgetMin: Number(value("budgetMin", "0")) || undefined,
     budgetMax: Number(value("budgetMax", "0")) || undefined,
     priorities: [value("priority1", "beginner"), value("priority2", "close"), value("priority3", "rental")] as Priority[],

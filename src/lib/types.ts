@@ -7,7 +7,8 @@ export type OperationStatus =
 
 export type SkillLevel = "first_time" | "beginner" | "intermediate" | "advanced";
 export type RideType = "ski" | "snowboard";
-export type TransportType = "car" | "shuttle" | "bus";
+export type TransportType = "car" | "public_transit";
+export type LegacyTransportType = TransportType | "shuttle" | "bus";
 export type ShuttleDataStatus =
   | "confirmed"
   | "route_only"
@@ -264,7 +265,7 @@ export type TripInput = {
   rideType: RideType;
   ownsEquipment: boolean;
   ownsClothing: boolean;
-  transportType: TransportType;
+  transportType: LegacyTransportType;
   budgetMin?: number;
   budgetMax?: number;
   priorities: Priority[];

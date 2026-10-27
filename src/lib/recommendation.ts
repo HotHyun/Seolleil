@@ -7,6 +7,7 @@ import type {
   SkiResort,
   TripInput
 } from "@/lib/types";
+import { normalizeTransportType } from "@/lib/transport";
 
 const priorityWeight = [3, 2, 1];
 
@@ -37,9 +38,10 @@ function priorityScore(resort: SkiResort, priority: Priority, costRep: number, a
 }
 
 function hardFilter(resort: SkiResort, input: TripInput) {
+  const transportType = normalizeTransportType(input.transportType);
   if (resort.operationStatus !== "operating") return false;
   if (input.priorities.includes("night") && !resort.nightSkiAvailable) return false;
-  if ((input.transportType === "shuttle" || input.transportType === "bus") && resort.transportScore < 45) {
+  if (transportType === "public_transit" && resort.transportScore < 45) {
     return false;
   }
   return true;
@@ -114,11 +116,12 @@ export function getRecommendations(input: TripInput): Recommendation[] {
 }
 
 export function buildRequiredTasks(input: TripInput) {
+  const transportType = normalizeTransportType(input.transportType);
   const tasks = ["리프트권 확인", "공식 운영현황 확인", "날씨 확인"];
   if (!input.ownsEquipment) tasks.push("장비 렌탈 예약");
   if (!input.ownsClothing) tasks.push("의류 렌탈 예약");
-  if (input.transportType === "car") tasks.push("자차 경로/주차 확인");
-  if (input.transportType !== "car") tasks.push("셔틀/버스 예약");
+  if (transportType === "car") tasks.push("자차 경로/주차 확인");
+  if (transportType === "public_transit") tasks.push("대중교통편 확인/예약");
   if (input.tripDuration === "overnight") tasks.push("숙박 예약");
   return tasks;
 }
@@ -181,7 +184,7 @@ export function getCategoryRecommendations(input: TripInput): RecommendationCate
     {
       id: "transport",
       label: "교통 편한 TOP 3",
-      description: "셔틀/버스 접근성과 이동 편의 기준",
+      description: "대중교통 접근성과 이동 편의 기준",
       recommendations: topThree(byTransport)
     }
   ];

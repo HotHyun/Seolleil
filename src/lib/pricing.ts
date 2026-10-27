@@ -14,6 +14,7 @@ import type {
   TripInput
 } from "@/lib/types";
 import { optionAppliesToDay, rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
+import { normalizeTransportType } from "@/lib/transport";
 
 function appendToIndex<T>(index: Map<string, T[]>, key: string, value: T) {
   const values = index.get(key);
@@ -160,7 +161,8 @@ export function liftTicketSavings(option: RentalPriceRule, visitDate: string) {
 }
 
 export function estimateTransportCost(resort: SkiResort, input: TripInput, shuttleRoute?: SkiShuttleRoute): CostItem {
-  if (input.transportType === "shuttle" && shuttleRoute?.fare) {
+  const transportType = normalizeTransportType(input.transportType);
+  if (transportType === "public_transit" && shuttleRoute?.fare) {
     const fare = shuttleRoute.fare;
     const perPerson = fare.roundTripAdult ?? (fare.oneWayAdult !== undefined ? fare.oneWayAdult * 2 : fare.seasonPassAdult);
     if (perPerson !== undefined) {
@@ -168,6 +170,20 @@ export function estimateTransportCost(resort: SkiResort, input: TripInput, shutt
       const isSeasonPass = fare.roundTripAdult === undefined && fare.seasonPassAdult !== undefined;
       return { key: "transport", label: isSeasonPass ? "셔틀 교통시즌권" : fare.type === "free" ? "무료 셔틀" : "셔틀 왕복 비용", representative: total, min: total, max: total, confidence: "confirmed", sourceName: shuttleRoute.operator, sourceUrl: shuttleRoute.sourceUrl, bookingUrl: shuttleRoute.bookingUrl, lastCheckedAt: shuttleRoute.lastCheckedAt, note: fare.note ?? `${shuttleRoute.name} · ${isSeasonPass ? "1인 시즌권" : fare.roundTripAdult !== undefined ? "1인 왕복" : "1인 편도 2회"} 기준` };
     }
+  }
+
+  if (transportType === "public_transit") {
+    const onePerson = 22000;
+    const total = onePerson * input.peopleCount;
+    return {
+      key: "transport",
+      label: "대중교통 예상 비용",
+      representative: total,
+      min: total,
+      max: Math.round(total * 1.15),
+      confidence: "estimated",
+      note: "버스·기차·제휴 셔틀의 실제 요금은 노선과 예약처에서 확인해 주세요."
+    };
   }
 
   const departure = departureLocations.find((location) => location.id === input.departureLocation);
@@ -181,40 +197,27 @@ export function estimateTransportCost(resort: SkiResort, input: TripInput, shutt
     };
   }
 
-  if (input.transportType === "car") {
-    const fuelEfficiency = 11;
-    const fuelPrice = 1700;
-    const toll = distance.km > 120 ? 18000 : distance.km > 80 ? 12000 : 7000;
-    const cost = Math.round(((distance.km * 2) / fuelEfficiency) * fuelPrice + toll);
-    return {
-      key: "transport",
-      label: "자차 예상 교통비",
-      representative: cost,
-      min: Math.round(cost * 0.9),
-      max: Math.round(cost * 1.15),
-      confidence: "estimated",
-      note: "왕복거리, 평균 연비, 유가, 통행료 추정 기준"
-    };
-  }
-
-  const shuttle = input.transportType === "shuttle";
-  const onePerson = shuttle ? 28000 : 22000;
-  const total = onePerson * input.peopleCount;
+  const fuelEfficiency = 11;
+  const fuelPrice = 1700;
+  const toll = distance.km > 120 ? 18000 : distance.km > 80 ? 12000 : 7000;
+  const cost = Math.round(((distance.km * 2) / fuelEfficiency) * fuelPrice + toll);
   return {
     key: "transport",
-    label: shuttle ? "셔틀 예상 비용" : "버스 예상 비용",
-    representative: total,
-    min: total,
-    max: Math.round(total * 1.15),
+    label: "자차 예상 교통비",
+    representative: cost,
+    min: Math.round(cost * 0.9),
+    max: Math.round(cost * 1.15),
     confidence: "estimated",
-    note: "정확한 노선 가격은 예약처 확인 필요"
+    note: "왕복거리, 평균 연비, 유가, 통행료 추정 기준"
   };
 }
 
 export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, plan: TripSkiPlan): CostItem {
   const [outbound, returning] = plan.transportLegs;
   if (!outbound || !returning) return estimateTransportCost(resort, input);
-  if (outbound.transportType === "shuttle" && returning.transportType === "shuttle") {
+  const outboundType = normalizeTransportType(outbound.transportType);
+  const returningType = normalizeTransportType(returning.transportType);
+  if (outboundType === "public_transit" && returningType === "public_transit") {
     const routes = getSkiShuttleRoutes(resort.id);
     const outboundRoute = routes.find(item => item.id === outbound.shuttleRouteId);
     const returnRoute = routes.find(item => item.id === returning.shuttleRouteId);
@@ -233,8 +236,8 @@ export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, p
       return { key: "transport", label: roundTripAdult === 0 ? "무료 셔틀" : "셔틀 왕복 비용", representative: total, min: total, max: total, confidence: "confirmed", sourceName: outboundRoute.operator, sourceUrl: outboundRoute.sourceUrl, bookingUrl: outboundRoute.bookingUrl, lastCheckedAt: outboundRoute.lastCheckedAt, note: `${outboundRoute.operator} 동일 왕복 상품으로 선택한 가는 편·오는 편 이용` };
     }
   }
-  if (outbound.transportType === returning.transportType) {
-    const route = outbound.transportType === "shuttle" && outbound.shuttleRouteId === returning.shuttleRouteId
+  if (outboundType === returningType) {
+    const route = outboundType === "public_transit" && outbound.shuttleRouteId === returning.shuttleRouteId
       ? getSkiShuttleRoutes(resort.id).find(item => item.id === outbound.shuttleRouteId)
       : undefined;
     const sharedStop = route && outbound.shuttleStopId && outbound.shuttleStopId === returning.shuttleStopId
@@ -244,9 +247,9 @@ export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, p
       const total = sharedStop.roundTripFareAdult * input.peopleCount;
       return { key: "transport", label: "셔틀 왕복 비용", representative: total, min: total, max: total, confidence: "confirmed", sourceName: route.operator, sourceUrl: route.sourceUrl, bookingUrl: route.bookingUrl, lastCheckedAt: route.lastCheckedAt, note: `${sharedStop.name} 왕복 기준` };
     }
-    if (outbound.transportType !== "shuttle" || route) {
+    if (outboundType !== "public_transit" || route || (!outbound.shuttleRouteId && !returning.shuttleRouteId)) {
       const hasDifferentPricedStops = Boolean(route && (outbound.shuttleStopId !== returning.shuttleStopId || sharedStop?.oneWayFareAdult !== undefined));
-      if (!hasDifferentPricedStops) return estimateTransportCost(resort, { ...input, transportType: outbound.transportType }, route);
+      if (!hasDifferentPricedStops) return estimateTransportCost(resort, { ...input, transportType: outboundType }, route);
     }
   }
 
@@ -256,7 +259,8 @@ export function estimateTransportPlanCost(resort: SkiResort, input: TripInput, p
 }
 
 function estimateTransportLegCost(resort: SkiResort, input: TripInput, leg: TripSkiPlan["transportLegs"][number]): CostItem {
-  if (leg.transportType === "shuttle" && leg.shuttleRouteId) {
+  const transportType = normalizeTransportType(leg.transportType);
+  if (transportType === "public_transit" && leg.shuttleRouteId) {
     const route = getSkiShuttleRoutes(resort.id).find(item => item.id === leg.shuttleRouteId);
     const fare = route?.fare;
     if (route && fare) {
@@ -268,7 +272,7 @@ function estimateTransportLegCost(resort: SkiResort, input: TripInput, leg: Trip
       }
     }
   }
-  const roundTrip = estimateTransportCost(resort, { ...input, transportType: leg.transportType });
+  const roundTrip = estimateTransportCost(resort, { ...input, transportType });
   const half = (value?: number) => value === undefined ? undefined : Math.round(value / 2);
   return { ...roundTrip, key: `transport:${leg.direction}`, label: `${leg.date} · ${leg.direction === "outbound" ? "가는 길" : "돌아오는 길"}`, representative: half(roundTrip.representative), min: half(roundTrip.min), max: half(roundTrip.max), confidence: "estimated" };
 }

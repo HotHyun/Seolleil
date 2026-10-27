@@ -20,6 +20,7 @@ import { getResort } from "@/data/resorts";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
+import { transportTypeLabel } from "@/lib/transport";
 
 export const metadata: Metadata = {
   robots: {
@@ -61,7 +62,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
                   <CardContent className="space-y-3 text-sm">
                     <ShareInfo icon={<CalendarDays aria-hidden="true" />} label="여행 기간" value={skiPlanDateLabel(trip.visitDate, trip.endDate)} />
                     <ShareInfo icon={<Users aria-hidden="true" />} label="인원" value={`${trip.peopleCount}명`} />
-                    <ShareInfo icon={<MapPin aria-hidden="true" />} label="교통" value={trip.transportType} />
+                    <ShareInfo icon={<MapPin aria-hidden="true" />} label="교통" value={transportTypeLabel(trip.transportType)} />
                   </CardContent>
                 </Card>
                 <ProgressSummary tasks={trip.tasks} />

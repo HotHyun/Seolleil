@@ -27,6 +27,7 @@ import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
+import { transportTypeLabel } from "@/lib/transport";
 
 export const metadata: Metadata = {
   title: "내 트립 상세 | Korean Ski",
@@ -94,7 +95,7 @@ export default async function MyTripDetailPage({
               <div className="grid gap-3 md:grid-cols-3">
                 <Info label="여행 기간" value={skiPlanDateLabel(trip.visitDate, trip.endDate)} />
                 <Info label="인원" value={`${trip.peopleCount}명`} />
-                <Info label="교통" value={trip.transportType} />
+                <Info label="교통" value={transportTypeLabel(trip.transportType)} />
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {resort?.officialUrl ? (

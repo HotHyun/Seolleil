@@ -8,9 +8,9 @@ import { getTripDashboardNextAction } from "@/lib/trip-workspace";
 import type { TripTaskRecord } from "@/lib/trip-store";
 import { lodgingPlanIsComplete, rentalOptionIds, transportPlanIsComplete, type TripSkiPlan } from "@/lib/trip-ski-plan";
 import { timeSlotLabels } from "@/lib/constants";
+import { transportTypeLabel } from "@/lib/transport";
 
 type Trip = { resortId: string; skiPlan: TripSkiPlan; selectedRentalOptionId: string | null; selectedLiftTicketOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; shuttleRouteId: string | null; shuttleStopId: string | null; lodgingName: string | null; lodgingUrl: string | null; tasks: TripTaskRecord[] };
-const transportLabels: Record<string, string> = { car: "자차", shuttle: "스키장 셔틀", bus: "고속·시외버스" };
 
 export function TripDashboard({ trip, basePath, canEdit = true }: { trip: Trip; basePath: string; canEdit?: boolean }) {
   const shops = getRentalShopsForResort(trip.resortId);
@@ -22,7 +22,7 @@ export function TripDashboard({ trip, basePath, canEdit = true }: { trip: Trip; 
   const shuttleRoutes = getSkiShuttleRoutes(trip.resortId);
   const transportSummary = trip.skiPlan.transportLegs.map(leg => {
     const route = shuttleRoutes.find(item => item.id === leg.shuttleRouteId);
-    return `${leg.direction === "outbound" ? "갈 때" : "올 때"} ${route?.name ?? transportLabels[leg.transportType] ?? leg.transportType}`;
+    return `${leg.direction === "outbound" ? "갈 때" : "올 때"} ${route?.name ?? transportTypeLabel(leg.transportType)}`;
   }).join(" · ");
   const firstShuttleRoute = shuttleRoutes.find(route => trip.skiPlan.transportLegs.some(leg => leg.shuttleRouteId === route.id));
   const lodgingNames = [...new Set(trip.skiPlan.lodgingNights.map(night => night.lodgingName).filter((name): name is string => Boolean(name)))];

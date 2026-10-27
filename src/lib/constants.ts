@@ -18,7 +18,7 @@ export const priorityLabels: Record<Priority, string> = {
   cheap: "저렴함",
   beginner: "초보 친화",
   night: "야간 가능",
-  transport: "셔틀/버스",
+  transport: "대중교통 편리",
   facilities: "시설 좋음",
   scale: "규모/코스",
   rental: "렌탈 편의"

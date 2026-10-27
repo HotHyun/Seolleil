@@ -20,10 +20,10 @@ describe("checklist", () => {
     expect(tasks.find((task) => task.title === "자차 경로/주차 확인")?.status).toBe("needs_check");
   });
 
-  it("marks shuttle/bus reservation as planned when transport is not car", () => {
+  it("marks public transit preparation as planned when transport is not car", () => {
     const tasks = buildDefaultTasks(tripInput({ transportType: "shuttle" }));
 
-    expect(tasks.find((task) => task.title === "셔틀/버스 예약")?.status).toBe("planned");
+    expect(tasks.find((task) => task.title === "대중교통편 확인/예약")?.status).toBe("planned");
     expect(tasks.find((task) => task.title === "자차 경로/주차 확인")?.status).toBe("not_needed");
   });
 

@@ -6,6 +6,7 @@ import { rentalOptionIds, tripDayTypeLabel, type TripSkiPlan } from "@/lib/trip-
 import type { RentalPriceRule, RentalShop } from "@/lib/types";
 import type { TripDecisionView } from "@/lib/trip-workspace";
 import { formatCurrency } from "@/lib/utils";
+import { transportTypeLabel } from "@/lib/transport";
 
 type Trip = { resortId: string; peopleCount: number; skiPlan: TripSkiPlan };
 type RentalGroup = { shop: RentalShop; options: RentalPriceRule[] };
@@ -43,12 +44,11 @@ function LodgingPlan({ plan }: { plan: TripSkiPlan }) {
 
 function TransportPlan({ resortId, plan }: { resortId: string; plan: TripSkiPlan }) {
   const routes = getSkiShuttleRoutes(resortId);
-  const labels = { car: "자차", shuttle: "스키장 제휴 셔틀", bus: "고속·시외버스" };
   return <Card><CardHeader><SectionTitle icon={<BusFront aria-hidden="true" />} title="가는 길과 돌아오는 길" description="각 이동 구간에 저장된 조건입니다." /></CardHeader><CardContent className="grid gap-3 sm:grid-cols-2">{plan.transportLegs.map(leg => {
     const route = routes.find(item => item.id === leg.shuttleRouteId);
     const stop = route ? getShuttleStopsForDirection(route, leg.direction).find(item => item.id === leg.shuttleStopId) : undefined;
     const returnService = leg.direction === "return" ? route?.returnService : undefined;
-    return <article key={leg.direction} className="rounded-xl border bg-muted/20 p-4"><p className="text-xs font-black uppercase tracking-wider text-primary">{leg.direction === "outbound" ? "가는 길" : "돌아오는 길"}</p><h2 className="mt-2 font-black">{formatDate(leg.date)}</h2><p className="mt-2 text-sm font-semibold">{route?.name ?? labels[leg.transportType]}</p>{returnService ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{returnService.departureName}{returnService.departureTime ? ` · ${returnService.departureTime} 출발` : " · 출발 시간 재확인"}</p> : null}{stop ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{leg.direction === "outbound" ? "탑승" : "하차"} · {stop.name}{leg.direction === "outbound" && stop.departureTime ? ` · ${stop.departureTime} 출발` : ""}</p> : leg.transportType === "shuttle" ? <p className="mt-1 text-xs text-muted-foreground">노선·{leg.direction === "outbound" ? "탑승지" : "귀가 하차지"} 미정</p> : null}{route?.bookingUrl ? <ExternalButton href={route.bookingUrl}>셔틀 예약 원문</ExternalButton> : null}</article>;
+    return <article key={leg.direction} className="rounded-xl border bg-muted/20 p-4"><p className="text-xs font-black uppercase tracking-wider text-primary">{leg.direction === "outbound" ? "가는 길" : "돌아오는 길"}</p><h2 className="mt-2 font-black">{formatDate(leg.date)}</h2><p className="mt-2 text-sm font-semibold">{route?.name ?? transportTypeLabel(leg.transportType)}</p>{returnService ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{returnService.departureName}{returnService.departureTime ? ` · ${returnService.departureTime} 출발` : " · 출발 시간 재확인"}</p> : null}{stop ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{leg.direction === "outbound" ? "탑승" : "하차"} · {stop.name}{leg.direction === "outbound" && stop.departureTime ? ` · ${stop.departureTime} 출발` : ""}</p> : null}{route?.bookingUrl ? <ExternalButton href={route.bookingUrl}>셔틀 예약 원문</ExternalButton> : null}</article>;
   })}</CardContent></Card>;
 }
 

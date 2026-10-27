@@ -63,8 +63,8 @@ describe("trip ski plan", () => {
       expect.objectContaining({ date: "2026-01-17", lodgingName: "테스트 숙소", cost: 105000 })
     ]);
     expect(plan.transportLegs).toEqual([
-      expect.objectContaining({ direction: "outbound", date: "2026-01-16", transportType: "shuttle", shuttleRouteId: "route-a" }),
-      expect.objectContaining({ direction: "return", date: "2026-01-18", transportType: "shuttle", shuttleRouteId: "route-a" })
+      expect.objectContaining({ direction: "outbound", date: "2026-01-16", transportType: "public_transit", shuttleRouteId: "route-a" }),
+      expect.objectContaining({ direction: "return", date: "2026-01-18", transportType: "public_transit", shuttleRouteId: "route-a" })
     ]);
   });
 
@@ -81,7 +81,7 @@ describe("trip ski plan", () => {
     expect(rentalPriceAvailability([], { date: "2026-12-24", timeSlot: "5h" })).toBe("no_catalog");
   });
 
-  it("requires every lodging night and every shuttle leg detail before marking plans complete", () => {
+  it("requires lodging details but not an optional shuttle route to complete transit planning", () => {
     const plan = parseTripSkiPlan(null, {
       visitDate: new Date("2026-01-16T00:00:00Z"),
       endDate: new Date("2026-01-18T00:00:00Z"),
@@ -89,7 +89,7 @@ describe("trip ski plan", () => {
       transportType: "shuttle"
     });
     expect(lodgingPlanIsComplete(plan)).toBe(false);
-    expect(transportPlanIsComplete(plan)).toBe(false);
+    expect(transportPlanIsComplete(plan)).toBe(true);
     plan.lodgingNights = plan.lodgingNights.map(night => ({ ...night, lodgingName: "숙소" }));
     plan.transportLegs = plan.transportLegs.map(leg => ({ ...leg, shuttleRouteId: "route", shuttleStopId: "stop" }));
     expect(lodgingPlanIsComplete(plan)).toBe(true);

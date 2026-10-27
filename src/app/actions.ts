@@ -7,6 +7,7 @@ import { CURRENT_SEASON } from "@/lib/constants";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
 import { getShuttleStopsForDirection, getSkiShuttleRoutes, routeSupportsShuttleDirection } from "@/data/ski-shuttles";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
+import { isLegacyTransportType, normalizeTransportType } from "@/lib/transport";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
 import { canEditOwnedTrip, canManageTripSharing, canMutateWithSharePermission, createdTripDestination } from "@/lib/trip-access";
@@ -165,7 +166,7 @@ export async function createTripAction(formData: FormData) {
       peopleCount: input.peopleCount,
       skillLevel: input.skillLevel,
       rideType: input.rideType,
-      transportType: input.transportType,
+      transportType: normalizeTransportType(input.transportType),
       tripDuration: input.tripDuration,
       ownsEquipment: input.ownsEquipment,
       ownsClothing: input.ownsClothing,
@@ -262,7 +263,7 @@ export async function createDirectTripAction(formData: FormData) {
       peopleCount: input.peopleCount,
       skillLevel: input.skillLevel,
       rideType: input.rideType,
-      transportType: input.transportType,
+      transportType: normalizeTransportType(input.transportType),
       tripDuration: input.tripDuration,
       ownsEquipment: input.ownsEquipment,
       ownsClothing: input.ownsClothing,
@@ -304,7 +305,7 @@ export async function createDirectTripAction(formData: FormData) {
     properties: {
       resortId,
       peopleCount: input.peopleCount,
-      transportType: input.transportType,
+      transportType: normalizeTransportType(input.transportType),
       requiredTasks: buildRequiredTasks(input),
       rentalShopCount: getRentalShopsForResort(resortId).length
     }
@@ -375,7 +376,7 @@ export async function updateTripDetailsAction(formData: FormData) {
       tripDuration: startDate === endDateOnly ? "same_day" : "overnight",
       skiPlan,
       peopleCount: input.peopleCount,
-      transportType: input.transportType,
+      transportType: normalizeTransportType(input.transportType),
       lodgingCostInput: input.lodgingCostInput,
       liftTicketTimeSlot: input.liftTicketTimeSlot,
       selectedRentalOptionId: selectedRentalOptionId ?? null
@@ -650,16 +651,17 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
     } else if (decision === "transport_leg") {
       const direction = String(formData.get("transportLegDirection") ?? "");
       const value = String(formData.get("transportType") ?? "");
-      if (!["outbound", "return"].includes(direction) || !["car", "shuttle", "bus"].includes(value)) throw new AppError("INVALID_INPUT", "이동 구간과 교통수단을 다시 선택해 주세요.");
+      if (!["outbound", "return"].includes(direction) || !isLegacyTransportType(value)) throw new AppError("INVALID_INPUT", "이동 구간과 교통수단을 다시 선택해 주세요.");
+      const transportType = normalizeTransportType(value);
       const applyAll = String(formData.get("applyToAllLegs") ?? "") === "true";
       const transportLegs = trip.skiPlan.transportLegs.map(leg => {
         if (leg.direction !== direction && !applyAll) return leg;
-        return { ...leg, transportType: value as TripInput["transportType"], shuttleRouteId: value === "shuttle" ? leg.shuttleRouteId : null, shuttleStopId: value === "shuttle" ? leg.shuttleStopId : null };
+        return { ...leg, transportType, shuttleRouteId: transportType === "public_transit" ? leg.shuttleRouteId : null, shuttleStopId: transportType === "public_transit" ? leg.shuttleStopId : null };
       });
       const skiPlan: TripSkiPlan = { ...trip.skiPlan, transportLegs };
       const outbound = transportLegs.find(leg => leg.direction === "outbound")!;
       patch.skiPlan = skiPlan;
-      patch.transportType = outbound.transportType;
+      patch.transportType = normalizeTransportType(outbound.transportType);
       patch.shuttleRouteId = outbound.shuttleRouteId;
       patch.shuttleStopId = outbound.shuttleStopId;
       if (transportPlanIsComplete(skiPlan)) taskCategory = "transport";
@@ -670,26 +672,38 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       const route = getSkiShuttleRoutes(trip.resortId).find(item => item.id === routeId);
       const stop = route && (direction === "outbound" || direction === "return") && routeSupportsShuttleDirection(route, direction) ? getShuttleStopsForDirection(route, direction).find(item => item.id === stopId) : undefined;
       if (!route || !stop) throw new AppError("INVALID_INPUT", "선택한 이동 구간과 셔틀 정류장을 다시 확인해 주세요.");
-      const transportLegs = trip.skiPlan.transportLegs.map(leg => leg.direction === direction ? { ...leg, transportType: "shuttle" as const, shuttleRouteId: route.id, shuttleStopId: stop.id } : leg);
+      const transportLegs = trip.skiPlan.transportLegs.map(leg => leg.direction === direction ? { ...leg, transportType: "public_transit" as const, shuttleRouteId: route.id, shuttleStopId: stop.id } : leg);
       const skiPlan: TripSkiPlan = { ...trip.skiPlan, transportLegs };
       const outbound = transportLegs.find(leg => leg.direction === "outbound")!;
       patch.skiPlan = skiPlan;
-      patch.transportType = outbound.transportType;
+      patch.transportType = normalizeTransportType(outbound.transportType);
       patch.shuttleRouteId = outbound.shuttleRouteId;
       patch.shuttleStopId = outbound.shuttleStopId;
       if (transportPlanIsComplete(skiPlan)) taskCategory = "transport";
     } else if (decision === "transport") {
       const value = String(formData.get("transportType") ?? "");
-      if (!["car", "shuttle", "bus"].includes(value)) throw new AppError("INVALID_INPUT", "교통수단을 다시 선택해 주세요.");
-      patch.transportType = value as TripInput["transportType"];
-      taskCategory = "transport";
+      if (!isLegacyTransportType(value)) throw new AppError("INVALID_INPUT", "교통수단을 다시 선택해 주세요.");
+      const transportType = normalizeTransportType(value);
+      const transportLegs = trip.skiPlan.transportLegs.map(leg => ({
+        ...leg,
+        transportType,
+        shuttleRouteId: transportType === "public_transit" ? leg.shuttleRouteId : null,
+        shuttleStopId: transportType === "public_transit" ? leg.shuttleStopId : null
+      }));
+      const skiPlan: TripSkiPlan = { ...trip.skiPlan, transportLegs };
+      patch.skiPlan = skiPlan;
+      const outbound = transportLegs.find(leg => leg.direction === "outbound")!;
+      patch.transportType = transportType;
+      patch.shuttleRouteId = outbound.shuttleRouteId;
+      patch.shuttleStopId = outbound.shuttleStopId;
+      if (transportPlanIsComplete(skiPlan)) taskCategory = "transport";
     } else if (decision === "shuttle") {
       const routeId = String(formData.get("shuttleRouteId") ?? "");
       const stopId = String(formData.get("shuttleStopId") ?? "");
       const route = getSkiShuttleRoutes(trip.resortId).find(item => item.id === routeId);
       const stop = route?.stops.find(item => item.id === stopId);
       if (!route || !stop) throw new AppError("INVALID_INPUT", "선택한 셔틀 노선과 정류장을 다시 확인해 주세요.");
-      patch.transportType = "shuttle";
+      patch.transportType = "public_transit";
       patch.shuttleRouteId = route.id;
       patch.shuttleStopId = stop.id;
       taskCategory = "transport";

@@ -11,6 +11,7 @@ import { estimateTripCost } from "@/lib/pricing";
 import type { CostEstimate, CostItem, PriceConfidence, TimeSlot } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import type { TripSkiPlan } from "@/lib/trip-ski-plan";
+import type { TransportType } from "@/lib/types";
 
 type TripOverviewData = {
   resortId: string;
@@ -21,7 +22,7 @@ type TripOverviewData = {
   visitDate: Date;
   departureLocation: string;
   peopleCount: number;
-  transportType: "car" | "shuttle" | "bus";
+  transportType: TransportType;
   shuttleRouteId: string | null;
   shuttleStopId: string | null;
   tripDuration: "same_day" | "overnight";

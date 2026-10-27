@@ -14,6 +14,7 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import { calculateTripBudget, type TripBudgetState, type TripExpenseCategory } from "@/lib/trip-budget";
 import type { CostEstimate } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
+import { transportTypeLabel } from "@/lib/transport";
 import { rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
 import { timeSlotLabels } from "@/lib/constants";
 
@@ -36,7 +37,6 @@ const categories: Array<{ value: TripExpenseCategory; label: string }> = [
   { value: "meal", label: "식비" }, { value: "fuel", label: "주유" }, { value: "toll", label: "통행료" },
   { value: "parking", label: "주차" }, { value: "transport", label: "추가 교통" }, { value: "other", label: "기타" }
 ];
-const transportLabels: Record<string, string> = { car: "자차", shuttle: "스키장 제휴 셔틀", bus: "고속·시외버스" };
 const budgetCostKeys = [
   { key: "lift_ticket", label: "리프트권" },
   { key: "rental", label: "렌탈" },
@@ -61,7 +61,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   const plannedRentalDays = trip.skiPlan.days.filter(day => rentalOptionIds(day).length > 0).length;
   const rentalLabel = plannedRentalDays ? `${trip.skiPlan.days.length}일 중 ${plannedRentalDays}일 선택됨` : "렌탈하지 않음 / 미정";
   const liftLabel = `${trip.skiPlan.days.length}일 · ${[...new Set(trip.skiPlan.days.map(day => timeSlotLabels[day.timeSlot]))].join(" · ")}`;
-  const transportLabel = trip.skiPlan.transportLegs.map(leg => `${leg.direction === "outbound" ? "갈 때" : "올 때"} ${transportLabels[leg.transportType] ?? leg.transportType}`).join(" · ");
+  const transportLabel = trip.skiPlan.transportLegs.map(leg => `${leg.direction === "outbound" ? "갈 때" : "올 때"} ${transportTypeLabel(leg.transportType)}`).join(" · ");
   const lodgingNames = [...new Set(trip.skiPlan.lodgingNights.map(night => night.lodgingName).filter((name): name is string => Boolean(name)))];
   const lodgingLabel = trip.skiPlan.lodgingNights.length ? `${trip.skiPlan.lodgingNights.length}박 · ${lodgingNames.join(", ") || "미정"}` : "당일치기 · 숙박 없음";
   const addExpense = () => {

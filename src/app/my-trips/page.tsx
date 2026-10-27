@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSession } from "@/lib/session";
 import { listTripMemberships, listUserTeams, type TripMembership } from "@/lib/trip-collaboration";
 import { getTripDisplayName, getTripsByTeamIds, getTripsByUserId, type TripRecord } from "@/lib/trip-store";
+import { transportTypeLabel } from "@/lib/transport";
 
 export const metadata: Metadata = {
   title: "내 트립 | Korean Ski",
@@ -157,7 +158,7 @@ function TripCard({ item }: { item: TripDashboardItem }) {
             </span>
             <span className="inline-flex items-center gap-2">
               <MapPin className="h-4 w-4" />
-              {trip.peopleCount}명 · {trip.transportType}
+              {trip.peopleCount}명 · {transportTypeLabel(trip.transportType)}
             </span>
             <span className="inline-flex items-center gap-2">
               <CheckCircle2 className="h-4 w-4" />

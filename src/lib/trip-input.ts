@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { Priority, TimeSlot, TripInput } from "@/lib/types";
+import { normalizeTransportType } from "@/lib/transport";
 
 const prioritySchema = z.enum([
   "close",
@@ -22,7 +23,7 @@ export const tripInputSchema = z.object({
   rideType: z.enum(["ski", "snowboard"]),
   ownsEquipment: z.preprocess((value) => value === "true" || value === true, z.boolean()),
   ownsClothing: z.preprocess((value) => value === "true" || value === true, z.boolean()),
-  transportType: z.enum(["car", "shuttle", "bus"]),
+  transportType: z.enum(["car", "public_transit", "shuttle", "bus"]).transform(value => normalizeTransportType(value)),
   budgetMin: z.coerce.number().int().optional(),
   budgetMax: z.coerce.number().int().optional(),
   priority1: prioritySchema,

@@ -17,6 +17,21 @@ export function loadDotenv(path = ".env") {
   }
 }
 
+export function loadWranglerPublicVars(path = "wrangler.jsonc") {
+  const file = resolve(process.cwd(), path);
+  if (!existsSync(file)) return;
+
+  const source = readFileSync(file, "utf8");
+  const config = JSON.parse(source.replace(/,\s*([}\]])/g, "$1")) as {
+    vars?: Record<string, unknown>;
+  };
+
+  for (const [key, value] of Object.entries(config.vars ?? {})) {
+    if (!key.startsWith("NEXT_PUBLIC_") || typeof value !== "string") continue;
+    if (process.env[key] === undefined) process.env[key] = value;
+  }
+}
+
 function unquote(value: string) {
   if (
     (value.startsWith('"') && value.endsWith('"')) ||

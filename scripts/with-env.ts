@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { loadDotenv } from "./env";
+import { loadDotenv, loadWranglerPublicVars } from "./env";
 
 const [, , ...command] = process.argv;
 
@@ -9,6 +9,7 @@ if (command.length === 0) {
 }
 
 loadDotenv();
+loadWranglerPublicVars();
 
 const child = spawn(command[0], command.slice(1), {
   stdio: "inherit",

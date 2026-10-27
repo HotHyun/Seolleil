@@ -34,7 +34,7 @@ Cloudflare 운영 배포에서는 `FIREBASE_SERVICE_ACCOUNT_JSON`과 `FIREBASE_S
 
 `.env.example`은 현재 Firebase client config, project ID, collection names와 선택형 설정의 기준이다.
 
-- 브라우저 설정: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`.
+- 브라우저 설정: `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`. `pnpm cf:build`와 `pnpm cf:deploy`는 `.env`를 읽고, `.env`에 없는 `NEXT_PUBLIC_*` 값은 `wrangler.jsonc`의 `vars`에서 빌드 환경으로 전달한다. 선택 기능인 Kakao Maps를 쓰려면 `NEXT_PUBLIC_KAKAO_MAP_APP_KEY`를 `.env`에 설정한 뒤 같은 빌드 명령으로 배포한다.
 - 서버 공개 설정: `FIREBASE_PROJECT_ID`와 collection name 변수들.
 - 필수 비밀: `FIREBASE_SERVICE_ACCOUNT_JSON`, `FIREBASE_SHARE_TOKEN_KEY`.
 - 초대 이메일 선택 설정: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`. 미설정 시 앱은 7일 유효 초대 URL을 보여주며 소유자가 직접 전달한다.

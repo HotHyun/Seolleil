@@ -17,7 +17,7 @@
     "test:e2e:production": "E2E_BASE_URL=https://ski.hothyun.com E2E_ALLOW_PRODUCTION_WRITES=1 playwright test tests/e2e/production-regression.spec.ts",
     "test:e2e:ui": "playwright test --ui",
     "test:all": "pnpm typecheck && pnpm test && pnpm test:e2e",
-    "cf:build": "opennextjs-cloudflare build",
+    "cf:build": "tsx scripts/with-env.ts opennextjs-cloudflare build",
     "cf:preview": "pnpm cf:build && tsx scripts/with-env.ts wrangler dev",
     "cf:deploy": "tsx scripts/with-env.ts opennextjs-cloudflare build && tsx scripts/with-env.ts opennextjs-cloudflare deploy",
     "cf:typegen": "wrangler types --env-interface CloudflareEnv src/types/cloudflare-env.d.ts",

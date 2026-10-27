@@ -6,6 +6,7 @@ import type {
   CostItem,
   DayType,
   PriceConfidence,
+  PriceRule,
   RentalPriceRule,
   SkiShuttleRoute,
   SkiResort,
@@ -13,6 +14,34 @@ import type {
   TripInput
 } from "@/lib/types";
 import { optionAppliesToDay, rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
+
+function appendToIndex<T>(index: Map<string, T[]>, key: string, value: T) {
+  const values = index.get(key);
+  if (values) values.push(value);
+  else index.set(key, [value]);
+}
+
+const liftRulesByResort = new Map<string, PriceRule[]>();
+for (const rule of priceRules) {
+  if (rule.itemType === "lift_ticket") appendToIndex(liftRulesByResort, rule.resortId, rule);
+}
+
+const rentalRulesByResort = new Map<string, RentalPriceRule[]>();
+const rentalRulesByResortAndType = new Map<string, Map<RentalPriceRule["itemType"], RentalPriceRule[]>>();
+const rentalRulesByShop = new Map<string, RentalPriceRule[]>();
+for (const rule of rentalPriceRules) {
+  appendToIndex(rentalRulesByResort, rule.resortId, rule);
+  if (rule.rentalShopId) appendToIndex(rentalRulesByShop, rule.rentalShopId, rule);
+
+  let rulesByType = rentalRulesByResortAndType.get(rule.resortId);
+  if (!rulesByType) {
+    rulesByType = new Map();
+    rentalRulesByResortAndType.set(rule.resortId, rulesByType);
+  }
+  const rules = rulesByType.get(rule.itemType);
+  if (rules) rules.push(rule);
+  else rulesByType.set(rule.itemType, [rule]);
+}
 
 function combineConfidence(items: CostItem[]): PriceConfidence {
   if (items.some((item) => item.confidence === "unavailable")) return "unavailable";
@@ -39,20 +68,24 @@ function dayTypeScore(ruleDayType: DayType, visitDayType: DayType) {
 
 export function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate: string) {
   const visitDayType = getVisitDayType(visitDate);
-  return priceRules
-    .filter(
-      (rule) =>
-        rule.resortId === resortId &&
-        rule.itemType === "lift_ticket" &&
-        rule.validFrom <= visitDate &&
-        rule.validTo >= visitDate &&
-        (rule.timeSlot === timeSlot || rule.timeSlot === "all") &&
-        dayTypeScore(rule.dayType, visitDayType) > 0
-    )
-    .sort(
-      (a, b) =>
-        dayTypeScore(b.dayType, visitDayType) - dayTypeScore(a.dayType, visitDayType)
-    )[0];
+  let bestRule: PriceRule | undefined;
+  let bestScore = 0;
+
+  for (const rule of liftRulesByResort.get(resortId) ?? []) {
+    if (
+      rule.validFrom > visitDate ||
+      rule.validTo < visitDate ||
+      (rule.timeSlot !== timeSlot && rule.timeSlot !== "all")
+    ) continue;
+
+    const score = dayTypeScore(rule.dayType, visitDayType);
+    if (score > bestScore) {
+      bestRule = rule;
+      bestScore = score;
+    }
+  }
+
+  return bestRule;
 }
 
 function resolveRentalPrice(
@@ -61,8 +94,9 @@ function resolveRentalPrice(
   selectedRentalOptionId?: string,
   strictDate = true
 ): RentalPriceRule | undefined {
+  const resortRules = rentalRulesByResort.get(resortId) ?? [];
   if (selectedRentalOptionId) {
-    const selected = rentalPriceRules.find(
+    const selected = resortRules.find(
       (rule) => rule.id === selectedRentalOptionId && rule.resortId === resortId && rule.itemType !== "lift_ticket"
     );
     return selected && (!strictDate || optionAppliesToDay(selected, {
@@ -84,16 +118,30 @@ function resolveRentalPrice(
 
   if (!itemType) return undefined;
 
-  const candidates = rentalPriceRules.filter((rule) => {
-    if (rule.resortId !== resortId || rule.itemType !== itemType) return false;
-    if (itemType === "equipment" && rule.rideType !== input.rideType) return false;
-    return true;
-  });
-  const datedCandidates = candidates.filter(rule => optionAppliesToDay(rule, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot }));
+  const candidates = rentalRulesByResortAndType.get(resortId)?.get(itemType) ?? [];
+  let cheapest: RentalPriceRule | undefined;
+  let cheapestPrice = Number.POSITIVE_INFINITY;
+  let cheapestDated: RentalPriceRule | undefined;
+  let cheapestDatedPrice = Number.POSITIVE_INFINITY;
 
-  return (datedCandidates.length ? datedCandidates : strictDate ? [] : candidates).sort(
-    (a, b) => (a.representativePrice ?? 999999) - (b.representativePrice ?? 999999)
-  )[0];
+  for (const rule of candidates) {
+    if (itemType === "equipment" && rule.rideType !== input.rideType) continue;
+
+    const price = rule.representativePrice ?? 999999;
+    if (!cheapest || price < cheapestPrice) {
+      cheapest = rule;
+      cheapestPrice = price;
+    }
+    if (
+      optionAppliesToDay(rule, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot }) &&
+      (!cheapestDated || price < cheapestDatedPrice)
+    ) {
+      cheapestDated = rule;
+      cheapestDatedPrice = price;
+    }
+  }
+
+  return cheapestDated ?? (strictDate ? undefined : cheapest);
 }
 
 export function liftTicketSavings(option: RentalPriceRule, visitDate: string) {
@@ -238,8 +286,9 @@ export function estimateTripCost(
   if (skiPlan?.days.length) {
     items.push(...estimateSkiPlanItems(resort, input, skiPlan, people));
   } else {
+  const resortRentalRules = rentalRulesByResort.get(resort.id) ?? [];
   const discountedLift = selectedLiftTicketOptionId
-    ? rentalPriceRules.find(rule =>
+    ? resortRentalRules.find(rule =>
         rule.id === selectedLiftTicketOptionId &&
         rule.resortId === resort.id &&
         rule.itemType === "lift_ticket" &&
@@ -337,10 +386,11 @@ export function estimateTripCost(
 function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSkiPlan, people: number) {
   const liftItems: CostItem[] = [];
   const rentalItems: CostItem[] = [];
+  const resortRentalRules = rentalRulesByResort.get(resort.id) ?? [];
 
   for (const day of plan.days) {
     const discountedLift = day.liftTicketOptionId
-      ? rentalPriceRules.find(rule => rule.id === day.liftTicketOptionId && rule.resortId === resort.id && rule.itemType === "lift_ticket" && optionAppliesToDay(rule, day))
+      ? resortRentalRules.find(rule => rule.id === day.liftTicketOptionId && rule.itemType === "lift_ticket" && optionAppliesToDay(rule, day))
       : undefined;
     const lift = discountedLift ?? resolveLiftPrice(resort.id, day.timeSlot, day.date);
     if (lift) {
@@ -361,7 +411,7 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
 
     const selectedOptionIds = rentalOptionIds(day);
     const selectedOptions = selectedOptionIds
-      .map(id => rentalPriceRules.find(rule => rule.id === id && rule.resortId === resort.id && rule.itemType !== "lift_ticket"))
+      .map(id => resortRentalRules.find(rule => rule.id === id && rule.itemType !== "lift_ticket"))
       .filter((rule): rule is RentalPriceRule => Boolean(rule && optionAppliesToDay(rule, day)));
     if (selectedOptions.length) {
       for (const option of selectedOptions) {
@@ -419,6 +469,6 @@ export function getRentalOptionsForResort(resortId: string) {
   const shops = getRentalShopsForResort(resortId);
   return shops.map((shop) => ({
     shop,
-    options: rentalPriceRules.filter((rule) => rule.rentalShopId === shop.id)
+    options: rentalRulesByShop.get(shop.id)?.slice() ?? []
   }));
 }

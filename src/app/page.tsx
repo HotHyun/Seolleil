@@ -1,20 +1,18 @@
 import { ArrowRight, CalendarCheck, Map, ReceiptText, Share2, Sparkles } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
-import { resorts } from "@/data/resorts";
 
 const journey = [
   { step: "01", icon: Map, title: "취향에 맞는 설원 찾기", copy: "거리, 실력, 동행 유형을 바탕으로 이유가 분명한 스키장을 추천해요.", color: "bg-[#326bff]" },
-  { step: "02", icon: ReceiptText, title: "현실적인 비용 그리기", copy: "방문 날짜의 시즌 요금으로 리프트권, 렌탈, 교통비를 미리 계산해요.", color: "bg-[#ff6b57]" },
+  { step: "02", icon: ReceiptText, title: "현실적인 비용 그리기", copy: "확인 가능한 시즌 참고 요금으로 리프트권, 렌탈, 교통비를 미리 비교해요.", color: "bg-[#ff6b57]" },
   { step: "03", icon: CalendarCheck, title: "빠짐없이 출발 준비", copy: "예약 링크와 준비물을 한곳에 모아 출발 전까지 차근차근 완료해요.", color: "bg-[#8b5cf6]" },
   { step: "04", icon: Share2, title: "동행자와 가볍게 공유", copy: "읽기 전용 링크 하나로 일정과 준비 상태를 모두에게 알려요.", color: "bg-[#0fa77a]" }
 ];
 
 export default function HomePage() {
-  const activeCount = resorts.filter((resort) => resort.operationStatus === "operating").length;
   return (
     <main id="main-content" className="overflow-hidden bg-background" tabIndex={-1}>
-      <CinematicHero activeResortCount={activeCount} />
+      <CinematicHero />
       <section className="relative py-24 sm:py-32">
         <div className="page-shell">
           <div className="max-w-2xl">

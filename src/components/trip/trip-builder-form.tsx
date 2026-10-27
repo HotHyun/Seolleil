@@ -120,7 +120,7 @@ export function TripBuilderForm({
   }
 
   return (
-    <form ref={formRef} action={action} onSubmit={handleSubmit} className="grid gap-5">
+    <form ref={formRef} action={action} onSubmit={handleSubmit} className="grid gap-5 pb-24 sm:pb-0">
       {selectedResort ? <input type="hidden" name="resortId" value={selectedResort.id} /> : null}
       <React.Fragment key={draftRevision}>
       <Card className="overflow-hidden">
@@ -319,8 +319,8 @@ export function TripBuilderForm({
         </CardContent>
       </Card>
 
-      <div className="sticky bottom-4 z-10 rounded-xl border bg-card/90 p-3 shadow-2xl backdrop-blur">
-        <div className="flex gap-2">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-card/95 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-12px_32px_rgba(15,23,42,0.1)] backdrop-blur sm:sticky sm:inset-x-auto sm:bottom-4 sm:z-10 sm:rounded-xl sm:border sm:p-3 sm:shadow-2xl">
+        <div className="page-shell mx-auto flex gap-2 sm:w-full">
           <Button
             type="button"
             variant="secondary"

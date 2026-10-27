@@ -53,18 +53,22 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <a href="#main-content" className="skip-link">본문으로 바로가기</a>
         <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur-xl">
           <div className="page-shell flex h-16 items-center justify-between gap-3">
-            <a href="/" className="flex min-w-0 items-center gap-2 font-black tracking-[-.02em] text-foreground sm:gap-2.5">
+            <a href="/" aria-label="코리안 스키" className="flex shrink-0 items-center gap-2 font-black tracking-[-.02em] text-foreground sm:gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
                 <MountainSnow className="h-5 w-5" />
               </span>
-              <span className="text-[11px] sm:text-sm">코리안 스키</span>
+              <span className="whitespace-nowrap text-xs sm:text-sm">
+                <span className="sm:hidden">스키</span>
+                <span className="hidden sm:inline">코리안 스키</span>
+              </span>
             </a>
-            <nav className="flex shrink-0 items-center gap-2 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">
-              <a href="/resorts" className="rounded-md px-2 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
+            <nav className="flex shrink-0 items-center gap-1 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">
+              <a href="/resorts" className="whitespace-nowrap rounded-md px-1.5 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
                 스키장
               </a>
-              <a href="/plan" className="rounded-lg bg-primary px-3 py-2 text-primary-foreground transition hover:brightness-110 sm:px-4">
-                여행 시작
+              <a href="/plan" aria-label="여행 시작" className="whitespace-nowrap rounded-lg bg-primary px-2.5 py-2 text-primary-foreground transition hover:brightness-110 sm:px-4">
+                <span className="sm:hidden">시작</span>
+                <span className="hidden sm:inline">여행 시작</span>
               </a>
               <AuthNav session={session} />
             </nav>

@@ -14,8 +14,8 @@ import type { AppSession } from "@/lib/session";
 export function AuthNav({ session }: { session: AppSession | null }) {
   if (!session?.user) {
     return (
-      <span className="inline-flex items-center gap-2">
-        <a href="/login" className="hover:text-foreground">
+      <span className="inline-flex shrink-0 items-center gap-2">
+        <a href="/login" className="whitespace-nowrap hover:text-foreground">
           로그인
         </a>
         <ThemeToggle />

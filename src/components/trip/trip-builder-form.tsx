@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, MapPin, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,27 +17,15 @@ import type { SkiResort } from "@/lib/types";
 const steps = [
   {
     icon: CalendarDays,
-    title: "일정/이동",
+    title: "여행 정보",
     eyebrow: "Step 1",
-    description: "언제, 어디서, 몇 명이 출발하는지 정합니다."
+    description: "날짜와 출발지만 정하면 시작할 수 있어요."
   },
   {
     icon: MapPin,
-    title: "사용자 상태",
+    title: "스키 준비",
     eyebrow: "Step 2",
-    description: "실력과 장비 보유 여부를 골라 추천 조건을 좁힙니다."
-  },
-  {
-    icon: SlidersHorizontal,
-    title: "비용/선호",
-    eyebrow: "Step 3",
-    description: "예산과 우선순위를 정하면 추천 결과를 비교할 수 있습니다."
-  },
-  {
-    icon: CheckCircle2,
-    title: "확인",
-    eyebrow: "Step 4",
-    description: "입력한 조건으로 추천 결과를 보거나 트립을 바로 만듭니다."
+    description: "잘 모르겠다면 기본 선택 그대로 추천을 받아도 괜찮아요."
   }
 ];
 
@@ -152,7 +140,7 @@ export function TripBuilderForm({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="mb-5 grid grid-cols-4 gap-2">
+          <div className="mb-5 grid grid-cols-2 gap-2">
             {steps.map((item, index) => {
               const Icon = item.icon;
               const state = index === step ? "active" : index < step ? "done" : "upcoming";
@@ -231,6 +219,9 @@ export function TripBuilderForm({
             </StepPanel>
 
             <StepPanel active={step === 1}>
+              <div className="rounded-xl border bg-muted/40 p-3 text-sm leading-6 text-muted-foreground md:col-span-2">
+                처음 가는 경우에는 ‘처음’을, 몇 번 타 봤지만 쉬운 코스가 편하다면 ‘초보’를 선택하세요. 장비나 의류가 없으면 렌탈 비용도 함께 계산해요.
+              </div>
               <Field label="실력">
                 <SelectField
                   name="skillLevel"
@@ -273,47 +264,40 @@ export function TripBuilderForm({
                   ]}
                 />
               </Field>
-            </StepPanel>
-
-            <StepPanel active={step === 2}>
-              <Field label="예산 최소">
-                <Input name="budgetMin" type="number" min={0} step={10000} defaultValue={draftValue("budgetMin")} placeholder="예: 100000" />
-              </Field>
-              <Field label="예산 최대">
-                <Input name="budgetMax" type="number" min={0} step={10000} defaultValue={draftValue("budgetMax")} placeholder="예: 250000" />
-              </Field>
-              <Field label="1순위">
-                <SelectField name="priority1" defaultValue={draftValue("priority1", "beginner")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
-              </Field>
-              <Field label="2순위">
-                <SelectField name="priority2" defaultValue={draftValue("priority2", "close")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
-              </Field>
-              <Field label="3순위">
-                <SelectField name="priority3" defaultValue={draftValue("priority3", "rental")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
-              </Field>
-              <Field label="리프트권 시간권">
-                <SelectField
-                  name="liftTicketTimeSlot"
-                  defaultValue={draftValue("liftTicketTimeSlot", "4h")}
-                  options={Object.entries(timeSlotLabels)
-                    .filter(([value]) => value !== "all")
-                    .map(([value, label]) => ({ value, label }))}
-                />
-              </Field>
-              <Field label="숙박비 직접 입력">
-                <Input name="lodgingCostInput" type="number" min={0} step={10000} defaultValue={draftValue("lodgingCostInput")} placeholder="1박이면 선택 입력" />
-              </Field>
-            </StepPanel>
-
-            <StepPanel active={step === 3}>
-              <div className="rounded-xl border bg-muted/40 p-4 md:col-span-2">
-                <p className="text-sm font-black text-foreground">
-                  조건 입력이 끝났습니다.
-                </p>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  이전 단계로 돌아가 조건을 조정하거나, 아래 버튼으로 다음 화면을 진행하세요.
-                </p>
-              </div>
+              <details className="rounded-xl border bg-card p-4 md:col-span-2">
+                <summary className="min-h-8 cursor-pointer font-bold outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                  예산과 추천 우선순위 설정 <span className="ml-1 text-xs font-medium text-muted-foreground">선택 사항</span>
+                </summary>
+                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                  <Field label="예산 최소">
+                    <Input name="budgetMin" type="number" min={0} step={10000} defaultValue={draftValue("budgetMin")} placeholder="예: 100000" />
+                  </Field>
+                  <Field label="예산 최대">
+                    <Input name="budgetMax" type="number" min={0} step={10000} defaultValue={draftValue("budgetMax")} placeholder="예: 250000" />
+                  </Field>
+                  <Field label="1순위">
+                    <SelectField name="priority1" defaultValue={draftValue("priority1", "beginner")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
+                  </Field>
+                  <Field label="2순위">
+                    <SelectField name="priority2" defaultValue={draftValue("priority2", "close")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
+                  </Field>
+                  <Field label="3순위">
+                    <SelectField name="priority3" defaultValue={draftValue("priority3", "rental")} options={Object.entries(priorityLabels).map(([value, label]) => ({ value, label }))} />
+                  </Field>
+                  <Field label="리프트 이용 시간">
+                    <SelectField
+                      name="liftTicketTimeSlot"
+                      defaultValue={draftValue("liftTicketTimeSlot", "4h")}
+                      options={Object.entries(timeSlotLabels)
+                        .filter(([value]) => value !== "all")
+                        .map(([value, label]) => ({ value, label }))}
+                    />
+                  </Field>
+                  <Field label="숙박비 직접 입력">
+                    <Input name="lodgingCostInput" type="number" min={0} step={10000} defaultValue={draftValue("lodgingCostInput")} placeholder="1박이면 선택 입력" />
+                  </Field>
+                </div>
+              </details>
             </StepPanel>
           </div>
         </CardContent>

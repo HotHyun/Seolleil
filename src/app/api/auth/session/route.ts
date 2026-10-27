@@ -3,8 +3,6 @@ import { cookies } from "next/headers";
 import { clearLegacyAppwriteCookies, FIREBASE_SESSION_COOKIE } from "@/lib/session";
 import { verifyFirebaseIdToken } from "@/lib/firebase-auth-token";
 
-export const runtime = "edge";
-
 export async function POST(request: Request) {
   let idToken = "";
   try {

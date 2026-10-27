@@ -108,7 +108,12 @@ export function TripBuilderForm({
   }
 
   return (
-    <form ref={formRef} action={action} onSubmit={handleSubmit} className="grid gap-5 pb-24 sm:pb-0">
+    <form
+      ref={formRef}
+      action={step === steps.length - 1 ? action : undefined}
+      onSubmit={handleSubmit}
+      className="grid gap-5 pb-24 sm:pb-0"
+    >
       {selectedResort ? <input type="hidden" name="resortId" value={selectedResort.id} /> : null}
       <React.Fragment key={draftRevision}>
       <Card className="overflow-hidden">
@@ -318,7 +323,14 @@ export function TripBuilderForm({
             <ArrowLeft className="h-4 w-4" />
           </Button>
           {step < steps.length - 1 ? (
-            <Button type="button" className="flex-1" onClick={goToNextStep}>
+            <Button
+              type="button"
+              className="flex-1"
+              onClick={(event) => {
+                event.preventDefault();
+                goToNextStep();
+              }}
+            >
               다음 단계 <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (

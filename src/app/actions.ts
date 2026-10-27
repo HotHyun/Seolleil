@@ -28,9 +28,8 @@ import {
   updateTrip
 } from "@/lib/trip-store";
 import { getSession } from "@/lib/session";
-import { getSessionSecret } from "@/lib/session";
 import { createTripTeam, getTripTeamPermission, inviteTripMember, removeTripMembership, updateTripMembership } from "@/lib/trip-collaboration";
-import { actionFailure, actionSuccess, AppError } from "@/lib/app-error";
+import { actionFailure, actionSuccess, AppError, reportAppError } from "@/lib/app-error";
 import type { TripInput } from "@/lib/types";
 import { parseTripBudget, type TripExpenseCategory } from "@/lib/trip-budget";
 import {
@@ -81,8 +80,7 @@ async function findEditableTrip(formData: FormData) {
     const trip = await getTripById(tripId);
     if (!trip) return null;
     if (canEditOwnedTrip(session.user.id, trip.userId)) return trip;
-    const secret = await getSessionSecret();
-    if (secret && trip.teamId && await getTripTeamPermission(secret, trip.teamId, session.user.id) === "edit") return trip;
+    if (trip.teamId && await getTripTeamPermission(trip.teamId, session.user.id) === "edit") return trip;
     return null;
   }
 
@@ -1009,22 +1007,6 @@ export async function deleteTripAction(formData: FormData) {
   redirect(`${editToken ? "/" : "/my-trips"}?notice=${encodeURIComponent("트립을 삭제했어요.")}`);
 }
 
-export async function regenerateShareLinkAction(formData: FormData) {
-  const trip = await findShareManageableTrip(formData);
-  if (!trip || trip.status === "archived" || trip.status === "deleted") {
-    throw new Error("공유 링크를 재발급할 수 없는 트립입니다.");
-  }
-
-  const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
-  const shareToken = createToken();
-  const session = await getSession();
-  await createTripShareLink({ tripId: trip.id, tokenHash: hashToken(shareToken), tokenValue: shareToken, permission, createdBy: session?.user?.id ?? null });
-  await recordAnalyticsEvent({ tripId: trip.id, eventName: "share_link_created", properties: { permission } });
-
-  const tripId = String(formData.get("tripId") ?? "");
-  redirect(`/my-trips/${tripId}?share=${shareToken}&sharePermission=${permission}&notice=${encodeURIComponent("공유 링크를 만들었어요. 기존 링크도 계속 유효합니다.")}`);
-}
-
 export async function createShareLinkSafeAction(formData: FormData) {
   try {
     const trip = await findShareManageableTrip(formData);
@@ -1038,46 +1020,28 @@ export async function createShareLinkSafeAction(formData: FormData) {
   } catch (error) { return actionFailure(error, { action: "createShareLink" }); }
 }
 
-export async function inviteTripMemberAction(formData: FormData) {
-  const trip = await findEditableTrip(formData);
-  const session = await getSession();
-  const sessionSecret = await getSessionSecret();
-  if (!trip || !session?.user?.id || trip.userId !== session.user.id || !sessionSecret) throw new Error("트립 소유자만 초대할 수 있습니다.");
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
-  const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
-  if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error("올바른 이메일을 입력해 주세요.");
-  let teamId = trip.teamId;
-  if (!teamId) {
-    const team = await createTripTeam(sessionSecret, getTripDisplayName(trip));
-    teamId = team.$id;
-    await updateTrip(trip.id, { teamId });
-  }
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-  await inviteTripMember({ sessionSecret, teamId, email, permission, acceptUrl: `${origin}/invite/accept?tripId=${encodeURIComponent(trip.id)}` });
-  await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_member_invited", properties: { permission } });
-  const tripId = String(formData.get("tripId") ?? trip.id);
-  redirect(`/my-trips/${tripId}?notice=${encodeURIComponent("초대 메일을 보냈어요.")}`);
-}
-
 export async function inviteTripMemberSafeAction(formData: FormData) {
   try {
     const trip = await findEditableTrip(formData);
     const session = await getSession();
-    const sessionSecret = await getSessionSecret();
-    if (!trip || !session?.user?.id || trip.userId !== session.user.id || !sessionSecret) throw new AppError("FORBIDDEN", "트립 소유자만 사용자를 초대할 수 있습니다.");
+    if (!trip || !session?.user?.id || trip.userId !== session.user.id) throw new AppError("FORBIDDEN", "트립 소유자만 사용자를 초대할 수 있습니다.");
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
     const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
     if (!/^\S+@\S+\.\S+$/.test(email)) throw new AppError("INVALID_INPUT", "올바른 이메일을 입력해 주세요.");
     let teamId = trip.teamId;
     if (!teamId) {
-      const team = await createTripTeam(sessionSecret, getTripDisplayName(trip));
+      const team = await createTripTeam(getTripDisplayName(trip), trip.id, session.user.id);
       teamId = team.$id;
       await updateTrip(trip.id, { teamId });
     }
     const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-    await inviteTripMember({ sessionSecret, teamId, email, permission, acceptUrl: `${origin}/invite/accept?tripId=${encodeURIComponent(trip.id)}` });
-    await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_member_invited", properties: { permission } });
-    return actionSuccess("초대 메일을 보냈어요.");
+    const invitation = await inviteTripMember({ teamId, tripId: trip.id, email, permission, acceptUrl: `${origin}/invite/accept` });
+    try {
+      await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_member_invited", properties: { permission } });
+    } catch (error) {
+      reportAppError(error, { action: "recordInviteEvent" });
+    }
+    return actionSuccess(invitation.emailSent ? "초대 메일을 보냈어요." : "초대 링크를 만들었어요. 링크를 복사해 동행자에게 보내 주세요.", { inviteUrl: invitation.inviteUrl, emailSent: invitation.emailSent });
   } catch (error) { return actionFailure(error, { action: "inviteTripMember" }); }
 }
 
@@ -1110,11 +1074,10 @@ export async function revokeShareLinkAction(formData: FormData) {
 export async function updateTripMemberAction(formData: FormData) {
   try {
     const trip = await findOwnedManagementTrip(formData);
-    const sessionSecret = await getSessionSecret();
     const membershipId = String(formData.get("membershipId") ?? "");
     const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
-    if (!trip.teamId || !sessionSecret || !membershipId) throw new AppError("INVALID_INPUT");
-    await updateTripMembership(sessionSecret, trip.teamId, membershipId, permission);
+    if (!trip.teamId || !membershipId) throw new AppError("INVALID_INPUT");
+    await updateTripMembership(trip.teamId, membershipId, permission);
     return actionSuccess("사용자 권한을 변경했어요.");
   } catch (error) { return actionFailure(error, { action: "updateTripMember" }); }
 }
@@ -1122,10 +1085,9 @@ export async function updateTripMemberAction(formData: FormData) {
 export async function removeTripMemberAction(formData: FormData) {
   try {
     const trip = await findOwnedManagementTrip(formData);
-    const sessionSecret = await getSessionSecret();
     const membershipId = String(formData.get("membershipId") ?? "");
-    if (!trip.teamId || !sessionSecret || !membershipId) throw new AppError("INVALID_INPUT");
-    await removeTripMembership(sessionSecret, trip.teamId, membershipId);
+    if (!trip.teamId || !membershipId) throw new AppError("INVALID_INPUT");
+    await removeTripMembership(trip.teamId, membershipId);
     return actionSuccess("공유 사용자를 내보냈어요.");
   } catch (error) { return actionFailure(error, { action: "removeTripMember" }); }
 }

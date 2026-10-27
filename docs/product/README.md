@@ -16,7 +16,7 @@
 - `technical-plan.md`: 기술 스택, 배포, 운영 방향.
 - `error-handling.md`: 오류 코드, 사용자 복구 UX, 관측성 연결 규칙.
 - `share-security.md`: 선택적 로그인, 편집 링크, 공유 링크 보안 정책.
-- `analytics.md`: 성과 지표, 이벤트 수집, Umami/Appwrite 운영 정책.
+- `analytics.md`: 성과 지표, 이벤트 수집, Umami/Firestore 운영 정책.
 - `ui-design.md`: UI 스타일링, 컴포넌트, 레이아웃 방향.
 - `resort-dataset.md`: 국내 스키장 데이터셋 범위와 수집/검증 정책.
 - `trip-flow.md`: 트립 생성, 추천, 옵션 선택, 저장 플로우.

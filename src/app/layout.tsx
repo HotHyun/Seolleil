@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { AuthNav } from "@/components/auth/auth-nav";
+import { FirebaseSessionSync } from "@/components/auth/firebase-session-sync";
 import { Toaster, ToastFromUrl } from "@/components/ui/sonner";
 import { getSession } from "@/lib/session";
 import "@/app/globals.css";
@@ -39,6 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={pretendard.className}>
+        <FirebaseSessionSync />
         <script
           dangerouslySetInnerHTML={{
             __html:

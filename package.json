@@ -25,8 +25,7 @@
     "data:report": "tsx scripts/report-static-data.ts",
     "data:links": "tsx scripts/check-links.ts",
     "data:locations:audit": "tsx scripts/audit-rental-locations.ts --write",
-    "data:locations": "tsx scripts/generate-rental-location-data.ts",
-    "appwrite:schema": "tsx scripts/with-env.ts tsx scripts/setup-appwrite-schema.ts"
+    "data:locations": "tsx scripts/generate-rental-location-data.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -39,7 +38,9 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "firebase": "^12.19.0",
     "gsap": "^3.15.0",
+    "jose": "^6.2.13",
     "lucide-react": "^0.468.0",
     "nanoid": "^5.0.9",
     "next": "^15.5.18",

@@ -9,13 +9,13 @@ MVP excludes payment, booking fulfillment, live crawling, instructor matching, a
 ## Current Stack
 
 - Next.js App Router, React, TypeScript, Tailwind CSS, local shadcn-style components.
-- Appwrite Databases, Auth, and Teams on self-hosted OCI infrastructure.
-- Cloudflare Workers deployment through OpenNext.
-- Umami for product analytics; Appwrite events for server-side product events.
+- Firebase Authentication and Cloud Firestore for BaaS.
+- Cloudflare Workers deployment through OpenNext. Firebase Hosting and Cloud Functions are not used.
+- Umami for product analytics; Firestore events for server-side product events.
 - Optional Sentry for browser/server exceptions and release source maps; structured Workers Logs remain the baseline.
 - Vitest and Playwright.
 
-There is no application Prisma/PostgreSQL runtime, PgAdmin workflow, Auth.js, or Coolify app deployment. Historical files must not be treated as current architecture.
+There is no application Prisma/PostgreSQL runtime, PgAdmin workflow, Auth.js, Coolify app deployment, or current Appwrite runtime. Historical files must not be treated as current architecture.
 
 ## Source And Product Rules
 
@@ -23,15 +23,16 @@ There is no application Prisma/PostgreSQL runtime, PgAdmin workflow, Auth.js, or
 - Product decisions belong in `docs/product`. Update the relevant document with behavior changes.
 - Seasonal data is edited in code and redeployed; do not crawl. Preserve price sources and link to official operation status.
 - Follow `docs/design.md`: mobile-first, Pretendard, dark-mode aware, dense and scannable operational screens, one sticky header, accessible shadcn-style controls, no nested-card clutter.
+- Firestore collections are created on first write. The client must not read or write application documents directly; keep `firestore.rules` closed to clients and use the Worker service account through the server adapter.
 
 ## Auth And Sharing
 
-- Appwrite Auth supports Google OAuth and verified email/password accounts.
+- Firebase Auth supports Google OAuth and verified email/password accounts.
 - Email/password users must verify email before authenticated product features are unlocked.
 - Trips start private. Anonymous owners use a high-entropy edit capability URL; raw tokens are never stored.
 - Owners may create multiple persistent `read` or `edit` share links. A trip/checklist change does not rotate them. Links can be revoked individually.
-- Account owners may invite Appwrite users through Teams and change/remove their access. Email delivery is Appwrite's responsibility.
-- Shared responses must not expose account data, internal events, token hashes, or raw tokens other than the capability in the current URL.
+- Account owners invite members through Firestore memberships and change/remove their access. Invitation email uses optional Resend settings; without them, the owner copies and sends a seven-day invite URL.
+- Firebase service account JSON and `FIREBASE_SHARE_TOKEN_KEY` are secrets. Never commit, print, or expose them to the browser. Shared responses must not expose account data, internal events, token hashes, or raw tokens other than the capability in the current URL.
 
 ## Commands
 
@@ -42,13 +43,12 @@ pnpm install
 pnpm typecheck
 pnpm test
 pnpm data:validate
-pnpm appwrite:schema
 pnpm cf:deploy
 ```
 
 - Routine validation is `pnpm typecheck` and `pnpm test`.
 - Do not run `pnpm build` routinely. Do not start `pnpm dev` for OCI-agent UI verification.
-- `pnpm appwrite:schema` changes Appwrite schema and requires the configured admin API key.
+- Firestore is schemaless; there is no schema migration command.
 - `pnpm cf:deploy` deploys the application and requires explicit user authorization.
 
 ## Tests And Deployment Verification

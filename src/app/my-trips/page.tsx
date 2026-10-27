@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { TripCompanions } from "@/components/trip/trip-companions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSession, getSessionSecret } from "@/lib/session";
+import { getSession } from "@/lib/session";
 import { listTripMemberships, listUserTeams, type TripMembership } from "@/lib/trip-collaboration";
 import { getTripDisplayName, getTripsByTeamIds, getTripsByUserId, type TripRecord } from "@/lib/trip-store";
 
@@ -21,15 +21,12 @@ export default async function MyTripsPage() {
   const session = await getSession();
   if (!session?.user?.id) redirect("/login?callbackUrl=/my-trips");
 
-  const sessionSecret = await getSessionSecret();
-  const [owned, teams] = await Promise.all([getTripsByUserId(session.user.id), sessionSecret ? listUserTeams(sessionSecret) : { teams: [] }]);
+  const [owned, teams] = await Promise.all([getTripsByUserId(session.user.id), listUserTeams(session.user.id)]);
   const teamIds = teams.teams.map(team => team.$id);
   const teamTrips = await getTripsByTeamIds(teamIds);
   const shared = teamTrips.filter(trip => trip.userId !== session.user.id);
   const relevantTeamIds = [...new Set(teamTrips.flatMap(trip => trip.teamId ? [trip.teamId] : []))];
-  const memberships = sessionSecret
-    ? await Promise.all(relevantTeamIds.map(async teamId => [teamId, await listTripMemberships(sessionSecret, teamId)] as const))
-    : [];
+  const memberships = await Promise.all(relevantTeamIds.map(async teamId => [teamId, await listTripMemberships(teamId)] as const));
   const membersByTeam = new Map<string, TripMembership[]>(memberships);
   const itemsFor = (trips: TripRecord[], sharedWithMe: boolean): TripDashboardItem[] => trips.map(trip => {
     const members = trip.teamId ? membersByTeam.get(trip.teamId) ?? [] : [];

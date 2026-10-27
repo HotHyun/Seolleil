@@ -1,5 +1,5 @@
-import { LogOut, UserCircle } from "lucide-react";
-import { signOutAction } from "@/app/auth-actions";
+import { UserCircle } from "lucide-react";
+import { FirebaseSignOutButton } from "@/components/auth/firebase-sign-out-button";
 import { ThemeMenuItem, ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
@@ -47,14 +47,7 @@ export function AuthNav({ session }: { session: AppSession | null }) {
         </DropdownMenuItem>
         <ThemeMenuItem />
         <DropdownMenuSeparator />
-        <form action={signOutAction}>
-          <button
-            type="submit"
-            className="relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition hover:bg-muted focus:bg-muted"
-          >
-            <LogOut className="h-4 w-4" /> 로그아웃
-          </button>
-        </form>
+        <FirebaseSignOutButton />
       </DropdownMenuContent>
     </DropdownMenu>
   );

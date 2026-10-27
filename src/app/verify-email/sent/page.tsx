@@ -1,5 +1,5 @@
 import { Check, MailCheck, MountainSnow } from "lucide-react";
-import { resendEmailVerificationAction } from "@/app/auth-actions";
+import { ResendFirebaseVerification } from "@/components/auth/firebase-email-verification";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -24,7 +24,7 @@ export default async function VerificationSentPage({ searchParams }: { searchPar
             <Step icon={<MountainSnow />} number="3" title="트립 시작" active={false} />
           </ol>
           <div className="mt-7 grid gap-3 sm:grid-cols-2">
-            <form action={resendEmailVerificationAction}><input type="hidden" name="callbackUrl" value={callbackUrl} /><Button variant="secondary" className="w-full">인증 메일 다시 보내기</Button></form>
+            <ResendFirebaseVerification callbackUrl={callbackUrl} />
             <a href="/login"><Button variant="ghost" className="w-full">다른 계정으로 로그인</Button></a>
           </div>
           <p className="mt-5 text-xs leading-5 text-muted-foreground">메일이 보이지 않으면 스팸함을 확인해 주세요. 링크는 다른 사람에게 전달하지 마세요.</p>

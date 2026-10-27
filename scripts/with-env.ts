@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { loadDotenv } from "./appwrite/env";
+import { loadDotenv } from "./env";
 
 const [, , ...command] = process.argv;
 

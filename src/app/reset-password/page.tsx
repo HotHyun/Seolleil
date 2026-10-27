@@ -1,6 +1,0 @@
-import { resetPasswordAction } from "@/app/auth-actions";
-import { Button } from "@/components/ui/button";
-import { SubmitButton } from "@/components/ui/submit-button";
-import { Input } from "@/components/ui/field";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-export default async function ResetPasswordPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) { const q = await searchParams; const val = (k: string) => Array.isArray(q[k]) ? q[k][0] ?? "" : q[k] ?? ""; return <main className="page-shell grid min-h-[70vh] place-items-center py-10"><Card className="w-full max-w-md"><CardHeader><CardTitle>새 비밀번호 설정</CardTitle></CardHeader><CardContent><form action={resetPasswordAction} className="space-y-3"><input type="hidden" name="userId" value={val("userId")} /><input type="hidden" name="secret" value={val("secret")} />{val("error") ? <p role="alert" className="text-sm text-destructive">{val("error")}</p> : null}<Input name="password" type="password" minLength={8} autoComplete="new-password" aria-label="새 비밀번호" placeholder="새 비밀번호 (8자 이상)" required /><SubmitButton className="w-full" pendingText="비밀번호 저장 중…">비밀번호 저장</SubmitButton></form></CardContent></Card></main>; }

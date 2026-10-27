@@ -1,4 +1,5 @@
-import { appwriteFetch, appwriteQuery, documentPath, getAppwriteConfig, type AppwriteDocument } from "@/lib/appwrite";
+import { createFirebaseDocument, deleteFirebaseDocument, getFirebaseCollections, getFirebaseDocument, queryFirebaseDocuments, updateFirebaseDocument, type FirebaseDocument } from "@/lib/firebase";
+import { decryptShareToken, encryptShareToken } from "@/lib/token-vault";
 import type { RideType, SkillLevel, TransportType, TripDuration } from "@/lib/types";
 import { EMPTY_TRIP_BUDGET, parseTripBudget, type TripBudgetState } from "@/lib/trip-budget";
 import { parseTripSkiPlan, type TripSkiPlan } from "@/lib/trip-ski-plan";
@@ -134,13 +135,8 @@ type EventDocument = {
   properties?: string | null;
 };
 
-type ShareLinkDocument = { tripId: string; tokenHash: string; tokenValue?: string | null; permission: "read" | "edit"; createdBy?: string | null; revokedAt?: string | null };
+type ShareLinkDocument = { tripId: string; tokenHash: string; tokenCiphertext?: string | null; permission: "read" | "edit"; createdBy?: string | null; revokedAt?: string | null };
 export type TripShareLinkRecord = { id: string; tripId: string; sharePath: string | null; permission: "read" | "edit"; createdAt: Date; revokedAt: Date | null };
-
-type DocumentList<T> = {
-  total: number;
-  documents: Array<AppwriteDocument<T>>;
-};
 
 function toIsoDate(value: Date | null | undefined) {
   return value ? value.toISOString() : null;
@@ -163,7 +159,7 @@ function decodeJson(value?: string | null) {
   }
 }
 
-function mapTask(document: AppwriteDocument<TaskDocument>): TripTaskRecord {
+function mapTask(document: FirebaseDocument<TaskDocument>): TripTaskRecord {
   return {
     id: document.$id,
     tripId: document.tripId,
@@ -188,7 +184,7 @@ function mapBudget(document: TripDocument) {
   return budget;
 }
 
-function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord[] = []): TripRecord {
+function mapTrip(document: FirebaseDocument<TripDocument>, tasks: TripTaskRecord[] = []): TripRecord {
   const visitDate = new Date(document.visitDate);
   const endDate = new Date(document.endDate ?? document.visitDate);
   return {
@@ -252,42 +248,19 @@ function mapTrip(document: AppwriteDocument<TripDocument>, tasks: TripTaskRecord
   };
 }
 
-async function listDocuments<T>(collectionId: string, queries: string[]) {
-  const params = new URLSearchParams();
-  for (const query of queries) params.append("queries[]", query);
-  return appwriteFetch<DocumentList<T>>(`${documentPath(collectionId)}?${params.toString()}`);
-}
-
 async function getTripTasks(tripId: string) {
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<TaskDocument>(collections.tripTasks, [
-    appwriteQuery("equal", "tripId", [tripId]),
-    appwriteQuery("orderAsc", "category"),
-    appwriteQuery("orderAsc", "sortOrder"),
-    appwriteQuery("limit", 200)
-  ]);
-  return result.documents.map(mapTask);
+  const { tripTasks } = getFirebaseCollections();
+  const tasks = await queryFirebaseDocuments<TaskDocument>(tripTasks, "tripId", tripId, 200);
+  return tasks.map(mapTask).sort((left, right) => left.category.localeCompare(right.category) || left.sortOrder - right.sortOrder);
 }
 
 export async function createTrip(input: TripCreateInput) {
-  const { collections } = getAppwriteConfig();
-  const trip = await appwriteFetch<AppwriteDocument<TripDocument>>(documentPath(collections.trips), {
-    method: "POST",
-    body: JSON.stringify({
-      documentId: "unique()",
-      data: serializeTrip(input)
-    })
-  });
+  const { trips: tripsCollection, tripTasks } = getFirebaseCollections();
+  const trip = await createFirebaseDocument<TripDocument>(tripsCollection, serializeTrip(input));
 
   await Promise.all(
     input.tasks.map((task) =>
-      appwriteFetch<AppwriteDocument<TaskDocument>>(documentPath(collections.tripTasks), {
-        method: "POST",
-        body: JSON.stringify({
-          documentId: "unique()",
-          data: serializeTask({ ...task, tripId: trip.$id })
-        })
-      })
+      createFirebaseDocument<TaskDocument>(tripTasks, serializeTask({ ...task, tripId: trip.$id }))
     )
   );
 
@@ -357,53 +330,45 @@ function serializeTask(input: Omit<TripTaskRecord, "id" | "createdAt" | "updated
 }
 
 export async function getTripByEditTokenHash(editTokenHash: string) {
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<TripDocument>(collections.trips, [
-    appwriteQuery("equal", "editTokenHash", [editTokenHash]),
-    appwriteQuery("limit", 1)
-  ]);
-  const document = result.documents[0];
+  const { trips } = getFirebaseCollections();
+  const [document] = await queryFirebaseDocuments<TripDocument>(trips, "editTokenHash", editTokenHash, 1);
   return document ? mapTrip(document, await getTripTasks(document.$id)) : null;
 }
 
 export async function getTripByShareTokenHash(shareTokenHash: string) {
   const link = await getShareLinkByTokenHash(shareTokenHash);
   if (link) return getTripById(link.tripId);
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<TripDocument>(collections.trips, [
-    appwriteQuery("equal", "shareTokenHash", [shareTokenHash]),
-    appwriteQuery("limit", 1)
-  ]);
-  const document = result.documents[0];
+  const { trips } = getFirebaseCollections();
+  const [document] = await queryFirebaseDocuments<TripDocument>(trips, "shareTokenHash", shareTokenHash, 1);
   return document ? mapTrip(document, await getTripTasks(document.$id)) : null;
 }
 
 export async function getShareLinkByTokenHash(tokenHash: string) {
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tokenHash", [tokenHash]), appwriteQuery("limit", 1)]);
-  const link = result.documents[0];
+  const { tripShareLinks } = getFirebaseCollections();
+  const [link] = await queryFirebaseDocuments<ShareLinkDocument>(tripShareLinks, "tokenHash", tokenHash, 1);
   if (!link || link.revokedAt) return null;
   return { id: link.$id, tripId: link.tripId, sharePath: null, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord;
 }
 
 export async function createTripShareLink(input: { tripId: string; tokenHash: string; tokenValue: string; permission: "read" | "edit"; createdBy?: string | null }) {
-  const { collections } = getAppwriteConfig();
-  return appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks), { method: "POST", body: JSON.stringify({ documentId: "unique()", data: { ...input, revokedAt: null } }) });
+  const { tripShareLinks } = getFirebaseCollections();
+  const { tokenValue, ...data } = input;
+  return createFirebaseDocument<ShareLinkDocument>(tripShareLinks, { ...data, tokenCiphertext: await encryptShareToken(tokenValue), revokedAt: null });
 }
 
 export async function listTripShareLinks(tripId: string) {
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tripId", [tripId]), appwriteQuery("limit", 100)]);
-  return result.documents
-    .map(link => ({ id: link.$id, tripId: link.tripId, sharePath: link.tokenValue ? `/share/${link.tokenValue}` : null, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord))
-    .sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
+  const { tripShareLinks } = getFirebaseCollections();
+  const links = await queryFirebaseDocuments<ShareLinkDocument>(tripShareLinks, "tripId", tripId, 100);
+  const mapped = await Promise.all(links.map(async link => ({ id: link.$id, tripId: link.tripId, sharePath: link.tokenCiphertext ? `/share/${await decryptShareToken(link.tokenCiphertext)}` : null, permission: link.permission, createdAt: new Date(link.$createdAt), revokedAt: fromDate(link.revokedAt) } satisfies TripShareLinkRecord)));
+  return mapped.sort((left, right) => right.createdAt.getTime() - left.createdAt.getTime());
 }
 
 export async function revokeTripShareLink(id: string, tripId: string) {
-  const { collections } = getAppwriteConfig();
-  const link = await appwriteFetch<AppwriteDocument<ShareLinkDocument>>(documentPath(collections.tripShareLinks, id));
+  const { tripShareLinks } = getFirebaseCollections();
+  const link = await getFirebaseDocument<ShareLinkDocument>(tripShareLinks, id);
+  if (!link) throw new Error("Share link does not exist");
   assertShareLinkBelongsToTrip(link.tripId, tripId);
-  await appwriteFetch(documentPath(collections.tripShareLinks, id), { method: "PATCH", body: JSON.stringify({ data: { revokedAt: new Date().toISOString() } }) });
+  await updateFirebaseDocument<ShareLinkDocument>(tripShareLinks, id, { revokedAt: new Date().toISOString() });
 }
 
 export function assertShareLinkBelongsToTrip(linkTripId: string, requestedTripId: string) {
@@ -411,15 +376,16 @@ export function assertShareLinkBelongsToTrip(linkTripId: string, requestedTripId
 }
 
 export async function revokeTripShareLinks(tripId: string) {
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<ShareLinkDocument>(collections.tripShareLinks, [appwriteQuery("equal", "tripId", [tripId]), appwriteQuery("limit", 100)]);
-  await Promise.all(result.documents.filter(link => !link.revokedAt).map(link => appwriteFetch(documentPath(collections.tripShareLinks, link.$id), { method: "PATCH", body: JSON.stringify({ data: { revokedAt: new Date().toISOString() } }) })));
+  const { tripShareLinks } = getFirebaseCollections();
+  const links = await queryFirebaseDocuments<ShareLinkDocument>(tripShareLinks, "tripId", tripId, 100);
+  await Promise.all(links.filter(link => !link.revokedAt).map(link => updateFirebaseDocument(tripShareLinks, link.$id, { revokedAt: new Date().toISOString() })));
 }
 
 export async function getTripById(id: string) {
-  const { collections } = getAppwriteConfig();
+  const { trips } = getFirebaseCollections();
   try {
-    const document = await appwriteFetch<AppwriteDocument<TripDocument>>(documentPath(collections.trips, id));
+    const document = await getFirebaseDocument<TripDocument>(trips, id);
+    if (!document) return null;
     return mapTrip(document, await getTripTasks(document.$id));
   } catch {
     return null;
@@ -427,33 +393,24 @@ export async function getTripById(id: string) {
 }
 
 export async function getTripsByUserId(userId: string) {
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<TripDocument>(collections.trips, [
-    appwriteQuery("equal", "userId", [userId]),
-    appwriteQuery("notEqual", "status", ["deleted"]),
-    appwriteQuery("orderAsc", "visitDate"),
-    appwriteQuery("orderDesc", "$createdAt"),
-    appwriteQuery("limit", 100)
-  ]);
-  const trips = await Promise.all(result.documents.map(async (document) => mapTrip(document, await getTripTasks(document.$id))));
-  return trips;
+  const { trips: tripsCollection } = getFirebaseCollections();
+  const documents = await queryFirebaseDocuments<TripDocument>(tripsCollection, "userId", userId, 100);
+  const visible = documents.filter(document => document.status !== "deleted");
+  const trips = await Promise.all(visible.map(async document => mapTrip(document, await getTripTasks(document.$id))));
+  return trips.sort((left, right) => left.visitDate.getTime() - right.visitDate.getTime() || right.createdAt.getTime() - left.createdAt.getTime());
 }
 
 export async function getTripsByTeamIds(teamIds: string[]) {
   if (!teamIds.length) return [];
-  const { collections } = getAppwriteConfig();
-  const result = await listDocuments<TripDocument>(collections.trips, [appwriteQuery("equal", "teamId", teamIds), appwriteQuery("notEqual", "status", ["deleted"]), appwriteQuery("limit", 100)]);
-  return Promise.all(result.documents.map(async document => mapTrip(document, await getTripTasks(document.$id))));
+  const { trips: tripsCollection } = getFirebaseCollections();
+  const result = await Promise.all(teamIds.map(teamId => queryFirebaseDocuments<TripDocument>(tripsCollection, "teamId", teamId, 100)));
+  const documents = [...new Map(result.flat().filter(document => document.status !== "deleted").map(document => [document.$id, document])).values()];
+  return Promise.all(documents.map(async document => mapTrip(document, await getTripTasks(document.$id))));
 }
 
 export async function updateTrip(id: string, data: Partial<Omit<TripRecord, "id" | "createdAt" | "updatedAt" | "tasks">>) {
-  const { collections } = getAppwriteConfig();
-  const document = await appwriteFetch<AppwriteDocument<TripDocument>>(documentPath(collections.trips, id), {
-    method: "PATCH",
-    body: JSON.stringify({
-      data: serializePartialTrip(data)
-    })
-  });
+  const { trips } = getFirebaseCollections();
+  const document = await updateFirebaseDocument<TripDocument>(trips, id, serializePartialTrip(data));
   return mapTrip(document, await getTripTasks(document.$id));
 }
 
@@ -487,59 +444,54 @@ export async function updateDefaultTasksForTrip(
 }
 
 export async function updateTask(id: string, data: Partial<Omit<TripTaskRecord, "id" | "tripId" | "createdAt" | "updatedAt">>) {
-  const { collections } = getAppwriteConfig();
+  const { tripTasks } = getFirebaseCollections();
   const serialized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(data)) {
     serialized[key] = value instanceof Date ? value.toISOString() : value;
   }
-  return appwriteFetch<AppwriteDocument<TaskDocument>>(documentPath(collections.tripTasks, id), {
-    method: "PATCH",
-    body: JSON.stringify({ data: serialized })
-  });
+  return updateFirebaseDocument<TaskDocument>(tripTasks, id, serialized);
 }
 
 export async function createTask(
   input: Omit<TripTaskRecord, "id" | "createdAt" | "updatedAt" | "memo" | "dueDate" | "externalUrl"> &
     Partial<Pick<TripTaskRecord, "memo" | "dueDate" | "externalUrl">>
 ) {
-  const { collections } = getAppwriteConfig();
-  return appwriteFetch<AppwriteDocument<TaskDocument>>(documentPath(collections.tripTasks), {
-    method: "POST",
-    body: JSON.stringify({
-      documentId: "unique()",
-      data: serializeTask({
-        ...input,
-        memo: input.memo ?? null,
-        dueDate: input.dueDate ?? null,
-        externalUrl: input.externalUrl ?? null
-      })
-    })
-  });
+  const { tripTasks } = getFirebaseCollections();
+  return createFirebaseDocument<TaskDocument>(tripTasks, serializeTask({
+    ...input,
+    memo: input.memo ?? null,
+    dueDate: input.dueDate ?? null,
+    externalUrl: input.externalUrl ?? null
+  }));
 }
 
 export async function deleteTask(id: string) {
-  const { collections } = getAppwriteConfig();
-  await appwriteFetch<void>(documentPath(collections.tripTasks, id), { method: "DELETE" });
+  const { tripTasks } = getFirebaseCollections();
+  await deleteFirebaseDocument(tripTasks, id);
 }
 
 export async function deleteTrip(id: string) {
-  const { collections } = getAppwriteConfig();
+  const { trips, tripShareLinks, tripMemberships, tripTeams } = getFirebaseCollections();
   const tasks = await getTripTasks(id);
-  await Promise.all(tasks.map((task) => deleteTask(task.id)));
-  await appwriteFetch<void>(documentPath(collections.trips, id), { method: "DELETE" });
+  const [shareLinks, memberships, teams] = await Promise.all([
+    queryFirebaseDocuments<ShareLinkDocument>(tripShareLinks, "tripId", id, 200),
+    queryFirebaseDocuments<{ tripId: string }>(tripMemberships, "tripId", id, 200),
+    queryFirebaseDocuments<{ tripId: string }>(tripTeams, "tripId", id, 100)
+  ]);
+  await Promise.all([
+    ...tasks.map(task => deleteTask(task.id)),
+    ...shareLinks.map(link => deleteFirebaseDocument(tripShareLinks, link.$id)),
+    ...memberships.map(membership => deleteFirebaseDocument(tripMemberships, membership.$id)),
+    ...teams.map(team => deleteFirebaseDocument(tripTeams, team.$id))
+  ]);
+  await deleteFirebaseDocument(trips, id);
 }
 
 export async function recordAnalyticsEvent(input: { tripId?: string | null; eventName: string; properties?: unknown }) {
-  const { collections } = getAppwriteConfig();
-  await appwriteFetch<AppwriteDocument<EventDocument>>(documentPath(collections.analyticsEvents), {
-    method: "POST",
-    body: JSON.stringify({
-      documentId: "unique()",
-      data: {
-        tripId: input.tripId ?? null,
-        eventName: input.eventName,
-        properties: encodeJson(input.properties ?? {})
-      }
-    })
+  const { analyticsEvents } = getFirebaseCollections();
+  await createFirebaseDocument<EventDocument>(analyticsEvents, {
+    tripId: input.tripId ?? null,
+    eventName: input.eventName,
+    properties: encodeJson(input.properties ?? {})
   });
 }

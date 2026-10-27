@@ -9,7 +9,7 @@ describe("trip identity", () => {
   });
 
   it("shows a member name without exposing the full email as the fallback", () => {
-    expect(membershipDisplayName({ $id: "m1", userId: "u1", userName: "동행자", userEmail: "person@example.com", confirm: true, roles: ["viewer"], joined: "" })).toBe("동행자");
-    expect(membershipDisplayName({ $id: "m2", userId: "u2", userName: "", userEmail: "person@example.com", confirm: true, roles: ["viewer"], joined: "" })).toBe("person");
+    expect(membershipDisplayName({ $id: "m1", teamId: "team1", userId: "u1", userName: "동행자", userEmail: "person@example.com", confirm: true, roles: ["viewer"], joined: "" })).toBe("동행자");
+    expect(membershipDisplayName({ $id: "m2", teamId: "team2", userId: "u2", userName: "", userEmail: "person@example.com", confirm: true, roles: ["viewer"], joined: "" })).toBe("person");
   });
 });

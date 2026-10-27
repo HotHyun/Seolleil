@@ -21,7 +21,7 @@ import { getTripWorkspaceView, isTripDecisionView } from "@/lib/trip-workspace";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
-import { getSession, getSessionSecret } from "@/lib/session";
+import { getSession } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
 import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 import { getRentalOptionsForResort } from "@/lib/pricing";
@@ -55,13 +55,12 @@ export default async function MyTripDetailPage({
 
   if (!trip) notFound();
   const isOwner = trip.userId === session.user.id;
-  const sessionSecret = await getSessionSecret();
-  const collaborationPermission = !isOwner && trip.teamId && sessionSecret ? await getTripTeamPermission(sessionSecret, trip.teamId, session.user.id) : null;
+  const collaborationPermission = !isOwner && trip.teamId ? await getTripTeamPermission(trip.teamId, session.user.id) : null;
   if (!isOwner && !collaborationPermission) notFound();
   const canEdit = isOwner || collaborationPermission === "edit";
   const [shareLinks, members] = await Promise.all([
     isOwner ? listTripShareLinks(trip.id) : Promise.resolve([]),
-    trip.teamId && sessionSecret ? listTripMemberships(sessionSecret, trip.teamId) : Promise.resolve([])
+    trip.teamId ? listTripMemberships(trip.teamId) : Promise.resolve([])
   ]);
 
   const resort = getResort(trip.resortId);

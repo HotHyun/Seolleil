@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { CheckCircle2, ExternalLink, ShieldAlert } from "lucide-react";
-import { signInWithGoogleAction } from "@/app/auth-actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { ProgressSummary } from "@/components/trip/progress";
@@ -131,12 +130,7 @@ export default async function TripEditPage({
                   <p className="text-sm text-muted-foreground">
                     로그인하면 이 링크를 따로 저장하지 않아도 내 트립 목록에서 다시 열 수 있습니다.
                   </p>
-                  <form action={signInWithGoogleAction}>
-                    <input type="hidden" name="callbackUrl" value={`/trips/${editToken}`} />
-                    <Button className="w-full" type="submit">
-                      Google로 로그인하고 저장
-                    </Button>
-                  </form>
+                  <a href={`/login?callbackUrl=${encodeURIComponent(`/trips/${editToken}`)}`}><Button className="w-full">로그인하고 내 트립에 저장</Button></a>
                 </>
             </CardContent>
           </Card>

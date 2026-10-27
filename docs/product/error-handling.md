@@ -16,7 +16,7 @@
 2. 사용자가 할 수 있는 다음 행동을 메시지에 쓴다.
 3. 재시도가 실제로 의미 있을 때만 `retryable`을 켠다.
 4. 서버 액션의 `actionFailure` context에는 액션명과 비민감 식별자만 넣는다.
-5. 토큰, 세션 secret, 이메일, 요청 본문, Appwrite API key는 기록하지 않는다.
+5. 토큰, 세션 secret, 이메일, 요청 본문, Firebase service account credential는 기록하지 않는다.
 6. 분류와 안전한 메시지를 단위 테스트한다.
 
 ## 발생 지점
@@ -24,7 +24,7 @@
 - 입력/검증: 잘못된 값은 `INVALID_INPUT`과 수정 안내.
 - 인증/이메일 인증: `AUTH_REQUIRED` 또는 `EMAIL_NOT_VERIFIED`와 해당 화면 이동 안내.
 - 공유 권한/폐기 링크: `FORBIDDEN`, `NOT_FOUND`, `CONFLICT`를 구분.
-- Appwrite/네트워크: 연결 실패와 5xx를 재시도 가능한 오류로 분류.
+- Firebase Auth/Firestore 네트워크: 연결 실패와 5xx를 재시도 가능한 오류로 분류.
 - 메일 초대: 발송 실패는 `EMAIL_DELIVERY_FAILED`; 사용자의 초대 입력을 유지한다.
 - 렌더링: App Router error boundary에서 재시도와 홈 이동, digest 참조 번호를 제공한다.
 

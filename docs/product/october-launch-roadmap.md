@@ -117,7 +117,7 @@
 ### 9월: 운영 안정화와 알파 테스트
 
 - GitHub Actions CI 구축.
-- Appwrite 백업/복구 리허설 문서화.
+- Firebase service account key 교체와 Firestore 백업/복구 절차 문서화.
 - Umami 이벤트 검증.
 - 앱 DB 이벤트 검증.
 - 알파 테스트 체크리스트 작성.
@@ -155,7 +155,7 @@
 - [ ] 잘못된 edit/share token 처리.
 - [ ] Umami 이벤트 수집 확인.
 - [ ] 앱 DB 이벤트 수집 확인.
-- [ ] Appwrite 백업/복구 절차 확인.
+- [ ] Firebase service account key 보관 및 Firestore 복구 절차 확인.
 - [ ] `pnpm test:all` 통과.
 - [ ] Cloudflare Workers 재배포와 production 회귀 확인.
 

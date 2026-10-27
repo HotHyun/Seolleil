@@ -11,32 +11,33 @@
 - `/share/{shareToken}`마다 `read` 또는 `edit` 권한을 저장한다.
 - 발급된 링크는 트립과 체크리스트 변경 후에도 계속 유효하다.
 - 새 링크 발급은 기존 링크를 폐기하지 않는다. 폐기는 별도 revoke 동작으로만 한다.
-- 링크 조회에는 SHA-256 해시를 사용한다. 관리 화면에서 기존 링크를 다시 복사할 수 있도록 새 링크의 원문 토큰도 `trip_share_links`에 보관한다.
+- 링크 조회에는 SHA-256 토큰 해시를 사용한다. 관리 화면에서 주소를 다시 복사할 수 있도록 암호화된 토큰 복사본을 Firestore에 저장한다. 암호화 키는 Cloudflare secret이며 해시와 원문 토큰은 analytics/logs에 기록하지 않는다.
 - 원문 링크 목록과 공유 관리 기능은 로그인한 트립 소유자에게만 반환한다. 공유 링크, 익명 편집 링크, 계정 초대 멤버는 공유 관리 기능을 사용할 수 없다.
-- 기존 hash-only 링크는 원문을 복구할 수 없으므로 관리 화면에서 새 링크 발급이 필요함을 알린다.
 - `read` 링크는 일정과 준비 상태만 조회하고 `edit` 링크만 수정 서버 액션에 사용할 수 있다.
-- `read` 링크와 계정 viewer 화면은 편집 폼을 비활성 상태로 남기지 않고, 저장된 날짜별 렌탈·리프트권·숙박·왕복 교통과 체크 상태만 읽기 전용 레이아웃으로 표시한다. 개인 체크리스트 메모는 표시하지 않는다.
+- `read` 링크와 계정 viewer 화면은 편집 폼 대신 저장된 날짜별 렌탈·리프트권·숙박·왕복 교통과 체크 상태만 읽기 전용 레이아웃으로 표시한다. 개인 체크리스트 메모는 표시하지 않는다.
 - 링크 접근은 로그인 여부와 무관하므로 편집 링크의 위험을 UI에서 안내한다.
 
 ## 계정 초대
 
 - 소유자가 이메일과 `viewer`/`editor` 역할로 초대한다.
-- Appwrite Teams membership invite가 미가입 이메일의 pending user/membership과 초대 메일을 처리한다.
-- 사용자는 로그인 또는 이메일 가입 후 `/invite/accept`에서 일회용 secret으로 수락한다.
+- 초대 hash, 이메일, 권한과 만료 시각을 Firestore membership에 저장한다. 7일짜리 원문 링크는 초대 생성 응답에서만 소유자에게 반환한다.
+- 선택형 Resend 설정이 있으면 초대 메일을 발송한다. 설정이 없으면 소유자가 링크를 복사해 직접 전달한다.
+- 초대받은 사용자는 지정 이메일과 일치하는 인증 완료 Firebase 계정으로 수락해야 한다.
 - 소유자만 계정 사용자를 초대하거나 계정 권한을 바꾸고, 공유 링크를 조회·복사·발급·폐기할 수 있다.
-- 공유 관리의 계정 목록은 초대 이메일을 기본 식별자로 표시한다.
-- 서버는 화면 상태를 신뢰하지 않고 현재 Appwrite membership을 다시 확인한다.
-- 트립 이름은 링크 공유 화면에도 표시할 수 있지만, 계정 멤버 목록은 인증된 팀 멤버에게만 노출한다.
+- 서버는 화면 상태를 신뢰하지 않고 현재 Firestore membership을 다시 확인한다.
 
 ## 이메일·비밀번호 인증
 
-- 비밀번호는 앱 DB에 저장하지 않고 Appwrite Auth가 Argon2로 처리한다.
-- 가입 후 verification 메일을 발송하고 `/verify-email`에서 `userId`와 일회용 `secret`으로 인증한다.
-- Appwrite 세션이 존재하더라도 `emailVerification !== true`이면 제품에서는 비로그인으로 취급해 내 트립·초대·협업 권한을 부여하지 않는다.
-- 가입 직후에는 인증 단계와 재전송 동작을 제공하는 브릿지 화면으로 이동한다.
-- 인증/초대 URL은 Appwrite Console에 등록된 HTTPS 플랫폼 도메인만 사용한다.
-- 세션 secret은 Secure, HttpOnly, SameSite=Lax 쿠키에만 저장한다.
+- 비밀번호는 앱 DB에 저장하지 않고 Firebase Authentication이 처리한다.
+- Firebase ID token 서명, audience, issuer, 만료, UID와 인증 시간을 서버에서 확인한다. 검증된 토큰만 Secure, HttpOnly, SameSite=Lax 쿠키에 동기화한다.
+- 이메일/비밀번호 계정은 `email_verified === true`가 되기 전 내 트립·초대·협업 권한을 갖지 않는다.
+- Firebase Auth 이메일 템플릿의 custom action URL은 앱을 배포한 뒤 `https://ski.hothyun.com/auth/action`으로 설정한다. 비밀번호 재설정과 이메일 인증의 OOB code는 이 경로에서 처리한다.
 - 오류 문구는 계정 존재 여부를 과도하게 노출하지 않는다.
+
+## Firestore 접근
+
+- 브라우저 SDK가 앱 문서를 직접 읽거나 쓰지 않는다. Firestore Security Rules는 전체 클라이언트 접근을 거부하고 Worker는 IAM service account로 REST API를 호출한다.
+- service account에는 Firestore 작업에 필요한 최소 역할만 부여한다. 키와 공유 토큰 암호화 키는 Worker secret으로 저장하고 저장소에 넣지 않는다.
 
 ## 검색·삭제
 

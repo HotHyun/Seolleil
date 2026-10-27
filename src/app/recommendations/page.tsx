@@ -11,6 +11,7 @@ import { SelectField } from "@/components/ui/select-field";
 import { estimateTripCost, getRentalOptionsForResort, resolveLiftPrice } from "@/lib/pricing";
 import { getRecommendations } from "@/lib/recommendation";
 import { optionAppliesToDay } from "@/lib/trip-ski-plan";
+import { departureLocations } from "@/data/departure-locations";
 import { getSession } from "@/lib/session";
 import type { CostEstimate, CostItem, PriceConfidence, Priority, RentalPriceRule, RentalShop, SkiResort, TimeSlot, TripDuration, TripInput } from "@/lib/types";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
@@ -23,6 +24,7 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const input = parseParams(params);
   const recommendations = getRecommendations(input);
+  const departureLabel = departureLocations.find((location) => location.id === input.departureLocation)?.label ?? "서울 강남";
   const session = await getSession();
   const isAuthenticated = Boolean(session?.user);
 
@@ -35,6 +37,9 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
           <h1 className="text-balance text-3xl font-black md:text-5xl">예약 전에 비교할 추천 3곳</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
             같은 날짜와 인원으로 리조트 공식 이용과 주변 렌탈샵 이용의 비용을 비교하고, 마음에 드는 곳을 트립으로 저장하세요.
+          </p>
+          <p className="mt-2 text-xs leading-5 text-muted-foreground">
+            기준 지역: {departureLabel} · 이동 시간과 자차 교통비는 대표 지점 기준의 대략적인 추정치입니다.
           </p>
         </div>
         <a href="/plan">

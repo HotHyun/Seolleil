@@ -1,4 +1,5 @@
 import type { RentalShop, SkiResort } from "@/lib/types";
+import { resortCoordinates } from "@/data/resort-coordinates";
 
 const checkedAt = "2026-05-17";
 
@@ -54,19 +55,19 @@ export type NearbyMapItem = {
 };
 
 export const resortMapPoints: ResortMapPoint[] = [
-  { resortId: "konjiam", lat: 37.3373, lng: 127.2966, sourceName: "곤지암리조트 주소 기준", sourceUrl: "https://www.konjiamresort.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "jisan", lat: 37.2177, lng: 127.3435, sourceName: "지산 포레스트 리조트 주소 기준", sourceUrl: "https://www.jisanresort.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "vivaldi", lat: 37.6457, lng: 127.6842, sourceName: "비발디파크 주소 기준", sourceUrl: "https://www.sonohotelsresorts.com/complex_vp", lastCheckedAt: checkedAt },
-  { resortId: "elysian", lat: 37.8302, lng: 127.5891, sourceName: "엘리시안 강촌 주소 기준", sourceUrl: "https://www.elysian.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "phoenix", lat: 37.5826, lng: 128.3227, sourceName: "휘닉스 스노우파크 주소 기준", sourceUrl: "https://phoenixhnr.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "yongpyong", lat: 37.6453, lng: 128.6819, sourceName: "모나 용평 주소 기준", sourceUrl: "https://www.yongpyong.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "high1", lat: 37.2092, lng: 128.8225, sourceName: "하이원리조트 주소 기준", sourceUrl: "https://www.high1.com/", lastCheckedAt: checkedAt },
-  { resortId: "wellihilli", lat: 37.4915, lng: 128.2509, sourceName: "웰리힐리파크 주소 기준", sourceUrl: "https://www.wellihillipark.com/", lastCheckedAt: checkedAt },
-  { resortId: "oakvalley", lat: 37.4308, lng: 127.8156, sourceName: "오크밸리 주소 기준", sourceUrl: "https://www.oakvalley.co.kr/", lastCheckedAt: checkedAt },
-  { resortId: "alpensia", lat: 37.6584, lng: 128.6723, sourceName: "알펜시아 리조트 주소 기준", sourceUrl: "https://www.alpensia.com/", lastCheckedAt: checkedAt },
-  { resortId: "o2", lat: 37.1775, lng: 128.9867, sourceName: "오투리조트 주소 기준", sourceUrl: "https://www.o2resort.com/", lastCheckedAt: checkedAt },
-  { resortId: "muju", lat: 35.8904, lng: 127.7381, sourceName: "무주 덕유산 리조트 주소 기준", sourceUrl: "https://www.mdysresort.com/", lastCheckedAt: checkedAt },
-  { resortId: "edenvalley", lat: 35.4298, lng: 129.0197, sourceName: "에덴밸리 리조트 주소 기준", sourceUrl: "https://www.edenvalley.co.kr/", lastCheckedAt: checkedAt }
+  { resortId: "konjiam", ...resortCoordinates.konjiam, sourceName: "곤지암리조트 주소 기준", sourceUrl: "https://www.konjiamresort.co.kr/", lastCheckedAt: checkedAt },
+  { resortId: "jisan", ...resortCoordinates.jisan, sourceName: "지산 포레스트 리조트 주소 기준", sourceUrl: "https://www.jisanresort.co.kr/", lastCheckedAt: checkedAt },
+  { resortId: "vivaldi", ...resortCoordinates.vivaldi, sourceName: "비발디파크 주소 기준", sourceUrl: "https://www.sonohotelsresorts.com/complex_vp", lastCheckedAt: checkedAt },
+  { resortId: "elysian", ...resortCoordinates.elysian, sourceName: "엘리시안 강촌 주소 기준", sourceUrl: "https://www.elysian.co.kr/", lastCheckedAt: checkedAt },
+  { resortId: "phoenix", ...resortCoordinates.phoenix, sourceName: "휘닉스 스노우파크 주소 기준", sourceUrl: "https://phoenixhnr.co.kr/", lastCheckedAt: checkedAt },
+  { resortId: "yongpyong", ...resortCoordinates.yongpyong, sourceName: "모나 용평 주소 기준", sourceUrl: "https://www.yongpyong.co.kr/", lastCheckedAt: checkedAt },
+  { resortId: "high1", ...resortCoordinates.high1, sourceName: "하이원리조트 주소 기준", sourceUrl: "https://www.high1.com/", lastCheckedAt: checkedAt },
+  { resortId: "wellihilli", ...resortCoordinates.wellihilli, sourceName: "웰리힐리파크 주소 기준", sourceUrl: "https://www.wellihillipark.com/", lastCheckedAt: checkedAt },
+  { resortId: "oakvalley", ...resortCoordinates.oakvalley, sourceName: "오크밸리 주소 기준", sourceUrl: "https://www.oakvalley.co.kr/", lastCheckedAt: checkedAt },
+  { resortId: "alpensia", ...resortCoordinates.alpensia, sourceName: "알펜시아 리조트 주소 기준", sourceUrl: "https://www.alpensia.com/", lastCheckedAt: checkedAt },
+  { resortId: "o2", ...resortCoordinates.o2, sourceName: "오투리조트 주소 기준", sourceUrl: "https://www.o2resort.com/", lastCheckedAt: checkedAt },
+  { resortId: "muju", ...resortCoordinates.muju, sourceName: "무주 덕유산 리조트 주소 기준", sourceUrl: "https://www.mdysresort.com/", lastCheckedAt: checkedAt },
+  { resortId: "edenvalley", ...resortCoordinates.edenvalley, sourceName: "에덴밸리 리조트 주소 기준", sourceUrl: "https://www.edenvalley.co.kr/", lastCheckedAt: checkedAt }
 ];
 
 export const nearbyLodgings: NearbyLodging[] = [

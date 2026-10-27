@@ -19,7 +19,7 @@ const steps = [
     icon: CalendarDays,
     title: "여행 정보",
     eyebrow: "Step 1",
-    description: "날짜와 출발지만 정하면 시작할 수 있어요."
+    description: "날짜와 이동 기준 지역만 정하면 시작할 수 있어요."
   },
   {
     icon: MapPin,
@@ -186,12 +186,17 @@ export function TripBuilderForm({
               <Field label="방문 날짜">
                 <DatePicker name="visitDate" required value={visitDate || draftValue("visitDate", "")} onValueChange={value => { setVisitDate(value); if (endDate && endDate <= value) setEndDate(""); }} ariaLabel="여행 방문 날짜" />
               </Field>
-              <Field label="출발지">
-                <SelectField
-                  name="departureLocation"
-                  defaultValue={draftValue("departureLocation", "seoul-gangnam")}
-                  options={departureLocations.map((location) => ({ value: location.id, label: location.label }))}
-                />
+              <Field label="이동 계산 기준 지역">
+                <div className="grid gap-1.5">
+                  <SelectField
+                    name="departureLocation"
+                    defaultValue={draftValue("departureLocation", "seoul-gangnam")}
+                    options={departureLocations.map((location) => ({ value: location.id, label: location.label }))}
+                  />
+                  <p className="text-xs leading-5 text-muted-foreground">
+                    선택한 대표 지역에서의 대략적인 이동 추정치예요. 실시간 교통 상황은 반영하지 않습니다.
+                  </p>
+                </div>
               </Field>
               <Field label="인원">
                 <Input name="peopleCount" type="number" min={1} max={20} defaultValue={draftValue("peopleCount", "2")} />

@@ -15,13 +15,10 @@ function normalizeLowerIsBetter(value: number, min: number, max: number) {
   return Math.max(0, Math.min(100, 100 - ((value - min) / (max - min)) * 100));
 }
 
-function priorityScore(resort: SkiResort, priority: Priority, input: TripInput, costRep: number) {
-  const departure = departureLocations.find((location) => location.id === input.departureLocation);
-  const distance = departure?.distances[resort.id];
-
+function priorityScore(resort: SkiResort, priority: Priority, costRep: number, accessScore: number) {
   switch (priority) {
     case "close":
-      return distance ? normalizeLowerIsBetter(distance.minutes, 40, 320) : resort.accessScore;
+      return accessScore;
     case "cheap":
       return normalizeLowerIsBetter(costRep, 90000, 420000);
     case "beginner":
@@ -50,7 +47,9 @@ function hardFilter(resort: SkiResort, input: TripInput) {
 
 function createReasons(resort: SkiResort, input: TripInput, travelMinutes?: number) {
   const reasons: string[] = [];
-  if (travelMinutes && travelMinutes <= 70) reasons.push("수도권 당일치기 접근성이 좋습니다.");
+  if (input.priorities.includes("close") && travelMinutes !== undefined && travelMinutes <= 80) {
+    reasons.push(`선택한 기준 지역에서 약 ${travelMinutes}분 거리입니다.`);
+  }
   if (resort.beginnerScore >= 85) reasons.push("초보자에게 맞는 코스와 준비 동선이 좋습니다.");
   if (resort.rentalConvenienceScore >= 84) reasons.push("렌탈샵 선택지가 많아 가격 비교에 유리합니다.");
   if (resort.nightSkiAvailable && input.priorities.includes("night")) {
@@ -64,16 +63,25 @@ function createReasons(resort: SkiResort, input: TripInput, travelMinutes?: numb
 export function getRecommendations(input: TripInput): Recommendation[] {
   const departure = departureLocations.find((location) => location.id === input.departureLocation);
   const candidates = resorts.filter((resort) => hardFilter(resort, input));
+  const candidateDetails = candidates.map((resort) => ({
+    resort,
+    cost: estimateTripCost(resort, input),
+    distance: departure?.distances[resort.id]
+  }));
+  const knownTravelTimes = candidateDetails.flatMap(({ distance }) => distance ? [distance.minutes] : []);
+  const shortestTravelTime = knownTravelTimes.length ? Math.min(...knownTravelTimes) : 40;
+  const longestTravelTime = knownTravelTimes.length ? Math.max(...knownTravelTimes) : 320;
 
-  return candidates
-    .map((resort) => {
-      const cost = estimateTripCost(resort, input);
-      const distance = departure?.distances[resort.id];
+  return candidateDetails
+    .map(({ resort, cost, distance }) => {
+      const accessScore = distance
+        ? normalizeLowerIsBetter(distance.minutes, shortestTravelTime, longestTravelTime)
+        : resort.accessScore;
       const weighted = input.priorities.reduce((sum, priority, index) => {
-        return sum + priorityScore(resort, priority, input, cost.representative) * (priorityWeight[index] ?? 1);
+        return sum + priorityScore(resort, priority, cost.representative, accessScore) * (priorityWeight[index] ?? 1);
       }, 0);
       const base =
-        resort.accessScore * 0.12 +
+        accessScore * 0.12 +
         resort.beginnerScore * 0.12 +
         resort.transportScore * 0.08 +
         resort.rentalConvenienceScore * 0.1 +
@@ -89,18 +97,20 @@ export function getRecommendations(input: TripInput): Recommendation[] {
         travelKm: distance?.km,
         cost,
         requiredTasks: buildRequiredTasks(input),
-        rentalShops: getRentalShopsForResort(resort.id)
+        rentalShops: getRentalShopsForResort(resort.id),
+        accessScore
       };
     })
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       const first = input.priorities[0];
       const firstDelta =
-        priorityScore(b.resort, first, input, b.cost.representative) -
-        priorityScore(a.resort, first, input, a.cost.representative);
+        priorityScore(b.resort, first, b.cost.representative, b.accessScore) -
+        priorityScore(a.resort, first, a.cost.representative, a.accessScore);
       if (firstDelta !== 0) return firstDelta;
       return (a.travelMinutes ?? 999) - (b.travelMinutes ?? 999);
-    });
+    })
+    .map(({ accessScore: _accessScore, ...recommendation }) => recommendation);
 }
 
 export function buildRequiredTasks(input: TripInput) {

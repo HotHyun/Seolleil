@@ -1,4 +1,4 @@
-import type { DepartureLocation, RentalShop, SkiResort } from "@/lib/types";
+import type { RentalShop, SkiResort } from "@/lib/types";
 import { rentalLocationRecords } from "@/data/rental-locations";
 import { verifiedRentalShops2526 } from "@/data/verified-rental-shops-25-26";
 
@@ -819,68 +819,7 @@ for (const shop of rentalShops) {
   }
 }
 
-export const departureLocations: DepartureLocation[] = [
-  {
-    id: "seoul-gangnam",
-    label: "서울 강남",
-    region: "서울",
-    distances: {
-      konjiam: { minutes: 45, km: 42 },
-      jisan: { minutes: 55, km: 55 },
-      vivaldi: { minutes: 95, km: 88 },
-      elysian: { minutes: 95, km: 86 },
-      phoenix: { minutes: 150, km: 165 },
-      yongpyong: { minutes: 165, km: 185 },
-      high1: { minutes: 210, km: 240 },
-      wellihilli: { minutes: 130, km: 135 },
-      oakvalley: { minutes: 105, km: 105 },
-      alpensia: { minutes: 165, km: 186 },
-      o2: { minutes: 210, km: 238 },
-      muju: { minutes: 190, km: 220 },
-      edenvalley: { minutes: 300, km: 365 }
-    }
-  },
-  {
-    id: "seoul-cityhall",
-    label: "서울 시청",
-    region: "서울",
-    distances: {
-      konjiam: { minutes: 60, km: 50 },
-      jisan: { minutes: 70, km: 65 },
-      vivaldi: { minutes: 105, km: 95 },
-      elysian: { minutes: 95, km: 82 },
-      phoenix: { minutes: 160, km: 170 },
-      yongpyong: { minutes: 175, km: 190 },
-      high1: { minutes: 220, km: 245 },
-      wellihilli: { minutes: 140, km: 142 },
-      oakvalley: { minutes: 115, km: 112 },
-      alpensia: { minutes: 175, km: 192 },
-      o2: { minutes: 220, km: 244 },
-      muju: { minutes: 200, km: 230 },
-      edenvalley: { minutes: 310, km: 375 }
-    }
-  },
-  {
-    id: "suwon",
-    label: "수원",
-    region: "경기",
-    distances: {
-      konjiam: { minutes: 55, km: 48 },
-      jisan: { minutes: 45, km: 44 },
-      vivaldi: { minutes: 115, km: 110 },
-      elysian: { minutes: 125, km: 115 },
-      phoenix: { minutes: 160, km: 170 },
-      yongpyong: { minutes: 175, km: 190 },
-      high1: { minutes: 215, km: 245 },
-      wellihilli: { minutes: 135, km: 142 },
-      oakvalley: { minutes: 110, km: 110 },
-      alpensia: { minutes: 175, km: 190 },
-      o2: { minutes: 220, km: 250 },
-      muju: { minutes: 165, km: 190 },
-      edenvalley: { minutes: 280, km: 340 }
-    }
-  }
-];
+export { departureLocations } from "@/data/departure-locations";
 
 export function getResort(id: string) {
   return resorts.find((resort) => resort.id === id);

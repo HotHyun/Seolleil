@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const metadata: Metadata = {
-  title: "운영 대시보드 | Korean Ski",
+  title: "운영 대시보드 | 설레일",
   robots: {
     index: false,
     follow: false

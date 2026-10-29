@@ -18,7 +18,7 @@ const pretendard = localFont({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ski.hothyun.com"),
-  title: "Korean Ski",
+  title: "설레일",
   description: "국내 스키장 추천과 스키 트립 준비 체크리스트",
   robots: {
     index: false,
@@ -53,13 +53,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <a href="#main-content" className="skip-link">본문으로 바로가기</a>
         <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur-xl">
           <div className="page-shell flex h-16 items-center justify-between gap-3">
-            <a href="/" aria-label="코리안 스키" className="flex shrink-0 items-center gap-2 font-black tracking-[-.02em] text-foreground sm:gap-2.5">
+            <a href="/" aria-label="설레일" className="flex shrink-0 items-center gap-2 font-black tracking-[-.02em] text-foreground sm:gap-2.5">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
                 <MountainSnow className="h-5 w-5" />
               </span>
               <span className="whitespace-nowrap text-xs sm:text-sm">
-                <span className="sm:hidden">스키</span>
-                <span className="hidden sm:inline">코리안 스키</span>
+                설레일
               </span>
             </a>
             <nav className="flex shrink-0 items-center gap-1 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">

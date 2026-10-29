@@ -30,7 +30,7 @@ import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
 import { transportTypeLabel } from "@/lib/transport";
 
 export const metadata: Metadata = {
-  title: "내 트립 상세 | Korean Ski",
+  title: "내 트립 상세 | 설레일",
   robots: {
     index: false,
     follow: false

@@ -15,7 +15,7 @@ MVP에서는 Umami와 Firestore 제품 이벤트를 함께 사용한다.
 
 - self-host로 운영한다.
 - 앱과 독립된 self-hosted 서비스로 운영한다.
-- Korean Ski 앱에는 Umami tracking script를 삽입한다.
+- 설레일 앱에는 Umami tracking script를 삽입한다.
 - Umami 저장소와 Firestore 제품 데이터는 운영·백업 경계를 분리한다.
 
 ### Firestore 이벤트

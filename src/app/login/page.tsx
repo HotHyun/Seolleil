@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSession } from "@/lib/session";
 
 export const metadata: Metadata = {
-  title: "로그인 | Korean Ski"
+  title: "로그인 | 설레일"
 };
 
 export default async function LoginPage({

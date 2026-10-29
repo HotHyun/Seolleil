@@ -48,7 +48,7 @@ export function CinematicHero() {
           </div>
         </div>
 
-        <div className="hero-reveal hero-delay-3 relative mt-10 w-full max-w-lg xl:mt-0 xl:max-w-none" aria-label="Korean Ski 트립 플래너 미리보기">
+        <div className="hero-reveal hero-delay-3 relative mt-10 w-full max-w-lg xl:mt-0 xl:max-w-none" aria-label="설레일 트립 플래너 미리보기">
           <div className="absolute -inset-10 -z-10 rounded-full bg-[#326bff]/25 blur-3xl" />
           <TripResultPreviewCard />
         </div>

@@ -11,7 +11,7 @@ import { getTripDisplayName, getTripsByTeamIds, getTripsByUserId, type TripRecor
 import { transportTypeLabel } from "@/lib/transport";
 
 export const metadata: Metadata = {
-  title: "내 트립 | Korean Ski",
+  title: "내 트립 | 설레일",
   robots: {
     index: false,
     follow: false

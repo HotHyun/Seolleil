@@ -13,7 +13,7 @@ import { resorts } from "@/data/resorts";
 import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 
 export const metadata: Metadata = {
-  title: "데이터 품질 | Korean Ski",
+  title: "데이터 품질 | 설레일",
   robots: {
     index: false,
     follow: false

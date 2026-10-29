@@ -21,7 +21,7 @@ export function generateStaticParams() { return resorts.map((resort) => ({ id: r
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resort = getResort((await params).id);
-  return { title: resort ? `${resort.name} | Korean Ski` : "스키장 상세 | Korean Ski" };
+  return { title: resort ? `${resort.name} | 설레일` : "스키장 상세 | 설레일" };
 }
 
 export default async function ResortDetailPage({ params }: PageProps) {

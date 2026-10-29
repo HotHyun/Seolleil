@@ -74,8 +74,8 @@ async function sendInvitationEmail(input: { email: string; inviteUrl: string; pe
     body: JSON.stringify({
       from,
       to: [input.email],
-      subject: "Korean Ski 트립 초대",
-      text: `Korean Ski 트립 초대가 도착했습니다. 권한: ${input.permission === "edit" ? "편집" : "보기"}.\n\n초대를 수락하려면 7일 안에 아래 링크를 열어 주세요.\n${input.inviteUrl}`
+      subject: "설레일 트립 초대",
+      text: `설레일 트립 초대가 도착했습니다. 권한: ${input.permission === "edit" ? "편집" : "보기"}.\n\n초대를 수락하려면 7일 안에 아래 링크를 열어 주세요.\n${input.inviteUrl}`
     }),
     cache: "no-store"
   });

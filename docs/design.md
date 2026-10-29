@@ -1,8 +1,8 @@
-# Korean Ski Design System
+# 설레일 Design System
 
 ## Direction
 
-Korean Ski supports both light mode and dark mode. Pretendard Variable is served locally and used across the whole product so Korean typography remains balanced at every weight and breakpoint.
+설레일 supports both light mode and dark mode. Pretendard Variable is served locally and used across the whole product so Korean typography remains balanced at every weight and breakpoint.
 
 The product connects an anticipatory ski-travel landing experience to a practical planning tool. Its visual idea is **Blue Run**: deep midnight slopes, vivid cobalt wayfinding, and a lift-safety lime accent. Operational screens stay compact and calm.
 
@@ -33,7 +33,7 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 ### Header
 
 - One sticky top header.
-- Left: Korean Ski brand.
+- Left: 설레일 brand.
 - Right: primary navigation and auth state.
 - No desktop sidebar.
 - Keep the Korean brand name visible on mobile; do not reduce the home link to an unexplained icon.

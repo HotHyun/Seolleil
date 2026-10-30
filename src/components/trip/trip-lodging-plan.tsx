@@ -23,7 +23,7 @@ type Props = {
 
 export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchUrl, access, save, canEdit }: Props) {
   const [activeDate, setActiveDate] = useState(plan.lodgingNights[0]?.date ?? "");
-  const [lodgingFilter, setLodgingFilter] = useState<"all" | "resort_lodging" | "hotel">("all");
+  const [lodgingFilter, setLodgingFilter] = useState<"all" | "resort_lodging" | "hotel" | "nearby_stay">("all");
   const activeNight = plan.lodgingNights.find(night => night.date === activeDate) ?? plan.lodgingNights[0];
   const initialOption = lodgingOptions.find(item => item.name === activeNight?.lodgingName);
   const [lodgingId, setLodgingId] = useState<string | null>(initialOption?.id ?? null);
@@ -31,9 +31,11 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
   const salesSnapshot = getOfficialLodgingSalesForResort(resortId);
   const resortLodgingCount = lodgingOptions.filter(item => item.category === "condo").length;
   const hotelCount = lodgingOptions.filter(item => item.category === "resort_hotel").length;
+  const nearbyStayCount = lodgingOptions.filter(item => item.category === "nearby_stay").length;
   const visibleOptions = lodgingOptions.filter(item => lodgingFilter === "all"
     || (lodgingFilter === "resort_lodging" && item.category === "condo")
     || (lodgingFilter === "hotel" && item.category === "resort_hotel")
+    || (lodgingFilter === "nearby_stay" && item.category === "nearby_stay")
     || item.id === lodgingId);
   const savedNights = plan.lodgingNights.filter(night => night.lodgingName).length;
   const savedCost = plan.lodgingNights.reduce((sum, night) => sum + (night.cost ?? 0), 0);
@@ -87,16 +89,26 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
       <PlaceComparisonMap candidates={candidates} selectedId={lodgingId} onSelect={setLodgingId} />
       <div className="space-y-3">
         <div className="space-y-2">
-          <p className="text-xs font-black uppercase tracking-wider text-muted-foreground">공식 객실 유형</p>
-          <div className="flex gap-2 overflow-x-auto pb-1" aria-label="공식 객실 유형 필터">
+          <p className="text-xs font-black uppercase tracking-wider text-muted-foreground">숙소 유형</p>
+          <div className="flex gap-2 overflow-x-auto pb-1" aria-label="숙소 유형 필터">
             <Button type="button" variant={lodgingFilter === "all" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "all"} onClick={() => setLodgingFilter("all")}>전체 {lodgingOptions.length}</Button>
             <Button type="button" variant={lodgingFilter === "resort_lodging" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "resort_lodging"} onClick={() => setLodgingFilter("resort_lodging")}>리조트 숙소 {resortLodgingCount}</Button>
-            <Button type="button" variant={lodgingFilter === "hotel" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "hotel"} onClick={() => setLodgingFilter("hotel")}>호텔 {hotelCount}</Button>
+            <Button type="button" variant={lodgingFilter === "hotel" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "hotel"} onClick={() => setLodgingFilter("hotel")}>리조트 호텔 {hotelCount}</Button>
+            <Button type="button" variant={lodgingFilter === "nearby_stay" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "nearby_stay"} onClick={() => setLodgingFilter("nearby_stay")}>주변 숙소 {nearbyStayCount}</Button>
           </div>
         </div>
         <div className="grid max-h-52 gap-2 overflow-y-auto pr-1">
           <button type="button" onClick={() => setLodgingId(null)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === null ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">다른 숙소 직접 입력</span><span className="mt-1 block text-xs text-muted-foreground">외부에서 찾은 숙소도 이 밤에 기록할 수 있어요.</span></button>
-          {visibleOptions.map(item => <button key={item.id} type="button" onClick={() => setLodgingId(item.id)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === item.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">{item.name}</span><span className="mt-1 block text-xs text-muted-foreground">공식 {item.category === "resort_hotel" ? "호텔" : item.category === "condo" ? "리조트 숙소" : "주변 호텔"}{item.id === lodgingId && lodgingFilter !== "all" && (lodgingFilter === "hotel") !== (item.category === "resort_hotel") ? " · 현재 선택" : ""}</span></button>)}
+          {visibleOptions.map(item => {
+            const lodgingType = item.category === "nearby_stay"
+              ? `${item.bookingPlatform ?? "외부 예약처"} · 주변 숙소${item.distanceMinutes !== undefined ? ` · 차량 약 ${item.distanceMinutes}분` : ""}`
+              : `리조트 공식 ${item.category === "resort_hotel" ? "호텔" : "숙소"}`;
+            const matchesFilter = lodgingFilter === "all"
+              || (lodgingFilter === "resort_lodging" && item.category === "condo")
+              || (lodgingFilter === "hotel" && item.category === "resort_hotel")
+              || (lodgingFilter === "nearby_stay" && item.category === "nearby_stay");
+            return <button key={item.id} type="button" onClick={() => setLodgingId(item.id)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === item.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-black">{item.name}</span><span className="mt-1 block text-xs text-muted-foreground">{lodgingType}{item.id === lodgingId && !matchesFilter ? " · 현재 선택" : ""}</span></button>;
+          })}
         </div>
         <form key={`${activeNight.date}:${lodgingId ?? "custom"}`} action={save} className="grid gap-3 sm:grid-cols-2">
           <input type="hidden" name={access.name} value={access.value} />
@@ -106,8 +118,8 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
           <Field label="이 밤의 숙박비"><Input name="lodgingCostInput" type="number" min="0" max="100000000" step="1000" defaultValue={activeNight.cost ?? ""} placeholder="1박 금액" /></Field>
           <Field label="예약·숙소 링크"><Input name="lodgingUrl" type="url" defaultValue={selectedLodging?.url ?? activeNight.lodgingUrl ?? ""} readOnly={Boolean(selectedLodging)} placeholder="https://" /></Field>
           <label className="flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border bg-muted/25 px-3 text-sm font-bold"><input type="checkbox" name="applyToAllNights" value="true" className="h-4 w-4 accent-primary" /><WandSparkles className="h-4 w-4 text-primary" />모든 숙박 밤에 적용</label>
-          <div className="flex flex-wrap items-center gap-2 sm:col-span-2">{canEdit ? <SubmitButton pendingText="숙박 저장 중…">{formatNightDate(activeNight.date)} 숙박 저장</SubmitButton> : null}{selectedLodging?.url ? <ExternalButton href={selectedLodging.url}>공식 원문</ExternalButton> : lodgingSearchUrl ? <ExternalButton href={lodgingSearchUrl}>주변 숙소</ExternalButton> : null}</div>
-          <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">여러 밤의 숙소나 가격이 같다면 한 번에 적용한 뒤, 달라지는 밤만 다시 선택해 수정하세요.</p>
+          <div className="flex flex-wrap items-center gap-2 sm:col-span-2">{canEdit ? <SubmitButton pendingText="숙박 저장 중…">{formatNightDate(activeNight.date)} 숙박 저장</SubmitButton> : null}{selectedLodging?.url ? <ExternalButton href={selectedLodging.url}>{selectedLodging.category === "nearby_stay" ? `${selectedLodging.bookingPlatform ?? "예약처"} 예약` : "공식 원문"}</ExternalButton> : lodgingSearchUrl ? <ExternalButton href={lodgingSearchUrl}>주변 숙소</ExternalButton> : null}</div>
+          <p className="text-xs leading-5 text-muted-foreground sm:col-span-2">숙박일·인원별 객실 요금과 재고는 예약처에서 확인하세요. 여러 밤의 숙소나 가격이 같다면 한 번에 적용한 뒤, 달라지는 밤만 다시 선택해 수정할 수 있습니다.</p>
         </form>
       </div>
     </div>

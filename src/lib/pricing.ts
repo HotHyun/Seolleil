@@ -126,7 +126,7 @@ function resolveRentalPrice(
   let cheapestDatedPrice = Number.POSITIVE_INFINITY;
 
   for (const rule of candidates) {
-    if (itemType === "equipment" && rule.rideType !== input.rideType) continue;
+    if (itemType === "equipment" && input.rideType !== "both" && rule.rideType !== input.rideType) continue;
 
     const price = rule.representativePrice ?? 999999;
     if (!cheapest || price < cheapestPrice) {

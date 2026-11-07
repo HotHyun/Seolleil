@@ -549,7 +549,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
         if (!id || id === "none") return null;
         const option = group.options.find(item => item.id === id && itemTypes.includes(item.itemType));
         if (!option || !optionAppliesToDay(option, day)) throw new AppError("INVALID_INPUT", `${skiDate}에 이용할 수 없는 렌탈 상품입니다.`);
-        if (option.itemType === "equipment" && option.rideType !== "all" && option.rideType !== trip.rideType) {
+        if (option.itemType === "equipment" && option.rideType !== "all" && trip.rideType !== "both" && option.rideType !== trip.rideType) {
           throw new AppError("INVALID_INPUT", "스키·보드 종목에 맞는 장비를 선택해 주세요.");
         }
         return option.id;

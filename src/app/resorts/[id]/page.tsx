@@ -45,7 +45,7 @@ export default async function ResortDetailPage({ params }: PageProps) {
           <p className="mt-6 text-sm font-black tracking-[0.16em] text-primary">{resort.region} · SKI GUIDE</p>
           <h1 className="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-6xl">{story.headline}</h1>
           <p className="mt-5 max-w-2xl text-base font-medium leading-7 text-muted-foreground sm:text-lg">{story.summary}</p>
-          <div className="mt-8 flex flex-wrap gap-3"><Link href={`/plan?resortId=${resort.id}`}><Button className="min-h-12 px-5">{resort.name}으로 트립 만들기 <ArrowRight className="h-4 w-4" /></Button></Link><ExternalButton href={resort.slopeStatusUrl} label="오늘의 코스 확인" resortId={resort.id} type="slope_status" /></div>
+          <div className="mt-8 flex flex-wrap gap-3"><Link href={`/plan?resortId=${resort.id}`}><Button className="h-12 px-5">{resort.name}으로 트립 만들기 <ArrowRight className="h-4 w-4" /></Button></Link><ExternalButton href={resort.slopeStatusUrl} label="오늘 운영하는 코스 확인하기" resortId={resort.id} type="slope_status" className="h-12" /></div>
         </div>
       </div>
     </section>
@@ -59,7 +59,7 @@ export default async function ResortDetailPage({ params }: PageProps) {
         <div className="min-w-0 space-y-6">
           <section className="grid gap-4 sm:grid-cols-2">
             <StoryCard icon={<Route />} title="코스는 이렇게 살펴보세요" description={story.courseNote} action={<ExternalTextLink href={resort.slopeStatusUrl} label="공식 코스·운영 현황" resortId={resort.id} type="course_guide" />} />
-            <StoryCard icon={<Eye />} title="이곳에서 만나는 풍경" description={story.sceneryNote} action={<ExternalTextLink href={resort.officialUrl} label="공식 소개 더 보기" resortId={resort.id} type="resort_story" />} />
+            <StoryCard icon={<Eye />} title="이곳에서 만나는 풍경" description={story.sceneryNote} action={<ExternalTextLink href={resort.galleryUrl ?? resort.officialUrl} label="공식 소개 더 보기" resortId={resort.id} type="resort_story" />} />
           </section>
 
           <Card><CardHeader><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-black tracking-[0.14em] text-primary">PRICE CHECK</p><CardTitle className="mt-2">리프트권 확인</CardTitle></div><Ticket className="h-6 w-6 text-primary" /></div></CardHeader><CardContent className="space-y-4"><PriceContextBanner compact /><div className="grid gap-2 sm:grid-cols-2">{liftPrices.slice(0, 6).map((price) => <div key={price.id} className="flex items-center justify-between gap-3 rounded-xl border bg-muted/40 p-3"><div><p className="text-sm font-bold">{price.label}</p><p className="mt-1 text-xs text-muted-foreground">{price.confidence === "confirmed" ? "가격 확인됨" : "방문 전 재확인"}</p></div><span className="shrink-0 font-black">{formatCurrency(price.adultPrice ?? price.priceMin)}</span></div>)}</div></CardContent></Card>
@@ -76,5 +76,5 @@ export default async function ResortDetailPage({ params }: PageProps) {
 
 function StoryCard({ icon, title, description, action }: { icon: React.ReactNode; title: string; description: string; action: React.ReactNode }) { return <Card><CardContent className="p-5 sm:p-6"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/12 text-primary [&_svg]:h-5 [&_svg]:w-5">{icon}</span><h2 className="mt-5 text-xl font-black">{title}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{description}</p><div className="mt-5">{action}</div></CardContent></Card>; }
 function ExternalTextLink({ href, label, resortId, type }: { href: string; label: string; resortId: string; type: string }) { return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-primary">{label} <ExternalLink className="h-3.5 w-3.5" /></AnalyticsLink>; }
-function ExternalButton({ href, label, resortId, type }: { href?: string; label: string; resortId: string; type: string }) { if (!href) return null; return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="block"><Button variant="secondary" className="w-full justify-between">{label}<ExternalLink className="h-4 w-4" /></Button></AnalyticsLink>; }
+function ExternalButton({ href, label, resortId, type, className }: { href?: string; label: string; resortId: string; type: string; className?: string }) { if (!href) return null; return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="block"><Button variant="secondary" className={`w-full justify-between ${className ?? ""}`}>{label}<ExternalLink className="h-4 w-4" /></Button></AnalyticsLink>; }
 function statusLabel(status: string) { return ({ operating: "운영", season_pending: "오픈 예정", temporarily_closed: "임시 휴장", closed: "폐장", unknown: "확인 필요" }[status] ?? status); }

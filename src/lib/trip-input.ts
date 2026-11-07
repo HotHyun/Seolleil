@@ -20,7 +20,7 @@ export const tripInputSchema = z.object({
   peopleCount: z.coerce.number().int().min(1).max(20),
   tripDuration: z.enum(["same_day", "overnight"]),
   skillLevel: z.enum(["first_time", "beginner", "intermediate", "advanced"]),
-  rideType: z.enum(["ski", "snowboard"]),
+  rideType: z.enum(["ski", "snowboard", "both"]),
   ownsEquipment: z.preprocess((value) => value === "true" || value === true, z.boolean()),
   ownsClothing: z.preprocess((value) => value === "true" || value === true, z.boolean()),
   transportType: z.enum(["car", "public_transit", "shuttle", "bus"]).transform(value => normalizeTransportType(value)),

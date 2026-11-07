@@ -6,7 +6,7 @@ export type OperationStatus =
   | "unknown";
 
 export type SkillLevel = "first_time" | "beginner" | "intermediate" | "advanced";
-export type RideType = "ski" | "snowboard";
+export type RideType = "ski" | "snowboard" | "both";
 export type TransportType = "car" | "public_transit";
 export type LegacyTransportType = TransportType | "shuttle" | "bus";
 export type ShuttleDataStatus =
@@ -117,6 +117,7 @@ export type SkiResort = {
   address: string;
   officialUrl: string;
   slopeStatusUrl: string;
+  galleryUrl?: string;
   liftTicketUrl: string;
   rentalUrl?: string;
   shuttleUrl?: string;

@@ -341,7 +341,7 @@ function getRentalCostScenarios(resort: SkiResort, input: TripInput, itemType: R
     const rentalOption = options
       .filter((option) => option.itemType === itemType)
       .filter((option) => option.representativePrice !== undefined || option.priceMin !== undefined)
-      .filter((option) => itemType !== "equipment" || !option.rideType || option.rideType === input.rideType || option.rideType === "all")
+      .filter((option) => itemType !== "equipment" || !option.rideType || input.rideType === "both" || option.rideType === input.rideType || option.rideType === "all")
       .filter((option) => optionAppliesToDay(option, matchingDay))
       .sort((left, right) => (left.representativePrice ?? left.priceMin ?? Number.MAX_SAFE_INTEGER) - (right.representativePrice ?? right.priceMin ?? Number.MAX_SAFE_INTEGER))[0];
     if (!rentalOption) return [];

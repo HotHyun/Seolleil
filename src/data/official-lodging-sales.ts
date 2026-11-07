@@ -189,7 +189,7 @@ export const officialLodgingSales: OfficialLodgingSalesSnapshot[] = [
     statusLabel: "전화 예약 확인",
     statusSummary: "26/27 겨울 판매 일정은 확인되지 않았습니다. 공식 안내에 따라 객실 예약실에 투숙일과 객실 요금을 문의해야 합니다.",
     winterPriceStatus: "not_published",
-    reservationUrl: "https://golf.edenvalley.co.kr/Course/gallery.asp",
+    reservationUrl: "https://www.edenvalley.co.kr/Reservation/Reser_Reservation.asp",
     offers: []
   },
   {

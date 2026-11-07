@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRight, BusFront, CalendarDays, Clock3, ExternalLink, MapPin, Search, ShieldCheck, TicketCheck, Users } from "lucide-react";
+import { ArrowRight, BusFront, CalendarDays, ChevronDown, Clock3, ExternalLink, MapPin, Search, ShieldCheck, TicketCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { getShuttleRegions, getShuttleStopsForDirection, isConfirmedShuttleRoute, routeSupportsShuttleDirection, searchShuttleRoutes } from "@/data/ski-shuttles";
 import type { SkiShuttleRoute } from "@/lib/types";
@@ -14,25 +15,56 @@ export function ShuttleRouteExplorer({ routes, destinationName, direction = "out
   const [region, setRegion] = useState("all");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState<string | null>(selectedRouteId ?? null);
+  const [routePickerOpen, setRoutePickerOpen] = useState(false);
   const filtered = useMemo(() => searchShuttleRoutes(routes, query, region, direction), [direction, query, region, routes]);
   const selected = filtered.find(route => route.id === selectedId) ?? (filtered.length === 1 ? filtered[0] : null);
+  const groupedRoutes = useMemo(() => {
+    const groups = new Map<string, SkiShuttleRoute[]>();
+    for (const route of filtered) groups.set(route.region, [...(groups.get(route.region) ?? []), route]);
+    return [...groups.entries()];
+  }, [filtered]);
 
   return <div className="min-w-0 max-w-full space-y-4" data-testid="shuttle-route-explorer">
     <div className="min-w-0 max-w-full overflow-hidden rounded-2xl border border-sky-500/20 bg-[linear-gradient(135deg,hsl(var(--card)),hsl(var(--primary)/.08))] p-4 sm:p-5">
       <div className="flex items-start gap-3"><span className="rounded-xl bg-sky-500/15 p-2.5 text-sky-700 dark:text-sky-300"><BusFront className="h-5 w-5" /></span><div><div className="flex flex-wrap items-center gap-2"><p className="font-black">{direction === "outbound" ? `내 출발지에서 ${destinationName ?? routes[0]?.arrivalName ?? "스키장"}까지` : `${destinationName ?? routes[0]?.arrivalName ?? "스키장"}에서 돌아오는 길`}</p><span className="rounded-full bg-amber-500/15 px-2 py-1 text-[10px] font-black text-amber-800 dark:text-amber-200">시즌별 운행 정보</span></div><p className="mt-1 text-sm leading-6 text-muted-foreground">{direction === "outbound" ? "도시나 역 이름을 찾으면 새벽 탑승지와 시간을 볼 수 있어요." : "돌아올 하차지를 먼저 고르세요. 귀가 출발 시간과 탑승 위치는 가는 편과 별도로 표시됩니다."} 노선의 시즌과 운영사 원문을 함께 확인하세요.</p></div></div>
-      <label className="relative mt-4 block"><span className="sr-only">{direction === "outbound" ? "출발 도시 또는 탑승지 검색" : "귀가 도시 또는 하차지 검색"}</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={event => { setQuery(event.target.value); setSelectedId(null); }} placeholder={direction === "outbound" ? "예: 수원, 동래역, 전주" : "예: 대구, 광주, 사당역"} className="h-12 w-full rounded-xl border bg-background pl-10 pr-3 text-sm font-bold outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" /></label>
-      <div className="mt-3 flex max-w-full gap-2 overflow-x-auto pb-1" aria-label="셔틀 권역 필터"><Filter active={region === "all"} onClick={() => { setRegion("all"); setSelectedId(null); }}>전국</Filter>{regions.map(item => <Filter key={item} active={region === item} onClick={() => { setRegion(item); setSelectedId(null); }}>{item}</Filter>)}</div>
+      {compact ? <div className="mt-4 space-y-3">
+        <Button type="button" variant="secondary" className="h-auto min-h-14 w-full justify-between gap-3 py-3 text-left hover:translate-y-0" onClick={() => setRoutePickerOpen(true)}>
+          <span className="min-w-0"><span className="block text-xs font-bold text-muted-foreground">{selected ? `${selected.region} · ${selected.operator}` : `${filtered.length}개 노선`}</span><span className="mt-0.5 block truncate font-black">{selected?.name ?? "노선 선택하기"}</span></span>
+          <ChevronDown aria-hidden="true" className="h-4 w-4 shrink-0 text-muted-foreground" />
+        </Button>
+        <Dialog open={routePickerOpen} onOpenChange={setRoutePickerOpen}>
+          <DialogContent className="grid-rows-[auto_minmax(0,1fr)] max-h-[90svh] max-w-3xl overflow-hidden p-0">
+            <DialogHeader className="border-b px-5 pb-4 pt-5 pr-12">
+              <DialogTitle>노선 선택하기</DialogTitle>
+              <DialogDescription>지역별 노선을 살펴보고 이용할 노선을 선택하세요.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 overflow-y-auto px-5 pb-5">
+              <label className="relative block"><span className="sr-only">{direction === "outbound" ? "출발 도시 또는 탑승지 검색" : "귀가 도시 또는 하차지 검색"}</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={event => { setQuery(event.target.value); setSelectedId(null); }} placeholder={direction === "outbound" ? "예: 수원, 동래역, 전주" : "예: 대구, 광주, 사당역"} className="h-12 w-full rounded-xl border bg-background pl-10 pr-3 text-sm font-bold outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" /></label>
+              <div className="flex max-w-full gap-2 overflow-x-auto pb-1" aria-label="셔틀 권역 필터"><Filter active={region === "all"} onClick={() => { setRegion("all"); setSelectedId(null); }}>전국</Filter>{regions.map(item => <Filter key={item} active={region === item} onClick={() => { setRegion(item); setSelectedId(null); }}>{item}</Filter>)}</div>
+              {groupedRoutes.length ? <div className="space-y-5">{groupedRoutes.map(([groupRegion, regionRoutes]) => <section key={groupRegion}><h3 className="mb-2 text-sm font-black">{groupRegion} 출발</h3><div className="grid gap-2 sm:grid-cols-2">{regionRoutes.map(route => <RouteChoice key={route.id} route={route} direction={direction} selected={selectedId === route.id} onSelect={() => { setSelectedId(route.id); setRoutePickerOpen(false); }} />)}</div></section>)}</div> : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">등록된 시즌 노선에서 찾지 못했어요. 다른 도시명이나 가까운 광역시를 검색해 보세요.</p>}
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div> : <>
+        <label className="relative mt-4 block"><span className="sr-only">{direction === "outbound" ? "출발 도시 또는 탑승지 검색" : "귀가 도시 또는 하차지 검색"}</span><Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><input value={query} onChange={event => { setQuery(event.target.value); setSelectedId(null); }} placeholder={direction === "outbound" ? "예: 수원, 동래역, 전주" : "예: 대구, 광주, 사당역"} className="h-12 w-full rounded-xl border bg-background pl-10 pr-3 text-sm font-bold outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20" /></label>
+        <div className="mt-3 flex max-w-full gap-2 overflow-x-auto pb-1" aria-label="셔틀 권역 필터"><Filter active={region === "all"} onClick={() => { setRegion("all"); setSelectedId(null); }}>전국</Filter>{regions.map(item => <Filter key={item} active={region === item} onClick={() => { setRegion(item); setSelectedId(null); }}>{item}</Filter>)}</div>
+      </>}
     </div>
 
-    <div className={compact ? "grid min-w-0 gap-3" : "grid min-w-0 gap-3 lg:grid-cols-[minmax(250px,.72fr)_minmax(0,1.28fr)]"}>
-      <div className={compact ? "flex min-w-0 max-w-full gap-2 overflow-x-auto pb-1" : "min-w-0 space-y-2 lg:max-h-[520px] lg:overflow-y-auto lg:pr-1"} aria-label="검색된 셔틀 노선">
-        {filtered.map(route => { const stops = getShuttleStopsForDirection(route, direction); return <button key={route.id} type="button" onClick={() => setSelectedId(route.id)} className={`${compact ? "min-w-[250px]" : "w-full"} rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${selected?.id === route.id ? "border-primary bg-primary/5 shadow-sm" : "bg-card hover:border-primary/40 hover:bg-muted/40"}`}><span className="flex items-start justify-between gap-3"><span><span className="block text-[11px] font-black tracking-[0.08em] text-primary">{route.season} · {route.region}</span><span className="mt-1 block font-black">{route.name}</span><span className="mt-1 block text-xs text-muted-foreground">{route.operator} · {direction === "outbound" ? "탑승지" : "하차지"} {stops.length ? `${stops.length}곳` : "운영사 재확인"}</span></span><ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" /></span></button>; })}
+    <div className={compact ? "min-w-0" : "grid min-w-0 gap-3 lg:grid-cols-[minmax(250px,.72fr)_minmax(0,1.28fr)]"}>
+      {!compact ? <div className="min-w-0 space-y-2 lg:max-h-[520px] lg:overflow-y-auto lg:pr-1" aria-label="검색된 셔틀 노선">
+        {filtered.map(route => <RouteChoice key={route.id} route={route} direction={direction} selected={selected?.id === route.id} onSelect={() => setSelectedId(route.id)} />)}
         {filtered.length === 0 ? <div className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">등록된 시즌 노선에서 찾지 못했어요.<br />다른 도시명이나 가까운 광역시를 검색해 보세요.</div> : null}
-      </div>
+      </div> : null}
 
       {selected ? <RouteDetail key={`${selected.id}-${direction}`} route={selected} direction={direction} selectedStopId={selected.id === selectedRouteId ? selectedStopId : null} access={access} saveAction={saveAction} canEdit={canEdit} decision={decision} extraFields={extraFields} /> : <div className="hidden min-h-64 place-items-center rounded-2xl border border-dashed bg-muted/20 p-6 text-center lg:grid"><div><MapPin className="mx-auto h-6 w-6 text-primary" /><p className="mt-3 font-black">노선을 하나 선택하세요</p><p className="mt-1 text-sm text-muted-foreground">{direction === "outbound" ? "탑승 순서와 운행 조건" : "귀가 출발 정보와 하차지"}가 여기에 표시됩니다.</p></div></div>}
     </div>
   </div>;
+}
+
+function RouteChoice({ route, direction, selected, onSelect }: { route: SkiShuttleRoute; direction: "outbound" | "return"; selected: boolean; onSelect: () => void }) {
+  const stops = getShuttleStopsForDirection(route, direction);
+  return <button type="button" onClick={onSelect} aria-pressed={selected} className={`w-full rounded-xl border p-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${selected ? "border-primary bg-primary/5 shadow-sm" : "bg-card hover:border-primary/40 hover:bg-muted/40"}`}><span className="flex items-start justify-between gap-3"><span className="min-w-0"><span className="block text-[11px] font-black tracking-[0.08em] text-primary">{route.season} · {route.region}</span><span className="mt-1 block font-black">{route.name}</span><span className="mt-1 block text-xs text-muted-foreground">{route.operator} · {direction === "outbound" ? "탑승지" : "하차지"} {stops.length ? `${stops.length}곳` : "운영사 재확인"}</span></span><ArrowRight className="mt-1 h-4 w-4 shrink-0 text-muted-foreground" /></span></button>;
 }
 
 function RouteDetail({ route, direction, selectedStopId, access, saveAction, canEdit, decision, extraFields }: { route: SkiShuttleRoute; direction: "outbound" | "return"; selectedStopId?: string | null; access?: { name: string; value: string }; saveAction?: (data: FormData) => void | Promise<void>; canEdit: boolean; decision: string; extraFields?: Record<string, string> }) {

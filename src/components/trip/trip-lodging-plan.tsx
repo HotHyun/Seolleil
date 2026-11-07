@@ -131,5 +131,5 @@ function formatNightDate(date: string) {
 }
 
 function ExternalButton({ href, children }: { href: string; children: React.ReactNode }) {
-  return <a href={href} target="_blank" rel="noreferrer"><Button type="button" variant="secondary" className="h-9 px-3 text-xs">{children}<ExternalLink className="h-3.5 w-3.5" /></Button></a>;
+  return <a href={href} target="_blank" rel="noreferrer"><Button type="button" variant="secondary" className="h-11 px-4">{children}<ExternalLink className="h-3.5 w-3.5" /></Button></a>;
 }

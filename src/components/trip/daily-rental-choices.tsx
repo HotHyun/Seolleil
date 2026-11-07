@@ -24,7 +24,7 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
 }) {
   const available = useMemo(() => options.filter(option => optionAppliesToDay(option, day)), [day, options]);
   const grouped = useMemo(() => ({
-    equipment: available.filter(option => option.itemType === "equipment" && (option.rideType === "all" || option.rideType === rideType)),
+    equipment: available.filter(option => option.itemType === "equipment" && (option.rideType === "all" || rideType === "both" || option.rideType === rideType)),
     clothing: available.filter(option => option.itemType === "clothing"),
     packages: available.filter(option => option.itemType === "equipment_clothing_package"),
     accessories: available.filter(option => ["helmet", "goggles", "protective_gear"].includes(option.itemType)),

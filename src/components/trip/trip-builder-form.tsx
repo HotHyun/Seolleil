@@ -262,7 +262,8 @@ export function TripBuilderForm({
                   defaultValue={draftValue("rideType", "ski")}
                   options={[
                     { value: "ski", label: "스키" },
-                    { value: "snowboard", label: "보드" }
+                    { value: "snowboard", label: "보드" },
+                    { value: "both", label: "스키 & 보드 모두" }
                   ]}
                 />
               </Field>

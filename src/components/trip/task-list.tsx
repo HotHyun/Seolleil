@@ -158,15 +158,15 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
                   <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1 text-xs font-bold text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
                     {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
                   </summary>
-                  <form action={async (formData) => { const result = await updateTaskDetailsSafeAction(formData); showActionResult(result); if (result.ok) { const title = String(formData.get("title")); const memo = String(formData.get("memo")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, title, memo } : item)); } }} onSubmit={() => window.umami?.track("checklist_details_update")} className="mt-2 grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
-                  <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
-                  <input type="hidden" name="background" value="1" />
-                  <input type="hidden" name="taskId" value={task.id} />
-                  {!task.isDefault ? <Input name="title" defaultValue={task.title} aria-label="체크 항목 이름" /> : <input type="hidden" name="title" value={task.title} />}
-                  <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모…" aria-label={`${task.title} 메모`} />
-                  <SubmitButton variant="secondary" className="h-11 shrink-0" pendingText="저장 중…">
-                    항목 저장
-                  </SubmitButton>
+                  <form action={async (formData) => { const result = await updateTaskDetailsSafeAction(formData); showActionResult(result); if (result.ok) { const title = String(formData.get("title")); const memo = String(formData.get("memo")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, title, memo } : item)); } }} onSubmit={() => window.umami?.track("checklist_details_update")} className={task.isDefault ? "mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2" : "mt-2 grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"}>
+                    <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />
+                    <input type="hidden" name="background" value="1" />
+                    <input type="hidden" name="taskId" value={task.id} />
+                    {!task.isDefault ? <Input name="title" defaultValue={task.title} aria-label="체크 항목 이름" /> : <input type="hidden" name="title" value={task.title} />}
+                    <Input name="memo" defaultValue={task.memo ?? ""} placeholder="메모…" aria-label={`${task.title} 메모`} className="min-w-0" />
+                    <SubmitButton variant="secondary" className="h-11 w-auto max-w-full justify-self-start whitespace-nowrap px-4" pendingText="저장 중…">
+                      항목 저장
+                    </SubmitButton>
                   </form>
                   {!task.isDefault ? <form action={async data => { const result = await deleteTaskSafeAction(data); showActionResult(result); if (result.ok) { setVisibleTasks(current => current.filter(item => item.id !== task.id)); router.refresh(); } }} onSubmit={event => { if (!window.confirm(`‘${task.title}’ 항목을 삭제할까요?`)) event.preventDefault(); }} className="mt-2"><AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} /><input type="hidden" name="taskId" value={task.id} /><SubmitButton variant="ghost" className="text-destructive" pendingText="삭제 중…"><Trash2 className="h-4 w-4" /> 항목 삭제</SubmitButton></form> : null}
                 </details>

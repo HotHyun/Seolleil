@@ -23,7 +23,7 @@ export default function HomePage() {
           <div className="mt-12 grid gap-4 md:grid-cols-2">
             {journey.map(({ step, icon: Icon, title, copy, color }) => (
               <article key={step} className="motion-card group relative overflow-hidden rounded-2xl border bg-card p-6 sm:p-8">
-                <div className="flex items-start justify-between gap-4"><span className={`flex h-12 w-12 items-center justify-center rounded-xl text-white ${color}`}><Icon className="h-6 w-6" /></span><span className="text-5xl font-black tracking-[-.06em] text-foreground/5">{step}</span></div>
+                <div className="flex items-start justify-between gap-4"><span className={`flex h-12 w-12 items-center justify-center rounded-xl text-white ${color}`}><Icon className="h-6 w-6" /></span><span className="text-5xl font-black tracking-[-.06em] text-primary">{step}</span></div>
                 <h3 className="mt-8 text-2xl font-black tracking-[-.025em]">{title}</h3>
                 <p className="mt-3 max-w-md font-medium leading-7 text-muted-foreground">{copy}</p>
               </article>

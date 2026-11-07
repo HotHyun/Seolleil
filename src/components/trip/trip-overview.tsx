@@ -27,7 +27,7 @@ type TripOverviewData = {
   shuttleStopId: string | null;
   tripDuration: "same_day" | "overnight";
   skillLevel: "first_time" | "beginner" | "intermediate" | "advanced";
-  rideType: "ski" | "snowboard";
+  rideType: "ski" | "snowboard" | "both";
   ownsEquipment: boolean;
   ownsClothing: boolean;
   budgetMin: number | null;

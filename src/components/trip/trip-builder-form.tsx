@@ -42,6 +42,7 @@ export function TripBuilderForm({
   const [step, setStep] = React.useState(0);
   const [maxStepReached, setMaxStepReached] = React.useState(0);
   const [error, setError] = React.useState("");
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [draftValues, setDraftValues] = React.useState<Record<string, string>>({});
   const [tripDuration, setTripDuration] = React.useState("same_day");
   const [visitDate, setVisitDate] = React.useState("");
@@ -80,7 +81,7 @@ export function TripBuilderForm({
       }
       const endDate = String(data.get("endDate") ?? "");
       if (tripDuration === "overnight" && (!endDate || endDate <= visitDate)) {
-        setError("출발 날짜는 도착 날짜보다 뒤로 선택해 주세요.");
+        setError("귀가 날짜는 방문 날짜보다 뒤로 선택해 주세요.");
         return;
       }
     }
@@ -94,6 +95,11 @@ export function TripBuilderForm({
   }
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    if (isSubmitting) {
+      event.preventDefault();
+      return;
+    }
+
     if (step < steps.length - 1) {
       event.preventDefault();
       goToNextStep();
@@ -105,7 +111,10 @@ export function TripBuilderForm({
       event.preventDefault();
       setError("방문 날짜를 먼저 선택해 주세요.");
       setStep(0);
+      return;
     }
+
+    setIsSubmitting(true);
   }
 
   return (
@@ -213,8 +222,8 @@ export function TripBuilderForm({
                   ]}
                 />
               </Field>
-              {tripDuration === "overnight" ? <Field label="출발 날짜">
-                <div><DatePicker name="endDate" required min={visitDate || draftValue("visitDate", "")} value={endDate || draftValue("endDate", "")} onValueChange={setEndDate} ariaLabel="여행 출발 날짜" /><p className="mt-1 text-xs leading-5 text-muted-foreground">트립을 만든 뒤 실제 스키를 탈 날짜와 날짜별 이용 시간을 정할 수 있어요.</p></div>
+              {tripDuration === "overnight" ? <Field label="귀가 날짜">
+                <div><DatePicker name="endDate" required min={visitDate || draftValue("visitDate", "")} value={endDate || draftValue("endDate", "")} onValueChange={setEndDate} ariaLabel="여행 귀가 날짜" /><p className="mt-1 text-xs leading-5 text-muted-foreground">스키를 마치고 집으로 돌아오는 날이에요. 실제 스키 이용 날짜는 트립을 만든 뒤 따로 정할 수 있어요.</p></div>
               </Field> : <input type="hidden" name="endDate" value={visitDate || draftValue("visitDate", "")} />}
               <Field label="교통수단">
                 <div>
@@ -348,9 +357,10 @@ export function TripBuilderForm({
                 label={`${selectedResort.name} 트립 만들기`}
                 className="w-full"
                 wrapperClassName="flex-1"
+                isLoading={isSubmitting}
               />
             ) : (
-              <Button type="submit" className="flex-1">
+              <Button type="submit" className="flex-1" isLoading={isSubmitting} loadingText="추천 장소 찾는 중…">
                 추천 결과 보기
               </Button>
             )

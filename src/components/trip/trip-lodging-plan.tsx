@@ -41,7 +41,7 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
   const savedCost = plan.lodgingNights.reduce((sum, night) => sum + (night.cost ?? 0), 0);
 
   if (!activeNight) {
-    return <div className="rounded-2xl border border-dashed bg-muted/20 p-6 text-center"><Moon className="mx-auto h-6 w-6 text-primary" /><p className="mt-3 font-black">당일치기 일정이에요</p><p className="mt-1 text-sm leading-6 text-muted-foreground">출발 날짜가 도착 날짜와 같아 등록할 숙박 밤이 없습니다. 일정이 늘어나면 숙박 밤이 자동으로 생깁니다.</p></div>;
+    return <div className="rounded-2xl border border-dashed bg-muted/20 p-6 text-center"><Moon className="mx-auto h-6 w-6 text-primary" /><p className="mt-3 font-black">당일치기 일정이에요</p><p className="mt-1 text-sm leading-6 text-muted-foreground">귀가 날짜가 도착 날짜와 같아 등록할 숙박 밤이 없습니다. 여행 기간을 늘리면 숙박 밤이 자동으로 생깁니다.</p></div>;
   }
 
   function chooseNight(date: string) {

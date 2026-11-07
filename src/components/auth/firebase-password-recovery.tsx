@@ -27,7 +27,7 @@ export function ForgotPasswordForm() {
       setSent(true);
       setPending(false);
     }
-  }}><p className="text-sm text-muted-foreground">Firebase가 재설정 메일을 보냅니다.</p><Input name="email" type="email" aria-label="이메일" placeholder="이메일" required /><Button className="w-full" disabled={pending}>{pending ? "메일 요청 중…" : "재설정 메일 보내기"}</Button></form>}{sent ? <p role={configurationError ? "alert" : "status"} className={`text-sm ${configurationError ? "text-destructive" : "text-muted-foreground"}`}>{configurationError ? "Firebase 환경 변수를 설정한 뒤 다시 시도해 주세요." : "해당 이메일 계정이 있다면 재설정 링크를 보냈습니다."}</p> : null}</>;
+  }}><p className="text-sm text-muted-foreground">Firebase가 재설정 메일을 보냅니다.</p><Input name="email" type="email" aria-label="이메일" placeholder="이메일" required /><Button className="w-full" isLoading={pending} loadingText="메일 요청 중…">재설정 메일 보내기</Button></form>}{sent ? <p role={configurationError ? "alert" : "status"} className={`text-sm ${configurationError ? "text-destructive" : "text-muted-foreground"}`}>{configurationError ? "Firebase 환경 변수를 설정한 뒤 다시 시도해 주세요." : "해당 이메일 계정이 있다면 재설정 링크를 보냈습니다."}</p> : null}</>;
 }
 
 export function ResetPasswordForm({ code }: { code: string }) {
@@ -75,5 +75,5 @@ export function ResetPasswordForm({ code }: { code: string }) {
     } finally {
       setPending(false);
     }
-  }}><Input name="password" type="password" minLength={8} autoComplete="new-password" aria-label="새 비밀번호" placeholder="새 비밀번호 (8자 이상)" required />{error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}<Button className="w-full" disabled={pending}>{pending ? "비밀번호 저장 중…" : "비밀번호 저장"}</Button></form>;
+  }}><Input name="password" type="password" minLength={8} autoComplete="new-password" aria-label="새 비밀번호" placeholder="새 비밀번호 (8자 이상)" required />{error ? <p role="alert" className="text-sm text-destructive">{error}</p> : null}<Button className="w-full" isLoading={pending} loadingText="비밀번호 저장 중…">비밀번호 저장</Button></form>;
 }

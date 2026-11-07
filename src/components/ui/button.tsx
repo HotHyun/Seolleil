@@ -1,11 +1,14 @@
 import * as React from "react";
+import { LoaderCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "ghost" | "danger";
+  isLoading?: boolean;
+  loadingText?: React.ReactNode;
 };
 
-export function Button({ className, variant = "primary", ...props }: ButtonProps) {
+export function Button({ className, variant = "primary", isLoading = false, loadingText, disabled, children, ...props }: ButtonProps) {
   return (
     <button
       className={cn(
@@ -16,7 +19,11 @@ export function Button({ className, variant = "primary", ...props }: ButtonProps
         variant === "danger" && "bg-destructive text-destructive-foreground hover:opacity-90",
         className
       )}
+      disabled={isLoading || disabled}
+      aria-busy={isLoading || undefined}
       {...props}
-    />
+    >
+      {isLoading ? <><LoaderCircle aria-hidden="true" className="h-4 w-4 shrink-0 animate-spin motion-reduce:animate-none" />{loadingText ?? children}</> : children}
+    </button>
   );
 }

@@ -63,14 +63,14 @@ export function FirebaseAuthForms({ mode, callbackUrl, initialError }: { mode: "
   }
 
   return <div className="space-y-5">
-    <Button type="button" className="w-full" disabled={pending} onClick={handleGoogleSignIn}>{pending ? "로그인 중…" : "Google로 계속하기"}</Button>
+    <Button type="button" className="w-full" isLoading={pending} loadingText="로그인 중…" onClick={handleGoogleSignIn}>Google로 계속하기</Button>
     <div className="flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border" />또는<span className="h-px flex-1 bg-border" /></div>
     <form onSubmit={handleEmailSubmit} className="space-y-3">
       {mode === "signup" ? <Input name="name" autoComplete="name" placeholder="이름" aria-label="이름" required /> : null}
       <Input name="email" type="email" autoComplete="email" placeholder="이메일" aria-label="이메일" required />
       <Input name="password" type="password" autoComplete={mode === "signup" ? "new-password" : "current-password"} minLength={8} placeholder="비밀번호 (8자 이상)" aria-label="비밀번호" required />
       {error ? <p role="alert" className="rounded-md bg-destructive/10 p-3 text-sm font-semibold text-destructive">{error}</p> : null}
-      <Button type="submit" variant="secondary" className="w-full" disabled={pending}>{pending ? (mode === "signup" ? "가입 처리 중…" : "로그인 중…") : mode === "signup" ? "이메일로 가입하기" : "이메일로 로그인"}</Button>
+      <Button type="submit" variant="secondary" className="w-full" isLoading={pending} loadingText={mode === "signup" ? "가입 처리 중…" : "로그인 중…"}>{mode === "signup" ? "이메일로 가입하기" : "이메일로 로그인"}</Button>
     </form>
     <a className="block text-center text-sm font-semibold text-primary" href={`/login?mode=${mode === "signup" ? "login" : "signup"}&callbackUrl=${encodeURIComponent(callbackUrl)}`}>
       {mode === "signup" ? "이미 계정이 있나요? 로그인" : "처음이신가요? 이메일로 가입"}

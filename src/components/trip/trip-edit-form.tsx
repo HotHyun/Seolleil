@@ -49,8 +49,8 @@ export function TripEditForm({
           <Field label="도착 날짜">
             <DatePicker name="visitDate" required value={startDate} onValueChange={value => { setStartDate(value); if (endDate < value) setEndDate(value); }} ariaLabel="트립 도착 날짜" />
           </Field>
-          <Field label="출발 날짜">
-            <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="트립 출발 날짜" />
+          <Field label="귀가 날짜">
+            <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="트립 귀가 날짜" />
           </Field>
           <Field label="인원">
             <Input name="peopleCount" type="number" min={1} defaultValue={trip.peopleCount} />

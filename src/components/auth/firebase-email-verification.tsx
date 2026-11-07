@@ -82,7 +82,7 @@ export function ResendFirebaseVerification({ callbackUrl }: { callbackUrl: strin
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   return <div className="space-y-2">
-    <Button variant="secondary" className="w-full" disabled={pending} onClick={async () => {
+    <Button variant="secondary" className="w-full" isLoading={pending} loadingText="메일 보내는 중…" onClick={async () => {
       setPending(true);
       setMessage("");
       try {
@@ -96,7 +96,7 @@ export function ResendFirebaseVerification({ callbackUrl }: { callbackUrl: strin
       } finally {
         setPending(false);
       }
-    }}>{pending ? "메일 보내는 중…" : "인증 메일 다시 보내기"}</Button>
+    }}>인증 메일 다시 보내기</Button>
     {message ? <p role="status" className="text-center text-sm text-muted-foreground">{message}</p> : null}
   </div>;
 }

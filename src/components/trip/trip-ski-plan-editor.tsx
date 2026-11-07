@@ -71,8 +71,8 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
         <Field label="도착 날짜">
           <DatePicker name="startDate" required value={startDate} onValueChange={value => { setStartDate(value); if (endDate < value) setEndDate(value); }} ariaLabel="여행 도착 날짜" />
         </Field>
-        <Field label="출발 날짜">
-          <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="여행 출발 날짜" />
+        <Field label="귀가 날짜">
+          <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="여행 귀가 날짜" />
         </Field>
       </div>
       {!rangeIsComplete ? <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/10 p-3 text-sm font-semibold text-destructive">여행 기간은 도착일부터 최대 14일까지 선택해 주세요.</p> : null}

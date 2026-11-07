@@ -1,10 +1,11 @@
 "use client";
 
-import { LoaderCircle } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 
-export function SubmitButton({ children, pendingText = "처리 중…", ...props }: React.ComponentProps<typeof Button> & { pendingText?: string }) {
+type SubmitButtonProps = Omit<React.ComponentProps<typeof Button>, "isLoading" | "loadingText"> & { pendingText?: React.ReactNode };
+
+export function SubmitButton({ children, pendingText, ...props }: SubmitButtonProps) {
   const { pending } = useFormStatus();
-  return <Button {...props} disabled={pending || props.disabled}>{pending ? <><LoaderCircle className="h-4 w-4 animate-spin" />{pendingText}</> : children}</Button>;
+  return <Button {...props} isLoading={pending} loadingText={pendingText}>{children}</Button>;
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useFormStatus } from "react-dom";
 import { CheckCircle2, Link2, LogIn, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { clearPendingTripDraft, currentPathWithSearch, readPendingTripDraft, savePendingTripDraft } from "@/lib/pending-trip-draft";
@@ -23,13 +24,17 @@ export function CreateTripSubmit({
   isAuthenticated,
   label = "이 스키장으로 트립 만들기",
   className = "mt-4 w-full",
-  wrapperClassName
+  wrapperClassName,
+  isLoading = false
 }: {
   isAuthenticated: boolean;
   label?: string;
   className?: string;
   wrapperClassName?: string;
+  isLoading?: boolean;
 }) {
+  const { pending } = useFormStatus();
+  const loading = isLoading || pending;
   const wrapperRef = React.useRef<HTMLDivElement>(null);
   const [loginHref, setLoginHref] = React.useState("/login");
   const [restored, setRestored] = React.useState(false);
@@ -63,7 +68,7 @@ export function CreateTripSubmit({
             <div><p className="font-black">입력한 설정을 그대로 불러왔어요.</p><p className="mt-0.5 text-xs text-muted-foreground">내용을 확인한 뒤 트립을 만들어 주세요.</p></div>
           </div>
         ) : null}
-        <Button type="submit" className={className} onClick={() => { window.umami?.track("trip_create_submit", { authenticated: true }); clearPendingTripDraft(); }}>
+        <Button type="submit" className={className} isLoading={loading} loadingText="트립 만드는 중…" onClick={() => { window.umami?.track("trip_create_submit", { authenticated: true }); clearPendingTripDraft(); }}>
           {label}
         </Button>
       </div>
@@ -85,7 +90,7 @@ export function CreateTripSubmit({
     <div ref={wrapperRef} className={wrapperClassName}>
       <Dialog>
         <DialogTrigger asChild>
-          <Button type="button" className={className}>
+          <Button type="button" className={className} isLoading={loading} loadingText="트립 만드는 중…">
             {label}
           </Button>
         </DialogTrigger>
@@ -105,7 +110,7 @@ export function CreateTripSubmit({
           </div>
           <DialogFooter>
             <DialogClose asChild>
-              <Button type="button" variant="secondary" onClick={submitAnonymousTrip}>
+              <Button type="button" variant="secondary" isLoading={loading} loadingText="트립 만드는 중…" onClick={submitAnonymousTrip}>
                 로그인 없이 링크로 만들기
               </Button>
             </DialogClose>

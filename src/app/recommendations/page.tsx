@@ -1,3 +1,7 @@
+"use client";
+
+import { Suspense, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { CheckCircle2, ExternalLink, MapPinned, ReceiptText, Sparkles } from "lucide-react";
 import { createTripAction } from "@/app/actions";
 import { AnalyticsLink } from "@/components/analytics-link";
@@ -12,22 +16,26 @@ import { estimateTripCost, getRentalOptionsForResort, resolveLiftPrice } from "@
 import { getRecommendations } from "@/lib/recommendation";
 import { optionAppliesToDay } from "@/lib/trip-ski-plan";
 import { departureLocations } from "@/data/departure-locations";
-import { getSession } from "@/lib/session";
 import { normalizeTransportType } from "@/lib/transport";
+import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import type { CostEstimate, CostItem, PriceConfidence, Priority, RentalPriceRule, RentalShop, SkiResort, TimeSlot, TripDuration, TripInput } from "@/lib/types";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
 
-type PageProps = {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
+export default function RecommendationsPage() {
+  return (
+    <Suspense fallback={<RecommendationsFallback />}>
+      <RecommendationsContent />
+    </Suspense>
+  );
+}
 
-export default async function RecommendationsPage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const input = parseParams(params);
-  const recommendations = getRecommendations(input);
+function RecommendationsContent() {
+  const searchParams = useSearchParams();
+  const params = useMemo(() => Object.fromEntries(searchParams.entries()), [searchParams]);
+  const input = useMemo(() => parseParams(params), [params]);
+  const recommendations = useMemo(() => getRecommendations(input), [input]);
   const departureLabel = departureLocations.find((location) => location.id === input.departureLocation)?.label ?? "서울 강남";
-  const session = await getSession();
-  const isAuthenticated = Boolean(session?.user);
+  const { isAuthenticated } = useFirebaseSession();
 
   return (
     <main className="page-shell py-8">
@@ -154,6 +162,16 @@ export default async function RecommendationsPage({ searchParams }: PageProps) {
           );
         })}
       </section>
+    </main>
+  );
+}
+
+function RecommendationsFallback() {
+  return (
+    <main className="page-shell py-8" aria-busy="true">
+      <p className="mb-2 text-sm font-semibold text-primary">Recommendations</p>
+      <h1 className="text-3xl font-black md:text-5xl">추천 결과를 준비하고 있어요.</h1>
+      <div className="mt-8 h-80 animate-pulse rounded-2xl border bg-muted/50" />
     </main>
   );
 }

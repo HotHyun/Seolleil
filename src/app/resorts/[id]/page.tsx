@@ -18,6 +18,7 @@ import { formatCurrency } from "@/lib/utils";
 type PageProps = { params: Promise<{ id: string }> };
 
 export function generateStaticParams() { return resorts.map((resort) => ({ id: resort.id })); }
+export const dynamicParams = false;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resort = getResort((await params).id);

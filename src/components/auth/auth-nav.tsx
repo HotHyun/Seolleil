@@ -1,5 +1,8 @@
+"use client";
+
 import { UserCircle } from "lucide-react";
 import { FirebaseSignOutButton } from "@/components/auth/firebase-sign-out-button";
+import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import { ThemeMenuItem, ThemeToggle } from "@/components/theme-toggle";
 import {
   DropdownMenu,
@@ -9,10 +12,20 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import type { AppSession } from "@/lib/session";
 
-export function AuthNav({ session }: { session: AppSession | null }) {
-  if (!session?.user) {
+export function AuthNav() {
+  const { user, ready, sessionReady, sessionError, isAuthenticated } = useFirebaseSession();
+
+  if (!ready || (user && !sessionReady && !sessionError)) {
+    return (
+      <span className="inline-flex shrink-0 items-center gap-2" aria-label="계정 상태 확인 중">
+        <span aria-hidden="true" className="h-9 w-12 animate-pulse rounded-md bg-muted" />
+        <ThemeToggle />
+      </span>
+    );
+  }
+
+  if (!isAuthenticated || !user) {
     return (
       <span className="inline-flex shrink-0 items-center gap-2">
         <a href="/login" className="whitespace-nowrap hover:text-foreground">
@@ -36,8 +49,8 @@ export function AuthNav({ session }: { session: AppSession | null }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>
-          <div className="font-black">{session.user.name ?? "내 스키 트립"}</div>
-          {session.user.email ? <div className="mt-0.5 truncate text-xs font-normal text-muted-foreground">{session.user.email}</div> : null}
+          <div className="font-black">{user.displayName ?? "내 스키 트립"}</div>
+          {user.email ? <div className="mt-0.5 truncate text-xs font-normal text-muted-foreground">{user.email}</div> : null}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>

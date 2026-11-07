@@ -3,6 +3,7 @@
 import * as React from "react";
 import { ArrowLeft, ArrowRight, CalendarDays, CheckCircle2, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
@@ -32,13 +33,12 @@ const steps = [
 
 export function TripBuilderForm({
   action = "/recommendations",
-  selectedResort,
-  isAuthenticated = false
+  selectedResort
 }: {
   action?: string | ((formData: FormData) => void | Promise<void>);
   selectedResort?: SkiResort;
-  isAuthenticated?: boolean;
 }) {
+  const { isAuthenticated } = useFirebaseSession();
   const [step, setStep] = React.useState(0);
   const [maxStepReached, setMaxStepReached] = React.useState(0);
   const [error, setError] = React.useState("");

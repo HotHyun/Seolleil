@@ -336,8 +336,8 @@ export async function getTripByEditTokenHash(editTokenHash: string) {
   return document ? mapTrip(document, await getTripTasks(document.$id)) : null;
 }
 
-export async function getTripByShareTokenHash(shareTokenHash: string) {
-  const link = await getShareLinkByTokenHash(shareTokenHash);
+export async function getTripByShareTokenHash(shareTokenHash: string, resolvedLink?: TripShareLinkRecord | null) {
+  const link = resolvedLink === undefined ? await getShareLinkByTokenHash(shareTokenHash) : resolvedLink;
   if (link) return getTripById(link.tripId);
   const { trips } = getFirebaseCollections();
   const [document] = await queryFirebaseDocuments<TripDocument>(trips, "shareTokenHash", shareTokenHash, 1);

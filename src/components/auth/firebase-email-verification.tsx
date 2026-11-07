@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged, sendEmailVerification, applyActionCode } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import { getFirebaseAuth } from "@/lib/firebase-client";
 
 export function FirebaseVerifyEmail() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { syncSession } = useFirebaseSession();
   const [status, setStatus] = useState<"loading" | "verified" | "signed_out" | "error">("loading");
   const [message, setMessage] = useState("");
 
@@ -40,11 +42,9 @@ export function FirebaseVerifyEmail() {
           await user?.reload();
           if (!active) return;
           if (user) {
-            const response = await fetch("/api/auth/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ idToken: await user.getIdToken(true) }) });
-            if (!response.ok) throw new Error("session sync failed");
+            await syncSession(user, true);
             setStatus("verified");
             router.replace(`${callbackUrl}${callbackUrl.includes("?") ? "&" : "?"}notice=${encodeURIComponent("이메일 인증이 완료됐어요.")}`);
-            router.refresh();
           } else {
             setStatus("signed_out");
           }
@@ -57,12 +57,10 @@ export function FirebaseVerifyEmail() {
         try {
           await user.reload();
           if (user.emailVerified) {
-            const response = await fetch("/api/auth/session", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ idToken: await user.getIdToken(true) }) });
-            if (!response.ok) throw new Error("session sync failed");
+            await syncSession(user, true);
             if (!active) return;
             setStatus("verified");
             router.replace(`${callbackUrl}${callbackUrl.includes("?") ? "&" : "?"}notice=${encodeURIComponent("이메일 인증이 완료됐어요.")}`);
-            router.refresh();
           } else if (active) setStatus("loading");
         } catch {
           if (active) { setStatus("error"); setMessage("인증 상태를 확인하지 못했습니다."); }
@@ -72,7 +70,7 @@ export function FirebaseVerifyEmail() {
       }
     });
     return () => { active = false; unsubscribe(); };
-  }, [router, searchParams]);
+  }, [router, searchParams, syncSession]);
 
   return <div className="space-y-4">
     <p className="text-sm text-muted-foreground">{status === "loading" ? "이메일 인증 상태를 확인하고 있습니다…" : status === "verified" ? "이메일 인증이 완료됐습니다." : status === "signed_out" ? "이메일 인증은 처리됐습니다. 계정으로 로그인해 주세요." : message}</p>

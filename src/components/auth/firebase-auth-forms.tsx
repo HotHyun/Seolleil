@@ -5,21 +5,14 @@ import { useRouter } from "next/navigation";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, sendEmailVerification, signInWithEmailAndPassword, signInWithPopup, updateProfile } from "firebase/auth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/field";
+import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import { getFirebaseAuth } from "@/lib/firebase-client";
 
 export function FirebaseAuthForms({ mode, callbackUrl, initialError }: { mode: "login" | "signup"; callbackUrl: string; initialError?: string }) {
   const router = useRouter();
+  const { syncSession } = useFirebaseSession();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState(initialError ?? "");
-
-  async function syncSession(user: { getIdToken: (forceRefresh?: boolean) => Promise<string> }) {
-    const response = await fetch("/api/auth/session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken: await user.getIdToken(true) })
-    });
-    if (!response.ok) throw new Error("로그인 정보를 저장하지 못했습니다. 다시 시도해 주세요.");
-  }
 
   async function handleEmailSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,7 +40,6 @@ export function FirebaseAuthForms({ mode, callbackUrl, initialError }: { mode: "
       } else {
         router.push(callbackUrl);
       }
-      router.refresh();
     } catch (caught) {
       setError(authMessage(caught));
     } finally {
@@ -63,7 +55,6 @@ export function FirebaseAuthForms({ mode, callbackUrl, initialError }: { mode: "
       const credential = await signInWithPopup(getFirebaseAuth(), new GoogleAuthProvider());
       await syncSession(credential.user);
       router.push(callbackUrl);
-      router.refresh();
     } catch (caught) {
       setError(authMessage(caught));
     } finally {

@@ -34,7 +34,8 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   const query = await searchParams;
   const activeView = getTripWorkspaceView(query.view);
   const tokenHash = hashToken(shareToken);
-  const [trip, link] = await Promise.all([getTripByShareTokenHash(tokenHash), getShareLinkByTokenHash(tokenHash)]);
+  const link = await getShareLinkByTokenHash(tokenHash);
+  const trip = await getTripByShareTokenHash(tokenHash, link);
   if (!trip) notFound();
   const resort = getResort(trip.resortId);
   const canEdit = link?.permission === "edit";

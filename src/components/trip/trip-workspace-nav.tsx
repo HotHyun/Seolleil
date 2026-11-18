@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowLeft, BedDouble, BusFront, CheckSquare2, LayoutDashboard, Menu, PanelLeftClose, PanelLeftOpen, ReceiptText, Shirt } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
@@ -21,16 +21,46 @@ const items = [
 const sidebarStorageKey = "korean-ski-trip-sidebar-collapsed";
 const focusStorageKey = "korean-ski-trip-workspace-focus";
 
+// Sidebar collapse state lives in localStorage (external store); keep an in-memory
+// override so toggling still works when storage is unavailable.
+let collapsedOverride: boolean | null = null;
+const collapsedListeners = new Set<() => void>();
+
+function subscribeCollapsed(listener: () => void) {
+  collapsedListeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    collapsedListeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+function readCollapsed() {
+  if (collapsedOverride !== null) return collapsedOverride;
+  try {
+    return localStorage.getItem(sidebarStorageKey) === "true";
+  } catch {
+    return false;
+  }
+}
+
+function writeCollapsed(next: boolean) {
+  collapsedOverride = next;
+  try {
+    localStorage.setItem(sidebarStorageKey, String(next));
+  } catch {}
+  collapsedListeners.forEach(listener => listener());
+}
+
 export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHref }: { basePath: string; activeView: TripWorkspaceView; tasks: Array<{ id: string; category: string; status: string }>; children: React.ReactNode; backHref?: string }) {
   const [visibleTasks, setVisibleTasks] = useState(tasks);
-  const [collapsed, setCollapsed] = useState(false);
+  const collapsed = useSyncExternalStore(subscribeCollapsed, readCollapsed, () => false);
   const contentRef = useRef<HTMLElement>(null);
-  useEffect(() => setVisibleTasks(tasks), [tasks]);
-  useEffect(() => {
-    try {
-      setCollapsed(localStorage.getItem(sidebarStorageKey) === "true");
-    } catch {}
-  }, []);
+  const [syncedTasks, setSyncedTasks] = useState(tasks);
+  if (syncedTasks !== tasks) {
+    setSyncedTasks(tasks);
+    setVisibleTasks(tasks);
+  }
   useEffect(() => {
     const updateStatus = (event: Event) => {
       const { taskId, status } = (event as CustomEvent<TaskStatusChangedDetail>).detail;
@@ -72,15 +102,7 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHr
     if (url.pathname !== basePath || !view) return;
     prepareWorkspaceNavigation(`${basePath}?view=${view}${url.hash}`);
   };
-  const toggleSidebar = () => {
-    setCollapsed(current => {
-      const next = !current;
-      try {
-        localStorage.setItem(sidebarStorageKey, String(next));
-      } catch {}
-      return next;
-    });
-  };
+  const toggleSidebar = () => writeCollapsed(!collapsed);
   const relevant = visibleTasks.filter(task => task.status !== "not_needed");
   const progress = relevant.length ? Math.round(relevant.filter(task => isTaskComplete(task.category, task.status)).length / relevant.length * 100) : 0;
   return (

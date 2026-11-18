@@ -47,6 +47,7 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
 
   useEffect(() => {
     const saved = day.rentalShopId === shop.id;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- resets local selections when the saved day changes
     setMode(saved && packages.some(option => option.id === day.packageOptionId) ? "package" : "individual");
     setEquipmentId(saved ? day.equipmentOptionId ?? "none" : "none");
     setClothingId(saved ? day.clothingOptionId ?? "none" : "none");

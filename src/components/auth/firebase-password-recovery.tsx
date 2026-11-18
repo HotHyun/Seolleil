@@ -39,6 +39,7 @@ export function ResetPasswordForm({ code }: { code: string }) {
 
   useEffect(() => {
     if (!code) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- verifies the reset code against Firebase Auth on mount
       setReady(true);
       return;
     }

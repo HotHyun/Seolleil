@@ -12,7 +12,11 @@ type Task = {
 
 export function ProgressSummary({ tasks }: { tasks: Task[] }) {
   const [visibleTasks, setVisibleTasks] = useState(tasks);
-  useEffect(() => setVisibleTasks(tasks), [tasks]);
+  const [syncedTasks, setSyncedTasks] = useState(tasks);
+  if (syncedTasks !== tasks) {
+    setSyncedTasks(tasks);
+    setVisibleTasks(tasks);
+  }
   useEffect(() => {
     function updateStatus(event: Event) {
       const { taskId, status } = (event as CustomEvent<TaskStatusChangedDetail>).detail;

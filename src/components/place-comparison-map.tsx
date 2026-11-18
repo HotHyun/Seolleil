@@ -29,6 +29,7 @@ export function PlaceComparisonMap({ candidates, selectedId, onSelect }: { candi
   const key = process.env.NEXT_PUBLIC_KAKAO_MAP_APP_KEY;
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- loads and syncs the Kakao Maps SDK (external system)
     if (!key) { setState("unavailable"); return; }
     if (!containerRef.current) return;
     setState("loading");

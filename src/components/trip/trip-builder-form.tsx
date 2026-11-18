@@ -57,6 +57,7 @@ export function TripBuilderForm({
     if (!isAuthenticated || !selectedResort) return;
     const draft = readPendingTripDraft(currentPathWithSearch());
     if (!draft || draft.values.resortId !== selectedResort.id) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- restores a client-only pending draft after mount
     setDraftValues(draft.values);
     setTripDuration(draft.values.tripDuration ?? "same_day");
     setVisitDate(draft.values.visitDate ?? "");

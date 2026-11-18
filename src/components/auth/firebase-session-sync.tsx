@@ -64,6 +64,7 @@ export function FirebaseSessionProvider({ children }: { children: ReactNode }) {
     try {
       auth = getFirebaseAuth();
     } catch {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs Firebase Auth state into React on mount
       setReady(true);
       setSessionReady(true);
       return;

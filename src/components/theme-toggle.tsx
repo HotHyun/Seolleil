@@ -5,27 +5,53 @@ import { Moon, Sun } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const storageKey = "korean-ski-theme";
+type Theme = "light" | "dark";
 
-function applyTheme(theme: "light" | "dark") {
+function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle("dark", theme === "dark");
 }
 
-export function ThemeToggle() {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
+// Theme lives in localStorage (external store). The in-memory override keeps the
+// toggle working when storage is unavailable.
+let themeOverride: Theme | null = null;
+const themeListeners = new Set<() => void>();
 
-  React.useEffect(() => {
+function subscribeTheme(listener: () => void) {
+  themeListeners.add(listener);
+  window.addEventListener("storage", listener);
+  return () => {
+    themeListeners.delete(listener);
+    window.removeEventListener("storage", listener);
+  };
+}
+
+function readTheme(): Theme {
+  if (themeOverride) return themeOverride;
+  try {
     const stored = window.localStorage.getItem(storageKey);
-    const nextTheme = stored === "dark" || stored === "light" ? stored : "light";
-    setTheme(nextTheme);
-    applyTheme(nextTheme);
-  }, []);
-
-  function toggleTheme() {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    window.localStorage.setItem(storageKey, nextTheme);
-    applyTheme(nextTheme);
+    return stored === "dark" || stored === "light" ? stored : "light";
+  } catch {
+    return "light";
   }
+}
+
+function writeTheme(theme: Theme) {
+  themeOverride = theme;
+  try {
+    window.localStorage.setItem(storageKey, theme);
+  } catch {}
+  applyTheme(theme);
+  themeListeners.forEach(listener => listener());
+}
+
+function useTheme() {
+  const theme = React.useSyncExternalStore<Theme>(subscribeTheme, readTheme, () => "light");
+  React.useEffect(() => applyTheme(theme), [theme]);
+  return [theme, () => writeTheme(theme === "dark" ? "light" : "dark")] as const;
+}
+
+export function ThemeToggle() {
+  const [theme, toggleTheme] = useTheme();
 
   return (
     <button
@@ -41,21 +67,7 @@ export function ThemeToggle() {
 }
 
 export function ThemeMenuItem({ className }: { className?: string }) {
-  const [theme, setTheme] = React.useState<"light" | "dark">("light");
-
-  React.useEffect(() => {
-    const stored = window.localStorage.getItem(storageKey);
-    const nextTheme = stored === "dark" || stored === "light" ? stored : "light";
-    setTheme(nextTheme);
-    applyTheme(nextTheme);
-  }, []);
-
-  function toggleTheme() {
-    const nextTheme = theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-    window.localStorage.setItem(storageKey, nextTheme);
-    applyTheme(nextTheme);
-  }
+  const [theme, toggleTheme] = useTheme();
 
   return (
     <button

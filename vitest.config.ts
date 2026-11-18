@@ -9,7 +9,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": new URL("./src", import.meta.url).pathname
+      "@": new URL("./src", import.meta.url).pathname,
+      // Next.js resolves `server-only` internally; stub it for Vitest.
+      "server-only": new URL("./node_modules/next/dist/compiled/server-only/empty.js", import.meta.url).pathname
     }
   }
 });

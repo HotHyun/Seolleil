@@ -14,7 +14,7 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.id === "high1-myski-lift-peak-7h" && rule.representativePrice === 53000)).toBe(true);
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-repo4u")).toBe(false);
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-four-season" && rule.representativePrice === 12000)).toBe(true);
-    expect(getNearbyLodgingsForResort("high1")).toHaveLength(5);
+    expect(getNearbyLodgingsForResort("high1")).toHaveLength(8);
   });
 
   it("keeps resort, price, rental, and departure data internally consistent", () => {
@@ -204,8 +204,8 @@ describe("static data validation", () => {
       priorityOneResearchCount: 12,
       priorityTwoResearchCount: 15,
       priorityThreeResearchCount: 12,
-      preliminaryResearchCount: 3,
-      latestResearchAt: "2026-08-11"
+      preliminaryResearchCount: 12,
+      latestResearchAt: "2026-10-11"
     });
     expect(new Set(priorityOneIds)).toEqual(new Set(["high1", "vivaldi", "yongpyong", "phoenix"]));
     expect(new Set(priorityTwoIds)).toEqual(new Set(["konjiam", "jisan", "elysian", "wellihilli", "alpensia"]));
@@ -229,8 +229,8 @@ describe("static data validation", () => {
       targetSeason: "2026-2027",
       status: "preliminary",
       announcedFacts: expect.arrayContaining([
-        { label: "BASIC PASS", value: "549,000원" },
-        { label: "폐장 예정", value: "2027-03-14" }
+        { label: "BASIC PASS", value: "1차 549,000원 · 2차 599,000원" },
+        { label: "운영 기간", value: "개장일 ~ 2027-03-14 예정" }
       ])
     });
     expect(phoenixTransition?.lift).toMatchObject({
@@ -243,7 +243,8 @@ describe("static data validation", () => {
       targetSeason: "2026-2027",
       status: "preliminary",
       announcedFacts: expect.arrayContaining([
-        { label: "시즌권 상태", value: "26/27 시즌 준비중" }
+        { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+        { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
       ])
     });
     expect(alpensiaTransition?.lift).toMatchObject({

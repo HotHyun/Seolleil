@@ -29,6 +29,7 @@ export function FirebaseVerifyEmail() {
     const callbackUrl = callbackValue.startsWith("/") && !callbackValue.startsWith("//") ? callbackValue : "/my-trips";
     let auth;
     try { auth = getFirebaseAuth(); }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs with Firebase Auth (external system) on mount
     catch { setStatus("error"); setMessage("Firebase 환경 변수를 먼저 설정해 주세요."); return; }
     const oobCode = searchParams.get("oobCode");
     let handlingActionCode = false;

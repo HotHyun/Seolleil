@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { UserCircle } from "lucide-react";
 import { FirebaseSignOutButton } from "@/components/auth/firebase-sign-out-button";
 import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
@@ -28,9 +29,9 @@ export function AuthNav() {
   if (!isAuthenticated || !user) {
     return (
       <span className="inline-flex shrink-0 items-center gap-2">
-        <a href="/login" className="whitespace-nowrap hover:text-foreground">
+        <Link href="/login" className="whitespace-nowrap hover:text-foreground">
           로그인
-        </a>
+        </Link>
         <ThemeToggle />
       </span>
     );
@@ -54,9 +55,9 @@ export function AuthNav() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <a href="/my-trips">
+          <Link href="/my-trips">
             <UserCircle className="h-4 w-4" /> 내 스키 트립
-          </a>
+          </Link>
         </DropdownMenuItem>
         <ThemeMenuItem />
         <DropdownMenuSeparator />

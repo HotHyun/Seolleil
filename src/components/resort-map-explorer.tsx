@@ -86,6 +86,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
 
   useEffect(() => {
     const requested = new URLSearchParams(window.location.search).get("resortId");
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads the initial selection from the URL on the client
     if (requested && rows.some((row) => row.resort.id === requested)) setSelectedId(requested);
   }, [rows]);
 

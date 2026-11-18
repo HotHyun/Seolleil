@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, ChevronDown, Compass, ExternalLink, ListFilter, Plus, Trash2 } from "lucide-react";
 import {
@@ -51,7 +51,11 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
   const taskRefs = useRef(new Map<string, HTMLDivElement>());
   const [visibleTasks, setVisibleTasks] = useState(tasks);
   const [showIncompleteOnly, setShowIncompleteOnly] = useState(false);
-  useEffect(() => setVisibleTasks(tasks), [tasks]);
+  const [syncedTasks, setSyncedTasks] = useState(tasks);
+  if (syncedTasks !== tasks) {
+    setSyncedTasks(tasks);
+    setVisibleTasks(tasks);
+  }
   const groups = visibleTasks.reduce<Record<string, Task[]>>((acc, task) => {
     const label = categoryLabels[task.category] ?? task.category;
     acc[label] = acc[label] ?? [];

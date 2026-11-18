@@ -41,6 +41,7 @@ export function CreateTripSubmit({
 
   React.useEffect(() => {
     const returnTo = currentPathWithSearch();
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads the client-only URL and pending draft after mount
     setLoginHref(`/login?callbackUrl=${encodeURIComponent(returnTo)}`);
 
     if (!isAuthenticated) return;

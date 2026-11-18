@@ -15,7 +15,11 @@ const statusOptions = [
 export function StatusSelect({ name, defaultValue, onStatusChange }: { name: string; defaultValue: string; onStatusChange?: (status: string) => void }) {
   const rootRef = React.useRef<HTMLDivElement>(null);
   const [value, setValue] = React.useState(defaultValue);
-  React.useEffect(() => setValue(defaultValue), [defaultValue]);
+  const [syncedDefault, setSyncedDefault] = React.useState(defaultValue);
+  if (syncedDefault !== defaultValue) {
+    setSyncedDefault(defaultValue);
+    setValue(defaultValue);
+  }
 
   return (
     <div ref={rootRef}>

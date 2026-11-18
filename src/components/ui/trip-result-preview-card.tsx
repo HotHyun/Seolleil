@@ -50,7 +50,7 @@ export function TripResultPreviewCard() {
           </div>
         </div>
 
-        <div className="mt-3 rounded-2xl border bg-card px-3.5 py-1 sm:px-4">
+        <div className="mt-3 hidden rounded-2xl border bg-card px-3.5 py-1 sm:block sm:px-4">
           <p className="py-2 text-[11px] font-black text-muted-foreground">같은 조건으로 더 비교하기</p>
           {comparisons.map((item) => (
             <Link key={item.resortId} href={`/resorts/${item.resortId}`} className="flex items-center justify-between gap-2 border-t py-2.5 text-xs transition hover:text-primary">

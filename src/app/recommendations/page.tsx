@@ -34,6 +34,7 @@ function RecommendationsContent() {
   const params = useMemo(() => Object.fromEntries(searchParams.entries()), [searchParams]);
   const input = useMemo(() => parseParams(params), [params]);
   const recommendations = useMemo(() => getRecommendations(input), [input]);
+  const usingDefaults = searchParams.size === 0;
   const departureLabel = departureLocations.find((location) => location.id === input.departureLocation)?.label ?? "서울 강남";
   const { isAuthenticated } = useFirebaseSession();
 
@@ -42,7 +43,7 @@ function RecommendationsContent() {
       <AnalyticsTrack eventName="recommendation_view" eventData={{ count: recommendations.length }} />
       <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <p className="mb-2 text-sm font-semibold text-primary">Recommendations</p>
+          <p className="mb-2 text-sm font-semibold text-primary">추천 결과</p>
           <h1 className="text-balance text-3xl font-black md:text-5xl">예약 전에 비교할 추천 3곳</h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
             같은 날짜와 인원으로 리조트 공식 이용과 주변 렌탈샵 이용의 비용을 비교하고, 마음에 드는 곳을 트립으로 저장하세요.
@@ -50,6 +51,11 @@ function RecommendationsContent() {
           <p className="mt-2 text-xs leading-5 text-muted-foreground">
             기준 지역: {departureLabel} · 이동 시간과 자차 교통비는 대표 지점 기준의 대략적인 추정치입니다.
           </p>
+          {usingDefaults ? (
+            <p className="mt-3 inline-flex rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-semibold" role="status">
+              아직 입력한 조건이 없어 기본 조건(서울 강남 출발·2명)으로 보여드려요. 날짜와 인원을 입력하면 내 조건에 맞게 다시 계산됩니다.
+            </p>
+          ) : null}
         </div>
         <a href="/plan">
           <Button variant="secondary">조건 다시 입력</Button>
@@ -169,7 +175,7 @@ function RecommendationsContent() {
 function RecommendationsFallback() {
   return (
     <main className="page-shell py-8" aria-busy="true">
-      <p className="mb-2 text-sm font-semibold text-primary">Recommendations</p>
+      <p className="mb-2 text-sm font-semibold text-primary">추천 결과</p>
       <h1 className="text-3xl font-black md:text-5xl">추천 결과를 준비하고 있어요.</h1>
       <div className="mt-8 h-80 animate-pulse rounded-2xl border bg-muted/50" />
     </main>

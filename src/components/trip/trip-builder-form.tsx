@@ -123,7 +123,7 @@ export function TripBuilderForm({
       ref={formRef}
       action={step === steps.length - 1 ? action : undefined}
       onSubmit={handleSubmit}
-      className="grid gap-5 pb-24 sm:pb-0"
+      className="grid gap-5 pb-32 sm:pb-0"
     >
       {selectedResort ? <input type="hidden" name="resortId" value={selectedResort.id} /> : null}
       <React.Fragment key={draftRevision}>
@@ -183,7 +183,7 @@ export function TripBuilderForm({
                     <span className={cn("flex h-7 w-7 items-center justify-center rounded-md", state === "active" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
                       {state === "done" ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
                     </span>
-                    <span className="hidden text-xs font-black sm:inline">{item.title}</span>
+                    <span className="text-xs font-black">{item.title}</span>
                   </div>
                 </button>
               );

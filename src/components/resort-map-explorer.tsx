@@ -290,7 +290,7 @@ function ResortSidebar({
   return (
     <>
       <div className="border-b p-4">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Ski map</p>
+        <p className="text-sm font-black text-primary">스키장 지도</p>
         <h1 className="mt-2 text-2xl font-black">국내 스키장</h1>
         <div className="mt-4 flex items-center gap-2 rounded-lg border bg-muted px-3 py-2">
           <Search className="h-4 w-4 text-muted-foreground" />

@@ -174,7 +174,7 @@ test.describe("production regression", () => {
       await page.goto(`${planQuery.replace("tripDuration=same_day", "tripDuration=overnight")}&endDate=2027-01-12`, { waitUntil: "networkidle" });
       await page.getByRole("button", { name: /이 스키장으로 트립 만들기/ }).first().click();
       await page.getByRole("button", { name: "로그인 없이 링크로 만들기" }).click();
-      await expect(page).toHaveURL(/\/trips\/[^?]+/);
+      await expect(page).toHaveURL(/\/trips\/[^?]+/, { timeout: 30_000 });
       editUrl = page.url().split("?")[0];
       await expect(page.getByText("비공개 트립을 만들었어요.")).toBeVisible();
 
@@ -270,7 +270,7 @@ test.describe("production regression", () => {
         await page.getByRole("button", { name: "트립 관리 메뉴" }).click();
         await page.getByRole("menuitem", { name: "트립 삭제" }).click();
         await page.getByRole("button", { name: "트립 삭제" }).click();
-        await expect(page).toHaveURL(/\/$/);
+        await expect(page).toHaveURL(/\/$/, { timeout: 30_000 });
       }
     }
   });

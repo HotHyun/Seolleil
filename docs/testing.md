@@ -11,11 +11,16 @@ Routine code validation is:
 
 ```bash
 pnpm typecheck
+pnpm lint
 pnpm data:validate
 pnpm test
 ```
 
-GitHub Actions의 `CI` workflow는 `main` 대상 pull request와 `main` push에서 같은 routine validation을 실행한다. Node.js 22와 `pnpm` 9.15.0을 사용하고 lockfile 고정 설치 후 타입 검사, Vitest, 정적 데이터 검증을 각각 실행한다. 로컬 브라우저 E2E와 production 회귀는 이 기본 CI에서 분리한다.
+`pnpm lint`는 에러 0건을 유지한다(경고는 허용). `react-hooks/set-state-in-effect`는 외부 시스템(Firebase Auth, Kakao 지도, URL·임시 초안 복원) 동기화처럼 구조상 필요한 effect에만 사유 주석과 함께 `eslint-disable-next-line`을 사용한다. props에서 파생되는 state와 `localStorage` 값은 렌더 중 동기화 또는 `useSyncExternalStore`를 사용한다.
+
+Vitest는 `vitest.config.ts`에서 `server-only`를 Next.js 내장 빈 모듈로 alias한다. 서버 전용 모듈(`session`, `firebase`, `token-vault` 등)은 이 alias 덕분에 단위 테스트에서 import할 수 있다.
+
+GitHub Actions의 `CI` workflow는 `main` 대상 pull request와 `main` push에서 같은 routine validation을 실행한다. Node.js 22와 `pnpm` 9.15.0을 사용하고 lockfile 고정 설치 후 타입 검사, 린트, Vitest, 정적 데이터 검증을 각각 실행한다. 로컬 브라우저 E2E와 production 회귀는 이 기본 CI에서 분리한다.
 
 Do not use a local development server for OCI-agent UI verification. When `E2E_BASE_URL` is set, Playwright skips its local web server.
 

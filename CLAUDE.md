@@ -25,6 +25,7 @@
 ```bash
 pnpm install
 pnpm typecheck        # 일상 검증
+pnpm lint             # 에러 0건 유지 (CI에서도 실행)
 pnpm test             # vitest (unit + integration)
 pnpm data:validate    # 정적 데이터 검증 (CI에서도 실행)
 pnpm data:report / data:links   # 데이터 리포트 / 공식 링크 점검

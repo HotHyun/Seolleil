@@ -94,6 +94,9 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 - The first viewport includes a direct plan CTA, resort browsing CTA, and low-friction trust cues.
 - At 1280px and wider, keep the planner preview explicitly positioned on the right so it cannot be displaced by fluid display typography.
 - Respect `prefers-reduced-motion`; motion is enhancement, never required to understand the page.
+- Below the hero: a data strip (resort count, rental shop count, latest price check date, all computed from static data), a bento board of miniature product tiles (recommendation comparison, price-confidence levels, checklist progress, share links), an FAQ accordion, and a dark final CTA that matches the hero tone.
+- Bento tiles show real UI fragments instead of icon-and-number cards. Sample figures are labelled as examples; never present invented scores or progress as real results.
+- On mobile the hero must fit the headline, both CTAs, and the trust cues in the first screen; the preview card is compacted (secondary comparison list hidden) and the overlay gradient runs vertically.
 
 ## Typography
 

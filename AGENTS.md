@@ -46,7 +46,7 @@ pnpm data:validate
 pnpm cf:deploy
 ```
 
-- Routine validation is `pnpm typecheck` and `pnpm test`.
+- Routine validation is `pnpm typecheck`, `pnpm lint` (0 errors), and `pnpm test`.
 - Do not run `pnpm build` routinely. Do not start `pnpm dev` for OCI-agent UI verification.
 - Firestore is schemaless; there is no schema migration command.
 - `pnpm cf:deploy` deploys the application and requires explicit user authorization.

@@ -61,10 +61,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 </span>
               </Link>
               <nav className="flex shrink-0 items-center gap-1 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">
-                <Link href="/resorts" className="whitespace-nowrap rounded-md px-1.5 py-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
+                <Link href="/resorts" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-md px-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
                   스키장
                 </Link>
-                <Link href="/plan" aria-label="여행 시작" className="whitespace-nowrap rounded-lg bg-primary px-2.5 py-2 text-primary-foreground transition hover:brightness-110 sm:px-4">
+                <Link href="/plan" aria-label="여행 시작" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-lg bg-primary px-2.5 text-primary-foreground transition hover:brightness-110 sm:px-4">
                   <span className="sm:hidden">시작</span>
                   <span className="hidden sm:inline">여행 시작</span>
                 </Link>

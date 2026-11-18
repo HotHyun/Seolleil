@@ -20,7 +20,7 @@ export function AuthNav() {
   if (!ready || (user && !sessionReady && !sessionError)) {
     return (
       <span className="inline-flex shrink-0 items-center gap-2" aria-label="계정 상태 확인 중">
-        <span aria-hidden="true" className="h-9 w-12 animate-pulse rounded-md bg-muted" />
+        <span aria-hidden="true" className="h-11 w-12 animate-pulse rounded-md bg-muted" />
         <ThemeToggle />
       </span>
     );
@@ -29,7 +29,7 @@ export function AuthNav() {
   if (!isAuthenticated || !user) {
     return (
       <span className="inline-flex shrink-0 items-center gap-2">
-        <Link href="/login" className="inline-flex h-9 w-12 items-center justify-center whitespace-nowrap hover:text-foreground">
+        <Link href="/login" className="inline-flex h-11 w-12 items-center justify-center whitespace-nowrap hover:text-foreground">
           로그인
         </Link>
         <ThemeToggle />
@@ -42,7 +42,7 @@ export function AuthNav() {
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="mx-1.5 flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-border bg-card text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="mx-1 flex h-11 w-11 items-center justify-center overflow-hidden rounded-full border border-border bg-card text-foreground transition hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           aria-label="프로필 메뉴 열기"
         >
           <UserCircle className="h-5 w-5" />

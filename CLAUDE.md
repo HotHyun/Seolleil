@@ -18,7 +18,7 @@
 - Umami(웹 분석), Firestore `analytics_events`(서버 이벤트), 선택적 Sentry
 - Vitest(unit/integration), Playwright(e2e), pnpm 9
 
-> `prisma/`, `Dockerfile`, `docker-compose*.yml`, `ops/appwrite-backup/`은 과거 아키텍처 잔재입니다. 현재 런타임이 아니므로 참고하지 마세요.
+> `ops/appwrite-backup/`은 OCI의 기존 Appwrite 백업 절차를 보존한 과거 아키텍처 잔재입니다. 현재 런타임이 아니므로 참고하지 마세요. (`prisma/`, `Dockerfile`, `docker-compose*.yml`은 제거됨)
 
 ## 명령어
 

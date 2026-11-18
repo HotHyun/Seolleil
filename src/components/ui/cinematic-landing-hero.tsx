@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ArrowRight, Check, MapPinned, Sparkles } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
+import { departureLocations } from "@/data/resorts";
 import { TripResultPreviewCard } from "@/components/ui/trip-result-preview-card";
 
 export function CinematicHero() {
@@ -41,6 +42,19 @@ export function CinematicHero() {
               <MapPinned className="h-5 w-5" /> 스키장 둘러보기
             </AnalyticsLink>
           </div>
+          <form action="/recommendations" method="get" className="hero-reveal hero-delay-4 mt-6 grid max-w-xl gap-2 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-xl sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+            <label className="grid gap-1 text-xs font-bold text-white/75">방문 날짜
+              <input type="date" name="visitDate" required className="h-11 rounded-lg border border-white/20 bg-[#071225]/70 px-3 text-sm font-semibold text-white [color-scheme:dark] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white" />
+            </label>
+            <label className="grid gap-1 text-xs font-bold text-white/75">출발지
+              <select name="departureLocation" defaultValue="seoul-gangnam" className="h-11 rounded-lg border border-white/20 bg-[#071225]/70 px-3 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">
+                {departureLocations.map(location => <option key={location.id} value={location.id}>{location.label}</option>)}
+              </select>
+            </label>
+            {[["peopleCount", "2"], ["tripDuration", "same_day"], ["transportType", "car"], ["skillLevel", "beginner"], ["rideType", "ski"], ["ownsEquipment", "false"], ["ownsClothing", "false"], ["priority1", "beginner"], ["priority2", "close"], ["priority3", "rental"], ["liftTicketTimeSlot", "4h"]].map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
+            <button type="submit" className="h-11 rounded-lg bg-[#b8f23d] px-5 text-sm font-black text-[#071225] transition hover:bg-[#c8ff52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white">바로 추천 보기</button>
+            <p className="text-xs font-medium text-white/60 sm:col-span-3">2명·당일·자차·초보 기준으로 계산해요. 조건을 직접 정하려면 위의 “내 스키 여행 시작하기”를 눌러 주세요.</p>
+          </form>
           <div className="hero-reveal hero-delay-4 mt-6 flex flex-wrap gap-x-4 gap-y-2 text-[13px] sm:mt-10 sm:gap-x-6 sm:gap-y-3 sm:text-sm font-semibold text-white/65">
             <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#b8f23d]" /> 로그인 없이 시작</span>
             <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#b8f23d]" /> 날짜별 예상 비용</span>

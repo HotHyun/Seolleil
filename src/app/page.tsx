@@ -1,23 +1,55 @@
 import { ArrowRight, CheckCircle2, Link2, ShieldCheck } from "lucide-react";
+import { confidenceMeta, confidenceOrder } from "@/components/confidence-badge";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
 import { seasonResearchRecords } from "@/data/season-research";
 import { rentalShops, resorts } from "@/data/resorts";
+import { getRecommendations } from "@/lib/recommendation";
+import { formatCurrency, formatMinutes } from "@/lib/utils";
 
 const latestCheckedAt = seasonResearchRecords.reduce((latest, record) => (record.lastCheckedAt > latest ? record.lastCheckedAt : latest), "");
 
-const compareRows = [
+type CompareRow = { name: string; time: string; cost: string; top: boolean };
+const fallbackRows: CompareRow[] = [
   { name: "곤지암리조트", time: "45분", cost: "₩17,984~22,979", top: true },
-  { name: "지산 포레스트", time: "55분", cost: "₩21,600~27,600", top: false },
+  { name: "지산 포레스트 리조트", time: "55분", cost: "₩21,600~27,600", top: false },
   { name: "비발디파크", time: "1시간 35분", cost: "₩35,280~45,080", top: false }
 ];
 
-const confidenceLevels = [
-  { label: "확인", note: "공식 판매처 확인", dot: "bg-emerald-500", ring: "border-emerald-500/40" },
-  { label: "전화 확인", note: "매장 통화로 확인", dot: "bg-sky-500", ring: "border-sky-500/40" },
-  { label: "추정", note: "전년 가격 기반", dot: "border-2 border-amber-500 bg-transparent", ring: "border-dashed border-amber-500/50" },
-  { label: "미공개", note: "새 시즌 가격 대기", dot: "border-2 border-muted-foreground bg-transparent", ring: "border-dashed border-border" }
-];
+// Computed from the real recommendation engine at build time for a sample trip (2 people, same day, from Gangnam).
+function buildSample(): { rows: CompareRow[]; label: string } {
+  const date = new Date();
+  date.setDate(date.getDate() + 14);
+  while (date.getDay() !== 6) date.setDate(date.getDate() + 1);
+  const visitDate = date.toISOString().slice(0, 10);
+  try {
+    const recommendations = getRecommendations({
+      visitDate,
+      departureLocation: "seoul-gangnam",
+      peopleCount: 2,
+      tripDuration: "same_day",
+      skillLevel: "beginner",
+      rideType: "ski",
+      ownsEquipment: false,
+      ownsClothing: false,
+      transportType: "car",
+      priorities: ["beginner", "close", "rental"],
+      liftTicketTimeSlot: "4h"
+    }).slice(0, 3);
+    if (recommendations.length < 3) throw new Error("not enough recommendations");
+    return {
+      rows: recommendations.map((item, index) => ({
+        name: item.resort.name,
+        time: formatMinutes(item.travelMinutes),
+        cost: `${formatCurrency(item.cost.min)}~${formatCurrency(item.cost.max)}`,
+        top: index === 0
+      })),
+      label: `서울 강남 출발·2명·당일 기준 예시(${visitDate.slice(5).replace("-", "/")} 토요일)이며, 입력한 조건에 따라 달라져요.`
+    };
+  } catch {
+    return { rows: fallbackRows, label: "예시 화면이며 실제 값은 입력한 조건에 따라 달라져요." };
+  }
+}
 
 const checklistSample = [
   { label: "리프트권 예약", done: true },
@@ -34,6 +66,7 @@ const faqs = [
 ];
 
 export default function HomePage() {
+  const sample = buildSample();
   const checkedDate = latestCheckedAt ? latestCheckedAt.replaceAll("-", ".") : "";
 
   return (
@@ -63,7 +96,7 @@ export default function HomePage() {
                 <div role="row" className="grid grid-cols-[1.4fr_1fr_1.4fr] gap-2 border-b border-white/10 px-4 py-2.5 text-xs font-semibold text-white/55">
                   <span role="columnheader">스키장</span><span role="columnheader">이동</span><span role="columnheader" className="text-right">예상 총액</span>
                 </div>
-                {compareRows.map(row => (
+                {sample.rows.map(row => (
                   <div role="row" key={row.name} className={`grid grid-cols-[1.4fr_1fr_1.4fr] items-center gap-2 px-4 py-3.5 text-sm ${row.top ? "bg-[#b8f23d]/12" : ""}`}>
                     <span role="cell" className="flex items-center gap-2 font-black">{row.top ? <span className="rounded-md bg-[#b8f23d] px-1.5 py-0.5 text-xs text-[#071225]">1순위</span> : null}{row.name}</span>
                     <span role="cell" className="text-white/80">{row.time}</span>
@@ -71,15 +104,15 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-              <p className="mt-3 text-xs text-white/50">예시 화면이며 실제 값은 입력한 조건에 따라 달라져요.</p>
+              <p className="mt-3 text-xs text-white/50">{sample.label}</p>
             </article>
 
             <article className="rounded-3xl border bg-card p-6 sm:p-8 lg:col-span-5">
               <h3 className="text-xl font-black sm:text-2xl">가격마다 믿을 수 있는 정도를 표시해요</h3>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">출처와 확인일을 함께 보여 주고, 확정되지 않은 가격은 점선으로 구분해요.</p>
               <ul className="mt-6 grid gap-2.5">
-                {confidenceLevels.map(level => (
-                  <li key={level.label} className={`flex items-center gap-3 rounded-xl border bg-background px-4 py-3 ${level.ring}`}>
+                {confidenceOrder.map(key => ({ key, ...confidenceMeta[key] })).map(level => (
+                  <li key={level.key} className={`flex items-center gap-3 rounded-xl border bg-background px-4 py-3 ${level.ring}`}>
                     <span aria-hidden="true" className={`h-3 w-3 shrink-0 rounded-full ${level.dot}`} />
                     <span className="text-sm font-black">{level.label}</span>
                     <span className="ml-auto text-xs font-medium text-muted-foreground">{level.note}</span>

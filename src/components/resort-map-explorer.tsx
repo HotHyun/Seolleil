@@ -226,7 +226,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
 
   return (
     <section className="grid min-h-[calc(100vh-4rem)] bg-background lg:grid-cols-[380px_1fr]">
-      <aside className="order-2 z-20 flex min-w-0 w-full flex-col border-t bg-card shadow-xl lg:sticky lg:top-16 lg:order-1 lg:max-h-[calc(100vh-4rem)] lg:border-r lg:border-t-0">
+      <aside className="order-1 z-20 flex min-w-0 w-full flex-col border-b bg-card shadow-xl lg:sticky lg:top-16 lg:max-h-[calc(100vh-4rem)] lg:border-b-0 lg:border-r">
         {showNearby && selected ? (
           <NearbySidebar resort={selected.resort} items={filteredNearbyItems} selectedId={selectedNearbyId} filter={nearbyFilter} onFilter={setNearbyFilter} onBack={closeNearby} onSelect={(id) => selectNearby(id, true)} />
         ) : (
@@ -247,7 +247,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
         )}
       </aside>
 
-      <div ref={mapSectionRef} className="relative order-1 min-w-0 w-full scroll-mt-16 lg:order-2 lg:min-h-[calc(100vh-4rem)]">
+      <div ref={mapSectionRef} className="relative order-2 min-w-0 w-full scroll-mt-16 lg:min-h-[calc(100vh-4rem)]">
         <div data-testid="ski-map-viewport" className="relative h-[460px] w-full sm:h-[540px] lg:absolute lg:inset-0 lg:h-auto">
           {kakaoKey ? (
             <div ref={mapRef} className="absolute inset-0 bg-muted" />
@@ -302,7 +302,7 @@ function ResortSidebar({
           />
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto p-3">
+      <div className="max-h-[min(52svh,440px)] flex-1 overflow-y-auto p-3 lg:max-h-none">
         <div className="grid gap-2">
           {rows.map(({ resort }) => {
             const isSelected = resort.id === selectedId;

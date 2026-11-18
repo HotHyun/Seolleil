@@ -1,3 +1,4 @@
+import { ConfidenceBadge, confidenceMeta } from "@/components/confidence-badge";
 import { ExternalLink, MapPinned } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { PriceContextBanner } from "@/components/price-context-banner";
@@ -8,7 +9,7 @@ import { rentalPriceRules } from "@/data/prices";
 import { getRentalShopsForResort, getResort } from "@/data/resorts";
 import { getSkiShuttleRoutes, isConfirmedShuttleRoute } from "@/data/ski-shuttles";
 import { estimateTripCost } from "@/lib/pricing";
-import type { CostEstimate, CostItem, PriceConfidence, TimeSlot } from "@/lib/types";
+import type { CostEstimate, CostItem, TimeSlot } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import type { TripSkiPlan } from "@/lib/trip-ski-plan";
 import type { TransportType } from "@/lib/types";
@@ -35,13 +36,6 @@ type TripOverviewData = {
   lodgingCostInput: number | null;
   liftTicketTimeSlot: string;
   skiPlan: TripSkiPlan;
-};
-
-const confidenceLabels: Record<PriceConfidence, string> = {
-  confirmed: "확인됨",
-  estimated: "추정",
-  phone_confirmed: "전화확인",
-  unavailable: "확인필요"
 };
 
 export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
@@ -98,7 +92,7 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
                 {formatCurrency(cost.min)} ~ {formatCurrency(cost.max)}
               </div>
               <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                대표 {formatCurrency(cost.representative)} · {confidenceLabels[cost.confidence]}
+                대표 {formatCurrency(cost.representative)} · {confidenceMeta[cost.confidence].label}
               </div>
               {priceChanged ? (
                 <div className="mt-2 rounded-md bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-200">
@@ -173,8 +167,8 @@ function CostItemLine({ item }: { item: CostItem }) {
         <span className="text-muted-foreground">{item.label}</span>
         <span className="font-semibold">{formatCurrency(item.representative ?? item.min)}</span>
       </div>
-      <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-muted-foreground">
-        <StatusBadge tone={item.confidence === "confirmed" ? "good" : item.confidence === "unavailable" ? "warn" : "neutral"}>{confidenceLabels[item.confidence]}</StatusBadge>
+      <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">
+        <ConfidenceBadge confidence={item.confidence} />
         {item.sourceName ? <span>{item.sourceName}</span> : null}
         {item.sourceUrl ? (
           <AnalyticsLink

@@ -15,6 +15,7 @@ import type {
 } from "@/lib/types";
 import { optionAppliesToDay, rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
 import { normalizeTransportType } from "@/lib/transport";
+import { canUseAsReference, previousSeasonDate, ruleForDate, toReferenceRule } from "@/lib/season-fallback";
 
 function appendToIndex<T>(index: Map<string, T[]>, key: string, value: T) {
   const values = index.get(key);
@@ -68,16 +69,27 @@ function dayTypeScore(ruleDayType: DayType, visitDayType: DayType) {
 }
 
 export function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate: string) {
+  const direct = pickLiftRule(resortId, timeSlot, visitDate, visitDate, false);
+  if (direct) return direct;
+
+  // 26/27 공식 가격이 아직 없으면 25/26 같은 날짜의 가격을 참고가로 쓴다.
+  const previousDate = previousSeasonDate(visitDate);
+  const reference = previousDate ? pickLiftRule(resortId, timeSlot, previousDate, visitDate, true) : undefined;
+  return reference ? toReferenceRule(reference) : undefined;
+}
+
+function pickLiftRule(resortId: string, timeSlot: TimeSlot, matchDate: string, visitDate: string, referenceOnly: boolean) {
   const visitDayType = getVisitDayType(visitDate);
   let bestRule: PriceRule | undefined;
   let bestScore = 0;
 
   for (const rule of liftRulesByResort.get(resortId) ?? []) {
     if (
-      rule.validFrom > visitDate ||
-      rule.validTo < visitDate ||
+      rule.validFrom > matchDate ||
+      rule.validTo < matchDate ||
       (rule.timeSlot !== timeSlot && rule.timeSlot !== "all")
     ) continue;
+    if (referenceOnly && (!canUseAsReference(rule) || rule.confidence === "unavailable")) continue;
 
     const score = dayTypeScore(rule.dayType, visitDayType);
     if (score > bestScore) {
@@ -100,10 +112,11 @@ function resolveRentalPrice(
     const selected = resortRules.find(
       (rule) => rule.id === selectedRentalOptionId && rule.resortId === resortId && rule.itemType !== "lift_ticket"
     );
-    return selected && (!strictDate || optionAppliesToDay(selected, {
-      date: input.visitDate,
-      timeSlot: input.liftTicketTimeSlot
-    })) ? selected : undefined;
+    if (!selected) return undefined;
+    if (!strictDate) return selected;
+    return optionAppliesToDay(selected, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot })
+      ? ruleForDate(selected, input.visitDate)
+      : undefined;
   }
 
   const needEquipment = !input.ownsEquipment || input.priorities.includes("rental");
@@ -124,6 +137,8 @@ function resolveRentalPrice(
   let cheapestPrice = Number.POSITIVE_INFINITY;
   let cheapestDated: RentalPriceRule | undefined;
   let cheapestDatedPrice = Number.POSITIVE_INFINITY;
+  let cheapestReference: RentalPriceRule | undefined;
+  let cheapestReferencePrice = Number.POSITIVE_INFINITY;
 
   for (const rule of candidates) {
     if (itemType === "equipment" && input.rideType !== "both" && rule.rideType !== input.rideType) continue;
@@ -133,16 +148,22 @@ function resolveRentalPrice(
       cheapest = rule;
       cheapestPrice = price;
     }
-    if (
-      optionAppliesToDay(rule, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot }) &&
-      (!cheapestDated || price < cheapestDatedPrice)
-    ) {
-      cheapestDated = rule;
-      cheapestDatedPrice = price;
+    if (optionAppliesToDay(rule, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot })) {
+      const direct = rule.validFrom <= input.visitDate && rule.validTo >= input.visitDate;
+      if (direct && (!cheapestDated || price < cheapestDatedPrice)) {
+        cheapestDated = rule;
+        cheapestDatedPrice = price;
+      } else if (!direct && (!cheapestReference || price < cheapestReferencePrice)) {
+        cheapestReference = rule;
+        cheapestReferencePrice = price;
+      }
     }
   }
 
-  return cheapestDated ?? (strictDate ? undefined : cheapest);
+  // 26/27 규칙이 직접 맞으면 그것을 우선하고, 없을 때만 25/26 참고가를 쓴다.
+  if (cheapestDated) return cheapestDated;
+  if (cheapestReference) return ruleForDate(cheapestReference, input.visitDate);
+  return strictDate ? undefined : cheapest;
 }
 
 export function liftTicketSavings(option: RentalPriceRule, visitDate: string) {
@@ -299,7 +320,7 @@ export function estimateTripCost(
         optionAppliesToDay(rule, { date: input.visitDate, timeSlot: input.liftTicketTimeSlot })
       )
     : undefined;
-  const lift = discountedLift ?? resolveLiftPrice(resort.id, input.liftTicketTimeSlot, input.visitDate);
+  const lift = discountedLift ? ruleForDate(discountedLift, input.visitDate) : resolveLiftPrice(resort.id, input.liftTicketTimeSlot, input.visitDate);
 
   if (lift) {
     const adult = discountedLift
@@ -318,6 +339,7 @@ export function estimateTripCost(
       bookingUrl: lift.bookingUrl,
       lastCheckedAt: lift.lastCheckedAt,
       verifiedByHuman: lift.verifiedByHuman,
+      referenceSeason: lift.referenceSeason,
       note: lift.memo
     });
   } else {
@@ -341,6 +363,7 @@ export function estimateTripCost(
       bookingUrl: rental.bookingUrl,
       lastCheckedAt: rental.lastCheckedAt,
       verifiedByHuman: rental.verifiedByHuman,
+      referenceSeason: rental.referenceSeason,
       note: rental.memo
     });
   }
@@ -396,7 +419,7 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
     const discountedLift = day.liftTicketOptionId
       ? resortRentalRules.find(rule => rule.id === day.liftTicketOptionId && rule.itemType === "lift_ticket" && optionAppliesToDay(rule, day))
       : undefined;
-    const lift = discountedLift ?? resolveLiftPrice(resort.id, day.timeSlot, day.date);
+    const lift = discountedLift ? ruleForDate(discountedLift, day.date) : resolveLiftPrice(resort.id, day.timeSlot, day.date);
     if (lift) {
       const adult = discountedLift
         ? discountedLift.representativePrice ?? discountedLift.priceMin
@@ -407,7 +430,8 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
         representative: adult ? adult * people : undefined,
         min: lift.priceMin ? lift.priceMin * people : undefined,
         max: lift.priceMax ? lift.priceMax * people : undefined,
-        confidence: lift.confidence
+        confidence: lift.confidence,
+        referenceSeason: lift.referenceSeason
       });
     } else {
       liftItems.push({ key: `lift_ticket:${day.date}`, label: `${day.date} 리프트권`, confidence: "unavailable" });
@@ -416,7 +440,8 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
     const selectedOptionIds = rentalOptionIds(day);
     const selectedOptions = selectedOptionIds
       .map(id => resortRentalRules.find(rule => rule.id === id && rule.itemType !== "lift_ticket"))
-      .filter((rule): rule is RentalPriceRule => Boolean(rule && optionAppliesToDay(rule, day)));
+      .filter((rule): rule is RentalPriceRule => Boolean(rule && optionAppliesToDay(rule, day)))
+      .map(rule => ruleForDate(rule, day.date));
     if (selectedOptions.length) {
       for (const option of selectedOptions) {
         rentalItems.push({
@@ -425,7 +450,8 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
           representative: option.representativePrice !== undefined ? option.representativePrice * people : undefined,
           min: option.priceMin !== undefined ? option.priceMin * people : undefined,
           max: option.priceMax !== undefined ? option.priceMax * people : undefined,
-          confidence: option.confidence
+          confidence: option.confidence,
+          referenceSeason: option.referenceSeason
         });
       }
     } else if (selectedOptionIds.length) {
@@ -439,7 +465,8 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
           representative: fallback.representativePrice !== undefined ? fallback.representativePrice * people : undefined,
           min: fallback.priceMin !== undefined ? fallback.priceMin * people : undefined,
           max: fallback.priceMax !== undefined ? fallback.priceMax * people : undefined,
-          confidence: fallback.confidence
+          confidence: fallback.confidence,
+          referenceSeason: fallback.referenceSeason
         });
       } else if (!input.ownsEquipment || !input.ownsClothing || input.priorities.includes("rental")) {
         rentalItems.push({ key: `rental:${day.date}`, label: `${day.date} 렌탈`, confidence: "unavailable" });
@@ -465,7 +492,10 @@ function aggregatePlanItems(key: string, label: string, values: CostItem[]): Cos
     min: hasMin ? values.reduce((sum, item) => sum + (item.min ?? item.representative ?? 0), 0) : undefined,
     max: hasMax ? values.reduce((sum, item) => sum + (item.max ?? item.representative ?? 0), 0) : undefined,
     confidence: combineConfidence(values),
-    note: "날짜별 이용 시간과 주중·주말 가격 조건을 합산한 금액입니다."
+    referenceSeason: values.find(item => item.referenceSeason)?.referenceSeason,
+    note: values.some(item => item.referenceSeason)
+      ? "날짜별 이용 시간과 주중·주말 가격 조건을 합산한 금액입니다. 일부 날짜는 25/26 참고가입니다."
+      : "날짜별 이용 시간과 주중·주말 가격 조건을 합산한 금액입니다."
   };
 }
 

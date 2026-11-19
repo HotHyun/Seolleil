@@ -2,7 +2,7 @@ import { UPCOMING_SEASON } from "@/lib/constants";
 import type { SeasonResearchRecord } from "@/lib/types";
 
 const checkedAt = "2026-10-11";
-const nextCheckAfter = "2026-11-01";
+const nextCheckAfter = "2026-12-15";
 
 export const seasonResearchRecords: SeasonResearchRecord[] = [
   {
@@ -37,7 +37,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     targetSeason: UPCOMING_SEASON,
     category: "shuttle",
     status: "checked_unpublished",
-    sources: [{ name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/Shop/YpSeason25/" }],
+    sources: [{ name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
     note: "운영사 판매 화면은 25/26 하이원 교통시즌권과 2026년 3월 2일까지의 노선만 안내합니다."
@@ -108,7 +108,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     targetSeason: UPCOMING_SEASON,
     category: "shuttle",
     status: "checked_unpublished",
-    sources: [{ name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/Shop/YpSeason25/" }],
+    sources: [{ name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
     note: "운영사 화면에는 25/26 용평 교통시즌권과 기존 노선만 있으며 26/27 판매·시간표는 없습니다."
@@ -122,10 +122,11 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "휘닉스 26/27 시즌패스 판매 안내", url: "https://phoenixhnr.co.kr/page/board/event/190000047134" },
       { name: "휘닉스 26/27 스키학교 운영 공고", url: "https://phoenixhnr.co.kr/page/customer/notice/14488" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "26/27 시즌패스 2차 판매와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 일일 리프트 가격표는 아직 없습니다. 시즌패스 가격·혜택은 일일권 가격으로 변환하지 않았습니다.",
+    note: "26/27 시즌패스 2차 판매와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 일일 리프트 가격표는 아직 없습니다. 시즌패스 가격·혜택은 일일권 가격으로 변환하지 않았습니다. 11/3~11/22 판매 중인 26/27 리프트 얼리버드 상품은 할인가라 정상가로 등록하지 않았습니다.",
     announcedFacts: [
+      { label: "26/27 리프트 얼리버드(11/3~11/22 판매)", value: "스마트 패스 6H 64,400원 · 라이트 패스 4H 57,900원, 장비 렌탈 포함 시 77,400원 · 70,900원" },
       { label: "BASIC PASS", value: "1차 549,000원 · 2차 599,000원" },
       { label: "판매 기간", value: "1차 2026-08-27 ~ 09-30 · 2차 2026-10-01 ~ 11-30" },
       { label: "리프트 혜택", value: "7시간권 2매 포함" },
@@ -151,7 +152,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     targetSeason: UPCOMING_SEASON,
     category: "shuttle",
     status: "checked_unpublished",
-    sources: [{ name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/Shop/YpSeason25/" }],
+    sources: [{ name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
     note: "대원관광 화면은 25/26 휘닉스 교통시즌권 275,000원과 기존 노선만 안내하며 26/27 판매 정보는 없습니다."
@@ -165,9 +166,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "곤지암리조트 공지사항", url: "https://reservation.konjiamresort.co.kr/view/customerNotice.do" },
       { name: "NOL 26/27 곤지암 시간권 판매", url: "https://leisure-web.yanolja.com/leisure/10365890" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "26/27 시즌패스와 20·30·40시간 누적 시간권 판매는 확인했습니다. 이는 일반 방문용 2·4·6시간 일일권과 상품 구조가 달라 가격 규칙에는 반영하지 않았습니다.",
+    note: "26/27 시즌패스와 20·30·40시간 누적 시간권 판매는 확인했습니다. 이는 일반 방문용 2·4·6시간 일일권과 상품 구조가 달라 가격 규칙에는 반영하지 않았습니다. 2026-11-19 Chrome 확인: 요금 안내 2시간 69,000/83,000원, 4시간 81,000/96,000원, 6시간 87,000/105,000원(주중/주말). 4h·6h는 25/26과 같고 표에 시즌 표기가 없어 26/27 규칙으로 등록하지 않았습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "선착순 한정 판매" },
       { label: "누적 시간권", value: "20시간 330,000원 · 30시간 430,000원 · 40시간 490,000원" },
@@ -183,9 +184,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "곤지암리조트 25/26 리프트·렌탈 패키지", url: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603" },
       { name: "곤지암리조트 리프트·장비 렌탈 예약 가이드", url: "https://reservation.konjiamresort.co.kr/view/buySkiPassGuide.do" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "예약 가이드는 장비 렌탈 절차만, 판매 공지는 25/26 패키지만 안내해 26/27 일반 장비·의류 가격으로 등록할 수 없습니다."
+    note: "예약 가이드는 장비 렌탈 절차만, 판매 공지는 25/26 패키지만 안내해 26/27 일반 장비·의류 가격으로 등록할 수 없습니다. 2026-11-19 Chrome 확인: 풀세트 6시간 36,000/39,000원(주중/주말), 의류 풀세트 27,000원(4시간 이하)·35,000원(초과). 시즌 표기가 없어 등록하지 않았습니다."
   },
   {
     resortId: "konjiam",
@@ -208,7 +209,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 요금표는 25/26으로 표시됩니다. 26/27 X6+ 통합 시즌패스 판매는 확인했지만 일일 리프트 요금은 아직 없습니다.",
+    note: "공식 요금표는 25/26으로 표시됩니다. 26/27 X6+ 통합 시즌패스 판매는 확인했지만 일일 리프트 요금은 아직 없습니다. 2026-11-19 Chrome 확인 시도: 가격 페이지가 로딩되지 않아 확인하지 못했습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
@@ -222,7 +223,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     sources: [{ name: "지산리조트 리프트·렌탈 종합요금", url: "https://www.jisanresort.co.kr/w/ski/use/rental.asp" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 장비 렌탈 표가 25/26 시즌으로 표시되어 26/27 장비·의류 가격 규칙은 생성하지 않았습니다."
+    note: "공식 장비 렌탈 표가 25/26 시즌으로 표시되어 26/27 장비·의류 가격 규칙은 생성하지 않았습니다. 2026-11-19 Chrome 확인 시도: 가격 페이지가 로딩되지 않아 확인하지 못했습니다."
   },
   {
     resortId: "jisan",
@@ -246,9 +247,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "엘리시안 강촌 스키 이용안내", url: "https://www.elysian.co.kr/about-gangchon/ski" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "공식 이용안내는 25/26 운영기간·요금 기준입니다. 26/27 X6+ 시즌패스는 판매 공지가 확인됐지만 SMART 일일 리프트 요금은 아직 없습니다.",
+    note: "공식 이용안내는 25/26 운영기간·요금 기준입니다. 26/27 X6+ 시즌패스는 판매 공지가 확인됐지만 SMART 일일 리프트 요금은 아직 없습니다. 2026-11-19 Chrome 확인: 이용요금 표의 소인 기준이 '2026년 초등학교 졸업예정자까지'인 25/26 표입니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
@@ -283,9 +284,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "웰리힐리파크 공지사항", url: "https://www.wellihillipark.com/" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "26/27 X6+ 시즌패스 및 리조트 회원용 시즌권 판매는 공지됐지만 일반 고객용 일일 리프트 가격은 아직 없습니다.",
+    note: "26/27 X6+ 시즌패스 및 리조트 회원용 시즌권 판매는 공지됐지만 일반 고객용 일일 리프트 가격은 아직 없습니다. 2026-11-19 Chrome 확인: 시즌권 페이지에는 26/27 횡성군민시즌권(290,000원~)과 회원시즌권만 있고 일일권 가격 경로는 찾지 못했습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" },
@@ -309,7 +310,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     status: "checked_unpublished",
     sources: [
       { name: "웰리힐리파크 수도권 스키셔틀", url: "https://www.wellihillipark.com/home/guide/map/shuttle" },
-      { name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/Shop/YpSeason25/" }
+      { name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/" }
     ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
@@ -350,7 +351,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     status: "checked_unpublished",
     sources: [
       { name: "알펜시아 공식 대중교통 안내", url: "https://www.alpensia.com/guide/directions-public.do" },
-      { name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/Shop/YpSeason25/" }
+      { name: "대원관광 KD 교통시즌권", url: "https://skibus.purplebus.co.kr/" }
     ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
@@ -361,7 +362,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     targetSeason: UPCOMING_SEASON,
     category: "lift",
     status: "preliminary",
-    sources: [{ name: "오크밸리 26/27 시즌권 판매 공지", url: "https://oakvalley.co.kr/customer-service/notice/1393866" }],
+    sources: [{ name: "오크밸리 공지사항", url: "https://oakvalley.co.kr/customer-service/notice" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
     note: "26/27 스키·눈놀이동산 시즌권 1차 판매 공지는 확인했지만, 일반 방문용 일일 리프트권 가격표는 아직 없습니다.",
@@ -442,9 +443,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "무주 덕유산리조트 스키 요금안내", url: "https://www.mdysresort.com/ski/charge.asp" },
       { name: "무주 덕유산리조트 시즌권", url: "https://www.mdysresort.com/ski/buy_season_pass04.asp" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "26/27 무주 통합 시즌권과 무주·오투 통합 시즌권 판매 및 2차 할인 가격표를 확인했습니다. 일일 리프트 요금은 26/27로 갱신되지 않았습니다.",
+    note: "26/27 무주 통합 시즌권과 무주·오투 통합 시즌권 판매 및 2차 할인 가격표를 확인했습니다. 일일 리프트 요금은 26/27로 갱신되지 않았습니다. 2026-11-19 Chrome 확인: 요금 안내 이미지는 '26/27 시즌, 더 좋은 모습으로 찾아뵙겠습니다' 준비 안내입니다.",
     announcedFacts: [
       { label: "시즌패스", value: "무주 통합권 I·II 및 무주·오투 통합권 I·II" },
       { label: "이용 기간", value: "2026년 개장일 ~ 2027년 폐장일" },
@@ -457,9 +458,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "rental",
     status: "checked_unpublished",
     sources: [{ name: "무주 덕유산리조트 스키 요금안내", url: "https://www.mdysresort.com/ski/charge.asp" }],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "공식 요금 화면에서 26/27 장비·의류 렌탈 가격과 유효 기간을 확인할 수 없습니다."
+    note: "공식 요금 화면에서 26/27 장비·의류 렌탈 가격과 유효 기간을 확인할 수 없습니다. 2026-11-19 Chrome 확인: 같은 요금 안내 이미지가 26/27 준비 안내입니다."
   },
   {
     resortId: "muju",
@@ -483,9 +484,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "에덴밸리 스키장 공식 공지", url: "https://www.edenvalley.co.kr/Inc_board/inc_list.asp?ConfigPID=1&Find=&GotoPage=25&Search=" },
       { name: "에덴밸리 25/26 시즌권 약관", url: "https://edenvalley.co.kr/images/Ski/2526season/2526%EC%8B%9C%EC%A6%8C%EA%B6%8C%EC%95%BD%EA%B4%80%28%EC%9D%BC%EB%B0%98%29.pdf" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "공식 공지는 25/26 시즌이 2026년 3월 1일 종료됐음을 안내하고 약관도 25/26 기준이어서 26/27 리프트 가격은 미발표입니다."
+    note: "공식 공지는 25/26 시즌이 2026년 3월 1일 종료됐음을 안내하고 약관도 25/26 기준이어서 26/27 리프트 가격은 미발표입니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다. 2025-09에 사전회생계획안 신청 안내 공지가 있어 운영 여부도 함께 확인이 필요합니다."
   },
   {
     resortId: "edenvalley",
@@ -493,9 +494,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "rental",
     status: "checked_unpublished",
     sources: [{ name: "에덴밸리 스키장 공식 공지", url: "https://www.edenvalley.co.kr/Inc_board/inc_list.asp?ConfigPID=1&Find=&GotoPage=25&Search=" }],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "공식 목록에는 25/26 리프트·렌탈 패키지만 남아 있고 26/27 장비·의류 일반 렌탈 가격표는 없습니다."
+    note: "공식 목록에는 25/26 리프트·렌탈 패키지만 남아 있고 26/27 장비·의류 일반 렌탈 가격표는 없습니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다."
   },
   {
     resortId: "edenvalley",
@@ -503,8 +504,8 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "shuttle",
     status: "checked_unpublished",
     sources: [{ name: "에덴밸리 공식 교통 안내", url: "https://www.edenvalley.co.kr/CS/View.asp?location=06" }],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-19",
     nextCheckAfter,
-    note: "공식 교통 화면에서 26/27 부산·양산 또는 대구 출발 스키 셔틀의 운행 기간·시간표·요금이 게시되지 않았습니다."
+    note: "공식 교통 화면에서 26/27 부산·양산 또는 대구 출발 스키 셔틀의 운행 기간·시간표·요금이 게시되지 않았습니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다."
   }
 ];

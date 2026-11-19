@@ -71,8 +71,11 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
         trip.skiPlan
       )
     : null;
+  // 저장 당시 스냅샷이 아니라 현재 가격 데이터로 다시 계산한 값을 보여준다. 26/27 공식 가격이 게시되면 이 트립도 바로 바뀐다.
+  const displayCost = currentCost ?? cost;
   const priceChanged =
     cost && currentCost && Math.abs(currentCost.representative - cost.representative) >= 1000;
+  const usesReferencePrice = Boolean(displayCost?.items.some(item => item.referenceSeason));
   const rentalShop = rentalOption?.rentalShopId
     ? getRentalShopsForResort(trip.resortId).find((shop) => shop.id === rentalOption.rentalShopId)
     : undefined;
@@ -84,24 +87,29 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
       </CardHeader>
       <CardContent className="space-y-4">
         <PriceContextBanner compact />
-        {cost ? (
+        {displayCost ? (
           <>
             <div className="rounded-lg border bg-white/7 p-4">
               <div className="text-xs font-semibold text-muted-foreground">예상 총액</div>
               <div className="mt-1 text-2xl font-black">
-                {formatCurrency(cost.min)} ~ {formatCurrency(cost.max)}
+                {formatCurrency(displayCost.min)} ~ {formatCurrency(displayCost.max)}
               </div>
               <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                대표 {formatCurrency(cost.representative)} · {confidenceMeta[cost.confidence].label}
+                대표 {formatCurrency(displayCost.representative)} · {confidenceMeta[displayCost.confidence].label}
               </div>
-              {priceChanged ? (
+              {usesReferencePrice ? (
                 <div className="mt-2 rounded-md bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-200">
-                  현재 static 가격 기준 대표 총액은 {formatCurrency(currentCost.representative)}입니다. 생성 당시 가격과 다를 수 있습니다.
+                  26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 트립 금액도 자동으로 바뀌어요.
+                </div>
+              ) : null}
+              {priceChanged && cost && currentCost ? (
+                <div className="mt-2 rounded-md bg-sky-500/15 px-3 py-2 text-xs font-semibold text-sky-800 dark:text-sky-200">
+                  가격이 업데이트됐어요. 저장 당시 대표 {formatCurrency(cost.representative)} → 지금 대표 {formatCurrency(currentCost.representative)}
                 </div>
               ) : null}
             </div>
             <div className="space-y-2">
-              {cost.items.map((item) => (
+              {displayCost.items.map((item) => (
                 <CostItemLine key={item.key} item={item} />
               ))}
             </div>
@@ -164,7 +172,7 @@ function CostItemLine({ item }: { item: CostItem }) {
   return (
     <div className="rounded-md border bg-white/7 px-3 py-2 text-sm">
       <div className="flex justify-between gap-3">
-        <span className="text-muted-foreground">{item.label}</span>
+        <span className="text-muted-foreground">{item.label}{item.referenceSeason && !item.label.includes("25/26 참고가") ? " · 25/26 참고가" : ""}</span>
         <span className="font-semibold">{formatCurrency(item.representative ?? item.min)}</span>
       </div>
       <div className="mt-1 flex flex-wrap items-center gap-2 text-xs font-semibold text-muted-foreground">

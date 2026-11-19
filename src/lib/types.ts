@@ -198,6 +198,8 @@ export type PriceRule = {
   validTo: string;
   dayType: DayType;
   timeSlot?: TimeSlot;
+  referenceSeason?: string;
+  upcomingFallback?: boolean;
   adultPrice?: number;
   childPrice?: number;
   priceMin?: number;
@@ -235,6 +237,8 @@ export type RentalPriceRule = {
   validFrom: string;
   validTo: string;
   dayType: DayType;
+  referenceSeason?: string;
+  upcomingFallback?: boolean;
   representativePrice?: number;
   priceMin?: number;
   priceMax?: number;
@@ -295,6 +299,7 @@ export type CostItem = {
   bookingUrl?: string;
   lastCheckedAt?: string;
   verifiedByHuman?: boolean;
+  referenceSeason?: string;
   note?: string;
 };
 

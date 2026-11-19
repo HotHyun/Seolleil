@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resorts } from "@/data/resorts";
-import { rentalPriceRules } from "@/data/prices";
+import { priceRules, rentalPriceRules } from "@/data/prices";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { estimateTransportCost, estimateTransportPlanCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings, resolveLiftPrice } from "@/lib/pricing";
 import { tripInput } from "../fixtures/trip-input";
@@ -52,7 +52,7 @@ describe("pricing", () => {
     expect(weekend.items.find((item) => item.key === "lift_ticket")?.representative).toBe(192000);
   });
 
-  it("does not apply expired 25/26 prices to a 26/27 trip date", () => {
+  it("uses 25/26 prices as labelled reference prices on 26/27 dates without published prices", () => {
     const high1 = resorts.find((resort) => resort.id === "high1")!;
     const liftOption = rentalPriceRules.find(rule => rule.id === "high1-myski-lift-peak-7h")!;
     const rentalOption = rentalPriceRules.find(rule => rule.resortId === "konjiam" && rule.itemType !== "lift_ticket")!;
@@ -69,11 +69,21 @@ describe("pricing", () => {
       liftOption.id
     );
 
-    expect(resolveLiftPrice("konjiam", "4h", "2027-01-16")).toBeUndefined();
-    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "unavailable" });
-    expect(estimate.items.find(item => item.key === "rental")).toBeUndefined();
-    expect(selectedLiftEstimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "unavailable" });
-    expect(liftTicketSavings(liftOption, "2027-01-16")).toBeNull();
+    expect(resolveLiftPrice("konjiam", "4h", "2027-01-16")).toMatchObject({ referenceSeason: "2025-2026", confidence: "estimated", adultPrice: 96000 });
+    expect(resolveLiftPrice("konjiam", "4h", "2027-01-14")).toMatchObject({ adultPrice: 81000 });
+    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ representative: 192000, confidence: "estimated" });
+    expect(estimate.items.find(item => item.key === "lift_ticket")?.label).toContain("25/26 참고가");
+    expect(estimate.items.find(item => item.key === "rental")).toMatchObject({ confidence: "estimated" });
+    expect(selectedLiftEstimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "estimated" });
+    expect(liftTicketSavings(liftOption, "2027-01-16")).not.toBeNull();
+    expect(resolveLiftPrice("konjiam", "4h", "2027-12-16")).toBeUndefined();
+  });
+
+  it("stops using reference prices for a resort once its 26/27 prices are published", () => {
+    expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "yongpyong").every(rule => rule.upcomingFallback === false)).toBe(true);
+    expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "high1").every(rule => rule.upcomingFallback === true)).toBe(true);
+    expect(resolveLiftPrice("yongpyong", "6h", "2026-12-20")).not.toHaveProperty("referenceSeason");
+    expect(resolveLiftPrice("high1", "4h", "2026-12-20")).toMatchObject({ referenceSeason: "2025-2026" });
   });
 
   it("applies published 26/27 lift prices only to 26/27 visit dates", () => {

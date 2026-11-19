@@ -49,6 +49,10 @@
 - `/admin` 기능 확장 대신 Firebase Console, Umami와 `/admin/data-quality`를 운영 도구로 사용한다.
 - 오류는 typed code, 안전한 한국어 안내, retry 여부와 incident ID로 표준화한다. 외부 오류 수집기는 reporter 경계로 나중에 연결한다.
 
+## 시즌 가격 전환
+
+- 새 시즌 공식 가격이 게시되기 전에는 직전 시즌 가격을 `참고가`(추정 신뢰도)로 표시하고 트립 비용에 합산한다. 공식 가격이 등록되면 같은 항목이 자동으로 새 가격으로 바뀌고, 트립 화면은 현재 가격 데이터로 다시 계산해 보여 준다. 세부 규칙은 `pricing.md`를 따른다.
+
 ## 배포와 검증
 
 - production은 `https://seolleil.com`이다.

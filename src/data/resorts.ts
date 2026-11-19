@@ -153,7 +153,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://cafe.yongpyong.co.kr/kor/skiNboard/slope/openStatusBoard.do",
     liftTicketUrl: "https://www.yongpyong.co.kr/",
     rentalUrl: "https://yongpyong.co.kr/mobile/kor/skiNboard/charge/equipment.do",
-    shuttleUrl: "https://skibus.purplebus.co.kr/Shop/YpSeason25/",
+    shuttleUrl: "https://skibus.purplebus.co.kr/",
     lodgingUrl: "https://www.yongpyong.co.kr/kor/guide/package/list.do",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EB%AA%A8%EB%82%98%EC%9A%A9%ED%8F%89",
@@ -209,7 +209,7 @@ export const resorts: SkiResort[] = [
     liftTicketUrl: "https://www.wellihillipark.com/",
     rentalUrl: "https://www.wellihillipark.com/",
     lodgingUrl: "https://www.wellihillipark.com/?seq=67",
-    shuttleUrl: "https://skibus.purplebus.co.kr/Shop/YpSeason25/",
+    shuttleUrl: "https://skibus.purplebus.co.kr/",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%9B%B0%EB%A6%AC%ED%9E%90%EB%A6%AC%ED%8C%8C%ED%81%AC",
       kakao: "https://map.kakao.com/link/search/%EC%9B%B0%EB%A6%AC%ED%9E%90%EB%A6%AC%ED%8C%8C%ED%81%AC"
@@ -264,7 +264,7 @@ export const resorts: SkiResort[] = [
     slopeStatusUrl: "https://www.alpensia.com/ski/slope-now.do?lang=ko",
     liftTicketUrl: "https://www.alpensia.com/",
     rentalUrl: "https://www.alpensia.com/",
-    shuttleUrl: "https://skibus.purplebus.co.kr/Shop/YpSeason25/",
+    shuttleUrl: "https://skibus.purplebus.co.kr/",
     lodgingUrl: "https://www.alpensia.com/reservation/index.do",
     mapLinks: {
       naver: "https://map.naver.com/p/search/%EC%95%8C%ED%8E%9C%EC%8B%9C%EC%95%84%EB%A6%AC%EC%A1%B0%ED%8A%B8",

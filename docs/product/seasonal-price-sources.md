@@ -2,7 +2,7 @@
 
 이 문서는 `src/data/prices.ts`에 반영한 2025/26 시즌 가격 데이터의 출처 목록이다.
 
-2026/27 시즌 가격이 확인되지 않은 항목은 25/26 시즌 출처 기반 값을 참고 데이터로 유지한다. 26/27 방문 날짜의 비용 계산에는 유효 기간이 지난 25/26 가격을 적용하지 않는다.
+2026/27 시즌 가격이 확인되지 않은 항목은 25/26 시즌 출처 기반 값을 `25/26 참고가`로 유지하며, 26/27 방문 날짜의 비용 계산에는 같은 날짜의 25/26 가격을 추정 신뢰도로 합산한다(`src/lib/season-fallback.ts`). 같은 리조트·렌탈샵에 26/27 규칙이 등록되면 자동으로 26/27 가격만 쓴다. 정책 상세는 `pricing.md`를 따른다.
 
 ## 26/27 P1 공식 공지 조사 — 2026-08-11
 
@@ -22,7 +22,7 @@ P1 하이원·비발디·모나용평·휘닉스의 리프트·렌탈·셔틀 12
 - 모나용평 리프트&렌탈요금: https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do
 - 휘닉스 26/27 시즌패스: https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047000
 - 휘닉스 26/27 스키학교 운영 공고: https://phoenixhnr.co.kr/page/customer/notice/14488
-- 대원관광 25/26 교통시즌권: https://skibus.purplebus.co.kr/Shop/YpSeason25/
+- 대원관광 25/26 교통시즌권: https://skibus.purplebus.co.kr/
 - 비발디 외국인 셔틀: https://vivabus.net/en/vivabus/page/vivaldi-timetable
 
 ## 26/27 P2·P3 공식 공지 조사 — 2026-08-11
@@ -102,7 +102,7 @@ P1~P3 전체 13개 리조트의 리프트·렌탈·셔틀 39개 조사 항목을
 - 웰리힐리: 26/27 시즌권만 확인했고 일일권 가격은 찾지 못했다.
 - 오크밸리: 리프트 출처로 기록된 공지(`notice/1393866`)는 2025년 러닝 대회 공지다. 일일권 출처로 교체해야 한다.
 - 지산·에덴밸리·무주 일일권·곤지암: 페이지를 읽지 못했거나 26/27 표기가 없어 보류했다.
-- 셔틀: 하이원·모나용평·휘닉스·웰리힐리·알펜시아의 출처로 쓰는 `skibus.purplebus.co.kr/Shop/YpSeason25/`가 404를 반환한다.
+- 셔틀: 하이원·모나용평·휘닉스·웰리힐리·알펜시아의 출처로 쓰는 `skibus.purplebus.co.kr/Shop/YpSeason25/`가 404를 반환해 운영사 첫 화면(`skibus.purplebus.co.kr/`)으로 교체했다.
 
 ## 신뢰도 기준
 

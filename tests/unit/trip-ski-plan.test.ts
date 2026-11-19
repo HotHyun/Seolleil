@@ -74,10 +74,11 @@ describe("trip ski plan", () => {
     expect(optionAppliesToDay(option, { date: "2026-01-16", timeSlot: "full_day" })).toBe(false);
   });
 
-  it("distinguishes unavailable future-season pricing from an empty rental catalog", () => {
+  it("uses 25/26 reference prices for 26/27 dates and keeps later seasons unavailable", () => {
     const options = rentalPriceRules.filter(rule => rule.rentalShopId === "high1-ski-no1");
     expect(rentalPriceAvailability(options, { date: "2026-01-16", timeSlot: "5h" })).toBe("available");
-    expect(rentalPriceAvailability(options, { date: "2026-12-24", timeSlot: "5h" })).toBe("outside_validity");
+    expect(rentalPriceAvailability(options, { date: "2026-12-24", timeSlot: "5h" })).toBe("available");
+    expect(rentalPriceAvailability(options, { date: "2027-12-24", timeSlot: "5h" })).toBe("outside_validity");
     expect(rentalPriceAvailability([], { date: "2026-12-24", timeSlot: "5h" })).toBe("no_catalog");
   });
 

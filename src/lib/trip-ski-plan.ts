@@ -1,5 +1,6 @@
 import type { LegacyTransportType, RentalPriceRule, TimeSlot } from "@/lib/types";
 import { normalizeTransportType } from "@/lib/transport";
+import { referenceDateFor } from "@/lib/season-fallback";
 
 export const SKI_PLAN_VERSION = 2 as const;
 export const MAX_TRIP_DAYS = 14;
@@ -258,7 +259,7 @@ export function rentalPriceAvailability(options: RentalPriceRule[], day: Pick<Sk
     || option.itemType === "equipment_clothing_package"
   );
   if (!primaryRentalOptions.length) return "no_catalog" as const;
-  if (!primaryRentalOptions.some(option => option.validFrom <= day.date && option.validTo >= day.date)) {
+  if (!primaryRentalOptions.some(option => (option.validFrom <= day.date && option.validTo >= day.date) || referenceDateFor(option, day.date))) {
     return "outside_validity" as const;
   }
   return "available" as const;
@@ -271,7 +272,8 @@ export function optionAppliesToDay(option: RentalPriceRule, day: Pick<SkiDayPlan
     || option.dayType === dayType
     || (dayType === "friday" && option.dayType === "weekday");
   const timeMatches = !option.timeSlot || option.timeSlot === "all" || option.timeSlot === day.timeSlot;
-  return dayMatches && timeMatches && option.validFrom <= day.date && option.validTo >= day.date;
+  const dateMatches = (option.validFrom <= day.date && option.validTo >= day.date) || referenceDateFor(option, day.date) !== undefined;
+  return dayMatches && timeMatches && dateMatches;
 }
 
 export function skiPlanDateLabel(startDate: Date, endDate: Date) {

@@ -878,3 +878,17 @@ rentalPriceRules.push(
     clothing: { price: 20000, max: 35000 }
   })
 );
+
+// 26/27 규칙이 아직 없는 리조트·렌탈샵의 25/26 규칙은 26/27 방문일에 참고가로 쓸 수 있다고 표시한다.
+// 26/27 규칙이 등록되면 위 목록이 바뀌어 해당 항목의 폴백이 자동으로 꺼진다. (src/lib/season-fallback.ts)
+const upcomingLiftResortIds = new Set(priceRules.filter(rule => rule.season === UPCOMING_SEASON && rule.itemType === "lift_ticket").map(rule => rule.resortId));
+const upcomingRentalShopIds = new Set(rentalPriceRules.filter(rule => rule.season === UPCOMING_SEASON && rule.rentalShopId).map(rule => rule.rentalShopId));
+const upcomingRentalResortIdsWithoutShop = new Set(rentalPriceRules.filter(rule => rule.season === UPCOMING_SEASON && !rule.rentalShopId).map(rule => rule.resortId));
+
+for (const rule of priceRules) {
+  if (rule.season === CURRENT_SEASON && rule.itemType === "lift_ticket") rule.upcomingFallback = !upcomingLiftResortIds.has(rule.resortId);
+}
+for (const rule of rentalPriceRules) {
+  if (rule.season !== CURRENT_SEASON) continue;
+  rule.upcomingFallback = rule.rentalShopId ? !upcomingRentalShopIds.has(rule.rentalShopId) : !upcomingRentalResortIdsWithoutShop.has(rule.resortId);
+}

@@ -8,7 +8,7 @@
 - 귀가편은 10:00 잠실선, 13:00 2개 노선, 14:20 잠실선, 17:00 6개 노선으로 분리한다. 사용자가 저장한 노선 ID로 귀가 출발 시각과 하차 조합을 복원할 수 있다.
 - 성수기는 2025-12-27~2026-02-12, 비수기는 2025-12-01~12-26 및 2026-02-20~03-02다. 구정 연휴 2026-02-13~02-19는 단축 운행 별도 공지 조건을 유지한다.
 - 교통시즌권 성인 가격은 290,000원이다. 가는 편과 오는 편의 노선 ID가 달라도 같은 운영사·같은 원문·같은 시즌권 가격이면 비용을 한 번만 계산한다.
-- 출처: [대원관광 25/26 교통시즌권·운행표](https://skibus.purplebus.co.kr/Shop/YpSeason25/), [한국관광공사 25/26 모나용평 교통 안내](https://japanese.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=250737)
+- 출처: [대원관광 25/26 교통시즌권·운행표](https://skibus.purplebus.co.kr/), [한국관광공사 25/26 모나용평 교통 안내](https://japanese.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=250737)
 
 ## 비발디파크 국내 셔틀
 

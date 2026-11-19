@@ -22,18 +22,18 @@ const vivaldi = "vivaldi";
 const yongpyong = "yongpyong";
 
 export const skiShuttleRoutes2526: SkiShuttleRoute[] = [
-  route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-myeongdong", "서울", "명동·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", "하이원 교통시즌권 30만원", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-sinchon", "서울", "홍대·신촌선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-nowon", "서울", "노원·광나루선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-mokdong", "서울", "강서·목동선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-sillim", "서울", "구디·신림선", "대원관광", "02-2201-7710", "주말 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-cheongnyangni", "서울", "성신여대·청량리선", "대원관광", "02-2201-7710", "토요일 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]], kdHigh1Return()),
-  route("kd-bundang", "경기", "수지·분당선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]], kdHigh1Return()),
-  route("kd-anyang", "경기", "산본·안양선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]], kdHigh1Return()),
-  route("kd-suwon", "경기", "수원·영통선", "대원관광", "02-2201-7710", "매일 운행 중심 · 영통 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]], kdHigh1Return()),
-  route("kd-ilsan", "경기", "일산선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]], kdHigh1Return()),
-  route("kd-incheon", "인천", "인천·부평선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/Shop/YpSeason25/", undefined, [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]], kdHigh1Return()),
+  route("kd-sadang", "서울", "사당·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/", "하이원 교통시즌권 30만원", [["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-myeongdong", "서울", "명동·강남선", "대원관광", "02-2201-7710", "매일 운행 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/", "하이원 교통시즌권 30만원", [["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-sinchon", "서울", "홍대·신촌선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/", undefined, [["서울","홍대입구","05:25"],["서울","신촌역","05:30"],["서울","광흥창역","05:35"],["서울","마포역","05:40"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-nowon", "서울", "노원·광나루선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/", undefined, [["서울","노원역","05:15"],["서울","석계역","05:25"],["서울","군자역","05:40"],["서울","광나루역","05:45"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-mokdong", "서울", "강서·목동선", "대원관광", "02-2201-7710", "성수기 매일, 비수기 주말 중심", "https://skibus.purplebus.co.kr/", undefined, [["서울","강서","05:15"],["서울","목동역","05:25"],["서울","여의도","05:40"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-sillim", "서울", "구디·신림선", "대원관광", "02-2201-7710", "주말 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/", undefined, [["서울","구로디지털단지역","05:25"],["서울","신림역","05:35"],["서울","서울대입구역","05:40"],["서울","이수역","05:50"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-cheongnyangni", "서울", "성신여대·청량리선", "대원관광", "02-2201-7710", "토요일 중심 · 종합운동장 합류", "https://skibus.purplebus.co.kr/", undefined, [["서울","성신여대입구역","05:20"],["서울","길음역","05:25"],["서울","청량리역","05:40"],["서울","회기역","05:45"],["서울","종합운동장","06:20"]], kdHigh1Return()),
+  route("kd-bundang", "경기", "수지·분당선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/", undefined, [["용인","수지","06:05"],["용인","죽전","06:10"],["성남","미금역","06:15"],["성남","정자역","06:20"],["성남","서현역","06:40"]], kdHigh1Return()),
+  route("kd-anyang", "경기", "산본·안양선", "대원관광", "02-2201-7710", "주말 중심 · 서현 합류", "https://skibus.purplebus.co.kr/", undefined, [["군포","산본역","05:40"],["안양","범계역","05:50"],["안양","평촌역","06:00"],["안양","인덕원역","06:10"],["성남","서현역","06:40"]], kdHigh1Return()),
+  route("kd-suwon", "경기", "수원·영통선", "대원관광", "02-2201-7710", "매일 운행 중심 · 영통 합류", "https://skibus.purplebus.co.kr/", undefined, [["수원","성균관대역","06:10"],["수원","화서역","06:15"],["수원","수원역","06:20"],["수원","영통","06:40"]], kdHigh1Return()),
+  route("kd-ilsan", "경기", "일산선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/", undefined, [["고양","대화역","05:20"],["고양","주엽역","05:25"],["고양","정발산역","05:30"],["고양","백석역","05:35"],["부천","송내역","06:10"]], kdHigh1Return()),
+  route("kd-incheon", "인천", "인천·부평선", "대원관광", "02-2201-7710", "주말 중심 · 송내 합류", "https://skibus.purplebus.co.kr/", undefined, [["인천","인천터미널","05:15"],["인천","간석오거리","05:25"],["인천","부평역","05:40"],["부천","송내역","06:10"]], kdHigh1Return()),
   route("osung-daegu-1", "대구·경북", "경산·대구 1코스", "오성고속관광", undefined, "평일·주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 편도 3.8만원 · 왕복 4.5만원", [["경산","임당역 1번 출구","04:25"],["경산","정평역 1번 출구","04:30"],["경산","신매역 1번 출구","04:35"],["대구","만촌역 1번 출구","04:45"],["대구","하나은행 대구범어금융센터","04:50"],["대구","대구은행역 1번 출구","04:55"],["대구","현대백화점 앞","05:00"],["대구","내당 홈플러스 앞","05:10"],["대구","성서 홈플러스 앞","05:20"],["대구","칠곡IC 신전뮤지엄","05:30"]], osungReturn()),
   route("osung-daegu-2", "대구·경북", "대구 동부 2코스", "오성고속관광", undefined, "주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 편도 3.8만원 · 왕복 4.5만원", [["대구","반야월 이마트","04:30"],["대구","신기역 1번 출구","04:35"],["대구","율하역 5번 출구","04:40"],["대구","동구청 앞","04:55"],["대구","영진전문대 복현소방서 앞","05:00"],["대구","경대북문 스타벅스 앞","05:05"],["대구","칠성 이마트 건너편","05:15"],["대구","칠곡IC 신전뮤지엄","05:30"]], osungReturn()),
   route("osung-daegu-3", "대구·경북", "대구 남부 3코스", "오성고속관광", undefined, "주말 운행", "https://osungtour.co.kr/hione/traffic2.asp", "일반 편도 3.8만원 · 왕복 4.5만원", [["대구","범물역 3번 출구","05:00"],["대구","상인역 7번 출구","05:10"],["대구","월성네거리 월성2주공 버스정류장","05:15"],["대구","칠곡IC 신전뮤지엄","05:30"]], osungReturn()),
@@ -91,7 +91,7 @@ function garamReturn(): NonNullable<SkiShuttleRoute["returnService"]> {
   return { departureName: "하이원 예약 화면 지정 승차지", stopOrder: "same_stops", note: "25/26 왕복 교통패스 노선 · 귀가 시간과 하차 순서는 운영사에 재확인" };
 }
 function phoenixRoute(id: string, region: string, name: string, operationNote: string, stops: StopInput[]): SkiShuttleRoute {
-  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const url = "https://skibus.purplebus.co.kr/";
   return { id, resortId: phoenix, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName: "휘닉스 스노우파크", directions: ["outbound"], priceLabel: "휘닉스 교통시즌권 27.5만원", fare: { type: "season_pass", seasonPassAdult: 275000 }, service: phoenixService(operationNote), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${id}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: phoenixOakCheckedAt };
 }
 function phoenixReturnRoutes(): SkiShuttleRoute[] {
@@ -108,7 +108,7 @@ function phoenixReturnRoutes(): SkiShuttleRoute[] {
     ["phoenix-return-1700-south-gyeonggi", "경기", "17시 남부 경기선", "17:00", "성수기 매일 · 비수기 토·일", [["안양","범계역"],["수원","영통"]]],
     ["phoenix-return-2130-jamsil", "서울", "21시 30분 잠실선", "21:30", "성수기 토·일", [["서울","잠실역"],["서울","종합운동장역"]]]
   ];
-  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const url = "https://skibus.purplebus.co.kr/";
   return specs.map(([id, region, name, departureTime, days, stops]) => ({
     id,
     resortId: phoenix,
@@ -170,7 +170,7 @@ function jisanRoutes(): SkiShuttleRoute[] {
   return [...outbound, ...returning];
 }
 function wellihilliRoutes(): SkiShuttleRoute[] {
-  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const url = "https://skibus.purplebus.co.kr/";
   const outboundSpecs: [id: string, region: string, name: string, days: string, stops: StopInput[]][] = [
     ["wellihilli-kd-sadang", "서울", "사당·강남선", "성수기·비수기·3월 3일부터 매일", [["서울","사당역","05:55"],["서울","양재역","06:10"],["서울","도곡역","06:12"],["서울","대치역","06:15"],["서울","종합운동장","06:40"]]],
     ["wellihilli-kd-sinchon", "서울", "홍대·신촌선", "성수기·비수기 매일 · 3월 3일부터 토·일", [["서울","홍대입구","05:40"],["서울","신촌역","05:45"],["서울","광흥창역","05:50"],["서울","마포역","05:55"],["서울","종합운동장","06:40"]]],
@@ -596,7 +596,7 @@ function alpensiaRoutes(): SkiShuttleRoute[] {
   return [...directRoutes, ...stationOutbound, ...stationReturn];
 }
 function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleRoute[] {
-  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const url = "https://skibus.purplebus.co.kr/";
   const specs: [string, string, string, string, StopInput[]][] = [
     ["sadang","서울","사당·강남선","매일 운행 중심 · 종합운동장 합류",[["서울","사당역","05:35"],["서울","양재역","05:50"],["서울","도곡역","05:52"],["서울","대치역","05:55"],["서울","종합운동장","06:20"]]],
     ["myeongdong","서울","명동·강남선","매일 운행 중심 · 종합운동장 합류",[["서울","명동역","05:25"],["서울","동대문","05:35"],["서울","강남역","05:47"],["서울","종합운동장","06:20"]]],
@@ -614,7 +614,7 @@ function kdPyeongchangRoutes(resortId: string, arrivalName: string): SkiShuttleR
   return specs.map(([suffix, region, name, operationNote, stops]) => ({ id: `${resortId}-kd-${suffix}`, resortId, season: "25/26", operator: "대원관광", operatorPhone: "02-2201-7710", region, name, operationNote, arrivalName, priceLabel: "용평·알펜시아 교통시즌권 29만원", fare: { type: "season_pass", seasonPassAdult: 290000 }, service: kdService(), bookingUrl: url, sourceUrl: url, stops: stops.map(([city, stopName, departureTime], index) => ({ id: `${resortId}-kd-${suffix}-${index + 1}`, city, name: stopName, departureTime })), dataStatus: "confirmed_25_26", lastCheckedAt: checkedAt }));
 }
 function yongpyongRoutes(): SkiShuttleRoute[] {
-  const url = "https://skibus.purplebus.co.kr/Shop/YpSeason25/";
+  const url = "https://skibus.purplebus.co.kr/";
   const daysById: Record<string, string> = {
     "yongpyong-kd-sadang": "성수기·비수기·3월 3일부터 매일",
     "yongpyong-kd-sinchon": "성수기·비수기 매일 · 3월 3일부터 토·일",

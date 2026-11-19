@@ -2,6 +2,8 @@ import type { Priority, TimeSlot } from "@/lib/types";
 
 export const CURRENT_SEASON = "2025-2026";
 export const UPCOMING_SEASON = "2026-2027";
+export const UPCOMING_SEASON_START = "2026-04-01";
+export const UPCOMING_SEASON_END = "2027-03-31";
 export const REFERENCE_PRICE_SEASON = "25/26 시즌";
 export const CURRENT_SHUTTLE_SEASON = "25/26";
 export const UPCOMING_SHUTTLE_SEASON = "26/27";

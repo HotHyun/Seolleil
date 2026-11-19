@@ -79,28 +79,29 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "yongpyong",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
+    status: "published",
     sources: [
       { name: "모나용평 리프트&렌탈요금", url: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: checkedAt,
-    nextCheckAfter,
-    note: "공식 페이지는 26/27 일일 요금을 추후 공지한다고 표시하며 25/26 요금만 제공합니다. X6+ 시즌패스는 판매 공지가 확인됐지만 일일권 가격으로 변환하지 않았습니다.",
+    lastCheckedAt: "2026-11-19",
+    nextCheckAfter: "2026-12-15",
+    note: "공식 페이지가 '26/27시즌 리프트 요금'(4·6·8시간, 대인·소인)을 게시해 4h·6h·full_day(8시간)를 등록했습니다. 2h·3h·야간권은 26/27 표에 없어 미등록입니다. 개장 특가와 슬로프 1면 운영 특가는 정상가가 아니라 반영하지 않았습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
-      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+      { label: "개장 특가", value: "11/22(일) 하루 리프트권 10,000원" },
+      { label: "1면 운영 시 특가", value: "4시간 30,000원 · 6시간 35,000원 · 8시간 40,000원 (11/23부터 2면 오픈 시 정상가)" }
     ]
   },
   {
     resortId: "yongpyong",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
+    status: "published",
     sources: [{ name: "모나용평 리프트&렌탈요금", url: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do" }],
-    lastCheckedAt: checkedAt,
-    nextCheckAfter,
-    note: "장비·고급장비·의류 가격표가 모두 25/26 시즌으로 표시되어 다음 시즌 가격은 미등록 상태입니다."
+    lastCheckedAt: "2026-11-19",
+    nextCheckAfter: "2026-12-15",
+    note: "공식 페이지가 '26/27시즌 장비(세트)·의류 렌탈 요금'을 게시해 일반 장비(4시간 44,000원~8시간 54,000원)와 의류 한벌(주간 33,000원~주간+야간 50,000원)로 등록했습니다. 고급 장비·부분 렌탈·연일권은 대표값에 넣지 않았습니다."
   },
   {
     resortId: "yongpyong",
@@ -318,28 +319,29 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "alpensia",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
+    status: "published",
     sources: [
+      { name: "알펜시아 스키700 리프트 요금", url: "https://www.alpensia.com/ski/use-cost-lift.do" },
       { name: "알펜시아 공식 시즌권 안내", url: "https://m.alpensia.com/ski/use-season.do" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: checkedAt,
-    nextCheckAfter,
-    note: "26/27 X6+ 시즌패스 판매는 확인했지만, 알펜시아 단독 시즌권 가격과 일일 리프트 요금은 공식 페이지에 게시되지 않았습니다.",
+    lastCheckedAt: "2026-11-19",
+    nextCheckAfter: "2026-12-15",
+    note: "공식 리프트 요금표가 '26/27 시즌'으로 게시되어 오전·오후권(4h), 야간권(night), 주간권(full_day), 후야권(7h)을 등록했습니다. 2h·3h·6h는 26/27 표에 없어 미등록입니다. 개장일은 '오픈일'로만 표기되어 시작일은 12월 1일로 두었습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
-      { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+      { label: "운영 일정", value: "오픈일 ~ 2027-03-07 · 야간 2026-12-19 ~ 2027-02-13" }
     ]
   },
   {
     resortId: "alpensia",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
-    sources: [{ name: "알펜시아 스키700 종합이용요금", url: "https://www.alpensia.com/guide/total-use-cost-ski.do" }],
-    lastCheckedAt: checkedAt,
-    nextCheckAfter,
-    note: "공식 렌탈 표의 가격 칸은 비어 있고 운영 기간도 2026년 3월 2일까지인 기존 시즌이어서 26/27 장비·의류 가격은 미발표입니다."
+    status: "published",
+    sources: [{ name: "알펜시아 스키700 렌탈 & 시설 이용 요금", url: "https://www.alpensia.com/ski/use-cost-rental.do" }],
+    lastCheckedAt: "2026-11-19",
+    nextCheckAfter: "2026-12-15",
+    note: "공식 렌탈 표에 시즌 표기는 없지만 같은 페이지의 운영 일정이 26/27(2027-03-07 폐장)입니다. 스키·보드(반일 32,000원~당일 50,000원)와 의류 세트(반일 20,000원~당일 35,000원)로 등록했고 부분 렌탈·헬멧은 대표값에 넣지 않았습니다."
   },
   {
     resortId: "alpensia",

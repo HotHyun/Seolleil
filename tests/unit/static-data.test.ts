@@ -198,22 +198,24 @@ describe("static data validation", () => {
       targetSeason: "2026-2027",
       sourceShuttleSeason: "25/26",
       targetShuttleSeason: "26/27",
-      completedTargetCount: 0,
-      progressPercent: 0,
+      completedTargetCount: 14,
+      progressPercent: 4,
       researchRecordCount: 39,
       priorityOneResearchCount: 12,
       priorityTwoResearchCount: 15,
       priorityThreeResearchCount: 12,
-      preliminaryResearchCount: 12,
-      latestResearchAt: "2026-10-11"
+      preliminaryResearchCount: 10,
+      latestResearchAt: "2026-11-19"
     });
     expect(new Set(priorityOneIds)).toEqual(new Set(["high1", "vivaldi", "yongpyong", "phoenix"]));
     expect(new Set(priorityTwoIds)).toEqual(new Set(["konjiam", "jisan", "elysian", "wellihilli", "alpensia"]));
     expect(new Set(priorityThreeIds)).toEqual(new Set(["oakvalley", "o2", "muju", "edenvalley"]));
+    const partiallyPublished = new Set(["yongpyong", "alpensia"]);
     expect(report.seasonTransition.resorts.every(resort =>
-      resort.lift.status === "not_published" &&
-      resort.rental.status === "not_published" &&
-      resort.shuttle.status === "not_published"
+      resort.shuttle.status === "not_published" &&
+      (partiallyPublished.has(resort.resortId)
+        ? resort.lift.status === "in_review" && resort.rental.status === "in_review"
+        : resort.lift.status === "not_published" && resort.rental.status === "not_published")
     )).toBe(true);
   });
 
@@ -241,16 +243,15 @@ describe("static data validation", () => {
     expect(phoenixTransition?.nextAction).toContain("일일 리프트권");
     expect(alpensiaLift).toMatchObject({
       targetSeason: "2026-2027",
-      status: "preliminary",
+      status: "published",
       announcedFacts: expect.arrayContaining([
-        { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
-        { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
+        { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" }
       ])
     });
     expect(alpensiaTransition?.lift).toMatchObject({
-      status: "not_published",
-      completedTargetCount: 0,
-      research: { status: "preliminary" }
+      status: "in_review",
+      completedTargetCount: 3,
+      research: { status: "published" }
     });
   });
 

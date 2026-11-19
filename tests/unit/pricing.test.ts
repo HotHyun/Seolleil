@@ -76,6 +76,15 @@ describe("pricing", () => {
     expect(liftTicketSavings(liftOption, "2027-01-16")).toBeNull();
   });
 
+  it("applies published 26/27 lift prices only to 26/27 visit dates", () => {
+    expect(resolveLiftPrice("yongpyong", "6h", "2026-12-20")).toMatchObject({ season: "2026-2027", adultPrice: 89000, childPrice: 79000 });
+    expect(resolveLiftPrice("yongpyong", "full_day", "2027-01-16")).toMatchObject({ adultPrice: 99000 });
+    expect(resolveLiftPrice("yongpyong", "6h", "2026-02-14")).toMatchObject({ season: "2025-2026", adultPrice: 96000 });
+    expect(resolveLiftPrice("yongpyong", "2h", "2026-12-20")).toBeUndefined();
+    expect(resolveLiftPrice("alpensia", "night", "2027-01-16")).toMatchObject({ season: "2026-2027", adultPrice: 46000 });
+    expect(resolveLiftPrice("alpensia", "full_day", "2027-03-08")).toBeUndefined();
+  });
+
   it("prices a rental-shop lift ticket independently and reports verified savings", () => {
     const high1 = resorts.find((resort) => resort.id === "high1")!;
     const liftOption = rentalPriceRules.find(rule => rule.id === "high1-myski-lift-peak-7h")!;

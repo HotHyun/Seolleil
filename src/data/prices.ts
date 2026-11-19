@@ -1,4 +1,4 @@
-import { CURRENT_SEASON } from "@/lib/constants";
+import { CURRENT_SEASON, UPCOMING_SEASON } from "@/lib/constants";
 import type { PriceConfidence, PriceRule, PriceSourceType, RentalPriceRule, TimeSlot } from "@/lib/types";
 import { rentalShops } from "@/data/resorts";
 
@@ -718,3 +718,163 @@ const high1DetailedRentalRules: RentalPriceRule[] = [
 ];
 
 rentalPriceRules.push(...high1DetailedRentalRules);
+
+// 26/27 시즌: 공식 페이지에 26/27 가격이 게시된 리조트만 등록한다. 25/26 규칙과 같은 라벨·구분을 써서 전환 보드가 대체 관계를 인식한다.
+const upcomingCheckedAt = "2026-11-19";
+
+type UpcomingLiftSeed = {
+  resortId: string;
+  resortName: string;
+  sourceName: string;
+  sourceUrl: string;
+  validFrom: string;
+  validTo: string;
+  verificationNote: string;
+  slots: Array<{ slot: TimeSlot; adult: number; child: number; memo: string }>;
+};
+
+type UpcomingOfficialRentalSeed = {
+  resortId: string;
+  sourceName: string;
+  sourceUrl: string;
+  validFrom: string;
+  validTo: string;
+  verificationNote: string;
+  memo: string;
+  equipment: { price: number; max: number };
+  clothing: { price: number; max: number };
+};
+
+function upcomingLiftRules(seed: UpcomingLiftSeed): PriceRule[] {
+  return seed.slots.map(({ slot, adult, child, memo }) => ({
+    id: `${seed.resortId}-lift-${slot}-26-27`,
+    resortId: seed.resortId,
+    season: UPCOMING_SEASON,
+    itemType: "lift_ticket" as const,
+    label: `${seed.resortName} ${slot} 리프트권`,
+    validFrom: seed.validFrom,
+    validTo: seed.validTo,
+    dayType: "all" as const,
+    timeSlot: slot,
+    adultPrice: adult,
+    childPrice: child,
+    priceMin: adult,
+    priceMax: adult,
+    sourceType: "official_site" as const,
+    sourceName: seed.sourceName,
+    sourceUrl: seed.sourceUrl,
+    bookingUrl: seed.sourceUrl,
+    confidence: "confirmed" as const,
+    lastCheckedAt: upcomingCheckedAt,
+    verifiedByHuman: true,
+    verificationNote: seed.verificationNote,
+    memo
+  }));
+}
+
+function upcomingOfficialRentalRules(seed: UpcomingOfficialRentalSeed): RentalPriceRule[] {
+  const shopId = `${seed.resortId}-official-rental`;
+  const common = {
+    rentalShopId: shopId,
+    resortId: seed.resortId,
+    providerType: "resort_official" as const,
+    season: UPCOMING_SEASON,
+    validFrom: seed.validFrom,
+    validTo: seed.validTo,
+    dayType: "all" as const,
+    ageGroup: "adult" as const,
+    sourceType: "official_site" as const,
+    sourceName: seed.sourceName,
+    sourceUrl: seed.sourceUrl,
+    bookingUrl: seed.sourceUrl,
+    confidence: "confirmed" as const,
+    lastCheckedAt: upcomingCheckedAt,
+    verifiedByHuman: true,
+    verificationNote: seed.verificationNote,
+    memo: seed.memo
+  };
+  const equipment = { representativePrice: seed.equipment.price, priceMin: seed.equipment.price, priceMax: seed.equipment.max };
+  return [
+    { ...common, ...equipment, id: `${shopId}-equipment-ski-26-27`, itemType: "equipment", rideType: "ski", label: "스키 장비 렌탈" },
+    { ...common, ...equipment, id: `${shopId}-equipment-board-26-27`, itemType: "equipment", rideType: "snowboard", label: "보드 장비 렌탈" },
+    {
+      ...common,
+      id: `${shopId}-clothing-26-27`,
+      itemType: "clothing",
+      rideType: "all",
+      label: "의류 세트 렌탈",
+      representativePrice: seed.clothing.price,
+      priceMin: seed.clothing.price,
+      priceMax: seed.clothing.max
+    },
+    {
+      ...common,
+      id: `${shopId}-package-26-27`,
+      itemType: "equipment_clothing_package",
+      rideType: "all",
+      label: "장비 + 의류 패키지",
+      representativePrice: seed.equipment.price + seed.clothing.price,
+      priceMin: seed.equipment.price + seed.clothing.price,
+      priceMax: seed.equipment.max + seed.clothing.max
+    }
+  ];
+}
+
+const upcomingLiftSeeds: UpcomingLiftSeed[] = [
+  {
+    resortId: "yongpyong",
+    resortName: "모나 용평",
+    sourceName: "모나용평 26/27시즌 리프트 요금",
+    sourceUrl: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do",
+    validFrom: "2026-11-22",
+    validTo: "2027-03-31",
+    verificationNote: "공식 페이지의 '26/27시즌 리프트 요금' 표(대인·소인) 기준. 8시간권은 종일(full_day)로 매핑.",
+    slots: [
+      { slot: "4h", adult: 79000, child: 69000, memo: "공식 4시간권. 개장 특가(11/22 하루 10,000원)와 슬로프 1면 운영 시 특가(4시간 30,000원)는 정상가가 아니어서 반영하지 않았다." },
+      { slot: "6h", adult: 89000, child: 79000, memo: "공식 6시간권. 슬로프 1면 운영 시 특가(6시간 35,000원)는 반영하지 않았다." },
+      { slot: "full_day", adult: 99000, child: 89000, memo: "공식 8시간권. 슬로프 1면 운영 시 특가(8시간 40,000원)는 반영하지 않았다." }
+    ]
+  },
+  {
+    resortId: "alpensia",
+    resortName: "알펜시아 리조트",
+    sourceName: "알펜시아 스키700 26/27 시즌 리프트 요금",
+    sourceUrl: "https://www.alpensia.com/ski/use-cost-lift.do",
+    validFrom: "2026-12-01",
+    validTo: "2027-03-07",
+    verificationNote: "공식 페이지의 '26/27 시즌' 리프트 요금 표(대인·소인) 기준. 개장일은 '오픈일'로만 표기되어 시작일은 12월 1일로 두었다.",
+    slots: [
+      { slot: "4h", adult: 59000, child: 48000, memo: "오전권(09:00~13:00)·오후권(13:00~17:00) 4시간, 가격 동일." },
+      { slot: "night", adult: 46000, child: 35000, memo: "야간권 18:30~21:30(3시간). 야간 운영은 2026-12-19~2027-02-13." },
+      { slot: "full_day", adult: 76000, child: 57000, memo: "주간권 09:00~17:00(8시간). 주간 운영은 오픈일~12-18, 2027-02-14~03-07." },
+      { slot: "7h", adult: 76000, child: 57000, memo: "후야권 13:00~21:30(7시간)." }
+    ]
+  }
+];
+
+priceRules.push(...upcomingLiftSeeds.flatMap(upcomingLiftRules));
+
+rentalPriceRules.push(
+  ...upcomingOfficialRentalRules({
+    resortId: "yongpyong",
+    sourceName: "모나용평 26/27시즌 장비·의류 렌탈 요금",
+    sourceUrl: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do",
+    validFrom: "2026-11-22",
+    validTo: "2027-03-31",
+    verificationNote: "공식 페이지의 '26/27시즌 장비(세트) 렌탈 요금'과 의류 렌탈 표 기준. 대표값은 일반 장비 4시간 대인과 의류 한벌 주간.",
+    memo: "일반 장비 대인 4시간 44,000원~8시간 54,000원(소인 39,000~49,000원), 의류 한벌 주간 33,000원~주간+야간 50,000원. 고급 장비·부분 렌탈·연일권은 대표값에 넣지 않았다.",
+    equipment: { price: 44000, max: 54000 },
+    clothing: { price: 33000, max: 50000 }
+  }),
+  ...upcomingOfficialRentalRules({
+    resortId: "alpensia",
+    sourceName: "알펜시아 스키700 렌탈 & 시설 이용 요금",
+    sourceUrl: "https://www.alpensia.com/ski/use-cost-rental.do",
+    validFrom: "2026-12-01",
+    validTo: "2027-03-07",
+    verificationNote: "공식 렌탈 표에 시즌 표기는 없지만 같은 페이지의 운영 일정이 26/27(2027-03-07 폐장)이다. 대표값은 오전·오후·야간 반일권(대인).",
+    memo: "스키·보드 반일 32,000원~당일권 50,000원(소인 26,000~40,000원), 의류 세트 반일 20,000원~당일 35,000원(대·소인 동일). 부분 렌탈과 헬멧은 대표값에 넣지 않았다.",
+    equipment: { price: 32000, max: 50000 },
+    clothing: { price: 20000, max: 35000 }
+  })
+);

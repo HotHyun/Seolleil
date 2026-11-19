@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BedDouble, BusFront, Check, Clock3, ExternalLink, Shirt, Sparkles } from "lucide-react";
+import { BedDouble, BusFront, Check, Clock3, ExternalLink, ListChecks, Shirt, Sparkles } from "lucide-react";
 import { updateTripDecisionSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
@@ -19,6 +19,8 @@ import type { TripDecisionView } from "@/lib/trip-workspace";
 import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/rental-comparison";
 import { formatCurrency } from "@/lib/utils";
 import { DailyRentalChoices } from "@/components/trip/daily-rental-choices";
+import { DaySummaryPanel, rentalStateLabel, savedItemsText } from "@/components/trip/day-summary-panel";
+import { buildDaySummaries } from "@/lib/trip-day-summary";
 import { TripSkiPlanEditor } from "@/components/trip/trip-ski-plan-editor";
 import { TripLodgingPlan } from "@/components/trip/trip-lodging-plan";
 import { TripTransportPlan } from "@/components/trip/trip-transport-plan";
@@ -38,6 +40,14 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
   const [activeSkiDate, setActiveSkiDate] = useState(trip.skiPlan.days[0]?.date ?? trip.visitDate.toISOString().slice(0, 10));
   const activeSkiDay = trip.skiPlan.days.find(day => day.date === activeSkiDate) ?? trip.skiPlan.days[0];
   const rentalListRef = useRef<HTMLDivElement | null>(null);
+  const summaries = useMemo(() => buildDaySummaries(trip.resortId, trip.skiPlan, rentalGroups, trip.peopleCount), [rentalGroups, trip.peopleCount, trip.resortId, trip.skiPlan]);
+  const activeSummary = summaries.find(summary => summary.date === activeSkiDay?.date);
+  const pickDay = useCallback((date: string) => {
+    const day = trip.skiPlan.days.find(item => item.date === date);
+    setActiveSkiDate(date);
+    setRentalId(day?.rentalShopId ?? rentalGroups[0]?.shop.id ?? null);
+    window.requestAnimationFrame(() => document.getElementById("rental")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }));
+  }, [rentalGroups, trip.skiPlan.days]);
   const filtered = useMemo(() => sortRentalComparisonGroups(rentalGroups
     .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, activeSkiDay?.rentalShopId), [activeSkiDay?.rentalShopId, filter, rentalGroups, sort]);
   const shuttleRoutes = useMemo(() => getSkiShuttleRoutes(trip.resortId), [trip.resortId]);
@@ -71,6 +81,9 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
     <section className="overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/15 via-card to-card p-5 sm:p-6"><div className="flex items-start gap-4"><span className="rounded-2xl bg-primary p-3 text-primary-foreground shadow-lg shadow-primary/20"><Sparkles className="h-5 w-5" /></span><div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{workspaceCopy.eyebrow}</p><h1 data-trip-workspace-title tabIndex={-1} className="mt-1 text-pretty text-2xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{workspaceCopy.title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{workspaceCopy.description}</p></div></div></section>
 
     {view === "rental_lift" ? <>
+    <DecisionSection id="summary" title="날짜별 확정 현황" description="렌탈샵, 장비·의류, 리프트권이 날짜마다 어떻게 정해졌고 얼마인지 한눈에 확인하세요." icon={<ListChecks />}>
+      <DaySummaryPanel summaries={summaries} peopleCount={trip.peopleCount} onSelectDay={pickDay} canEdit={canEdit} />
+    </DecisionSection>
     <DecisionSection id="schedule" title="스키 일정" description="숙박 기간과 실제 스키를 탈 날짜는 다를 수 있어요. 날짜별 이용 시간을 먼저 정하세요." icon={<Clock3 />}>
       <TripSkiPlanEditor trip={trip} editToken={editToken} shareToken={shareToken} canEdit={canEdit} />
     </DecisionSection>
@@ -78,13 +91,13 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
       <div className="mb-4">
         <p className="mb-2 text-xs font-black uppercase tracking-wider text-muted-foreground">설정할 스키 날짜</p>
         <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="날짜별 렌탈 계획">
-          {trip.skiPlan.days.map(day => <button key={day.date} type="button" role="tab" aria-selected={activeSkiDate === day.date} onClick={() => { setActiveSkiDate(day.date); setRentalId(day.rentalShopId ?? rentalGroups[0]?.shop.id ?? null); }} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeSkiDate === day.date ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-black">{new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</span><span className={`mt-0.5 block text-[11px] ${activeSkiDate === day.date ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{tripDayTypeLabel(day.date)} · {timeSlotLabels[day.timeSlot]}</span></button>)}
+          {trip.skiPlan.days.map(day => <button key={day.date} type="button" role="tab" aria-selected={activeSkiDate === day.date} onClick={() => { setActiveSkiDate(day.date); setRentalId(day.rentalShopId ?? rentalGroups[0]?.shop.id ?? null); }} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeSkiDate === day.date ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-black">{new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</span><span className={`mt-0.5 block text-[11px] ${activeSkiDate === day.date ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{tripDayTypeLabel(day.date)} · {timeSlotLabels[day.timeSlot]}</span><span className={`mt-0.5 block text-[10px] font-black ${activeSkiDate === day.date ? "text-primary-foreground" : summaries.find(summary => summary.date === day.date)?.rentalState === "items" ? "text-emerald-700 dark:text-emerald-300" : "text-amber-700 dark:text-amber-300"}`}>{rentalStateLabel(summaries.find(summary => summary.date === day.date)?.rentalState ?? "none")}</span></button>)}
         </div>
       </div>
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="flex gap-2 overflow-x-auto pb-1" aria-label="렌탈샵 필터">{([['all','전체'],['verified','가격 확인'],['pickup','픽업'],['clothing','의류'],['lift','리프트권']] as const).map(([value,label]) => <Button key={value} type="button" variant={filter === value ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs hover:translate-y-0" onClick={() => setFilter(value)}>{label}</Button>)}</div><div className="w-full sm:w-36"><SelectField name="rentalSort" ariaLabel="렌탈샵 정렬" value={sort} onValueChange={(value) => setSort(value as RentalComparisonSort)} options={[{value:"verified",label:"검증순"},{value:"distance",label:"거리순"},{value:"price",label:"가격순"}]} /></div></div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]">
         <PlaceComparisonMap candidates={filtered.map(({shop}) => toCandidate(shop.id, shop.name, "rental", shop.address, shop.latitude, shop.longitude, shop.mapLinks?.kakao ?? shop.mapLinks?.naver))} selectedId={rentalId} onSelect={selectRentalFromMap} />
-        <div ref={rentalListRef} className="max-h-[720px] space-y-3 overflow-y-auto pr-1">{activeSkiDay && filtered.length ? filtered.map(({ shop, options }) => { const selected = rentalId === shop.id; const saved = activeSkiDay.rentalShopId === shop.id; return <div key={shop.id} data-rental-shop-id={shop.id} tabIndex={-1} className={`rounded-2xl border bg-transparent text-card-foreground ${selected ? "border-primary ring-1 ring-primary/40" : "border-border"}`}><CardHeader className="cursor-pointer pb-3" onClick={() => setRentalId(shop.id)}><div className="flex items-start justify-between gap-3"><div><CardTitle className="text-base">{shop.name}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{shop.distanceMinutes !== undefined ? `리조트에서 약 ${shop.distanceMinutes}분` : "지도에서 위치 확인"}</p></div>{saved ? <span className="rounded-full bg-primary p-1.5 text-primary-foreground"><Check className="h-3.5 w-3.5" /></span> : null}</div></CardHeader>{selected ? <CardContent><DailyRentalChoices shop={shop} options={options} day={activeSkiDay} peopleCount={trip.peopleCount} rideType={trip.rideType} access={access} save={save} canEdit={canEdit} /></CardContent> : null}</div>; }) : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">{activeSkiDay ? "조건에 맞는 업체가 없습니다." : "먼저 스키를 탈 날짜를 저장해 주세요."}</p>}</div>
+        <div ref={rentalListRef} className="max-h-[720px] space-y-3 overflow-y-auto pr-1">{activeSkiDay && filtered.length ? filtered.map(({ shop, options }) => { const selected = rentalId === shop.id; const saved = activeSkiDay.rentalShopId === shop.id; return <div key={shop.id} data-rental-shop-id={shop.id} tabIndex={-1} className={`rounded-2xl border bg-transparent text-card-foreground ${selected ? "border-primary ring-1 ring-primary/40" : "border-border"}`}><CardHeader className="cursor-pointer pb-3" onClick={() => setRentalId(shop.id)}><div className="flex items-start justify-between gap-3"><div><CardTitle className="text-base">{shop.name}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{shop.distanceMinutes !== undefined ? `리조트에서 약 ${shop.distanceMinutes}분` : "지도에서 위치 확인"}</p></div>{saved ? <span className="inline-flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-black text-primary-foreground"><Check className="h-3.5 w-3.5" aria-hidden="true" />이 날짜 확정</span> : null}</div>{saved && activeSummary ? <p className="mt-2 text-xs font-semibold text-primary">{savedItemsText(activeSummary)}</p> : null}</CardHeader>{selected ? <CardContent><DailyRentalChoices shop={shop} options={options} day={activeSkiDay} peopleCount={trip.peopleCount} rideType={trip.rideType} access={access} save={save} canEdit={canEdit} /></CardContent> : null}</div>; }) : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">{activeSkiDay ? "조건에 맞는 업체가 없습니다." : "먼저 스키를 탈 날짜를 저장해 주세요."}</p>}</div>
       </div>
     </DecisionSection>
 

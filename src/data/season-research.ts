@@ -209,7 +209,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     ],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 요금표는 25/26으로 표시됩니다. 26/27 X6+ 통합 시즌패스 판매는 확인했지만 일일 리프트 요금은 아직 없습니다. 2026-11-19 Chrome 확인 시도: 가격 페이지가 로딩되지 않아 확인하지 못했습니다.",
+    note: "공식 요금표는 25/26으로 표시됩니다. 26/27 X6+ 통합 시즌패스 판매는 확인했지만 일일 리프트 요금은 아직 없습니다. 2026-11-19 운영자 확인: 가격 페이지가 무한 로딩이 아니라 26/27 요금 '준비 중' 안내(alert)를 띄우는 상태입니다. 공지 후 재확인합니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
@@ -223,7 +223,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     sources: [{ name: "지산리조트 리프트·렌탈 종합요금", url: "https://www.jisanresort.co.kr/w/ski/use/rental.asp" }],
     lastCheckedAt: checkedAt,
     nextCheckAfter,
-    note: "공식 장비 렌탈 표가 25/26 시즌으로 표시되어 26/27 장비·의류 가격 규칙은 생성하지 않았습니다. 2026-11-19 Chrome 확인 시도: 가격 페이지가 로딩되지 않아 확인하지 못했습니다."
+    note: "공식 장비 렌탈 표가 25/26 시즌으로 표시되어 26/27 장비·의류 가격 규칙은 생성하지 않았습니다. 2026-11-19 운영자 확인: 가격 페이지가 무한 로딩이 아니라 26/27 요금 '준비 중' 안내(alert)를 띄우는 상태입니다. 공지 후 재확인합니다."
   },
   {
     resortId: "jisan",

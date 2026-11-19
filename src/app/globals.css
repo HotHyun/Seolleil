@@ -216,3 +216,12 @@ body {
     transform: none;
   }
 }
+
+/* iOS Safari는 16px 미만 입력창에 포커스하면 화면을 확대한다. 모바일에서는 입력 글자 크기를 16px로 유지한다. */
+@media (max-width: 767px) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

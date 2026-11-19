@@ -22,5 +22,5 @@ export async function expectNoEmptyMain(page: Page) {
 
 export async function expectClickablePrimaryNav(page: Page) {
   await expect(page.getByRole("navigation").getByRole("link", { name: "스키장", exact: true })).toBeVisible();
-  await expect(page.getByRole("navigation").getByRole("link", { name: "트립 만들기", exact: true })).toBeVisible();
+  await expect(page.getByRole("navigation").getByRole("link", { name: "여행 시작", exact: true })).toBeVisible();
 }

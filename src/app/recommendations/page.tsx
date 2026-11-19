@@ -215,9 +215,9 @@ function RentalCostComparison({ resort, input, baseEstimate, expanded }: { resor
     : null;
 
   return (
-    <details open={expanded} className="rounded-xl border bg-card">
+    <details open={expanded} className="min-w-0 max-w-full rounded-xl border bg-card">
       <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-3 py-3 font-black outline-none focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
-        <span>
+        <span className="min-w-0">
           <span className="block text-sm">공식 리조트와 주변 렌탈샵 비교</span>
           <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">
             {itemType === null ? "장비·의류 보유로 렌탈 비교 제외" : <>
@@ -230,7 +230,7 @@ function RentalCostComparison({ resort, input, baseEstimate, expanded }: { resor
         </span>
         <span aria-hidden="true" className="text-lg text-muted-foreground">⌄</span>
       </summary>
-      <div className="space-y-3 border-t p-3">
+      <div className="min-w-0 space-y-3 overflow-x-auto border-t p-3">
         {!itemType ? (
           <>
             <p className="text-xs leading-5 text-muted-foreground">장비와 의류를 모두 보유한다고 입력해 렌탈비 비교는 생략했어요.</p>
@@ -238,7 +238,7 @@ function RentalCostComparison({ resort, input, baseEstimate, expanded }: { resor
           </>
         ) : scenarios.length ? (
           <>
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {official ? <RentalScenarioCard scenario={official} peopleCount={input.peopleCount} /> : (
                 <p className="rounded-lg border border-dashed p-3 text-xs leading-5 text-muted-foreground">이 날짜에 적용할 공식 렌탈 가격을 찾지 못했어요. 공식 요금은 원문에서 확인할 수 있습니다.</p>
               )}
@@ -281,7 +281,7 @@ function RentalScenarioCard({ scenario, peopleCount }: { scenario: RentalCostSce
   ].filter(Boolean).join(" · ");
 
   return (
-    <section className="rounded-lg border bg-background p-3" aria-label={`${label} ${scenario.shop.name} 예상 비용`}>
+    <section className="min-w-0 rounded-lg border bg-background p-3" aria-label={`${label} ${scenario.shop.name} 예상 비용`}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <StatusBadge>{label}</StatusBadge>
@@ -293,10 +293,10 @@ function RentalScenarioCard({ scenario, peopleCount }: { scenario: RentalCostSce
       <div className="mt-3 divide-y rounded-md border px-2.5">
         {scenario.estimate.items.map((item) => <ScenarioCostLine key={item.key} item={item} />)}
       </div>
-      <div className="mt-3 flex items-end justify-between gap-3">
-        <div>
+      <div className="mt-3 flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+        <div className="min-w-0">
           <p className="text-xs font-bold text-muted-foreground">{hasUnknownItems ? "확인된 항목 합계" : "일행 전체 예상"}</p>
-          <p className="text-lg font-black">{formatCurrency(scenario.estimate.representative)}</p>
+          <p className="break-words text-lg font-black tabular-nums">{formatCurrency(scenario.estimate.representative)}</p>
         </div>
         <p className="text-right text-xs font-semibold text-muted-foreground">1인 약 {formatCurrency(Math.round(scenario.estimate.representative / peopleCount))}</p>
       </div>

@@ -93,14 +93,14 @@ export default function HomePage() {
               <h3 className="text-xl font-black sm:text-2xl">조건에 맞는 스키장 3곳을 나란히</h3>
               <p className="mt-2 max-w-md text-sm leading-6 text-white/70">출발지·날짜·인원으로 이동 시간과 예상 비용을 한 번에 비교해요.</p>
               <div className="mt-6 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06]" role="table" aria-label="추천 비교 예시">
-                <div role="row" className="grid grid-cols-[1.4fr_1fr_1.4fr] gap-2 border-b border-white/10 px-4 py-2.5 text-xs font-semibold text-white/55">
+                <div role="row" className="grid grid-cols-[minmax(0,1.15fr)_minmax(0,0.7fr)_minmax(0,1.5fr)] gap-2 border-b border-white/10 px-3 py-2.5 sm:px-4 text-xs font-semibold text-white/55">
                   <span role="columnheader">스키장</span><span role="columnheader">이동</span><span role="columnheader" className="text-right">예상 총액</span>
                 </div>
                 {sample.rows.map(row => (
-                  <div role="row" key={row.name} className={`grid grid-cols-[1.4fr_1fr_1.4fr] items-center gap-2 px-4 py-3.5 text-sm ${row.top ? "bg-[#b8f23d]/12" : ""}`}>
-                    <span role="cell" className="flex items-center gap-2 font-black">{row.top ? <span className="rounded-md bg-[#b8f23d] px-1.5 py-0.5 text-xs text-[#071225]">1순위</span> : null}{row.name}</span>
-                    <span role="cell" className="text-white/80">{row.time}</span>
-                    <span role="cell" className={`text-right font-black ${row.top ? "text-[#b8f23d]" : ""}`}>{row.cost}</span>
+                  <div role="row" key={row.name} className={`grid grid-cols-[minmax(0,1.15fr)_minmax(0,0.7fr)_minmax(0,1.5fr)] items-center gap-2 px-3 py-3.5 sm:px-4 text-sm ${row.top ? "bg-[#b8f23d]/12" : ""}`}>
+                    <span role="cell" className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1 font-black">{row.top ? <span className="shrink-0 whitespace-nowrap rounded-md bg-[#b8f23d] px-1.5 py-0.5 text-xs text-[#071225]">1순위</span> : null}<span className="break-keep">{row.name}</span></span>
+                    <span role="cell" className="break-keep text-white/80">{row.time}</span>
+                    <span role="cell" className={`text-right text-xs font-black sm:text-sm ${row.top ? "text-[#b8f23d]" : ""}`}>{row.cost.split("~").map((part, index, parts) => <span key={index} className="block whitespace-nowrap">{part}{index < parts.length - 1 ? "~" : ""}</span>)}</span>
                   </div>
                 ))}
               </div>

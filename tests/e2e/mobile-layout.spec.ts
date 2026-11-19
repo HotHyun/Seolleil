@@ -2,9 +2,9 @@ import { expect, test } from "@playwright/test";
 import { expectClickablePrimaryNav, expectNoEmptyMain, expectNoHorizontalOverflow, planQuery } from "./helpers";
 
 const mobilePages = [
-  { path: "/", heading: /스키장 고르고/ },
+  { path: "/", heading: /설원으로/ },
   { path: "/plan", heading: /조건을 입력하면/ },
-  { path: planQuery, heading: /조건에 맞는 추천 3곳/ },
+  { path: planQuery, heading: /예약 전에 비교할 추천 3곳/ },
   { path: "/resorts", heading: /국내 스키장/ },
   { path: "/login", heading: /내 트립 저장하기/ }
 ];
@@ -37,7 +37,7 @@ test.describe("mobile layout", () => {
     await expectNoHorizontalOverflow(page);
   });
 
-  test("ski map keeps the mobile map visible above its compact selection sheet", async ({ page }) => {
+  test("ski map is the main mobile view with the resort picker in a bottom drawer", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/resorts");
 
@@ -47,9 +47,14 @@ test.describe("mobile layout", () => {
     await expect(selection).toBeVisible();
 
     const [mapBox, selectionBox] = await Promise.all([map.boundingBox(), selection.boundingBox()]);
-    expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(460);
-    const overlap = Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0));
-    expect(overlap).toBeLessThanOrEqual(42);
+    expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(600);
+    expect(selectionBox?.y ?? 0).toBeGreaterThanOrEqual(mapBox?.y ?? 0);
+    expect((selectionBox?.y ?? 0) + (selectionBox?.height ?? 0)).toBeLessThanOrEqual((mapBox?.y ?? 0) + (mapBox?.height ?? 0));
+
+    await page.getByRole("button", { name: "스키장 선택" }).click();
+    await expect(page.getByRole("dialog").getByPlaceholder("스키장, 지역, 태그 검색")).toBeVisible();
+    await page.getByRole("dialog").getByRole("button").filter({ hasText: "렌탈" }).first().click();
+    await expect(page.getByRole("dialog")).toHaveCount(0);
     await expectNoHorizontalOverflow(page);
   });
 });

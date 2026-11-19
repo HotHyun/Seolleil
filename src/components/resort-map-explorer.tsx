@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ChevronRight, ExternalLink, Hotel, MapPin, Search, Shirt } from "lucide-react";
+import { ArrowLeft, ChevronRight, ExternalLink, Hotel, List, MapPin, Search, Shirt } from "lucide-react";
 import Link from "next/link";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import {
   getNearbyMapItems,
   getNearbySummary,
@@ -60,6 +61,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
   const [selectedId, setSelectedId] = useState(rows[0]?.resort.id ?? "");
   const [query, setQuery] = useState("");
   const [showNearby, setShowNearby] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedNearbyId, setSelectedNearbyId] = useState<string | null>(null);
   const [nearbyFilter, setNearbyFilter] = useState<"all" | "rental" | "lodging" | "pickup" | "priced">("all");
   const [shouldFocusSelectedNearby, setShouldFocusSelectedNearby] = useState(false);
@@ -224,31 +226,31 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
     selectNearby(null, false);
   }
 
+  const handleSelectResort = (id: string) => {
+    setSelectedId(id);
+    selectNearby(null, false);
+    setDrawerOpen(false);
+  };
+  const handleSelectNearby = (id: string) => {
+    selectNearby(id, true);
+    setDrawerOpen(false);
+  };
+  const sidebar = showNearby && selected ? (
+    <NearbySidebar resort={selected.resort} items={filteredNearbyItems} selectedId={selectedNearbyId} filter={nearbyFilter} onFilter={setNearbyFilter} onBack={closeNearby} onSelect={handleSelectNearby} />
+  ) : (
+    <ResortSidebar rows={filteredRows} rentalShops={rentalShops} query={query} selectedId={selected?.resort.id} onQueryChange={setQuery} onSelect={handleSelectResort} />
+  );
+
   return (
-    <section className="grid min-h-[calc(100vh-4rem)] bg-background lg:grid-cols-[380px_1fr]">
-      <aside className="order-1 z-20 flex min-w-0 w-full flex-col border-b bg-card shadow-xl lg:sticky lg:top-16 lg:max-h-[calc(100vh-4rem)] lg:border-b-0 lg:border-r">
-        {showNearby && selected ? (
-          <NearbySidebar resort={selected.resort} items={filteredNearbyItems} selectedId={selectedNearbyId} filter={nearbyFilter} onFilter={setNearbyFilter} onBack={closeNearby} onSelect={(id) => selectNearby(id, true)} />
-        ) : (
-          <ResortSidebar
-            rows={filteredRows}
-            rentalShops={rentalShops}
-            query={query}
-            selectedId={selected?.resort.id}
-            onQueryChange={setQuery}
-            onSelect={(id) => {
-              setSelectedId(id);
-              selectNearby(null, false);
-              if (window.matchMedia("(max-width: 1023px)").matches) {
-                window.requestAnimationFrame(() => mapSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
-              }
-            }}
-          />
-        )}
+    <section className="grid min-h-[calc(100svh-4rem)] bg-background lg:min-h-[calc(100vh-4rem)] lg:grid-cols-[380px_1fr]">
+      <aside className="z-20 hidden min-w-0 w-full flex-col border-b bg-card shadow-xl lg:sticky lg:top-16 lg:flex lg:max-h-[calc(100vh-4rem)] lg:border-b-0 lg:border-r">
+        {sidebar}
       </aside>
 
-      <div ref={mapSectionRef} className="relative order-2 min-w-0 w-full scroll-mt-16 lg:min-h-[calc(100vh-4rem)]">
-        <div data-testid="ski-map-viewport" className="relative h-[460px] w-full sm:h-[540px] lg:absolute lg:inset-0 lg:h-auto">
+      <h1 className="sr-only lg:hidden">국내 스키장</h1>
+
+      <div ref={mapSectionRef} className="relative min-w-0 w-full scroll-mt-16 lg:min-h-[calc(100vh-4rem)]">
+        <div data-testid="ski-map-viewport" className="relative h-[calc(100svh-4rem)] w-full lg:absolute lg:inset-0 lg:h-auto">
           {kakaoKey ? (
             <div ref={mapRef} className="absolute inset-0 bg-muted" />
           ) : (
@@ -257,8 +259,8 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
         </div>
 
         {selected ? (
-          <div data-testid="ski-map-selection" className="relative z-20 mx-3 -mt-10 mb-4 lg:absolute lg:bottom-4 lg:left-auto lg:right-4 lg:mx-0 lg:mb-0 lg:mt-0 lg:w-[390px]">
-            <div className="rounded-2xl border bg-card p-3 shadow-2xl shadow-black/25 sm:p-4">
+          <div data-testid="ski-map-selection" className="absolute inset-x-3 bottom-[5.5rem] z-20 lg:bottom-4 lg:left-auto lg:right-4 lg:inset-x-auto lg:w-[390px]">
+            <div className="max-h-[50svh] overflow-y-auto rounded-2xl border bg-card p-3 shadow-2xl shadow-black/25 sm:p-4">
               {selectedNearby && showNearby ? (
                 <NearbySelectedCard item={selectedNearby} />
               ) : (
@@ -267,6 +269,26 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
             </div>
           </div>
         ) : null}
+      </div>
+
+      <div className="lg:hidden">
+        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+          <DrawerTrigger asChild>
+            <button
+              type="button"
+              style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
+              className="fixed left-1/2 z-40 flex h-12 -translate-x-1/2 items-center gap-2 rounded-full border border-primary/20 bg-primary px-5 text-sm font-black text-primary-foreground shadow-[0_12px_32px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <List aria-hidden="true" className="h-4 w-4" />
+              {showNearby && selected ? "주변 렌탈·숙박 목록" : "스키장 선택"}
+            </button>
+          </DrawerTrigger>
+          <DrawerContent className="px-0 pb-[calc(env(safe-area-inset-bottom)+0.5rem)]">
+            <DrawerTitle className="sr-only">{showNearby ? "주변 렌탈·숙박 목록" : "스키장 선택"}</DrawerTitle>
+            <DrawerDescription className="sr-only">지도에서 볼 스키장이나 주변 시설을 고르세요.</DrawerDescription>
+            <div className="flex flex-col">{sidebar}</div>
+          </DrawerContent>
+        </Drawer>
       </div>
     </section>
   );

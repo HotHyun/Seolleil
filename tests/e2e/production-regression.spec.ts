@@ -31,8 +31,8 @@ test.describe("production regression", () => {
     await expect(map).toBeVisible();
     await expect(selection).toBeVisible();
     const [mapBox, selectionBox] = await Promise.all([map.boundingBox(), selection.boundingBox()]);
-    expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(460);
-    expect(Math.max(0, (mapBox?.y ?? 0) + (mapBox?.height ?? 0) - (selectionBox?.y ?? 0))).toBeLessThanOrEqual(42);
+    expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(600);
+    expect(selectionBox?.y ?? 0).toBeGreaterThanOrEqual(mapBox?.y ?? 0);
     await expect(selection.getByText(/렌탈 후보/)).toBeVisible();
     await expect(selection.getByText(/숙박 후보/)).toBeVisible();
     await expect(selection.getByText(/^초보\s*\d+$/)).toHaveCount(0);
@@ -40,6 +40,7 @@ test.describe("production regression", () => {
     const fallback = page.getByRole("heading", { name: "실제 지도 연결을 준비하고 있어요" });
     if (await fallback.count()) await expect(page.getByRole("link", { name: /카카오맵에서 정확히 보기/ })).toBeVisible();
     await selection.getByRole("button", { name: "주변 보기" }).click();
+    await page.getByRole("button", { name: "주변 렌탈·숙박 목록" }).click();
     await expect(page.getByRole("button", { name: "전체", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "픽업", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();

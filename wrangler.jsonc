@@ -24,5 +24,7 @@
     "FIREBASE_TRIP_TEAMS_COLLECTION": "trip_teams",
     "SENTRY_ENVIRONMENT": "production",
     "NEXT_PUBLIC_SENTRY_ENVIRONMENT": "production",
+    "NEXT_PUBLIC_UMAMI_WEBSITE_ID": "2c429146-5854-4245-b6d5-88aa9e7d32c5",
+    "NEXT_PUBLIC_UMAMI_SCRIPT_URL": "https://umami.hothyun.com/script.js"
   },
 }

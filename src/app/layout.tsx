@@ -47,7 +47,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
           {umamiId && umamiScript ? (
-            <Script defer src={umamiScript} data-website-id={umamiId} strategy="afterInteractive" />
+            <>
+              <script
+                dangerouslySetInnerHTML={{
+                  __html:
+                    "window.umamiBeforeSend=function(t,p){try{var m=function(u){if(!u)return u;var s=String(u).split('?')[0].split('#')[0];return s.replace(/^(https?:\\/\\/[^/]+)?\\/(share|trips)\\/[^/]+/,'$1/$2/[REDACTED]').replace(/^(https?:\\/\\/[^/]+)?\\/(verify-email|reset-password|invite\\/accept|auth\\/action).*/,'$1/$2')};p.url=m(p.url);p.referrer=m(p.referrer)}catch(e){}return p};"
+                }}
+              />
+              <Script
+                defer
+                src={umamiScript}
+                data-website-id={umamiId}
+                data-before-send="umamiBeforeSend"
+                strategy="afterInteractive"
+              />
+            </>
           ) : null}
           <a href="#main-content" className="skip-link">본문으로 바로가기</a>
           <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur-xl">

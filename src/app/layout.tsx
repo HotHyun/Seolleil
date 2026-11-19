@@ -8,6 +8,7 @@ import { AuthNav } from "@/components/auth/auth-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { FirebaseSessionProvider } from "@/components/auth/firebase-session-sync";
 import { Toaster, ToastFromUrl } from "@/components/ui/sonner";
+import { ogImagePath, siteDescription, siteName, siteTitle, siteUrl } from "@/lib/seo";
 import "@/app/globals.css";
 
 const pretendard = localFont({
@@ -18,19 +19,22 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://seolleil.com"),
-  title: "설레일",
-  description: "국내 스키장 추천과 스키 트립 준비 체크리스트",
-  robots: {
-    index: false,
-    follow: false,
-    nocache: true,
-    googleBot: {
-      index: false,
-      follow: false,
-      noimageindex: true
-    }
-  }
+  metadataBase: new URL(siteUrl),
+  title: siteTitle,
+  description: siteDescription,
+  applicationName: siteName,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName,
+    url: "/",
+    title: siteTitle,
+    description: siteDescription,
+    images: [{ url: ogImagePath, width: 1200, height: 630, alt: "설레일 - 국내 스키장 추천과 스키 트립 준비" }]
+  },
+  twitter: { card: "summary_large_image", title: siteTitle, description: siteDescription, images: [ogImagePath] },
+  robots: { index: true, follow: true }
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

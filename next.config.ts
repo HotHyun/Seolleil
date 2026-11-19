@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { privatePathPrefixes } from "./src/lib/seo-paths";
 import { baseSecurityHeaders, buildContentSecurityPolicy, mapPageSources, strictPageSource } from "./src/lib/security-headers";
 
 const nextConfig: NextConfig = {
@@ -15,16 +16,11 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      {
-        source: "/:path*",
-        headers: [
-          {
-            key: "X-Robots-Tag",
-            value: "noindex, nofollow, noarchive, nosnippet, noimageindex"
-          },
-          ...baseSecurityHeaders
-        ]
-      },
+      { source: "/:path*", headers: baseSecurityHeaders },
+      ...privatePathPrefixes.flatMap((prefix) => [prefix, `${prefix}/:path*`]).map((source) => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow, noarchive, nosnippet, noimageindex" }]
+      })),
       { source: strictPageSource, headers: [{ key: "Content-Security-Policy", value: buildContentSecurityPolicy({ allowEval: false }) }] },
       ...mapPageSources.map((source) => ({ source, headers: [{ key: "Content-Security-Policy", value: buildContentSecurityPolicy({ allowEval: true }) }] }))
     ];

@@ -4,7 +4,8 @@ import { legal } from "@/lib/legal";
 
 export const metadata: Metadata = {
   title: "이용약관 | 설레일",
-  description: "설레일 서비스 이용 조건, 가격 정보의 성격, 이용자와 운영자의 권리·책임을 안내합니다."
+  description: "설레일 서비스 이용 조건, 가격 정보의 성격, 이용자와 운영자의 권리·책임을 안내합니다.",
+  alternates: { canonical: "/terms" }
 };
 
 export default function TermsPage() {

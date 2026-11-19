@@ -14,6 +14,7 @@ import { priceRules, rentalPriceRules } from "@/data/prices";
 import { getResortStory } from "@/data/resort-content";
 import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { getRentalShopsForResort, getResort, resorts } from "@/data/resorts";
+import { absoluteUrl, jsonLd, ogImagePath } from "@/lib/seo";
 import { formatCurrency } from "@/lib/utils";
 
 type PageProps = { params: Promise<{ id: string }> };
@@ -23,7 +24,18 @@ export const dynamicParams = false;
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const resort = getResort((await params).id);
-  return { title: resort ? `${resort.name} | 설레일` : "스키장 상세 | 설레일" };
+  if (!resort) return { title: "스키장 상세 | 설레일" };
+  const story = getResortStory(resort);
+  const title = `${resort.name} 가격·렌탈·셔틀 정보와 트립 준비 | 설레일`;
+  const description = `${resort.name}(${resort.region}) ${story.summary} 리프트권·렌탈 시즌 가격, 셔틀, 주변 렌탈샵과 숙박 후보를 한곳에서 확인하세요.`;
+  const path = `/resorts/${resort.id}`;
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { type: "website", locale: "ko_KR", siteName: "설레일", url: path, title, description, images: [{ url: ogImagePath, width: 1200, height: 630, alt: `${resort.name} - 설레일` }] },
+    twitter: { card: "summary_large_image", title, description, images: [ogImagePath] }
+  };
 }
 
 export default async function ResortDetailPage({ params }: PageProps) {
@@ -36,7 +48,20 @@ export default async function ResortDetailPage({ params }: PageProps) {
   const shuttleRoutes = getSkiShuttleRoutes(resort.id);
   const shuttleCoverage = getSkiShuttleCoverage(resort, shuttleRoutes);
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "SkiResort", "@id": `${absoluteUrl(`/resorts/${resort.id}`)}#resort`, name: resort.name, description: story.summary, url: resort.officialUrl, address: { "@type": "PostalAddress", addressCountry: "KR", streetAddress: resort.address, addressRegion: resort.region }, sameAs: [resort.mapLinks.kakao, resort.mapLinks.naver].filter(Boolean) },
+      { "@type": "BreadcrumbList", itemListElement: [
+        { "@type": "ListItem", position: 1, name: "설레일", item: absoluteUrl("/") },
+        { "@type": "ListItem", position: 2, name: "국내 스키장", item: absoluteUrl("/resorts") },
+        { "@type": "ListItem", position: 3, name: resort.name, item: absoluteUrl(`/resorts/${resort.id}`) }
+      ] }
+    ]
+  };
+
   return <main>
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
     <AnalyticsTrack eventName="resort_detail_view" eventData={{ resortId: resort.id }} />
     <section className="relative overflow-hidden border-b bg-[radial-gradient(circle_at_82%_18%,hsl(var(--primary)/0.24),transparent_28rem),linear-gradient(145deg,hsl(var(--background)),hsl(var(--muted)))]">
       <div className="page-shell relative py-8 sm:py-14 lg:py-20">

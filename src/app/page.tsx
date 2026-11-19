@@ -5,6 +5,7 @@ import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
 import { seasonResearchRecords } from "@/data/season-research";
 import { rentalShops, resorts } from "@/data/resorts";
 import { getRecommendations } from "@/lib/recommendation";
+import { absoluteUrl, jsonLd, siteDescription } from "@/lib/seo";
 import { formatCurrency, formatMinutes } from "@/lib/utils";
 
 const latestCheckedAt = seasonResearchRecords.reduce((latest, record) => (record.lastCheckedAt > latest ? record.lastCheckedAt : latest), "");
@@ -69,8 +70,17 @@ export default function HomePage() {
   const sample = buildSample();
   const checkedDate = latestCheckedAt ? latestCheckedAt.replaceAll("-", ".") : "";
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      { "@type": "WebSite", "@id": `${absoluteUrl("/")}#website`, name: "설레일", alternateName: "Seolleil", url: absoluteUrl("/"), inLanguage: "ko-KR", description: siteDescription },
+      { "@type": "Organization", "@id": `${absoluteUrl("/")}#organization`, name: "설레일", url: absoluteUrl("/"), logo: absoluteUrl("/icon.svg") }
+    ]
+  };
+
   return (
     <main id="main-content" className="overflow-hidden bg-background" tabIndex={-1}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
       <CinematicHero />
 
       <section aria-label="수록 데이터" className="border-b bg-card">

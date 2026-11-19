@@ -364,7 +364,7 @@ export const resorts: SkiResort[] = [
     transportScore: 46,
     rentalConvenienceScore: 70,
     tags: ["남부권", "부산근교"],
-    operationStatus: "operating",
+    operationStatus: "unknown",
     lastCheckedAt: checkedAt
   }
 ];

@@ -42,6 +42,7 @@ export default async function ResortDetailPage({ params }: PageProps) {
         <Link href="/resorts" className="inline-flex min-h-11 items-center gap-2 text-sm font-bold text-muted-foreground transition hover:text-foreground"><ArrowLeft className="h-4 w-4" /> 스키장 지도로 돌아가기</Link>
         <div className="mt-8 max-w-4xl">
           <div className="flex flex-wrap gap-2"><StatusBadge tone={resort.operationStatus === "operating" ? "good" : "warn"}>{statusLabel(resort.operationStatus)}</StatusBadge>{resort.nightSkiAvailable ? <StatusBadge>야간 운영</StatusBadge> : null}{resort.tags.map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}</div>
+          {resort.operationStatus !== "operating" ? <p role="note" className="mt-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm font-semibold leading-6 text-amber-900 dark:text-amber-100">{operationNotice(resort.operationStatus)}</p> : null}
           <p className="mt-6 text-sm font-black tracking-[0.16em] text-primary">{resort.region} · SKI GUIDE</p>
           <h1 className="mt-3 text-4xl font-black tracking-[-0.04em] sm:text-6xl">{story.headline}</h1>
           <p className="mt-5 max-w-2xl text-base font-medium leading-7 text-muted-foreground sm:text-lg">{story.summary}</p>
@@ -77,4 +78,10 @@ export default async function ResortDetailPage({ params }: PageProps) {
 function StoryCard({ icon, title, description, action }: { icon: React.ReactNode; title: string; description: string; action: React.ReactNode }) { return <Card><CardContent className="p-5 sm:p-6"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/12 text-primary [&_svg]:h-5 [&_svg]:w-5">{icon}</span><h2 className="mt-5 text-xl font-black">{title}</h2><p className="mt-3 text-sm leading-6 text-muted-foreground">{description}</p><div className="mt-5">{action}</div></CardContent></Card>; }
 function ExternalTextLink({ href, label, resortId, type }: { href: string; label: string; resortId: string; type: string }) { return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="inline-flex min-h-11 items-center gap-1.5 text-sm font-bold text-primary">{label} <ExternalLink className="h-3.5 w-3.5" /></AnalyticsLink>; }
 function ExternalButton({ href, label, resortId, type, className }: { href?: string; label: string; resortId: string; type: string; className?: string }) { if (!href) return null; return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="block"><Button variant="secondary" className={`w-full justify-between ${className ?? ""}`}>{label}<ExternalLink className="h-4 w-4" /></Button></AnalyticsLink>; }
+function operationNotice(status: string) {
+  if (status === "unknown") return "26/27 시즌 운영 공지를 아직 확인하지 못해 추천에서는 제외했어요. 아래 가격은 25/26 참고 데이터이며, 예약 전 공식 사이트에서 운영 여부를 꼭 확인해 주세요.";
+  if (status === "season_pending") return "이번 시즌 오픈 전이에요. 오픈 일정과 가격은 공식 사이트에서 확인해 주세요.";
+  return "현재 운영하지 않는 스키장이에요. 공식 사이트에서 운영 여부를 확인해 주세요.";
+}
+
 function statusLabel(status: string) { return ({ operating: "운영", season_pending: "오픈 예정", temporarily_closed: "임시 휴장", closed: "폐장", unknown: "확인 필요" }[status] ?? status); }

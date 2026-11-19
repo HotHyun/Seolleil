@@ -7,7 +7,7 @@ import type { SkiShuttleRoute } from "@/lib/types";
 
 export function ResortShuttleCoverage({ resortName, routes, coverage }: { resortName: string; routes: SkiShuttleRoute[]; coverage: SkiShuttleCoverage }) {
   return <Card data-testid="shuttle-coverage">
-    <CardHeader><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-black tracking-[0.14em] text-primary">SKI SHUTTLE · {coverage.season}</p><CardTitle className="mt-2">차 없이 {resortName} 가는 법</CardTitle><CoverageLegend coverage={coverage} /></div><BusFront className="h-6 w-6 shrink-0 text-primary" /></div></CardHeader>
+    <CardHeader><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-black tracking-[0.14em] text-primary">SKI SHUTTLE · {coverage.season}</p><CardTitle className="mt-2">차 없이 {resortName} 가는 법</CardTitle><CoverageLegend coverage={coverage} />{routes.length > 0 ? <p className="mt-3 text-xs leading-5 text-muted-foreground">26/27 셔틀 운행 시간표와 요금은 운영사가 공지하면 반영합니다. 아래는 {coverage.season} 기준이며, 26/27 날짜 비용에는 참고가로 합산됩니다.</p> : null}</div><BusFront className="h-6 w-6 shrink-0 text-primary" /></div></CardHeader>
     <CardContent>{routes.length > 0 ? <ShuttleRouteExplorer routes={routes} destinationName={resortName} /> : <NoAffiliateShuttleNotice coverage={coverage} />}</CardContent>
   </Card>;
 }

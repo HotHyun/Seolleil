@@ -15,7 +15,8 @@ import type {
 } from "@/lib/types";
 import { optionAppliesToDay, rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
 import { normalizeTransportType } from "@/lib/transport";
-import { canUseAsReference, previousSeasonDate, ruleForDate, toReferenceRule } from "@/lib/season-fallback";
+import { CURRENT_SEASON, CURRENT_SHUTTLE_SEASON } from "@/lib/constants";
+import { canUseAsReference, isUpcomingSeasonDate, previousSeasonDate, ruleForDate, toReferenceRule } from "@/lib/season-fallback";
 
 function appendToIndex<T>(index: Map<string, T[]>, key: string, value: T) {
   const values = index.get(key);
@@ -395,7 +396,13 @@ export function estimateTripCost(
     });
   }
 
-  items.push(skiPlan?.transportLegs.length ? estimateTransportPlanCost(resort, input, skiPlan) : estimateTransportCost(resort, input, shuttleRoute));
+  items.push(markShuttleReference(
+    skiPlan?.transportLegs.length ? estimateTransportPlanCost(resort, input, skiPlan) : estimateTransportCost(resort, input, shuttleRoute),
+    resort.id,
+    input,
+    shuttleRoute,
+    skiPlan
+  ));
 
   const min = items.reduce((sum, item) => sum + (item.min ?? item.representative ?? 0), 0);
   const max = items.reduce((sum, item) => sum + (item.max ?? item.representative ?? 0), 0);
@@ -407,6 +414,23 @@ export function estimateTripCost(
     representative,
     confidence: combineConfidence(items),
     items
+  };
+}
+
+// 26/27 방문일에 25/26 셔틀 노선·요금을 쓰면 확정 요금이 아니라 참고가로 표시한다.
+function markShuttleReference(item: CostItem, resortId: string, input: TripInput, shuttleRoute: SkiShuttleRoute | undefined, skiPlan: TripSkiPlan | undefined): CostItem {
+  if (item.confidence !== "confirmed") return item;
+  const usedRoutes = skiPlan?.transportLegs.length
+    ? skiPlan.transportLegs.map(leg => ({ date: leg.date, route: leg.shuttleRouteId ? getSkiShuttleRoutes(resortId).find(route => route.id === leg.shuttleRouteId) : undefined }))
+    : [{ date: input.visitDate, route: shuttleRoute }];
+  const usesReference = usedRoutes.some(({ date, route }) => route?.season === CURRENT_SHUTTLE_SEASON && isUpcomingSeasonDate(date));
+  if (!usesReference) return item;
+  return {
+    ...item,
+    confidence: "estimated",
+    referenceSeason: CURRENT_SEASON,
+    label: `${item.label} · 25/26 참고가`,
+    note: `26/27 셔틀 운행 시간표·요금이 아직 공지되지 않아 25/26 요금을 참고로 사용합니다.${item.note ? ` ${item.note}` : ""}`
   };
 }
 

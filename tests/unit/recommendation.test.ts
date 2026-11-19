@@ -1,8 +1,14 @@
 import { describe, expect, it } from "vitest";
+import { resorts } from "@/data/resorts";
 import { getCategoryRecommendations, getRecommendations } from "@/lib/recommendation";
 import { tripInput } from "../fixtures/trip-input";
 
 describe("recommendation", () => {
+  it("keeps a resort without a confirmed 26/27 operation notice out of recommendations", () => {
+    expect(resorts.find((resort) => resort.id === "edenvalley")?.operationStatus).toBe("unknown");
+    expect(getRecommendations(tripInput()).some((item) => item.resort.id === "edenvalley")).toBe(false);
+  });
+
   it("returns operating resorts with explanations and cost", () => {
     const recommendations = getRecommendations(tripInput());
 

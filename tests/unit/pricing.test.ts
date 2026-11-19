@@ -79,6 +79,22 @@ describe("pricing", () => {
     expect(resolveLiftPrice("konjiam", "4h", "2027-12-16")).toBeUndefined();
   });
 
+  it("labels 25/26 shuttle fares as reference prices on 26/27 dates", () => {
+    const found = resorts.flatMap(resort => getSkiShuttleRoutes(resort.id).map(route => ({ resort, route })))
+      .find(({ resort, route }) => {
+        const estimate = estimateTripCost(resort, tripInput({ visitDate: "2026-01-20", transportType: "public_transit" }), undefined, route);
+        return estimate.items.find(item => item.key === "transport")?.confidence === "confirmed";
+      });
+    expect(found).toBeDefined();
+    const { resort, route } = found!;
+    const current = estimateTripCost(resort, tripInput({ visitDate: "2026-01-20", transportType: "public_transit" }), undefined, route);
+    const upcoming = estimateTripCost(resort, tripInput({ visitDate: "2026-12-20", transportType: "public_transit" }), undefined, route);
+
+    expect(current.items.find(item => item.key === "transport")?.referenceSeason).toBeUndefined();
+    expect(upcoming.items.find(item => item.key === "transport")).toMatchObject({ confidence: "estimated", referenceSeason: "2025-2026" });
+    expect(upcoming.items.find(item => item.key === "transport")?.label).toContain("25/26 참고가");
+  });
+
   it("stops using reference prices for a resort once its 26/27 prices are published", () => {
     expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "yongpyong").every(rule => rule.upcomingFallback === false)).toBe(true);
     expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "high1").every(rule => rule.upcomingFallback === true)).toBe(true);

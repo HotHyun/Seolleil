@@ -17,6 +17,7 @@ import { estimateTripCost, getRentalOptionsForResort, resolveLiftPrice } from "@
 import { getRecommendations } from "@/lib/recommendation";
 import { optionAppliesToDay } from "@/lib/trip-ski-plan";
 import { departureLocations } from "@/data/departure-locations";
+import { defaultVisitDate, formatOpenDate, getNotYetOpenResorts } from "@/lib/season-open";
 import { normalizeTransportType } from "@/lib/transport";
 import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import type { CostEstimate, CostItem, Priority, RentalPriceRule, RentalShop, SkiResort, TimeSlot, TripDuration, TripInput } from "@/lib/types";
@@ -36,6 +37,8 @@ function RecommendationsContent() {
   const input = useMemo(() => parseParams(params), [params]);
   const recommendations = useMemo(() => getRecommendations(input), [input]);
   const usingDefaults = searchParams.size === 0;
+  const usingDefaultDate = !params.visitDate;
+  const notYetOpen = useMemo(() => getNotYetOpenResorts(input.visitDate), [input.visitDate]);
   const departureLabel = departureLocations.find((location) => location.id === input.departureLocation)?.label ?? "서울 강남";
   const { isAuthenticated } = useFirebaseSession();
 
@@ -52,9 +55,14 @@ function RecommendationsContent() {
           <p className="mt-2 text-sm leading-6 text-muted-foreground">
             기준 지역: {departureLabel} · 이동 시간과 자차 교통비는 대표 지점 기준의 대략적인 추정치입니다.
           </p>
-          {usingDefaults ? (
+          {usingDefaults || usingDefaultDate ? (
             <p className="mt-3 inline-flex rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-sm font-semibold" role="status">
-              아직 입력한 조건이 없어 기본 조건(서울 강남 출발·2명)으로 보여드려요. 날짜와 인원을 입력하면 내 조건에 맞게 다시 계산됩니다.
+              {usingDefaults ? "아직 입력한 조건이 없어 기본 조건(서울 강남 출발·2명)으로 보여드려요. " : "방문 날짜를 고르지 않아 "}가장 가까운 토요일({formatOpenDate(input.visitDate)}) 기준으로 계산했어요. 날짜와 인원을 입력하면 내 조건에 맞게 다시 계산됩니다.
+            </p>
+          ) : null}
+          {notYetOpen.length ? (
+            <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm font-semibold leading-6 text-amber-900 dark:text-amber-100" role="note">
+              선택한 날짜에는 아직 열지 않아 추천에서 뺀 스키장: {notYetOpen.map((item) => `${item.name} ${formatOpenDate(item.openDate)} ${item.status === "official" ? "개장" : "개장 예정"}`).join(", ")}. 개장일은 날씨에 따라 바뀔 수 있어요.
             </p>
           ) : null}
         </div>
@@ -456,7 +464,8 @@ function parseParams(params: Record<string, string | string[] | undefined>): Tri
     return Array.isArray(raw) ? raw[0] ?? fallback : raw ?? fallback;
   };
   return {
-    visitDate: value("visitDate"),
+    // 날짜를 비워 두면 가격 규칙을 찾을 수 없어 합계가 크게 낮아지므로 가장 가까운 토요일로 계산한다.
+    visitDate: value("visitDate") || defaultVisitDate(),
     endDate: value("endDate") || undefined,
     departureLocation: value("departureLocation", "seoul-gangnam"),
     peopleCount: Number(value("peopleCount", "2")),

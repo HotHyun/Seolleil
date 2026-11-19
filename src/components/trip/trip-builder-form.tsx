@@ -7,6 +7,7 @@ import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/date-picker";
+import { earliestSelectableDate, formatOpenDate, getSeasonOpening } from "@/lib/season-open";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { departureLocations } from "@/data/resorts";
@@ -195,8 +196,9 @@ export function TripBuilderForm({
           <div className="relative min-h-[460px]">
             <StepPanel active={step === 0}>
               <Field label="방문 날짜">
-                <DatePicker name="visitDate" required value={visitDate || draftValue("visitDate", "")} onValueChange={value => { setVisitDate(value); if (endDate && endDate <= value) setEndDate(""); }} ariaLabel="여행 방문 날짜" />
+                <DatePicker name="visitDate" required min={earliestSelectableDate(selectedResort?.id)} value={visitDate || draftValue("visitDate", "")} onValueChange={value => { setVisitDate(value); if (endDate && endDate <= value) setEndDate(""); }} ariaLabel="여행 방문 날짜" />
               </Field>
+              {selectedResort && getSeasonOpening(selectedResort.id) ? <p className="-mt-2 text-xs leading-5 text-muted-foreground" data-testid="open-date-hint">{selectedResort.name}은 {formatOpenDate(getSeasonOpening(selectedResort.id)!.openDate)}부터 {getSeasonOpening(selectedResort.id)!.status === "official" ? "운영해요" : "운영할 예정이에요(변경될 수 있어요)"}. 이전 날짜는 고를 수 없습니다.</p> : null}
               <Field label="이동 계산 기준 지역">
                 <div className="grid gap-1.5">
                   <SelectField

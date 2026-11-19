@@ -7,6 +7,7 @@ import type {
   SkiResort,
   TripInput
 } from "@/lib/types";
+import { isBeforeOpening } from "@/lib/season-open";
 import { normalizeTransportType } from "@/lib/transport";
 
 const priorityWeight = [3, 2, 1];
@@ -40,6 +41,8 @@ function priorityScore(resort: SkiResort, priority: Priority, costRep: number, a
 function hardFilter(resort: SkiResort, input: TripInput) {
   const transportType = normalizeTransportType(input.transportType);
   if (resort.operationStatus !== "operating") return false;
+  // 방문 날짜가 개장일보다 이르면 이용할 수 없으므로 추천에서 뺀다.
+  if (isBeforeOpening(resort.id, input.visitDate)) return false;
   if (input.priorities.includes("night") && !resort.nightSkiAvailable) return false;
   if (transportType === "public_transit" && resort.transportScore < 45) {
     return false;

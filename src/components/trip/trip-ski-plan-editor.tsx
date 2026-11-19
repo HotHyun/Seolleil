@@ -18,10 +18,12 @@ import {
   type TripSkiPlan
 } from "@/lib/trip-ski-plan";
 import type { TimeSlot } from "@/lib/types";
+import { getSeasonOpening } from "@/lib/season-open";
 import { cn } from "@/lib/utils";
 
 type ScheduleTrip = {
   id: string;
+  resortId?: string;
   visitDate: Date;
   endDate: Date;
   skiPlan: TripSkiPlan;
@@ -69,7 +71,7 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
       <input type="hidden" name="skiDays" value="[]" />
       <div className="grid gap-3 sm:grid-cols-2">
         <Field label="도착 날짜">
-          <DatePicker name="startDate" required value={startDate} onValueChange={value => { setStartDate(value); if (endDate < value) setEndDate(value); }} ariaLabel="여행 도착 날짜" />
+          <DatePicker name="startDate" required min={getSeasonOpening(trip.resortId)?.openDate} value={startDate} onValueChange={value => { setStartDate(value); if (endDate < value) setEndDate(value); }} ariaLabel="여행 도착 날짜" />
         </Field>
         <Field label="귀가 날짜">
           <DatePicker name="endDate" required min={startDate} value={endDate} onValueChange={setEndDate} ariaLabel="여행 귀가 날짜" />

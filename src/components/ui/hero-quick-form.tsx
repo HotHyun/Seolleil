@@ -4,6 +4,7 @@ import { useState } from "react";
 import { DatePicker } from "@/components/ui/date-picker";
 import { SelectField } from "@/components/ui/select-field";
 import { departureLocations } from "@/data/resorts";
+import { todayKst } from "@/lib/season-open";
 
 const hiddenDefaults: Array<[string, string]> = [
   ["peopleCount", "2"], ["tripDuration", "same_day"], ["transportType", "car"], ["skillLevel", "beginner"],
@@ -21,7 +22,7 @@ export function HeroQuickForm() {
     <form action="/recommendations" method="get" className="hero-reveal hero-delay-4 mt-6 grid max-w-xl gap-2 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-xl sm:grid-cols-[1fr_1fr_auto] sm:items-end">
       <div className="grid gap-1">
         <span className="text-xs font-bold text-white/75">방문 날짜</span>
-        <DatePicker name="visitDate" value={visitDate} onValueChange={setVisitDate} ariaLabel="방문 날짜" className={`${fieldClass} ${visitDate ? "text-white" : "text-white/60"}`} />
+        <DatePicker name="visitDate" min={todayKst()} value={visitDate} onValueChange={setVisitDate} ariaLabel="방문 날짜" className={`${fieldClass} ${visitDate ? "text-white" : "text-white/60"}`} />
       </div>
       <div className="grid gap-1">
         <span className="text-xs font-bold text-white/75">출발지</span>

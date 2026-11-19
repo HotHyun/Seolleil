@@ -1,5 +1,7 @@
 "use client";
 
+import { AffiliateNotice } from "@/components/affiliate-notice";
+import { AnalyticsLink } from "@/components/analytics-link";
 import { NearbyPlaceHelp } from "@/components/nearby-place-help";
 import { getResort } from "@/data/resorts";
 import { useState } from "react";
@@ -70,6 +72,7 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
     <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="날짜별 숙박 계획">
       {plan.lodgingNights.map((night, index) => <button key={night.date} type="button" role="tab" aria-selected={activeNight.date === night.date} onClick={() => chooseNight(night.date)} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeNight.date === night.date ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-black">{formatNightDate(night.date)} 숙박</span><span className={`mt-0.5 block text-[11px] ${activeNight.date === night.date ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{index + 1}박 · {night.lodgingName ?? "미정"}</span></button>)}
     </div>
+    <AffiliateNotice />
     {salesSnapshot ? <section aria-labelledby="official-lodging-sales-title" className="space-y-3 rounded-2xl border bg-muted/15 p-4 sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
@@ -82,7 +85,7 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
         {salesSnapshot.offers.map((offer) => <li key={offer.title} className="py-3 first:pt-3 last:pb-3">
           <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between"><div><p className="text-sm font-black">{offer.title}</p><p className="mt-1 text-sm font-black tabular-nums text-primary">{offer.priceSummary}</p></div>{offer.period ? <span className="text-xs text-muted-foreground sm:text-right">{offer.period}</span> : null}</div>
           {offer.note ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{offer.note}</p> : null}
-          <a href={offer.url} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-9 items-center gap-1 text-xs font-black text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">공식 상품 보기<ExternalLink className="h-3.5 w-3.5" /></a>
+          <AnalyticsLink href={offer.url} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "lodging_offer" }} className="mt-2 inline-flex min-h-9 items-center gap-1 text-xs font-black text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">공식 상품 보기<ExternalLink className="h-3.5 w-3.5" /></AnalyticsLink>
         </li>)}
       </ul> : <p className="rounded-xl border border-dashed px-3 py-2 text-xs leading-5 text-muted-foreground">공개된 26/27 겨울 객실 요금은 확인되지 않았습니다. 예약 화면에서 숙박일과 객실을 선택해 확인하세요.</p>}
       <p className="text-[11px] leading-5 text-muted-foreground">공식 페이지 확인일 {salesSnapshot.checkedAt}. {salesSnapshot.winterPriceStatus === "published" ? "시즌패스 등 상품 조건이 있는 요금입니다." : salesSnapshot.winterPriceStatus === "partial" ? "표시한 가격은 기간·상품 조건이 붙은 참고값이며, 겨울 전체 요금이 아닐 수 있습니다." : "겨울 요금은 날짜별 공식 예약 화면에서 확인하세요."} 예약 가능 객실과 최종 금액은 달라질 수 있습니다.</p>
@@ -134,5 +137,5 @@ function formatNightDate(date: string) {
 }
 
 function ExternalButton({ href, children }: { href: string; children: React.ReactNode }) {
-  return <a href={href} target="_blank" rel="noreferrer"><Button type="button" variant="secondary" className="h-11 px-4">{children}<ExternalLink className="h-3.5 w-3.5" /></Button></a>;
+  return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "lodging_reservation" }}><Button type="button" variant="secondary" className="h-11 px-4">{children}<ExternalLink className="h-3.5 w-3.5" /></Button></AnalyticsLink>;
 }

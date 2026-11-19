@@ -1153,7 +1153,10 @@ export async function recordExternalLinkClickAction(formData: FormData) {
       href: sanitizeExternalHref(formData.get("href")),
       type: sanitizeLinkEventText(formData.get("type"), 40),
       resortId,
-      sourceName: sanitizeLinkEventText(formData.get("sourceName"), 80)
+      sourceName: sanitizeLinkEventText(formData.get("sourceName"), 80),
+      provider: sanitizeLinkEventText(formData.get("provider"), 24).replace(/[^a-z0-9_-]/gi, ""),
+      category: sanitizeLinkEventText(formData.get("category"), 16).replace(/[^a-z_]/gi, ""),
+      affiliate: formData.get("affiliate") === "true"
     }
   });
 }

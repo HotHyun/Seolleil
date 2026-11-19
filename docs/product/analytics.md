@@ -76,3 +76,8 @@ type AnalyticsEvent = {
 가장 중요한 지표는 트립을 만든 사용자가 체크리스트 상태를 실제로 업데이트하는지다. `trip_created` 이후 같은 `tripId`에서 `task_status_changed`가 발생했는지로 확인한다.
 
 보조 지표는 트립 생성 완료율, 추천 결과에서 스키장 선택률, 체크리스트 항목 완료율, 외부 예약 링크 클릭률, 공유 링크 복사율, 공유 페이지 조회율과 재방문율이다.
+
+## 제휴 클릭 속성
+
+- `external_link_click` 이벤트(Umami·Firestore)에 `provider`(여기어때 `yeogi`, NOL `nol` 등), `category`(`lodging|lift|gear` 등), `affiliate`(제휴 파라미터 적용 여부)가 추가된다. 저장 href는 기존대로 출처와 경로만 남기므로 제휴 ID는 기록되지 않는다.
+- 제휴사 리포트의 클릭·전환 수와 이 이벤트를 `provider`별로 비교해 전환율을 본다.

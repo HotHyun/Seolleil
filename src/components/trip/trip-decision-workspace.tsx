@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { BedDouble, BusFront, Check, Clock3, ExternalLink, ListChecks, Shirt, Sparkles } from "lucide-react";
 import { updateTripDecisionSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
+import { AffiliateNotice } from "@/components/affiliate-notice";
+import { AnalyticsLink } from "@/components/analytics-link";
 import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -97,6 +99,7 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
     <DecisionSection id="schedule" title="스키 일정" description="숙박 기간과 실제 스키를 탈 날짜는 다를 수 있어요. 날짜별 이용 시간을 먼저 정하세요." icon={<Clock3 />}>
       <TripSkiPlanEditor trip={trip} editToken={editToken} shareToken={shareToken} canEdit={canEdit} />
     </DecisionSection>
+    <AffiliateNotice />
     <DecisionSection id="rental" title="렌탈샵과 상품" description="위치, 제공 품목, 시즌 가격과 원문을 한 화면에서 비교하세요." icon={<Shirt />}>
       <div className="mb-4">
         <p className="mb-2 text-xs font-black uppercase tracking-wider text-muted-foreground">설정할 스키 날짜</p>
@@ -142,5 +145,5 @@ function RentalShopChoices({ shop, options, trip, access, save, canEdit }: { sho
 function AccessInput({ access }: { access: { name: string; value: string } }) { return <input type="hidden" name={access.name} value={access.value} />; }
 function Tag({ children }: { children: React.ReactNode }) { return <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">{children}</span>; }
 function SourceLinks({ mapUrl, siteUrl }: { mapUrl?: string; siteUrl?: string }) { return <div className="flex gap-2">{mapUrl ? <ExternalButton href={mapUrl}>지도</ExternalButton> : null}{siteUrl ? <ExternalButton href={siteUrl}>가격·예약 원문</ExternalButton> : null}</div>; }
-function ExternalButton({ href, children }: { href: string; children: React.ReactNode }) { return <a href={href} target="_blank" rel="noreferrer"><Button type="button" variant="secondary" className="h-11 px-4">{children} <ExternalLink className="h-3.5 w-3.5" /></Button></a>; }
+function ExternalButton({ href, children }: { href: string; children: React.ReactNode }) { return <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "decision_source" }}><Button type="button" variant="secondary" className="h-11 px-4">{children} <ExternalLink className="h-3.5 w-3.5" /></Button></AnalyticsLink>; }
 function DecisionSection({ id, title, description, icon, children }: { id: string; title: string; description: string; icon: React.ReactNode; children: React.ReactNode }) { return <section id={id} className="scroll-mt-28 rounded-2xl border bg-card p-4 shadow-sm sm:p-5"><div className="mb-4 flex items-start gap-3"><span className="rounded-xl bg-muted p-2.5 text-primary [&>svg]:h-5 [&>svg]:w-5">{icon}</span><div><h2 data-trip-workspace-anchor-title tabIndex={-1} className="text-lg font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{title}</h2><p className="mt-1 text-sm text-muted-foreground">{description}</p></div></div>{children}</section>; }

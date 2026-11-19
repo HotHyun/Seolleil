@@ -41,17 +41,22 @@ export function AnalyticsLink({
       data-affiliate={outbound?.affiliate ? "true" : undefined}
       onClick={(event) => {
         window.umami?.track(eventName, trackedData);
-        const data = new FormData();
-        data.set("eventName", eventName);
-        data.set("href", String(href ?? ""));
-        for (const [key, value] of Object.entries(trackedData ?? {})) {
-          if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
-            data.set(key, String(value));
+        // 서버가 받는 이벤트는 external_link_click뿐이다. 내부 이동 CTA에서 서버 액션을 보내면
+        // 페이지 이동과 겹쳐 요청이 취소되며 Safari에서 "Load failed" 미처리 오류가 난다.
+        if (eventName === "external_link_click") {
+          const data = new FormData();
+          data.set("eventName", eventName);
+          data.set("href", String(href ?? ""));
+          for (const [key, value] of Object.entries(trackedData ?? {})) {
+            if (typeof value === "string" || typeof value === "number" || typeof value === "boolean") {
+              data.set(key, String(value));
+            }
           }
+          React.startTransition(() => {
+            // 분석 기록 실패가 사용자 오류나 Sentry 노이즈가 되지 않게 삼킨다.
+            void recordExternalLinkClickAction(data).catch(() => undefined);
+          });
         }
-        React.startTransition(() => {
-          void recordExternalLinkClickAction(data);
-        });
         onClick?.(event);
       }}
     />

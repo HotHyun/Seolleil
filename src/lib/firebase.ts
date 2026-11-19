@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 
 type ServiceAccount = {
   project_id: string;
@@ -35,7 +36,6 @@ class FirebaseHttpError extends Error {
 
 let accessToken: string | undefined;
 let accessTokenExpiresAt = 0;
-let accessTokenRequest: Promise<string> | undefined;
 
 function requiredEnv(name: string) {
   const value = process.env[name];
@@ -131,11 +131,12 @@ async function requestAccessToken() {
 
 async function getAccessToken() {
   if (accessToken && Date.now() < accessTokenExpiresAt) return accessToken;
-  if (!accessTokenRequest) {
-    accessTokenRequest = requestAccessToken().finally(() => { accessTokenRequest = undefined; });
-  }
-  return accessTokenRequest;
+  // 진행 중인 요청을 모듈 전역으로 공유하면 Workers에서 이미 끝난 다른 요청의 Promise를 기다리다
+  // "promise was created by a request that has since ended" 오류가 난다. 같은 요청 안에서만 React cache로 합친다.
+  return requestScopedAccessToken();
 }
+
+const requestScopedAccessToken = cache(() => requestAccessToken());
 
 function documentsBase() {
   return `https://firestore.googleapis.com/v1/projects/${encodeURIComponent(getFirebaseProjectId())}/databases/(default)/documents`;

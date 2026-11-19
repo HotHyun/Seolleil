@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { User } from "firebase/auth";
 
 type FirebaseSessionContextValue = {
@@ -15,8 +15,24 @@ type FirebaseSessionContextValue = {
 
 const FirebaseSessionContext = createContext<FirebaseSessionContextValue | null>(null);
 
+// 로그인·인증 흐름이 있는 화면. 여기서는 SDK를 바로 불러온다.
+const AUTH_ROUTE_PREFIXES = ["/login", "/oauth", "/verify-email", "/reset-password", "/forgot-password", "/auth", "/invite"];
+
+// Firebase Auth는 로그인 정보를 IndexedDB(firebaseLocalStorageDb)에 저장한다. 그 DB가 없으면 로그인한 적 없는 방문자다.
+async function mayHavePersistedAuth() {
+  try {
+    if (typeof indexedDB === "undefined" || typeof indexedDB.databases !== "function") return true;
+    const databases = await indexedDB.databases();
+    return databases.some(database => database.name === "firebaseLocalStorageDb");
+  } catch {
+    return true;
+  }
+}
+
 export function FirebaseSessionProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const [authWanted, setAuthWanted] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const [sessionReady, setSessionReady] = useState(false);
@@ -59,6 +75,29 @@ export function FirebaseSessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    if (AUTH_ROUTE_PREFIXES.some(prefix => pathname === prefix || pathname.startsWith(`${prefix}/`))) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- 인증 화면에 들어오면 SDK 로딩을 켠다
+      setAuthWanted(true);
+    }
+  }, [pathname]);
+
+  useEffect(() => {
+    // 로그인한 적 없는 익명 방문자는 Firebase SDK(약 130KB+iframe)를 첫 화면에서 불러오지 않는다.
+    let cancelled = false;
+    void mayHavePersistedAuth().then(persisted => {
+      if (cancelled) return;
+      if (persisted) {
+        setAuthWanted(true);
+      } else {
+        setReady(true);
+        setSessionReady(true);
+      }
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!authWanted) return;
     let active = true;
     let generation = 0;
     let unsubscribe: (() => void) | undefined;
@@ -118,7 +157,7 @@ export function FirebaseSessionProvider({ children }: { children: ReactNode }) {
       active = false;
       unsubscribe?.();
     };
-  }, [router, syncSession]);
+  }, [authWanted, router, syncSession]);
 
   const value = useMemo(() => ({
     user,

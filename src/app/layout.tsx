@@ -15,6 +15,8 @@ import "@/app/globals.css";
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
   display: "swap",
+  // 글꼴(약 350KB)을 최우선으로 미리 받으면 느린 모바일에서 히어로 이미지·CSS와 대역폭을 다툰다. 텍스트는 swap으로 먼저 그린다.
+  preload: false,
   weight: "400 900",
   variable: "--font-pretendard"
 });

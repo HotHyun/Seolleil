@@ -6,19 +6,18 @@ import { TripResultPreviewCard } from "@/components/ui/trip-result-preview-card"
 export function CinematicHero() {
   return (
     <section className="landing-hero relative isolate min-h-[calc(100svh-4rem)] overflow-hidden bg-[#071225] text-white">
-      {/* 미리 WebP로 변환한 정적 파일: Workers에서 이미지 변환 없이 바로 서빙하고, 화면 폭에 맞는 크기만 받는다. */}
-      <picture>
-        <source media="(min-width: 768px)" srcSet="/images/ski-hero-2400.webp" type="image/webp" />
-        <img
-          src="/images/ski-hero-1080.webp"
-          alt="눈 덮인 산을 내려오는 스키어"
-          width={1080}
-          height={721}
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 h-full w-full object-cover object-[62%_center] opacity-80"
-        />
-      </picture>
+      {/* 미리 WebP로 변환한 정적 파일: Workers에서 이미지 변환 없이 바로 서빙하고, srcSet으로 화면 폭·DPR에 맞는 크기만 받는다. */}
+      <img
+        src="/images/ski-hero-1080.webp"
+        srcSet="/images/ski-hero-1080.webp 1080w, /images/ski-hero-2400.webp 2400w"
+        sizes="100vw"
+        alt="눈 덮인 산을 내려오는 스키어"
+        width={1080}
+        height={721}
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 h-full w-full object-cover object-[62%_center] opacity-80"
+      />
       <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(3,10,24,.9)_0%,rgba(3,10,24,.6)_45%,rgba(3,10,24,.88)_100%)] md:bg-[linear-gradient(90deg,rgba(3,10,24,.94)_0%,rgba(3,10,24,.72)_46%,rgba(3,10,24,.22)_100%)]" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,#071225_0%,transparent_28%,rgba(5,13,30,.08)_100%)]" />
       <div className="snow-drift snow-drift-one" aria-hidden="true" />

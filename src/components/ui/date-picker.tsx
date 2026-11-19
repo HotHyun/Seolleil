@@ -21,7 +21,8 @@ export function DatePicker({
   max,
   disabled,
   ariaLabel,
-  placeholder = "날짜 선택"
+  placeholder = "날짜 선택",
+  className
 }: {
   id?: string;
   name: string;
@@ -34,6 +35,7 @@ export function DatePicker({
   disabled?: boolean;
   ariaLabel?: string;
   placeholder?: string;
+  className?: string;
 }) {
   const [open, setOpen] = React.useState(false);
   const [internalValue, setInternalValue] = React.useState(defaultValue ?? "");
@@ -59,7 +61,7 @@ export function DatePicker({
           variant="secondary"
           disabled={disabled}
           aria-label={ariaLabel}
-          className={cn("min-h-11 w-full justify-start border-input bg-card px-3 text-left font-semibold", !date && "text-muted-foreground")}
+          className={cn("min-h-11 w-full justify-start border-input bg-card px-3 text-left font-semibold", !date && "text-muted-foreground", className)}
         >
           <CalendarIcon className="h-4 w-4" />
           {date ? format(date, "yyyy년 M월 d일", { locale: ko }) : placeholder}

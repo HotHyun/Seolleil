@@ -8,12 +8,12 @@ Firebase 프로젝트 `korean-ski`와 `asia-northeast3`(서울) Cloud Firestore�
 - 기본 Firestore 데이터베이스: Seoul (`asia-northeast3`), production mode.
 - Firebase Authentication 이메일/비밀번호 Provider.
 - Google 로그인 Provider: 활성화됨. 공개 프로젝트 이름은 `Korean Ski`이며, 사용자가 제공한 공개 지원 이메일을 저장했다.
-- Authentication의 승인된 도메인에 `ski.hothyun.com`을 등록했다. `localhost`도 로컬 개발용으로 포함되어 있다.
+- Authentication의 승인된 도메인에 `seolleil.com`을 등록했다. `localhost`도 로컬 개발용으로 포함되어 있다.
 - Firebase 웹 앱의 비공개가 아닌 client config는 `.env.example`과 `wrangler.jsonc`에 들어 있다. Firebase Web API key는 브라우저 앱용 식별 값이며 service account key와 다르다.
 
 ## Firebase Console에서 마무리할 설정
 
-1. 앱을 배포한 뒤 Authentication → Templates에서 이메일 action URL을 `https://ski.hothyun.com/auth/action`으로 지정한다. 앱에는 Firebase의 `verifyEmail`과 `resetPassword` 코드를 처리하는 공통 action 화면이 있다.
+1. 앱을 배포한 뒤 Authentication → Templates에서 이메일 action URL을 `https://seolleil.com/auth/action`으로 지정한다. 앱에는 Firebase의 `verifyEmail`과 `resetPassword` 코드를 처리하는 공통 action 화면이 있다.
 2. Firestore Rules에는 현재 `firestore.rules`와 같은 전체 브라우저 read/write 거부 규칙이 적용되어 있다. 규칙을 바꿀 때도 Worker service account만 서버에서 Firestore REST API를 사용하도록 유지한다.
 
 ## Worker service account key

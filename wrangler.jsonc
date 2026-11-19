@@ -10,7 +10,7 @@
     "binding": "ASSETS",
   },
   "vars": {
-    "NEXT_PUBLIC_SITE_URL": "https://ski.hothyun.com",
+    "NEXT_PUBLIC_SITE_URL": "https://seolleil.com",
     "NEXT_PUBLIC_FIREBASE_API_KEY": "AIzaSyAfL_G6wHT3KLLQszuYZnNp69fcr139syg",
     "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN": "korean-ski.firebaseapp.com",
     "NEXT_PUBLIC_FIREBASE_PROJECT_ID": "korean-ski",

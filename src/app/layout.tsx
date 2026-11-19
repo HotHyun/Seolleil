@@ -17,7 +17,7 @@ const pretendard = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://ski.hothyun.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://seolleil.com"),
   title: "설레일",
   description: "국내 스키장 추천과 스키 트립 준비 체크리스트",
   robots: {

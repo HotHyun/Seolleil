@@ -5,7 +5,7 @@
 - `pnpm test:unit`: pure recommendation, pricing, checklist, parsing, and error classification.
 - `pnpm test:integration`: multi-module behavior without a browser.
 - `pnpm test:e2e`: local browser suite; it builds and starts the standalone app on port 3211.
-- `pnpm test:e2e:production`: deployed regression against `https://ski.hothyun.com`.
+- `pnpm test:e2e:production`: deployed regression against `https://seolleil.com`.
 
 Routine code validation is:
 

@@ -6,7 +6,7 @@ on:
       base_url:
         description: Deployed URL to verify
         required: true
-        default: https://ski.hothyun.com
+        default: https://seolleil.com
         type: string
       allow_test_writes:
         description: Create and clean up an isolated anonymous test trip

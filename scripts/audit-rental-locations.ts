@@ -62,7 +62,7 @@ function scoreCandidate(shop: (typeof rentalShops)[number], place: KakaoPlace): 
 async function main() {
   const browser = await chromium.launch({ headless: true, args: ["--no-sandbox", "--disable-dev-shm-usage"] });
   const page = await browser.newPage();
-  await page.goto("https://ski.hothyun.com/resorts", { waitUntil: "networkidle", timeout: 90_000 });
+  await page.goto("https://seolleil.com/resorts", { waitUntil: "networkidle", timeout: 90_000 });
   await page.waitForFunction(() => Boolean(window.kakao?.maps.services?.Places), undefined, { timeout: 30_000 });
 
   const results: AuditResult[] = [];
@@ -96,7 +96,7 @@ async function main() {
   await browser.close();
   const report = {
     generatedAt: new Date().toISOString(),
-    source: "Kakao Maps JavaScript Places keyword search via ski.hothyun.com",
+    source: "Kakao Maps JavaScript Places keyword search via seolleil.com",
     counts: Object.fromEntries(["verified", "review", "uncertain", "unresolved"].map((key) => [key, results.filter((item) => item.confidence === key).length])),
     results
   };

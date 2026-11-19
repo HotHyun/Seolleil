@@ -55,7 +55,7 @@ pnpm cf:deploy
 
 - Add the narrowest useful unit, integration, or E2E test for meaningful changes.
 - Local E2E builds the standalone app; only run when explicitly needed.
-- Production regression: `pnpm test:e2e:production`. It targets `https://ski.hothyun.com`, creates one isolated anonymous trip, and deletes it in cleanup.
+- Production regression: `pnpm test:e2e:production`. It targets `https://seolleil.com`, creates one isolated anonymous trip, and deletes it in cleanup.
 - Deployment and verification are separate approvals. Never deploy unless the user explicitly says to deploy.
 - After an authorized deployment, only run production Playwright when the user asks to test/verify the deployment.
 - When requested, run the production regression suite, then targeted desktop/mobile checks for the changed areas. Inspect console errors, failed requests, overflow, themes, loading/error states, and critical interactions. Clean up generated test data and report evidence and gaps.

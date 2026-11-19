@@ -51,7 +51,7 @@
 
 ## 배포와 검증
 
-- production은 `https://ski.hothyun.com`이다.
+- production은 `https://seolleil.com`이다.
 - 코드 완료는 배포 승인이 아니다. 사용자 지시 뒤 `pnpm cf:deploy`한다.
 - 배포 완료는 실사용 테스트 승인도 아니다. 사용자가 요청하면 production Playwright와 변경 영역 집중 점검을 실행한다.
 - CI production regression은 수동 실행하며 테스트 트립을 격리 생성하고 반드시 정리한다.

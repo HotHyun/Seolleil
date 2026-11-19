@@ -31,7 +31,7 @@
 - 비밀번호는 앱 DB에 저장하지 않고 Firebase Authentication이 처리한다.
 - Firebase ID token 서명, audience, issuer, 만료, UID와 인증 시간을 서버에서 확인한다. 검증된 토큰만 Secure, HttpOnly, SameSite=Lax 쿠키에 동기화한다.
 - 이메일/비밀번호 계정은 `email_verified === true`가 되기 전 내 트립·초대·협업 권한을 갖지 않는다.
-- Firebase Auth 이메일 템플릿의 custom action URL은 앱을 배포한 뒤 `https://ski.hothyun.com/auth/action`으로 설정한다. 비밀번호 재설정과 이메일 인증의 OOB code는 이 경로에서 처리한다.
+- Firebase Auth 이메일 템플릿의 custom action URL은 앱을 배포한 뒤 `https://seolleil.com/auth/action`으로 설정한다. 비밀번호 재설정과 이메일 인증의 OOB code는 이 경로에서 처리한다.
 - 오류 문구는 계정 존재 여부를 과도하게 노출하지 않는다.
 
 ## Firestore 접근

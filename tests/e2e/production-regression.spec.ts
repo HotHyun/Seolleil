@@ -168,7 +168,7 @@ test.describe("production regression", () => {
     let editUrl: string | undefined;
     const serverErrors: string[] = [];
     page.on("response", (response) => {
-      if (response.url().startsWith("https://ski.hothyun.com") && response.status() >= 500) serverErrors.push(`${response.status()} ${response.url()}`);
+      if (response.url().startsWith("https://seolleil.com") && response.status() >= 500) serverErrors.push(`${response.status()} ${response.url()}`);
     });
     try {
       await page.goto(`${planQuery.replace("tripDuration=same_day", "tripDuration=overnight")}&endDate=2027-01-12`, { waitUntil: "networkidle" });

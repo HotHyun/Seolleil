@@ -144,12 +144,12 @@ export default function HomePage() {
               <div className="mt-6 grid gap-3 sm:grid-cols-2">
                 <div className="rounded-2xl border bg-background p-4">
                   <p className="flex items-center gap-2 text-sm font-black"><Link2 aria-hidden="true" className="h-4 w-4 text-primary" /> 보기 전용 링크</p>
-                  <p className="mt-2 truncate rounded-lg bg-muted px-3 py-2 text-xs font-medium text-muted-foreground">ski.hothyun.com/share/••••••••</p>
+                  <p className="mt-2 truncate rounded-lg bg-muted px-3 py-2 text-xs font-medium text-muted-foreground">seolleil.com/share/••••••••</p>
                   <p className="mt-2 text-xs text-muted-foreground">일정과 준비 상태만 볼 수 있어요.</p>
                 </div>
                 <div className="rounded-2xl border bg-background p-4">
                   <p className="flex items-center gap-2 text-sm font-black"><ShieldCheck aria-hidden="true" className="h-4 w-4 text-primary" /> 편집 가능 링크</p>
-                  <p className="mt-2 truncate rounded-lg bg-muted px-3 py-2 text-xs font-medium text-muted-foreground">ski.hothyun.com/trips/••••••••</p>
+                  <p className="mt-2 truncate rounded-lg bg-muted px-3 py-2 text-xs font-medium text-muted-foreground">seolleil.com/trips/••••••••</p>
                   <p className="mt-2 text-xs text-muted-foreground">체크리스트와 비용을 함께 고쳐요.</p>
                 </div>
               </div>

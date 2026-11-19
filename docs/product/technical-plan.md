@@ -23,7 +23,7 @@ Firebase Authentication은 Google과 이메일/비밀번호 로그인 및 인증
 
 ## 배포
 
-- production: `https://ski.hothyun.com`
+- production: `https://seolleil.com`
 - command: `pnpm cf:deploy`
 - 컬렉션은 Firestore 첫 쓰기 때 생성되며 별도 스키마 migration 명령은 없다.
 - 배포와 검증은 별도 사용자 승인으로 수행.

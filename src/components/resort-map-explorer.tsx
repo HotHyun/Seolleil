@@ -259,8 +259,8 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
         </div>
 
         {selected ? (
-          <div data-testid="ski-map-selection" className="absolute inset-x-3 bottom-[5.5rem] z-20 lg:bottom-4 lg:left-auto lg:right-4 lg:inset-x-auto lg:w-[390px]">
-            <div className="max-h-[50svh] overflow-y-auto rounded-2xl border bg-card p-3 shadow-2xl shadow-black/25 sm:p-4">
+          <div data-testid="ski-map-selection" className="absolute inset-x-3 bottom-3 z-20 lg:bottom-4 lg:left-auto lg:right-4 lg:inset-x-auto lg:w-[390px]">
+            <div className="max-h-[50svh] overflow-y-auto rounded-2xl border bg-card p-2.5 shadow-2xl shadow-black/25 sm:p-4">
               {selectedNearby && showNearby ? (
                 <NearbySelectedCard item={selectedNearby} />
               ) : (
@@ -276,8 +276,8 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
           <DrawerTrigger asChild>
             <button
               type="button"
-              style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }}
-              className="fixed left-1/2 z-40 flex h-12 -translate-x-1/2 items-center gap-2 rounded-full border border-primary/20 bg-primary px-5 text-sm font-black text-primary-foreground shadow-[0_12px_32px_rgba(0,0,0,0.35)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              style={{ top: "4.75rem" }}
+              className="fixed left-1/2 z-40 flex h-10 -translate-x-1/2 items-center gap-2 rounded-full border border-primary/20 bg-primary px-4 text-sm font-black text-primary-foreground shadow-[0_8px_24px_rgba(0,0,0,0.3)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <List aria-hidden="true" className="h-4 w-4" />
               {showNearby && selected ? "주변 렌탈·숙박 목록" : "스키장 선택"}
@@ -480,13 +480,14 @@ function SelectedResortCard({
         {resort.nightSkiAvailable ? <StatusBadge>야간</StatusBadge> : null}
         {resort.tags.slice(0, 3).map((tag) => <span key={tag} className="hidden sm:inline-flex"><StatusBadge>{tag}</StatusBadge></span>)}
       </div>
-      <h2 className="mt-1.5 text-base font-black sm:mt-3 sm:text-xl">{resort.name}</h2>
+      <h2 className="mt-1 text-base font-black sm:mt-3 sm:text-xl">{resort.name}</h2>
       <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{resort.address}</p>
       <div className="mt-3 hidden flex-wrap gap-1.5 sm:mt-4 sm:flex">
         {resort.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}
         {resort.nightSkiAvailable ? <StatusBadge>야간 운영</StatusBadge> : null}
       </div>
-      <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:mt-4">
+      <p className="mt-1 text-xs font-bold text-muted-foreground sm:hidden">렌탈 후보 {summary.rentalCount}곳 · 숙박 후보 {summary.lodgingCount}곳</p>
+      <div className="mt-4 hidden grid-cols-2 gap-2 text-sm sm:grid">
         <MapStat icon={<Shirt />} label="렌탈 후보" value={`${summary.rentalCount}곳`} />
         <MapStat icon={<Hotel />} label="숙박 후보" value={`${summary.lodgingCount}곳`} />
       </div>

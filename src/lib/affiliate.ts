@@ -1,6 +1,9 @@
+import { affiliateLinkOverrides } from "@/data/affiliate-links";
+
 // 외부 예약·구매 링크의 제휴 파라미터와 표기를 한 곳에서 관리한다.
 // 제휴 승인 후 아래 `params`에 발급받은 값을 채우고 재배포하면 해당 사이트 링크에만 적용된다.
-// params가 비어 있으면 링크를 바꾸지 않으며, 제휴 표기(rel="sponsored", 안내 문구)도 나타나지 않는다.
+// 상품 URL마다 발급하는 방식은 src/data/affiliate-links.ts에 원본 URL과 제휴 링크를 짝지어 넣는다.
+// params가 비어 있고 매핑이 없으면 링크를 바꾸지 않으며, 제휴 표기(rel="sponsored", 안내 문구)도 나타나지 않는다.
 // 추천 순위와 가격 계산은 제휴 여부와 무관하다.
 
 export type OutboundCategory = "lodging" | "rental" | "lift" | "shuttle" | "gear" | "other";
@@ -24,6 +27,16 @@ export const affiliateProviders: AffiliateProvider[] = [
   { id: "coupang", label: "쿠팡", category: "gear", hostSuffixes: ["coupang.com"], params: {} }
 ];
 
+/** 상품 URL별로 발급받은 제휴 링크. 매핑 데이터는 src/data/affiliate-links.ts. */
+export type AffiliateLinkOverride = {
+  provider: string;
+  category: OutboundCategory;
+  /** 앱에 들어 있는 원본 주소 */
+  url: string;
+  /** 제휴사가 발급한 링크 */
+  affiliateUrl: string;
+};
+
 export type ResolvedOutboundLink = {
   href: string;
   /** 제휴 파라미터를 적용했는지 */
@@ -35,6 +48,31 @@ export type ResolvedOutboundLink = {
 
 const baseRel = "noreferrer";
 
+/** 호스트+경로만 비교한다(www, 끝 슬래시, 쿼리, 해시 무시). 잘못된 URL은 null. */
+export function normalizeOutboundKey(href: string) {
+  try {
+    const url = new URL(href);
+    if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+    return `${url.hostname.toLowerCase().replace(/^www\./, "")}${url.pathname.replace(/\/+$/, "")}`;
+  } catch {
+    return null;
+  }
+}
+
+function findOverride(href: string, overrides: AffiliateLinkOverride[]) {
+  const key = normalizeOutboundKey(href);
+  if (!key) return undefined;
+  return overrides.find((item) => {
+    if (normalizeOutboundKey(item.url) !== key) return false;
+    try {
+      const target = new URL(item.affiliateUrl);
+      return target.protocol === "https:";
+    } catch {
+      return false;
+    }
+  });
+}
+
 function matchProvider(hostname: string, providers: AffiliateProvider[]) {
   const host = hostname.toLowerCase();
   return providers.find((provider) => provider.hostSuffixes.some((suffix) => host === suffix || host.endsWith(`.${suffix}`)));
@@ -42,7 +80,8 @@ function matchProvider(hostname: string, providers: AffiliateProvider[]) {
 
 export function resolveOutboundLink(
   href: string | undefined,
-  providers: AffiliateProvider[] = affiliateProviders
+  providers: AffiliateProvider[] = affiliateProviders,
+  overrides: AffiliateLinkOverride[] = affiliateLinkOverrides
 ): ResolvedOutboundLink {
   const fallback: ResolvedOutboundLink = { href: href ?? "", affiliate: false, rel: baseRel };
   if (!href) return fallback;
@@ -53,6 +92,18 @@ export function resolveOutboundLink(
     return fallback;
   }
   if (url.protocol !== "https:" && url.protocol !== "http:") return fallback;
+
+  // 상품별로 발급받은 제휴 링크가 있으면 파라미터 방식보다 우선한다.
+  const override = findOverride(href, overrides);
+  if (override) {
+    return {
+      href: override.affiliateUrl,
+      affiliate: true,
+      provider: override.provider,
+      category: override.category,
+      rel: `${baseRel} sponsored`
+    };
+  }
 
   const provider = matchProvider(url.hostname, providers);
   if (!provider) return fallback;
@@ -71,8 +122,11 @@ export function resolveOutboundLink(
 }
 
 /** 하나라도 제휴가 활성화되어 있는지. 안내 문구 노출 여부에 쓴다. */
-export function hasActiveAffiliate(providers: AffiliateProvider[] = affiliateProviders) {
-  return providers.some((provider) => Object.values(provider.params).some(Boolean));
+export function hasActiveAffiliate(
+  providers: AffiliateProvider[] = affiliateProviders,
+  overrides: AffiliateLinkOverride[] = affiliateLinkOverrides
+) {
+  return overrides.length > 0 || providers.some((provider) => Object.values(provider.params).some(Boolean));
 }
 
 export const affiliateDisclosure =

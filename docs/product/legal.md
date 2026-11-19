@@ -13,6 +13,7 @@
 ## 제휴 링크
 
 - 제휴 파라미터는 `src/lib/affiliate.ts`의 `affiliateProviders[].params`에만 둔다. 비어 있으면 링크·표기가 바뀌지 않는다. 승인 후 값을 채우고 재배포하면 해당 도메인의 외부 링크에 적용된다(`AnalyticsLink`가 변환, `rel="sponsored"` 추가).
+- 쿠팡 파트너스·여기어때 마케팅 파트너처럼 상품 URL마다 링크를 발급하는 곳은 `src/data/affiliate-links.ts`에 `{ provider, category, url(원본), affiliateUrl(발급 링크) }`를 추가한다. 호스트·경로가 같으면 쿼리·해시·`www`·끝 슬래시와 무관하게 교체되며, 파라미터 방식보다 우선한다. `affiliateUrl`은 https만 허용한다.
 - 제휴가 하나라도 활성화되면 `AffiliateNotice`가 숙박·렌탈 선택 화면에 대가 고지 문구를 보여준다. 새 화면에 예약·구매 링크를 추가하면 같은 고지를 함께 둔다. 약관 제10조와 내용을 맞춘다.
 - 쿠팡 파트너스 등 사업자별 의무 문구가 있으면 `affiliateDisclosure`에 추가한다.
 - 추천 순서·가격 계산은 제휴 여부와 무관하게 유지한다.

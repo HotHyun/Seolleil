@@ -34,7 +34,8 @@ export const metadata: Metadata = {
     images: [{ url: ogImagePath, width: 1200, height: 630, alt: "설레일 - 국내 스키장 추천과 스키 트립 준비" }]
   },
   twitter: { card: "summary_large_image", title: siteTitle, description: siteDescription, images: [ogImagePath] },
-  robots: { index: true, follow: true }
+  robots: { index: true, follow: true },
+  verification: { other: { "naver-site-verification": "226e96c60075fd4395b39489ee7eef19dede0807" } }
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

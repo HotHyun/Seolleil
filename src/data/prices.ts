@@ -222,11 +222,11 @@ const liftSeeds: LiftSeed[] = [
   {
     resortId: "muju",
     resortName: "무주 덕유산 리조트",
-    sourceName: "WAUG 무주 25/26 리프트권 및 스프링 시즌 보도",
-    sourceUrl: "https://www.waug.com/ko/activities/127269",
-    sourceType: "travel_agency",
+    sourceName: "무주 덕유산리조트 스키 요금 안내",
+    sourceUrl: "https://www.mdysresort.com/ski/charge.asp",
+    sourceType: "official_site",
     verifiedByHuman: false,
-    verificationNote: "예약처/보도자료 기반. 정규시즌 정상가 재검증 필요.",
+    verificationNote: "금액은 25/26 예약처·보도자료 기반 추정값이다. 기존 출처(WAUG 상품 페이지)가 삭제되어(2026-11-19 404) 공식 요금 안내로 출처를 교체했으며, 요금표가 이미지라 정규시즌 정상가는 재검증이 필요하다.",
     memo: "스프링 시즌 1일권 주중 40,000/주말 50,000 보도와 25/26 예약처 기반.",
     slots: {
       "2h": { adult: 42000, min: 40000, max: 50000 },

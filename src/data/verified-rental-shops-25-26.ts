@@ -248,11 +248,11 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["25/26영업확인", "강습연계", "문의필요"], sourceUrl: "https://www.ftimes.kr/news/articleView.html?idxno=35189", lastCheckedAt: checkedAt
   },
   {
-    id: "elysian-mobydic", resortId: "elysian", name: "모비딕스키", url: "https://www.waug.com/ko/activities/127677",
+    id: "elysian-mobydic", resortId: "elysian", name: "모비딕스키", url: "https://place.map.kakao.com/2071071494",
     mapLinks: { naver: "https://map.naver.com/p/search/%EC%97%98%EB%A6%AC%EC%8B%9C%EC%95%88%20%EA%B0%95%EC%B4%8C%20%EB%AA%A8%EB%B9%84%EB%94%95%EC%8A%A4%ED%82%A4" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
     dataStatus: "listed_25_26", serviceNote: "25/26 장비·의류·리프트·강습 패키지 판매 경로 확인. 옵션별 최종 단품 가격과 주소는 예약 단계에서 확인 필요.",
-    recommendationTags: ["25/26상품", "리프트패키지", "강습"], sourceUrl: "https://www.waug.com/ko/activities/127677", lastCheckedAt: checkedAt
+    recommendationTags: ["25/26상품", "리프트패키지", "강습"], sourceUrl: "https://place.map.kakao.com/2071071494", lastCheckedAt: checkedAt
   },
   {
     id: "oakvalley-advance", resortId: "oakvalley", name: "전진스키",
@@ -492,12 +492,12 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["도보1분", "픽업", "리프트할인"], sourceUrl: "https://timeticket.co.kr/product/6697", lastCheckedAt: checkedAt
   },
   {
-    id: "phoenix-baekya", resortId: "phoenix", name: "백야 렌탈샵", url: "https://www.waug.com/ko/activities/127169",
+    id: "phoenix-baekya", resortId: "phoenix", name: "백야 렌탈샵", url: "https://place.map.kakao.com/22017290",
     mapLinks: { naver: "https://map.naver.com/p/search/%EA%B0%95%EC%9B%90%20%ED%8F%89%EC%B0%BD%EA%B5%B0%20%EB%B4%89%ED%8F%89%EB%A9%B4%20%ED%83%9C%EA%B8%B0%EB%A1%9C%20523" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: false,
     address: "강원특별자치도 평창군 봉평면 태기로 523, 1층 103호", dataStatus: "listed_25_26",
     serviceNote: "25/26 시즌 판매 기간과 최신급 장비·신상 의류·강습 운영 확인. 단품별 최종 가격과 리프트권 취급은 예약 단계에서 확인 필요.",
-    recommendationTags: ["25/26영업확인", "신상의류", "강습"], sourceUrl: "https://www.waug.com/ko/activities/127169", lastCheckedAt: checkedAt
+    recommendationTags: ["25/26영업확인", "신상의류", "강습"], sourceUrl: "https://place.map.kakao.com/22017290", lastCheckedAt: checkedAt
   },
   {
     id: "yongpyong-beaver",
@@ -691,12 +691,12 @@ export const verifiedRentalShops2526: RentalShop[] = [
     recommendationTags: ["픽업", "리프트권", "숙박연결"], sourceUrl: "https://www.mujuskiworld.com/", lastCheckedAt: checkedAt
   },
   {
-    id: "muju-mentor", resortId: "muju", name: "멘토 렌탈샵", url: "https://www.mentorski.com/page/page161",
+    id: "muju-mentor", resortId: "muju", name: "멘토 렌탈샵", url: "https://www.mentorski.com/",
     mapLinks: { naver: "https://map.naver.com/p/search/%EC%A0%84%EB%B6%81%20%EB%AC%B4%EC%A3%BC%EA%B5%B0%20%EC%84%A4%EC%B2%9C%EB%A9%B4%20%EB%A7%8C%EC%84%A0%EB%A1%9C%2038" },
     equipmentRentalAvailable: true, clothingRentalAvailable: true, pickupAvailable: false, deliveryAvailable: false, liftTicketSalesAvailable: true,
     address: "전북특별자치도 무주군 설천면 만선로 38", phone: "063-324-7922 / 010-7173-7922", dataStatus: "listed_25_26",
     serviceNote: "장비·신상 의류, 리프트 할인, 강습·숙박·견적 경로 확인. 최근 시즌 상세 가격은 재확인 필요.",
-    recommendationTags: ["리프트할인", "강습", "숙박연결"], sourceUrl: "https://www.mentorski.com/page/page161", lastCheckedAt: checkedAt
+    recommendationTags: ["리프트할인", "강습", "숙박연결"], sourceUrl: "https://www.mentorski.com/", lastCheckedAt: checkedAt
   },
   {
     id: "muju-silkroad", resortId: "muju", name: "실크로드 스키샵", url: "https://mujusilk.com/main/pc_index.html",

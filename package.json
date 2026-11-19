@@ -25,7 +25,9 @@
     "data:report": "tsx scripts/report-static-data.ts",
     "data:links": "tsx scripts/check-links.ts",
     "data:locations:audit": "tsx scripts/audit-rental-locations.ts --write",
-    "data:locations": "tsx scripts/generate-rental-location-data.ts"
+    "data:locations": "tsx scripts/generate-rental-location-data.ts",
+    "data:discover": "tsx scripts/discover-nearby-places.ts",
+    "data:discovered": "tsx scripts/generate-discovered-places.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

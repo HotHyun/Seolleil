@@ -1,5 +1,6 @@
 import type { RentalShop, SkiResort } from "@/lib/types";
 import { resortCoordinates } from "@/data/resort-coordinates";
+import { discoveredLodgings } from "@/data/discovered-lodgings";
 
 const checkedAt = "2026-05-17";
 
@@ -205,7 +206,8 @@ export const nearbyLodgings: NearbyLodging[] = [
     mapLinks: { naver: `https://map.naver.com/p/search/${encodeURIComponent(lodging.name)}` },
     sourceUrl: lodging.url,
     lastCheckedAt: "2026-10-30"
-  }))
+  })),
+  ...discoveredLodgings
 ];
 
 const koreaBounds = {

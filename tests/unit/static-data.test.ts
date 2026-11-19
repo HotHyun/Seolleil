@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { rentalPriceRules } from "@/data/prices";
 import { seasonResearchRecords } from "@/data/season-research";
-import { getNearbyLodgingsForResort } from "@/data/resort-map";
+import { getNearbyLodgingsForResort, nearbyLodgings } from "@/data/resort-map";
 import { getResortStory } from "@/data/resort-content";
 import { getRentalShopsForResort, rentalShops, resorts } from "@/data/resorts";
 import { classifySeasonCategory, getStaticDataReport, validateStaticData } from "@/lib/data-validation";
@@ -14,7 +14,8 @@ describe("static data validation", () => {
     expect(rentalPriceRules.some((rule) => rule.id === "high1-myski-lift-peak-7h" && rule.representativePrice === 53000)).toBe(true);
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-repo4u")).toBe(false);
     expect(rentalPriceRules.some((rule) => rule.rentalShopId === "high1-four-season" && rule.representativePrice === 12000)).toBe(true);
-    expect(getNearbyLodgingsForResort("high1")).toHaveLength(8);
+    expect(getNearbyLodgingsForResort("high1")).toHaveLength(12);
+    expect(getNearbyLodgingsForResort("high1").filter((lodging) => lodging.id.startsWith("high1-kk-"))).toHaveLength(4);
   });
 
   it("keeps resort, price, rental, and departure data internally consistent", () => {
@@ -272,8 +273,27 @@ describe("static data validation", () => {
   it("keeps verified rental coordinates and exact Kakao place links together", () => {
     const located = rentalShops.filter((shop) => shop.latitude !== undefined && shop.longitude !== undefined);
     expect(located.length).toBeGreaterThanOrEqual(80);
-    expect(located.every((shop) => shop.kakaoPlaceId && shop.locationCheckedAt === "2026-07-16")).toBe(true);
+    expect(located.every((shop) => shop.kakaoPlaceId && ["2026-07-16", "2026-11-19"].includes(shop.locationCheckedAt ?? ""))).toBe(true);
     expect(located.every((shop) => shop.mapLinks?.kakao === `https://place.map.kakao.com/${shop.kakaoPlaceId}`)).toBe(true);
+  });
+
+  it("keeps Kakao-discovered rental shops and lodgings unique, located and listing-only", () => {
+    const discovered = rentalShops.filter((shop) => shop.id.includes("-kk-"));
+    const lodgings = nearbyLodgings.filter((lodging) => lodging.id.includes("-kk-"));
+    expect(discovered.length).toBeGreaterThanOrEqual(50);
+    expect(lodgings.length).toBeGreaterThanOrEqual(40);
+    expect(new Set(discovered.map((shop) => shop.kakaoPlaceId)).size).toBe(discovered.length);
+    const existingPlaceIds = new Set(rentalShops.filter((shop) => !shop.id.includes("-kk-")).map((shop) => shop.kakaoPlaceId).filter(Boolean));
+    expect(discovered.some((shop) => existingPlaceIds.has(shop.kakaoPlaceId))).toBe(false);
+    expect(new Set(discovered.map((shop) => shop.name)).size).toBe(discovered.length);
+    for (const resort of resorts) {
+      expect(discovered.filter((shop) => shop.resortId === resort.id).length).toBeLessThanOrEqual(6);
+      expect(lodgings.filter((lodging) => lodging.resortId === resort.id).length).toBeLessThanOrEqual(4);
+    }
+    // 가격을 확인하지 않은 업체는 가격 규칙을 만들지 않고 위치·연락처만 보여 준다.
+    expect(discovered.every((shop) => shop.dataStatus === "listed_25_26" && shop.latitude !== undefined && shop.mapLinks?.kakao === `https://place.map.kakao.com/${shop.kakaoPlaceId}`)).toBe(true);
+    expect(rentalPriceRules.some((rule) => rule.rentalShopId?.includes("-kk-"))).toBe(false);
+    expect(lodgings.every((lodging) => lodging.kakaoPlaceId && lodging.mapLinks?.kakao === `https://place.map.kakao.com/${lodging.kakaoPlaceId}`)).toBe(true);
   });
 
   it("provides decision-oriented detail stories without exposing internal scores", () => {

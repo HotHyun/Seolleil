@@ -221,7 +221,7 @@ export const rentalLocationRecords = {
     "kakaoMapUrl": "https://place.map.kakao.com/2071071494",
     "address": "강원특별자치도 춘천시 남산면 서백길 37",
     "locationSource": "place_search",
-    "locationCheckedAt": "2026-07-16"
+    "locationCheckedAt": "2026-11-19"
   },
   "oakvalley-advance": {
     "latitude": 37.4063893757685,
@@ -446,7 +446,7 @@ export const rentalLocationRecords = {
     "kakaoMapUrl": "https://place.map.kakao.com/22017290",
     "address": "강원특별자치도 평창군 봉평면 태기로 523",
     "locationSource": "place_search",
-    "locationCheckedAt": "2026-07-16"
+    "locationCheckedAt": "2026-11-19"
   },
   "yongpyong-beaver": {
     "latitude": 37.6640598059589,
@@ -707,7 +707,7 @@ export const rentalLocationRecords = {
     "kakaoMapUrl": "https://place.map.kakao.com/11824386",
     "address": "강원특별자치도 정선군 고한읍 고한로 35",
     "locationSource": "place_search",
-    "locationCheckedAt": "2026-07-16"
+    "locationCheckedAt": "2026-11-19"
   },
   "high1-wolnam": {
     "latitude": 37.2076414223009,
@@ -716,7 +716,7 @@ export const rentalLocationRecords = {
     "kakaoMapUrl": "https://place.map.kakao.com/12624780",
     "address": "강원특별자치도 정선군 고한읍 고한로 40",
     "locationSource": "place_search",
-    "locationCheckedAt": "2026-07-16"
+    "locationCheckedAt": "2026-11-19"
   },
   "high1-sereno": {
     "latitude": 37.2077777062753,
@@ -725,7 +725,7 @@ export const rentalLocationRecords = {
     "kakaoMapUrl": "https://place.map.kakao.com/336790624",
     "address": "강원특별자치도 정선군 고한읍 고한로 39",
     "locationSource": "place_search",
-    "locationCheckedAt": "2026-07-16"
+    "locationCheckedAt": "2026-11-19"
   },
   "high1-seven-ski": {
     "latitude": 37.20957255162565,
@@ -771,5 +771,32 @@ export const rentalLocationRecords = {
     "address": "경남 양산시 어실로 440",
     "locationSource": "place_search",
     "locationCheckedAt": "2026-07-16"
+  },
+  "oakvalley-snb": {
+    "latitude": 37.40681230362487,
+    "longitude": 127.80136911657952,
+    "kakaoPlaceId": "1959930025",
+    "kakaoMapUrl": "https://place.map.kakao.com/1959930025",
+    "address": "강원특별자치도 원주시 지정면 구재로 265",
+    "locationSource": "place_search",
+    "locationCheckedAt": "2026-11-19"
+  },
+  "oakvalley-cat-ski": {
+    "latitude": 37.39264669487246,
+    "longitude": 127.78879085832705,
+    "kakaoPlaceId": "18463405",
+    "kakaoMapUrl": "https://place.map.kakao.com/18463405",
+    "address": "강원특별자치도 원주시 지정면 구재로 52",
+    "locationSource": "place_search",
+    "locationCheckedAt": "2026-11-19"
+  },
+  "oakvalley-kang-pro": {
+    "latitude": 37.4031720651246,
+    "longitude": 127.799003760765,
+    "kakaoPlaceId": "15526558",
+    "kakaoMapUrl": "https://place.map.kakao.com/15526558",
+    "address": "강원특별자치도 원주시 지정면 구재로 216",
+    "locationSource": "place_search",
+    "locationCheckedAt": "2026-11-19"
   }
 } as const satisfies Record<string, RentalLocationRecord>;

@@ -1,6 +1,7 @@
 import type { RentalShop, SkiResort } from "@/lib/types";
 import { rentalLocationRecords } from "@/data/rental-locations";
 import { verifiedRentalShops2526 } from "@/data/verified-rental-shops-25-26";
+import { discoveredRentalShops } from "@/data/discovered-rental-shops";
 
 const checkedAt = "2026-05-13";
 
@@ -371,6 +372,7 @@ export const resorts: SkiResort[] = [
 
 export const rentalShops: RentalShop[] = [
   ...verifiedRentalShops2526,
+  ...discoveredRentalShops,
   {
     id: "jisan-boong",
     resortId: "jisan",
@@ -565,26 +567,26 @@ export const rentalShops: RentalShop[] = [
     lastCheckedAt: "2026-07-15"
   },
   ...[
-    ["high1-high-and-high", "하이앤하이", "https://leisure-web.yanolja.com/leisure/", "12,000원~"],
-    ["high1-seolleim", "설래임 렌탈샵", "https://leisure-web.yanolja.com/leisure/", "12,000원~"],
-    ["high1-wolnam", "월남스키", "https://leisure-web.yanolja.com/leisure/", "12,000원~"],
-    ["high1-sereno", "쎄레노", "https://leisure-web.yanolja.com/leisure/", "12,000원~"],
+    ["high1-high-and-high", "하이앤하이", "https://place.map.kakao.com/11824386", "12,000원~"],
+    ["high1-seolleim", "설래임 렌탈샵", "", "12,000원~"],
+    ["high1-wolnam", "월남스키", "https://place.map.kakao.com/12624780", "12,000원~"],
+    ["high1-sereno", "쎄레노", "https://place.map.kakao.com/336790624", "12,000원~"],
     ["high1-seven-ski", "세븐스키", "https://www.tripinfo.co.kr/info.html?content_id=506800&content_type_id=28", "가격 미확인"]
   ].map(([id, name, sourceUrl, priceNote]) => ({
     id,
     resortId: "high1",
     name,
-    url: sourceUrl,
+    url: sourceUrl || undefined,
     mapLinks: { naver: `https://map.naver.com/p/search/${encodeURIComponent(`하이원 ${name}`)}` },
     equipmentRentalAvailable: true,
     clothingRentalAvailable: true,
     pickupAvailable: false,
     deliveryAvailable: false,
     liftTicketSalesAvailable: name === "세븐스키",
-    dataStatus: "listed_25_26" as const,
+    dataStatus: (sourceUrl ? "listed_25_26" : "historical_needs_recheck") as RentalShop["dataStatus"],
     serviceNote: `25/26 예약/관광 플랫폼 등록 후보. 노출 시작가 ${priceNote}; 세부 품목·픽업·최종가는 업체 확인 필요.`,
     recommendationTags: ["25/26판매목록", "가격재확인"],
-    sourceUrl,
+    sourceUrl: sourceUrl || undefined,
     lastCheckedAt: "2026-07-15"
   })),
   {

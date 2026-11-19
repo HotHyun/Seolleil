@@ -33,8 +33,8 @@ test.describe("production regression", () => {
     const [mapBox, selectionBox] = await Promise.all([map.boundingBox(), selection.boundingBox()]);
     expect(mapBox?.height ?? 0).toBeGreaterThanOrEqual(600);
     expect(selectionBox?.y ?? 0).toBeGreaterThanOrEqual(mapBox?.y ?? 0);
-    await expect(selection.getByText(/렌탈 후보/)).toBeVisible();
-    await expect(selection.getByText(/숙박 후보/)).toBeVisible();
+    await expect(selection.getByText(/렌탈 후보/).first()).toBeVisible();
+    await expect(selection.getByText(/숙박 후보/).first()).toBeVisible();
     await expect(selection.getByText(/^초보\s*\d+$/)).toHaveCount(0);
     await expect(selection.getByText(/^접근\s*\d+$/)).toHaveCount(0);
     const fallback = page.getByRole("heading", { name: "실제 지도 연결을 준비하고 있어요" });

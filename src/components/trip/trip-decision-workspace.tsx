@@ -7,7 +7,15 @@ import { updateTripDecisionSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { AffiliateNotice } from "@/components/affiliate-notice";
 import { AnalyticsLink } from "@/components/analytics-link";
-import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
+import dynamic from "next/dynamic";
+import type { PlaceCandidate } from "@/components/place-comparison-map";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// 지도 코드는 지도 영역이 필요한 화면에서만 따로 내려받는다.
+const PlaceComparisonMap = dynamic(() => import("@/components/place-comparison-map").then(module => module.PlaceComparisonMap), {
+  ssr: false,
+  loading: () => <Skeleton className="h-64 w-full" />
+});
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/field";

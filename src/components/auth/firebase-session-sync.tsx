@@ -2,8 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
-import { onIdTokenChanged, type Auth, type User } from "firebase/auth";
-import { getFirebaseAuth } from "@/lib/firebase-client";
+import type { User } from "firebase/auth";
 
 type FirebaseSessionContextValue = {
   user: User | null;
@@ -60,48 +59,64 @@ export function FirebaseSessionProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    let auth: Auth;
-    try {
-      auth = getFirebaseAuth();
-    } catch {
-      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs Firebase Auth state into React on mount
-      setReady(true);
-      setSessionReady(true);
-      return;
-    }
-
     let active = true;
     let generation = 0;
-    const unsubscribe = onIdTokenChanged(auth, async user => {
-      if (!active) return;
-      const currentGeneration = ++generation;
-      setUser(user);
-      setReady(true);
-      setSessionError(false);
+    let unsubscribe: (() => void) | undefined;
 
-      if (user) {
-        hasSeenUser.current = true;
-      } else if (!hasSeenUser.current) {
-        // Anonymous public visits do not need a server session request.
+    // Firebase SDK는 하이드레이션 이후에 따로 불러와 모든 페이지의 첫 번들에서 뺀다.
+    void (async () => {
+      let modules: [typeof import("firebase/auth"), typeof import("@/lib/firebase-client")];
+      try {
+        modules = await Promise.all([import("firebase/auth"), import("@/lib/firebase-client")]);
+      } catch {
+        if (!active) return;
+        setReady(true);
         setSessionReady(true);
         return;
-      } else {
-        hasSeenUser.current = false;
+      }
+      if (!active) return;
+      const [{ onIdTokenChanged }, { getFirebaseAuth }] = modules;
+      let auth: ReturnType<typeof getFirebaseAuth>;
+      try {
+        auth = getFirebaseAuth();
+      } catch {
+        setReady(true);
+        setSessionReady(true);
+        return;
       }
 
-      setSessionReady(false);
-      try {
-        const result = await syncSession(user);
-        if (!active || currentGeneration !== generation) return;
-        setSessionReady(true);
-        if (result.changed && !user) router.refresh();
-      } catch {
-        if (active && currentGeneration === generation) setSessionError(true);
-      }
-    });
+      unsubscribe = onIdTokenChanged(auth, async user => {
+        if (!active) return;
+        const currentGeneration = ++generation;
+        setUser(user);
+        setReady(true);
+        setSessionError(false);
+
+        if (user) {
+          hasSeenUser.current = true;
+        } else if (!hasSeenUser.current) {
+          // Anonymous public visits do not need a server session request.
+          setSessionReady(true);
+          return;
+        } else {
+          hasSeenUser.current = false;
+        }
+
+        setSessionReady(false);
+        try {
+          const result = await syncSession(user);
+          if (!active || currentGeneration !== generation) return;
+          setSessionReady(true);
+          if (result.changed && !user) router.refresh();
+        } catch {
+          if (active && currentGeneration === generation) setSessionError(true);
+        }
+      });
+    })();
+
     return () => {
       active = false;
-      unsubscribe();
+      unsubscribe?.();
     };
   }, [router, syncSession]);
 

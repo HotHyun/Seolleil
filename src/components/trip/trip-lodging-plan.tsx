@@ -6,7 +6,15 @@ import { NearbyPlaceHelp } from "@/components/nearby-place-help";
 import { getResort } from "@/data/resorts";
 import { useState } from "react";
 import { BedDouble, ExternalLink, Moon, WandSparkles } from "lucide-react";
-import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
+import dynamic from "next/dynamic";
+import type { PlaceCandidate } from "@/components/place-comparison-map";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// 지도 코드는 지도 영역이 필요한 화면에서만 따로 내려받는다.
+const PlaceComparisonMap = dynamic(() => import("@/components/place-comparison-map").then(module => module.PlaceComparisonMap), {
+  ssr: false,
+  loading: () => <Skeleton className="h-64 w-full" />
+});
 import { Button } from "@/components/ui/button";
 import { Field, Input } from "@/components/ui/field";
 import { SubmitButton } from "@/components/ui/submit-button";

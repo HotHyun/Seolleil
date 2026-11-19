@@ -5,6 +5,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { AuthNav } from "@/components/auth/auth-nav";
+import { WebVitals } from "@/components/web-vitals";
 import { SiteFooter } from "@/components/site-footer";
 import { FirebaseSessionProvider } from "@/components/auth/firebase-session-sync";
 import { Toaster, ToastFromUrl } from "@/components/ui/sonner";
@@ -14,7 +15,7 @@ import "@/app/globals.css";
 const pretendard = localFont({
   src: "../../public/fonts/PretendardVariable.woff2",
   display: "swap",
-  weight: "45 920",
+  weight: "400 900",
   variable: "--font-pretendard"
 });
 
@@ -69,6 +70,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               />
             </>
           ) : null}
+          <WebVitals />
           <a href="#main-content" className="skip-link">본문으로 바로가기</a>
           <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur-xl">
             <div className="page-shell flex h-16 items-center justify-between gap-3">

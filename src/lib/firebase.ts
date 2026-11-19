@@ -34,6 +34,13 @@ class FirebaseHttpError extends Error {
   }
 }
 
+// 바깥 서비스가 응답하지 않을 때 Worker 요청이 끝없이 매달리지 않도록 시간 제한을 둔다.
+const REQUEST_TIMEOUT_MS = 8000;
+
+function isTimeoutError(error: unknown) {
+  return error instanceof Error && (error.name === "TimeoutError" || error.name === "AbortError");
+}
+
 let accessToken: string | undefined;
 let accessTokenExpiresAt = 0;
 
@@ -120,7 +127,8 @@ async function requestAccessToken() {
       grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
       assertion
     }),
-    cache: "no-store"
+    cache: "no-store",
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS)
   });
   if (!response.ok) throw new Error(`Firebase service authentication failed (${response.status}).`);
   const token = await response.json() as GoogleTokenResponse;
@@ -202,7 +210,14 @@ async function firestoreRequest<T>(url: string, init: RequestInit = {}): Promise
       "Content-Type": "application/json",
       ...(init.headers ?? {})
     },
-    cache: "no-store"
+    cache: "no-store",
+    signal: init.signal ?? AbortSignal.timeout(REQUEST_TIMEOUT_MS)
+  }).catch((error: unknown) => {
+    if (isTimeoutError(error)) {
+      console.error("Firestore request timed out");
+      throw new FirebaseHttpError(504);
+    }
+    throw error;
   });
   if (!response.ok) {
     await response.body?.cancel().catch(() => undefined);
@@ -241,6 +256,30 @@ export async function listFirebaseDocuments<T>(collectionId: string) {
     pageToken = result.nextPageToken;
   } while (pageToken);
   return all;
+}
+
+// Firestore `in` 필터는 값이 최대 30개라 나눠서 보낸다. 여러 부모 문서의 하위 항목을 한 번에 가져올 때 쓴다(N+1 방지).
+export async function queryFirebaseDocumentsIn<T>(collectionId: string, field: string, values: string[], limitPerChunk = 1000) {
+  const unique = [...new Set(values)];
+  const chunks: string[][] = [];
+  for (let index = 0; index < unique.length; index += 30) chunks.push(unique.slice(index, index + 30));
+  const results = await Promise.all(chunks.map(async chunk => {
+    const result = await firestoreRequest<Array<{ document?: FirestoreDocument }>>(
+      `${documentsBase()}:runQuery`,
+      {
+        method: "POST",
+        body: JSON.stringify({
+          structuredQuery: {
+            from: [{ collectionId }],
+            where: { fieldFilter: { field: { fieldPath: field }, op: "IN", value: encodeValue(chunk) } },
+            limit: limitPerChunk
+          }
+        })
+      }
+    );
+    return result.flatMap(item => item.document ? [mapDocument<T>(item.document)] : []);
+  }));
+  return results.flat();
 }
 
 export async function queryFirebaseDocuments<T>(collectionId: string, field: string, value: unknown, limit = 1000) {

@@ -1,4 +1,4 @@
-import { createFirebaseDocument, deleteFirebaseDocument, getFirebaseCollections, getFirebaseDocument, queryFirebaseDocuments, updateFirebaseDocument, type FirebaseDocument } from "@/lib/firebase";
+import { createFirebaseDocument, deleteFirebaseDocument, getFirebaseCollections, getFirebaseDocument, queryFirebaseDocuments, queryFirebaseDocumentsIn, updateFirebaseDocument, type FirebaseDocument } from "@/lib/firebase";
 import { decryptShareToken, encryptShareToken } from "@/lib/token-vault";
 import type { RideType, SkillLevel, TransportType, TripDuration } from "@/lib/types";
 import { EMPTY_TRIP_BUDGET, parseTripBudget, type TripBudgetState } from "@/lib/trip-budget";
@@ -249,10 +249,24 @@ function mapTrip(document: FirebaseDocument<TripDocument>, tasks: TripTaskRecord
   };
 }
 
+// 트립 목록에서 트립마다 할 일을 따로 조회(N+1)하지 않고 한꺼번에 가져와 트립별로 나눈다.
+async function attachTasks(documents: FirebaseDocument<TripDocument>[]) {
+  if (!documents.length) return [];
+  const { tripTasks } = getFirebaseCollections();
+  const tasks = await queryFirebaseDocumentsIn<TaskDocument>(tripTasks, "tripId", documents.map(document => document.$id), 6000);
+  const byTrip = new Map<string, FirebaseDocument<TaskDocument>[]>();
+  for (const task of tasks) byTrip.set(task.tripId, [...(byTrip.get(task.tripId) ?? []), task]);
+  return documents.map(document => mapTrip(document, sortTasks((byTrip.get(document.$id) ?? []).slice(0, 200).map(mapTask))));
+}
+
+function sortTasks(tasks: TripTaskRecord[]) {
+  return tasks.sort((left, right) => left.category.localeCompare(right.category) || left.sortOrder - right.sortOrder);
+}
+
 async function getTripTasks(tripId: string) {
   const { tripTasks } = getFirebaseCollections();
   const tasks = await queryFirebaseDocuments<TaskDocument>(tripTasks, "tripId", tripId, 200);
-  return tasks.map(mapTask).sort((left, right) => left.category.localeCompare(right.category) || left.sortOrder - right.sortOrder);
+  return sortTasks(tasks.map(mapTask));
 }
 
 export async function createTrip(input: TripCreateInput) {
@@ -397,7 +411,7 @@ export async function getTripsByUserId(userId: string) {
   const { trips: tripsCollection } = getFirebaseCollections();
   const documents = await queryFirebaseDocuments<TripDocument>(tripsCollection, "userId", userId, 100);
   const visible = documents.filter(document => document.status !== "deleted");
-  const trips = await Promise.all(visible.map(async document => mapTrip(document, await getTripTasks(document.$id))));
+  const trips = await attachTasks(visible);
   return trips.sort((left, right) => left.visitDate.getTime() - right.visitDate.getTime() || right.createdAt.getTime() - left.createdAt.getTime());
 }
 
@@ -406,7 +420,7 @@ export async function getTripsByTeamIds(teamIds: string[]) {
   const { trips: tripsCollection } = getFirebaseCollections();
   const result = await Promise.all(teamIds.map(teamId => queryFirebaseDocuments<TripDocument>(tripsCollection, "teamId", teamId, 100)));
   const documents = [...new Map(result.flat().filter(document => document.status !== "deleted").map(document => [document.$id, document])).values()];
-  return Promise.all(documents.map(async document => mapTrip(document, await getTripTasks(document.$id))));
+  return attachTasks(documents);
 }
 
 export async function updateTrip(id: string, data: Partial<Omit<TripRecord, "id" | "createdAt" | "updatedAt" | "tasks">>) {

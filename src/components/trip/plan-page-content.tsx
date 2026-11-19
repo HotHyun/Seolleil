@@ -10,10 +10,13 @@ export function PlanPageContent() {
   const searchParams = useSearchParams();
   const selectedResortId = searchParams.get("resortId");
   const selectedResort = selectedResortId ? getResort(selectedResortId) : undefined;
+  // 유입 경로(예: 공유 페이지 CTA)를 퍼널에서 구분한다. 허용 형식만 통과시킨다.
+  const refValue = searchParams.get("ref");
+  const ref = refValue && /^[a-z_]{1,20}$/.test(refValue) ? refValue : undefined;
 
   return (
     <main className="page-shell py-8">
-      <AnalyticsTrack eventName="trip_form_start" />
+      <AnalyticsTrack eventName="trip_form_start" eventData={ref ? { ref } : undefined} />
       <div className="mb-8 max-w-3xl">
         <p className="mb-2 text-sm font-semibold text-primary">{selectedResort ? "스키장 고정 트립" : "트립 추천"}</p>
         <h1 className="text-3xl font-black md:text-5xl">

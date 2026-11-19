@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CalendarDays, MapPin, Users } from "lucide-react";
+import { AnalyticsTrack } from "@/components/analytics-track";
 import { StatusBadge } from "@/components/status-badge";
+import { ShareInviteCta } from "@/components/trip/share-invite-cta";
 import { ProgressSummary } from "@/components/trip/progress";
 import { ReadOnlyAccessBanner } from "@/components/trip/read-only-access-banner";
 import { TaskList } from "@/components/trip/task-list";
@@ -23,7 +25,23 @@ import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
 import { transportTypeLabel } from "@/lib/transport";
 
+// 토큰으로 조회하지 않는 일반 미리보기라 트립 이름·일정 같은 개인 정보가 메신저 미리보기에 남지 않는다.
+const sharePreviewTitle = "스키 트립에 초대받았어요 | 설레일";
+const sharePreviewDescription = "일정, 준비물, 렌탈·교통 선택과 비용을 함께 확인하고 나도 스키 트립을 만들어 보세요.";
+
 export const metadata: Metadata = {
+  title: sharePreviewTitle,
+  description: sharePreviewDescription,
+  alternates: { canonical: null },
+  openGraph: {
+    type: "website",
+    locale: "ko_KR",
+    siteName: "설레일",
+    title: sharePreviewTitle,
+    description: sharePreviewDescription,
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "설레일 - 스키 트립 공유" }]
+  },
+  twitter: { card: "summary_large_image", title: sharePreviewTitle, description: sharePreviewDescription, images: ["/og-image.png"] },
   robots: {
     index: false,
     follow: false
@@ -48,6 +66,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
 
   return (
     <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
+      <AnalyticsTrack eventName="share_page_view" eventData={{ permission: canEdit ? "edit" : "view" }} />
       <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
       {activeView === "overview" ? <div className="mb-4">
         <StatusBadge tone="good">{canEdit ? "함께 편집" : "보기 전용"}</StatusBadge>
@@ -69,6 +88,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
                 </Card>
                 <ProgressSummary tasks={trip.tasks} />
               </aside>
+              <ShareInviteCta permission={canEdit ? "edit" : "view"} />
             </div>
           ) : null}
           {isTripDecisionView(activeView) ? (canEdit ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit /> : <TripDecisionReadOnly view={activeView} trip={trip} rentalGroups={rentalGroups} />) : null}

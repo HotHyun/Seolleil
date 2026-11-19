@@ -43,3 +43,7 @@
 - `sendDefaultPii=false`이며 beforeSend에서 사용자 이메일/IP, cookie, authorization, request body, query string, secret/token/password/key context를 제거한다.
 
 Sentry 프로젝트 생성 후 Cloudflare runtime에는 `SENTRY_DSN`을 secret으로 설정한다. `NEXT_PUBLIC_SENTRY_DSN`은 client bundle을 만드는 build 환경에도 있어야 하며 public DSN이므로 secret일 필요는 없다. `SENTRY_AUTH_TOKEN`은 source map을 업로드하는 OCI/CI build 환경의 secret으로 설정하고 Worker 변수로 노출할 필요가 없다. org/project/environment는 build 변수로 설정한다. 첫 배포 뒤 의도적으로 만든 비민감 테스트 오류 한 건으로 Issues와 source map을 확인하고 테스트 경로는 제거한다.
+
+## 서버 Sentry 설정 (경량)
+
+`src/sentry.server.config.ts`는 오류 캡처만 한다(OpenTelemetry 트레이싱·기본 계측 끔, `tracesSampleRate: 0`). 이전 설정이 Workers CPU를 절반 이상 써서 1102 오류를 냈기 때문이다. 켠 뒤 Workers 메트릭의 CPU p50·오류율을 확인하고, 늘어나면 `src/instrumentation.ts`의 import를 다시 제거한다. 운영 절차는 `docs/ops/error-triage.md`.

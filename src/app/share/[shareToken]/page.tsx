@@ -16,6 +16,7 @@ import { getTripWorkspaceView, isTripDecisionView } from "@/lib/trip-workspace";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
 import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
+import { withCurrentCost } from "@/lib/trip-current-cost";
 import { getResort } from "@/data/resorts";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
@@ -72,7 +73,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
           ) : null}
           {isTripDecisionView(activeView) ? (canEdit ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} shareToken={shareToken} canEdit /> : <TripDecisionReadOnly view={activeView} trip={trip} rentalGroups={rentalGroups} />) : null}
           {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} shareToken={shareToken} basePath={`/share/${shareToken}`} /> : <TripChecklistReadOnly tasks={trip.tasks} />) : null}
-          {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} basePath={`/share/${shareToken}`} shareToken={shareToken} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
+          {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={withCurrentCost(trip)} basePath={`/share/${shareToken}`} shareToken={shareToken} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
       </TripWorkspaceNav>
     </main>
   );

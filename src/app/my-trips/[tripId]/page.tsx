@@ -21,9 +21,11 @@ import { getTripWorkspaceView, isTripDecisionView } from "@/lib/trip-workspace";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
+import { tripSeasonFor } from "@/lib/season-fallback";
 import { getSession } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
 import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
+import { withCurrentCost } from "@/lib/trip-current-cost";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
@@ -79,7 +81,7 @@ export default async function MyTripDetailPage({
             <CardHeader>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
+                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{tripSeasonFor(trip.visitDate, trip.season)}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
                   <div className="mt-3"><TripIdentityEditor tripId={trip.id} name={getTripDisplayName(trip)} canEdit={canEdit} /></div>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
@@ -127,7 +129,7 @@ export default async function MyTripDetailPage({
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/my-trips/${trip.id}`} canEdit={canEdit} /><ProgressSummary tasks={trip.tasks} /></div> : null}
               {isTripDecisionView(activeView) ? (canEdit ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} canEdit /> : <TripDecisionReadOnly view={activeView} trip={trip} rentalGroups={rentalGroups} />) : null}
               {activeView === "checklist" ? (canEdit ? <TaskList tasks={trip.tasks} tripId={trip.id} basePath={`/my-trips/${trip.id}`} /> : <TripChecklistReadOnly tasks={trip.tasks} />) : null}
-              {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={trip} basePath={`/my-trips/${trip.id}`} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
+              {activeView === "budget" ? (canEdit ? <TripBudgetWorkspace trip={withCurrentCost(trip)} basePath={`/my-trips/${trip.id}`} rentalOptions={rentalOptions} /> : <TripCostDisclosure trip={trip} />) : null}
         </div>
       </TripWorkspaceNav>
     </main>

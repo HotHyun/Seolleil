@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { buildDefaultTasks, externalUrlForTask } from "@/lib/checklist";
 import { CURRENT_SEASON } from "@/lib/constants";
+import { tripSeasonFor } from "@/lib/season-fallback";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
 import { getShuttleStopsForDirection, getSkiShuttleRoutes, routeSupportsShuttleDirection } from "@/data/ski-shuttles";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
@@ -159,7 +160,7 @@ export async function createTripAction(formData: FormData) {
         travelKm: recommendation.travelKm,
         cost: recommendation.cost
       },
-      season: CURRENT_SEASON,
+      season: tripSeasonFor(visitDate, CURRENT_SEASON),
       visitDate,
       endDate,
       departureLocation: input.departureLocation,
@@ -256,7 +257,7 @@ export async function createDirectTripAction(formData: FormData) {
         travelKm: distance?.km,
         cost
       },
-      season: CURRENT_SEASON,
+      season: tripSeasonFor(visitDate, CURRENT_SEASON),
       visitDate,
       endDate,
       departureLocation: input.departureLocation,

@@ -16,10 +16,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
 import { getTripByEditTokenHash, getTripDisplayName } from "@/lib/trip-store";
+import { withCurrentCost } from "@/lib/trip-current-cost";
 import { hashToken } from "@/lib/tokens";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
+import { tripSeasonFor } from "@/lib/season-fallback";
 import { getSession } from "@/lib/session";
 import { transportTypeLabel } from "@/lib/transport";
 
@@ -80,7 +82,7 @@ export default async function TripEditPage({
             <CardHeader>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{trip.season}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
+                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{tripSeasonFor(trip.visitDate, trip.season)}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
                   <div className="mt-3"><TripIdentityEditor tripId={trip.id} editToken={editToken} name={getTripDisplayName(trip)} canEdit /></div>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>
@@ -139,7 +141,7 @@ export default async function TripEditPage({
               {activeView === "overview" ? <div className="space-y-4"><TripDashboard trip={trip} basePath={`/trips/${editToken}`} /><ProgressSummary tasks={trip.tasks} /></div> : null}
               {isTripDecisionView(activeView) ? <TripDecisionWorkspace view={activeView} trip={trip} rentalGroups={rentalGroups} lodgingOptions={lodgingOptions} liftUrl={resort?.liftTicketUrl} shuttleUrl={resort?.shuttleUrl} lodgingSearchUrl={resort?.lodgingUrl} editToken={editToken} /> : null}
               {activeView === "checklist" ? <TaskList tasks={trip.tasks} editToken={editToken} basePath={`/trips/${editToken}`} /> : null}
-              {activeView === "budget" ? <TripBudgetWorkspace trip={trip} basePath={`/trips/${editToken}`} editToken={editToken} rentalOptions={rentalOptions} /> : null}
+              {activeView === "budget" ? <TripBudgetWorkspace trip={withCurrentCost(trip)} basePath={`/trips/${editToken}`} editToken={editToken} rentalOptions={rentalOptions} /> : null}
       </div>
       </TripWorkspaceNav>
     </main>

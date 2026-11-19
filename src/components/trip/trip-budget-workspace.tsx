@@ -58,6 +58,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   const [splitCount, setSplitCount] = useState(trip.splitCount || trip.peopleCount);
   const [dirty, setDirty] = useState(false);
   const totals = useMemo(() => calculateTripBudget(recommendationCost(trip.selectedRecommendation), budget, splitCount), [trip.selectedRecommendation, budget, splitCount]);
+  const referenceKeys = useMemo(() => new Set((recommendationCost(trip.selectedRecommendation)?.items ?? []).filter(item => item.referenceSeason).map(item => item.key)), [trip.selectedRecommendation]);
   const plannedRentalDays = trip.skiPlan.days.filter(day => rentalOptionIds(day).length > 0).length;
   const rentalLabel = plannedRentalDays ? `${trip.skiPlan.days.length}일 중 ${plannedRentalDays}일 선택됨` : "렌탈하지 않음 / 미정";
   const liftLabel = `${trip.skiPlan.days.length}일 · ${[...new Set(trip.skiPlan.days.map(day => timeSlotLabels[day.timeSlot]))].join(" · ")}`;
@@ -125,9 +126,10 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
 
           <section>
             <h2 className="mb-3 font-black">예상 비용을 실제 금액으로 확정</h2>
+            {referenceKeys.size ? <p className="mb-3 rounded-md bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-200">26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 금액도 자동으로 바뀌어요.</p> : null}
             <div className="grid gap-3 sm:grid-cols-2">
               {budgetCostKeys.map(({ key, label }) => { const item = totals.items.find(candidate => candidate.key === key); return (
-                <Field key={key} label={`${label} · ${budget.overrides[key] !== undefined ? "확정" : item ? `예상 ${formatCurrency(item.amount)}` : "직접 입력"}`}>
+                <Field key={key} label={`${label} · ${budget.overrides[key] !== undefined ? "확정" : item ? `예상 ${formatCurrency(item.amount)}${referenceKeys.has(key) ? " · 25/26 참고가" : ""}` : "직접 입력"}`}>
                   <Input name={`${key}Override`} type="number" min={0} inputMode="numeric" defaultValue={budget.overrides[key]} placeholder={item ? String(item.amount) : "0"} onChange={event => setBudget(current => ({ ...current, overrides: { ...current.overrides, [key]: event.target.value === "" ? undefined : Number(event.target.value) } }))} />
                 </Field>
               ); })}

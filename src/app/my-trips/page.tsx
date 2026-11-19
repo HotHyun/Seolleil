@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { TripCompanions } from "@/components/trip/trip-companions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { tripSeasonFor } from "@/lib/season-fallback";
 import { getSession } from "@/lib/session";
 import { listTripMemberships, listUserTeams, type TripMembership } from "@/lib/trip-collaboration";
 import { getTripDisplayName, getTripsByTeamIds, getTripsByUserId, type TripRecord } from "@/lib/trip-store";
@@ -143,7 +144,7 @@ function TripCard({ item }: { item: TripDashboardItem }) {
       <Card className="h-full transition hover:border-zinc-400 hover:shadow-sm">
         <CardHeader>
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold text-primary">{trip.season}</span>{sharedWithMe ? <StatusBadge tone="good"><Share2 className="mr-1 h-3 w-3" />공유됨 · {permission === "edit" ? "편집" : "보기"}</StatusBadge> : null}</div>
+            <div className="flex flex-wrap items-center gap-2"><span className="text-sm font-semibold text-primary">{tripSeasonFor(trip.visitDate, trip.season)}</span>{sharedWithMe ? <StatusBadge tone="good"><Share2 className="mr-1 h-3 w-3" />공유됨 · {permission === "edit" ? "편집" : "보기"}</StatusBadge> : null}</div>
             <StatusBadge tone={trip.status === "completed" ? "good" : "neutral"}>{statusLabel}</StatusBadge>
           </div>
           <CardTitle>{getTripDisplayName(trip)}</CardTitle>

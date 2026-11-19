@@ -197,9 +197,10 @@ test.describe("production regression", () => {
       await decisions.getByRole("button", { name: "픽업", exact: true }).click();
       await expect(decisions.getByRole("heading", { name: "간지보더" })).toBeVisible();
       await decisions.getByRole("heading", { name: "간지보더" }).click();
-      await expect(decisions.getByText(/2027\. 1\. 10\. 렌탈 가격 미공개/)).toBeVisible();
-      await expect(decisions.getByText(/장비나 의류를 대여하지 않는다는 뜻이 아닙니다/)).toBeVisible();
-      await decisions.getByRole("button", { name: "이 날짜의 후보 샵으로 저장" }).click();
+      // 26/27 공식 가격이 없는 날짜는 25/26 가격을 참고가로 쓰므로 가격 미공개 안내 대신 저장 폼이 보인다.
+      await expect(decisions.getByText("25/26 참고가").first()).toBeVisible();
+      await expect(decisions.getByText(/렌탈 가격 미공개/)).toHaveCount(0);
+      await decisions.getByRole("button", { name: /2027-01-10 렌탈 저장/ }).click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
       await decisions.locator("#lift").getByRole("combobox").click();
       await page.getByRole("option", { name: "6시간권" }).click();

@@ -32,6 +32,8 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
   }), [available, rideType]);
   const { equipment, clothing, packages, accessories, liftOptions } = grouped;
   const priceAvailability = rentalPriceAvailability(options, day);
+  // 26/27 가격이 없어 25/26 가격을 참고가로 쓰는 날짜인지(선택한 날짜에 직접 맞는 상품이 없을 때)
+  const usesReferencePrice = priceAvailability === "available" && available.length > 0 && !available.some(option => option.validFrom <= day.date && option.validTo >= day.date);
   const savedAtShop = day.rentalShopId === shop.id;
   const [mode, setMode] = useState<"individual" | "package">(savedAtShop && packages.some(option => option.id === day.packageOptionId) ? "package" : "individual");
   const [equipmentId, setEquipmentId] = useState(savedAtShop ? day.equipmentOptionId ?? "none" : "none");
@@ -68,6 +70,7 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
     <div className="flex flex-wrap gap-1.5 text-[11px] font-bold">
       <Tag>{tripDayTypeLabel(day.date)} 가격</Tag>
       {priceAvailability === "outside_validity" ? <Tag>새 시즌 가격 미공개</Tag> : shop.dataStatus === "verified_25_26" ? <Tag>25/26 가격 확인</Tag> : <Tag>가격 원문 확인</Tag>}
+      {usesReferencePrice ? <Tag>25/26 참고가</Tag> : null}
       {shop.pickupAvailable ? <Tag>픽업</Tag> : null}
       {shop.clothingRentalAvailable ? <Tag>의류</Tag> : null}
     </div>
@@ -80,7 +83,7 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
       <input type="hidden" name="accessoryOptionIds" value="[]" />
       <div>
         <p className="text-xs font-black uppercase tracking-wider text-muted-foreground">장비와 의류</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">품목을 따로 고르거나 샵의 결합 패키지를 선택하세요.</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">품목을 따로 고르거나 샵의 결합 패키지를 선택하세요.{usesReferencePrice ? " 26/27 가격이 아직 없어 25/26 가격을 참고가로 합산하며, 공식 가격이 게시되면 자동으로 바뀌어요." : ""}</p>
       </div>
       {packages.length ? <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted p-1" role="group" aria-label="렌탈 선택 방식">
         <ModeButton active={mode === "individual"} onClick={() => setMode("individual")}>개별 선택</ModeButton>

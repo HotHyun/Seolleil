@@ -1,4 +1,4 @@
-import { CURRENT_SEASON, UPCOMING_SEASON_END, UPCOMING_SEASON_START } from "@/lib/constants";
+import { CURRENT_SEASON, UPCOMING_SEASON, UPCOMING_SEASON_END, UPCOMING_SEASON_START } from "@/lib/constants";
 import type { PriceRule, RentalPriceRule } from "@/lib/types";
 
 // 26/27 공식 가격이 아직 없는 항목은 25/26 가격을 "참고가"로 쓴다.
@@ -45,4 +45,10 @@ export function toReferenceRule<T extends PriceRule | RentalPriceRule>(rule: T):
 // 방문일에 규칙이 직접 맞으면 그대로, 25/26 참고가로만 맞으면 참고가 표시를 붙여 돌려준다.
 export function ruleForDate<T extends PriceRule | RentalPriceRule>(rule: T, date: string): T {
   return rule.validFrom <= date && rule.validTo >= date ? rule : toReferenceRule(rule);
+}
+
+// 트립에 표시할 시즌. 방문일이 26/27 시즌 기간이면 저장된 값과 관계없이 26/27로 보여 준다.
+export function tripSeasonFor(visitDate: Date | string, storedSeason: string) {
+  const date = typeof visitDate === "string" ? visitDate.slice(0, 10) : visitDate.toISOString().slice(0, 10);
+  return isUpcomingSeasonDate(date) ? UPCOMING_SEASON : storedSeason;
 }

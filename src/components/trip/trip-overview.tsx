@@ -8,35 +8,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { rentalPriceRules } from "@/data/prices";
 import { getRentalShopsForResort, getResort } from "@/data/resorts";
 import { getSkiShuttleRoutes, isConfirmedShuttleRoute } from "@/data/ski-shuttles";
-import { estimateTripCost } from "@/lib/pricing";
-import type { CostEstimate, CostItem, TimeSlot } from "@/lib/types";
+import { computeCurrentTripCost, type CostableTrip } from "@/lib/trip-current-cost";
+import type { CostEstimate, CostItem } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import type { TripSkiPlan } from "@/lib/trip-ski-plan";
-import type { TransportType } from "@/lib/types";
 
-type TripOverviewData = {
-  resortId: string;
-  resortNameSnapshot: string;
-  selectedRecommendation: unknown;
-  selectedRentalOptionId: string | null;
-  selectedLiftTicketOptionId: string | null;
-  visitDate: Date;
-  departureLocation: string;
-  peopleCount: number;
-  transportType: TransportType;
-  shuttleRouteId: string | null;
-  shuttleStopId: string | null;
-  tripDuration: "same_day" | "overnight";
-  skillLevel: "first_time" | "beginner" | "intermediate" | "advanced";
-  rideType: "ski" | "snowboard" | "both";
-  ownsEquipment: boolean;
-  ownsClothing: boolean;
-  budgetMin: number | null;
-  budgetMax: number | null;
-  lodgingCostInput: number | null;
-  liftTicketTimeSlot: string;
-  skiPlan: TripSkiPlan;
-};
+type TripOverviewData = CostableTrip;
 
 export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
   const resort = getResort(trip.resortId);
@@ -46,31 +22,7 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
     : undefined;
   const shuttleRoute = trip.shuttleRouteId ? getSkiShuttleRoutes(trip.resortId).find(route => route.id === trip.shuttleRouteId) : undefined;
   const shuttleStop = shuttleRoute?.stops.find(stop => stop.id === trip.shuttleStopId);
-  const currentCost = resort
-    ? estimateTripCost(
-        resort,
-        {
-          visitDate: trip.visitDate.toISOString().slice(0, 10),
-          departureLocation: trip.departureLocation,
-          peopleCount: trip.peopleCount,
-          tripDuration: trip.tripDuration,
-          skillLevel: trip.skillLevel,
-          rideType: trip.rideType,
-          ownsEquipment: trip.ownsEquipment,
-          ownsClothing: trip.ownsClothing,
-          transportType: trip.transportType,
-          budgetMin: trip.budgetMin ?? undefined,
-          budgetMax: trip.budgetMax ?? undefined,
-          priorities: ["beginner", "close", "rental"],
-          liftTicketTimeSlot: trip.liftTicketTimeSlot as TimeSlot,
-          lodgingCostInput: trip.lodgingCostInput ?? undefined
-        },
-        trip.selectedRentalOptionId ?? undefined,
-        shuttleRoute,
-        trip.selectedLiftTicketOptionId ?? undefined,
-        trip.skiPlan
-      )
-    : null;
+  const currentCost = computeCurrentTripCost(trip);
   // 저장 당시 스냅샷이 아니라 현재 가격 데이터로 다시 계산한 값을 보여준다. 26/27 공식 가격이 게시되면 이 트립도 바로 바뀐다.
   const displayCost = currentCost ?? cost;
   const priceChanged =

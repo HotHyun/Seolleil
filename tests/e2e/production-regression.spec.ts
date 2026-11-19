@@ -75,7 +75,7 @@ test.describe("production regression", () => {
 
     await page.goto("/resorts/phoenix");
     await expect(page.getByRole("heading", { name: "넓은 설원과 역동적인 라이딩" })).toBeVisible();
-    await expect(page.getByText("주변 렌탈샵 9곳")).toBeVisible();
+    await expect(page.getByText("주변 렌탈샵 15곳")).toBeVisible();
     const phoenixShuttle = page.getByTestId("shuttle-route-explorer");
     await phoenixShuttle.getByRole("textbox", { name: "출발 도시 또는 탑승지 검색" }).fill("수원");
     await selectShuttleRoute(phoenixShuttle, /수원·영통선/);

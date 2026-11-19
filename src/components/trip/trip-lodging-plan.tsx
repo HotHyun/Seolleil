@@ -1,5 +1,7 @@
 "use client";
 
+import { NearbyPlaceHelp } from "@/components/nearby-place-help";
+import { getResort } from "@/data/resorts";
 import { useState } from "react";
 import { BedDouble, ExternalLink, Moon, WandSparkles } from "lucide-react";
 import { PlaceComparisonMap, type PlaceCandidate } from "@/components/place-comparison-map";
@@ -123,6 +125,7 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
         </form>
       </div>
     </div>
+    <NearbyPlaceHelp resortName={getResort(resortId)?.name ?? "스키장"} kind="lodging" />
   </div>;
 }
 

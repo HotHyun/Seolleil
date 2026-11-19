@@ -21,6 +21,8 @@ describe("nearby place help", () => {
     const html = renderToStaticMarkup(createElement(NearbyPlaceHelp, { resortName: "곤지암리조트", kind: "rental" }));
     expect(html).toContain("카카오맵에서 곤지암리조트 주변 스키 렌탈 더 찾기");
     expect(html).toContain("없는 렌탈샵 알려주기");
+    expect(html).toContain("찾는 렌탈샵이 목록에 없나요?");
+    expect(renderToStaticMarkup(createElement(NearbyPlaceHelp, { resortName: "곤지암리조트", kind: "lodging" }))).toContain("찾는 숙소가 목록에 없나요?");
     expect(html).toContain("가격까지 확인된 곳부터 목록에 추가해요");
   });
 });

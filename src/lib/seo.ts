@@ -10,7 +10,7 @@ export const ogImagePath = "/og-image.png";
 
 export { privatePathPrefixes } from "@/lib/seo-paths";
 
-export const indexableStaticPaths = ["/", "/resorts", "/privacy", "/terms"] as const;
+export const indexableStaticPaths = ["/", "/resorts", "/guides", "/privacy", "/terms"] as const;
 
 export function absoluteUrl(path: string) {
   return `${siteUrl}${path === "/" ? "" : path}`;

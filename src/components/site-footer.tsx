@@ -10,7 +10,8 @@ export function SiteFooter() {
           <p>운영: {legal.operatorName} · 문의: <a href={`mailto:${legal.contactEmail}`} className="underline underline-offset-2">{legal.contactEmail}</a></p>
           <p>가격 정보는 시즌 참고용이며 예약 전 공식 판매처에서 최신 가격을 확인해 주세요.</p>
         </div>
-        <nav aria-label="약관 및 정책" className="flex flex-wrap gap-x-4 gap-y-1 font-semibold">
+        <nav aria-label="사이트 링크와 약관" className="flex flex-wrap gap-x-4 gap-y-1 font-semibold">
+          <Link href="/guides" className="inline-flex min-h-11 items-center hover:text-foreground">스키장 가이드</Link>
           <Link href="/terms" className="inline-flex min-h-11 items-center hover:text-foreground">이용약관</Link>
           <Link href="/privacy" className="inline-flex min-h-11 items-center hover:text-foreground">개인정보처리방침</Link>
         </nav>

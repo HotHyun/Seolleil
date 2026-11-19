@@ -38,6 +38,7 @@ MVP에서는 Umami와 Firestore 제품 이벤트를 함께 사용한다.
 - `share_page_view`(`permission=view|edit`): 공유 링크로 들어온 방문. 공유 경로의 토큰은 Umami `before-send`에서 마스킹한다.
 - `share_cta_click`(`permission`): 공유 페이지의 "나도 스키 트립 만들기" 클릭.
 - `checklist_*`: 체크리스트 상태·항목 변경.
+- `guide_view`(`resortId`, `topic`), `guide_cta_click`: 가이드 페이지 조회와 트립 만들기 클릭. `/plan?ref=guide`로 이어져 `trip_form_start(ref=guide)`로 구분한다.
 - `external_link_click`: `type`, `resortId`와 제휴 속성(`provider`, `category`, `affiliate`).
 
 바이럴 퍼널: `share_link_copy` → `share_page_view` → `share_cta_click` → `trip_form_start(ref=share)` → `trip_create_submit`.

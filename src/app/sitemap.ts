@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { getGuidePaths } from "@/lib/guides";
 import { absoluteUrl, getIndexableResortPaths } from "@/lib/seo";
 import { seasonResearchRecords } from "@/data/season-research";
 
@@ -9,7 +10,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: absoluteUrl("/"), lastModified, changeFrequency: "weekly", priority: 1 },
     { url: absoluteUrl("/resorts"), lastModified, changeFrequency: "weekly", priority: 0.9 },
+    { url: absoluteUrl("/guides"), lastModified, changeFrequency: "weekly", priority: 0.8 },
     ...getIndexableResortPaths().map((path) => ({ url: absoluteUrl(path), lastModified, changeFrequency: "weekly" as const, priority: 0.8 })),
+    ...getGuidePaths().map((path) => ({ url: absoluteUrl(path), lastModified, changeFrequency: "weekly" as const, priority: 0.7 })),
     { url: absoluteUrl("/privacy"), changeFrequency: "yearly", priority: 0.2 },
     { url: absoluteUrl("/terms"), changeFrequency: "yearly", priority: 0.2 }
   ];

@@ -488,11 +488,18 @@ export async function deleteTrip(id: string) {
   await deleteFirebaseDocument(trips, id);
 }
 
+const analyticsEventNamePattern = /^[a-z][a-z0-9_]{1,47}$/;
+const maxAnalyticsPropertiesLength = 2_000;
+
+// 분석 이벤트는 이름 형식과 크기를 제한해 저장한다. 형식이 맞지 않으면 저장하지 않고 조용히 건너뛴다.
 export async function recordAnalyticsEvent(input: { tripId?: string | null; eventName: string; properties?: unknown }) {
+  if (!analyticsEventNamePattern.test(input.eventName)) return;
+  const properties = encodeJson(input.properties ?? {}) ?? "{}";
+  if (properties.length > maxAnalyticsPropertiesLength) return;
   const { analyticsEvents } = getFirebaseCollections();
   await createFirebaseDocument<EventDocument>(analyticsEvents, {
     tripId: input.tripId ?? null,
     eventName: input.eventName,
-    properties: encodeJson(input.properties ?? {})
+    properties
   });
 }

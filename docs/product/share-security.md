@@ -53,3 +53,22 @@
 - 서버는 링크 ID가 대상 트립에 속하는지 확인해 다른 트립의 링크를 폐기할 수 없게 한다.
 - 공유 링크 및 익명 편집 링크만 가진 요청은 공유 링크의 목록·발급·폐기를 거부한다.
 - 계정 viewer/editor도 공유 링크의 목록·발급·폐기를 거부하며, 트립 소유자만 공유를 관리한다.
+
+## 보안 점검 기록 (2026-11-19)
+
+코드로 적용한 항목:
+
+- 로그인/이메일 인증 후 이동 주소는 `safeCallbackPath`로 같은 사이트 경로만 허용한다(open redirect 방지).
+- `/api/auth/session` POST/DELETE는 same-origin + JSON 요청만 받는다(로그인·로그아웃 CSRF 방지). ID 토큰 검증은 RS256만 허용한다.
+- 트립 삭제는 소유자(또는 edit 토큰)만 가능하며, 상태·체크리스트 값은 허용 목록으로 검증하고 제목/메모 길이와 항목 수를 제한한다.
+- 외부 링크 클릭 이벤트와 `recordAnalyticsEvent`는 이벤트명·길이·URL을 검증해 분석 컬렉션 쓰기 남용을 막는다.
+- `/admin`, `/admin/data-quality`는 `ADMIN_EMAILS`에 등록된 인증 완료 사용자에게만 열리고 그 외에는 404를 반환한다. `ADMIN_EMAILS` 시크릿이 없으면 모두 404다.
+- CSP와 보안 헤더(`src/lib/security-headers.ts`)를 적용한다. `unsafe-eval`은 Kakao 지도 SDK가 필요한 지도 페이지에만 허용한다.
+- 의존성은 `pnpm.overrides`로 전이 취약점을 올렸고 zod 4, Sentry 10.78로 갱신했다. 남은 moderate 2건은 Sentry 빌드 도구(glob/minimatch)이며 런타임에 포함되지 않는다.
+
+코드 밖에서 해야 할 항목:
+
+- Cloudflare WAF Rate limiting 규칙(로그인·공유 토큰 경로, 서버 액션 POST).
+- Google Cloud에서 Firebase Web API 키를 HTTP referrer(`seolleil.com`)로 제한.
+- `wrangler secret put ADMIN_EMAILS`로 운영자 이메일 등록.
+- Firestore 사용량 알림/백업 설정.

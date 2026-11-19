@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FirebaseAuthForms } from "@/components/auth/firebase-auth-forms";
+import { safeCallbackPath } from "@/lib/safe-redirect";
 import { useFirebaseSession } from "@/components/auth/firebase-session-sync";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -12,9 +13,7 @@ export function LoginPageContent() {
   const searchParams = useSearchParams();
   const { isAuthenticated, user, sessionError } = useFirebaseSession();
   const callbackUrlValue = searchParams.get("callbackUrl");
-  const callbackUrl = callbackUrlValue && callbackUrlValue.startsWith("/") && !callbackUrlValue.startsWith("//")
-    ? callbackUrlValue
-    : "/my-trips";
+  const callbackUrl = safeCallbackPath(callbackUrlValue);
   const mode = searchParams.get("mode") === "signup" ? "signup" : "login";
   const error = searchParams.get("error") ?? undefined;
   const notice = searchParams.get("notice");

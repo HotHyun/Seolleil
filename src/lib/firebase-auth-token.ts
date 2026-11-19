@@ -22,6 +22,7 @@ function getProjectId() {
 export async function verifyFirebaseIdToken(token: string) {
   const projectId = getProjectId();
   const { payload } = await jwtVerify(token, firebaseSigningKeys, {
+    algorithms: ["RS256"],
     audience: projectId,
     issuer: `https://securetoken.google.com/${projectId}`
   });

@@ -3,7 +3,19 @@ import { cookies } from "next/headers";
 import { clearLegacyAppwriteCookies, FIREBASE_SESSION_COOKIE } from "@/lib/session";
 import { verifyFirebaseIdToken } from "@/lib/firebase-auth-token";
 
+// 쿠키를 바꾸는 요청은 같은 사이트에서 보낸 JSON 요청만 받는다(다른 사이트의 폼 전송으로 로그인·로그아웃되는 CSRF 방지).
+function isSameOriginRequest(request: Request) {
+  const fetchSite = request.headers.get("sec-fetch-site");
+  if (fetchSite) return fetchSite === "same-origin";
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  try { return origin === new URL(request.url).origin; } catch { return false; }
+}
+
 export async function POST(request: Request) {
+  if (!isSameOriginRequest(request) || !(request.headers.get("content-type") ?? "").toLowerCase().includes("application/json")) {
+    return NextResponse.json({ error: "Invalid request." }, { status: 403 });
+  }
   let idToken = "";
   try {
     const body = await request.json() as { idToken?: unknown };
@@ -29,7 +41,8 @@ export async function POST(request: Request) {
   }
 }
 
-export async function DELETE() {
+export async function DELETE(request: Request) {
+  if (!isSameOriginRequest(request)) return NextResponse.json({ error: "Invalid request." }, { status: 403 });
   const cookieStore = await cookies();
   const changed = Boolean(cookieStore.get(FIREBASE_SESSION_COOKIE));
   cookieStore.delete(FIREBASE_SESSION_COOKIE);

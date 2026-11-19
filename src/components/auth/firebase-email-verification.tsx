@@ -1,5 +1,6 @@
 "use client";
 
+import { safeCallbackPath } from "@/lib/safe-redirect";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged, sendEmailVerification, applyActionCode } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -26,7 +27,7 @@ export function FirebaseVerifyEmail() {
         callbackValue = "/my-trips";
       }
     }
-    const callbackUrl = callbackValue.startsWith("/") && !callbackValue.startsWith("//") ? callbackValue : "/my-trips";
+    const callbackUrl = safeCallbackPath(callbackValue);
     let auth;
     try { auth = getFirebaseAuth(); }
     // eslint-disable-next-line react-hooks/set-state-in-effect -- syncs with Firebase Auth (external system) on mount

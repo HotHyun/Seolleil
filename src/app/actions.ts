@@ -47,6 +47,10 @@ import {
 } from "@/lib/trip-ski-plan";
 import type { TimeSlot } from "@/lib/types";
 
+const taskStatuses = new Set(["not_needed", "needs_check", "planned", "reserved", "paid", "prepared"]);
+const taskTitleMaxLength = 120;
+const taskMemoMaxLength = 2000;
+const maxTasksPerTrip = 200;
 const expenseCategories = new Set<TripExpenseCategory>(["meal", "fuel", "toll", "parking", "transport", "lodging", "other"]);
 
 function resolveTripRange(input: Pick<TripInput, "visitDate" | "endDate" | "tripDuration">) {
@@ -783,6 +787,7 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
 
 export async function updateTripStatusAction(formData: FormData) {
   const status = String(formData.get("status") ?? "");
+  if (!(["planning", "ready", "completed"] as const).includes(status as never)) throw new AppError("INVALID_INPUT", "변경할 수 없는 트립 상태입니다.");
   const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
@@ -829,6 +834,7 @@ export async function updateTaskStatusAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const taskId = String(formData.get("taskId") ?? "");
   const status = String(formData.get("status") ?? "");
+  if (!taskStatuses.has(status)) throw new AppError("INVALID_INPUT", "변경할 수 없는 체크 상태입니다.");
 
   const trip = await findEditableTrip(formData);
 
@@ -854,7 +860,7 @@ export async function updateTaskStatusSafeAction(formData: FormData) {
 export async function updateTaskMemoAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
   const taskId = String(formData.get("taskId") ?? "");
-  const memo = String(formData.get("memo") ?? "");
+  const memo = String(formData.get("memo") ?? "").slice(0, taskMemoMaxLength);
 
   const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
@@ -868,8 +874,8 @@ export async function updateTaskMemoAction(formData: FormData) {
 
 export async function updateTaskDetailsAction(formData: FormData) {
   const taskId = String(formData.get("taskId") ?? "");
-  const title = String(formData.get("title") ?? "").trim();
-  const memo = String(formData.get("memo") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim().slice(0, taskTitleMaxLength);
+  const memo = String(formData.get("memo") ?? "").trim().slice(0, taskMemoMaxLength);
   const trip = await findEditableTrip(formData);
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
@@ -894,7 +900,7 @@ export async function updateTaskDetailsSafeAction(formData: FormData) {
 
 export async function addTaskAction(formData: FormData) {
   const editToken = String(formData.get("editToken") ?? "");
-  const title = String(formData.get("title") ?? "").trim();
+  const title = String(formData.get("title") ?? "").trim().slice(0, taskTitleMaxLength);
   if (!title) return;
 
   const accessTrip = await findEditableTrip(formData);
@@ -902,6 +908,7 @@ export async function addTaskAction(formData: FormData) {
   if (!trip || trip.status === "archived" || trip.status === "deleted") {
     throw new Error("수정할 수 없는 트립입니다.");
   }
+  if (trip.tasks.length >= maxTasksPerTrip) throw new AppError("INVALID_INPUT", "체크 항목은 트립마다 최대 200개까지 만들 수 있습니다.");
 
   const maxSortOrder = Math.max(...trip.tasks.map((task) => task.sortOrder), 999);
   await createTask({
@@ -1017,6 +1024,11 @@ export async function deleteTripAction(formData: FormData) {
     ? await getTripByEditTokenHash(hashToken(editToken))
     : await findEditableTrip(formData);
   if (!trip) throw new Error("트립을 찾을 수 없습니다.");
+  if (!editToken) {
+    // 편집 권한 공유 링크나 편집자 권한으로는 트립을 삭제할 수 없고, 로그인한 소유자만 삭제할 수 있다.
+    const session = await getSession();
+    if (!canEditOwnedTrip(session?.user?.id, trip.userId)) throw new AppError("FORBIDDEN", "트립 소유자만 트립을 삭제할 수 있습니다.");
+  }
   await recordAnalyticsEvent({ tripId: trip.id, eventName: "trip_deleted" });
   await deleteTrip(trip.id);
   redirect(`${editToken ? "/" : "/my-trips"}?notice=${encodeURIComponent("트립을 삭제했어요.")}`);
@@ -1042,7 +1054,7 @@ export async function inviteTripMemberSafeAction(formData: FormData) {
     if (!trip || !session?.user?.id || trip.userId !== session.user.id) throw new AppError("FORBIDDEN", "트립 소유자만 사용자를 초대할 수 있습니다.");
     const email = String(formData.get("email") ?? "").trim().toLowerCase();
     const permission = String(formData.get("permission") ?? "read") === "edit" ? "edit" : "read";
-    if (!/^\S+@\S+\.\S+$/.test(email)) throw new AppError("INVALID_INPUT", "올바른 이메일을 입력해 주세요.");
+    if (email.length > 254 || !/^\S+@\S+\.\S+$/.test(email)) throw new AppError("INVALID_INPUT", "올바른 이메일을 입력해 주세요.");
     let teamId = trip.teamId;
     if (!teamId) {
       const team = await createTripTeam(getTripDisplayName(trip), trip.id, session.user.id);
@@ -1107,22 +1119,41 @@ export async function removeTripMemberAction(formData: FormData) {
   } catch (error) { return actionFailure(error, { action: "removeTripMember" }); }
 }
 
+// 로그인 없이 호출할 수 있는 분석 기록이라 허용 이벤트·길이·형식을 제한해 DB 오염과 쓰기 남용을 막는다.
+const externalLinkEventNames = new Set(["external_link_click"]);
+const tripIdPattern = /^[A-Za-z0-9_-]{6,64}$/;
+
+function sanitizeLinkEventText(value: FormDataEntryValue | null, max: number) {
+  return String(value ?? "").replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, max);
+}
+
+function sanitizeExternalHref(value: FormDataEntryValue | null) {
+  try {
+    const url = new URL(String(value ?? ""));
+    if (url.protocol !== "https:" && url.protocol !== "http:") return "";
+    // 주소에 토큰이나 개인 정보가 섞일 수 있어 출처와 경로만 남긴다.
+    return `${url.origin}${url.pathname}`.slice(0, 300);
+  } catch {
+    return "";
+  }
+}
+
 export async function recordExternalLinkClickAction(formData: FormData) {
-  const tripId = String(formData.get("tripId") ?? "") || undefined;
-  const eventName = String(formData.get("eventName") ?? "external_link_click");
-  const href = String(formData.get("href") ?? "");
-  const type = String(formData.get("type") ?? "");
-  const resortId = String(formData.get("resortId") ?? "");
-  const sourceName = String(formData.get("sourceName") ?? "");
+  const tripIdValue = sanitizeLinkEventText(formData.get("tripId"), 64);
+  const tripId = tripIdPattern.test(tripIdValue) ? tripIdValue : undefined;
+  const requestedEvent = sanitizeLinkEventText(formData.get("eventName"), 48) || "external_link_click";
+  if (!externalLinkEventNames.has(requestedEvent)) return;
+  const resortIdValue = sanitizeLinkEventText(formData.get("resortId"), 40);
+  const resortId = getResort(resortIdValue) ? resortIdValue : "";
 
   await recordAnalyticsEvent({
-      tripId,
-      eventName,
-      properties: {
-        href,
-        type,
-        resortId,
-        sourceName
-      }
+    tripId,
+    eventName: requestedEvent,
+    properties: {
+      href: sanitizeExternalHref(formData.get("href")),
+      type: sanitizeLinkEventText(formData.get("type"), 40),
+      resortId,
+      sourceName: sanitizeLinkEventText(formData.get("sourceName"), 80)
+    }
   });
 }

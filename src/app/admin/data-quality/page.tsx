@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin";
 import Link from "next/link";
 import { StatusBadge } from "@/components/status-badge";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ type PageProps = {
 };
 
 export default async function AdminDataQualityPage({ searchParams }: PageProps) {
+  await requireAdmin();
   const { priority: priorityParam } = await searchParams;
   const selectedPriority = priorityParam === "1" || priorityParam === "2" || priorityParam === "3"
     ? Number(priorityParam) as SeasonRefreshPriority

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { requireAdmin } from "@/lib/admin";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
   }
 };
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  await requireAdmin();
   const firebaseConsoleUrl = process.env.FIREBASE_PROJECT_ID
     ? `https://console.firebase.google.com/project/${encodeURIComponent(process.env.FIREBASE_PROJECT_ID)}/firestore/databases/-default-/data`
     : null;

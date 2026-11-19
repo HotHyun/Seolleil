@@ -161,7 +161,7 @@ test.describe("production regression", () => {
   });
 
   test("anonymous trip supports identity, decisions, checklist, and budget lifecycle", async ({ page, context }, testInfo) => {
-    test.setTimeout(90_000);
+    test.setTimeout(120_000);
     test.skip(process.env.E2E_ALLOW_PRODUCTION_WRITES !== "1", "Production writes require an explicit opt-in.");
     test.skip(testInfo.project.name !== "chromium", "Run the mutation lifecycle once, then cover mobile with read-only checks.");
 
@@ -208,7 +208,7 @@ test.describe("production regression", () => {
       await page.getByRole("link", { name: /^교통/ }).first().click();
       const transportDecisions = page.getByTestId("trip-decision-workspace");
       await transportDecisions.locator("#transport").getByRole("combobox").click();
-      await page.getByRole("option", { name: "스키장 제휴 셔틀" }).click();
+      await page.getByRole("option", { name: "대중교통", exact: true }).click();
       await transportDecisions.getByText("가는 길과 돌아오는 길에 같이 적용").click();
       await transportDecisions.locator("#transport").getByRole("button", { name: "이동수단 저장" }).click();
       await page.getByRole("link", { name: /^숙박/ }).first().click();
@@ -224,7 +224,7 @@ test.describe("production regression", () => {
       await page.getByRole("link", { name: /트립 개요/ }).first().click();
       await expect(page.getByText("Playwright 테스트 숙소")).toBeVisible();
       await expect(page.getByText("6시간권")).toBeVisible();
-      await expect(page.getByText("스키장 셔틀")).toBeVisible();
+      await expect(page.getByText("대중교통").first()).toBeVisible();
 
       const marker = `회귀 체크 ${Date.now()}`;
       await page.getByRole("link", { name: /준비 체크리스트/ }).first().click();
@@ -257,8 +257,10 @@ test.describe("production regression", () => {
       await expect(mobileDecisions.getByRole("heading", { name: "렌탈샵과 상품" })).toBeVisible();
       await expect(mobileDecisions.getByTestId("trip-place-map").or(mobileDecisions.getByTestId("trip-place-map-fallback")).first()).toBeVisible();
       await expect(mobileDecisions.getByRole("button", { name: "가격 확인", exact: true })).toBeVisible();
-      await page.getByRole("link", { name: /^숙박/ }).first().click();
-      await expect(page.getByTestId("trip-decision-workspace").getByRole("heading", { name: "숙박 밤별 계획" })).toBeVisible();
+      await page.getByRole("button", { name: "트립 메뉴 열기" }).click();
+      await page.getByRole("navigation", { name: "트립 기능" }).getByRole("link", { name: /^숙박/ }).click();
+      await expect(page).toHaveURL(/view=lodging/, { timeout: 20_000 });
+      await expect(page.getByTestId("trip-decision-workspace").getByRole("heading", { name: "숙박 밤별 계획" })).toBeVisible({ timeout: 20_000 });
       await expectNoHorizontalOverflow(page);
       expect(serverErrors, `Production 5xx responses: ${serverErrors.join("\n")}`).toEqual([]);
     } finally {

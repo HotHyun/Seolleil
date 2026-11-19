@@ -8,12 +8,12 @@ export function CinematicHero() {
     <section className="landing-hero relative isolate min-h-[calc(100svh-4rem)] overflow-hidden bg-[#071225] text-white">
       {/* 미리 WebP로 변환한 정적 파일: Workers에서 이미지 변환 없이 바로 서빙하고, srcSet으로 화면 폭·DPR에 맞는 크기만 받는다. */}
       <img
-        src="/images/ski-hero-1080.webp"
-        srcSet="/images/ski-hero-1080.webp 1080w, /images/ski-hero-2400.webp 2400w"
+        src="/images/ski-hero-828.webp"
+        srcSet="/images/ski-hero-828.webp 828w, /images/ski-hero-1440.webp 1440w, /images/ski-hero-2400.webp 2400w"
         sizes="100vw"
         alt="눈 덮인 산을 내려오는 스키어"
-        width={1080}
-        height={721}
+        width={828}
+        height={553}
         fetchPriority="high"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover object-[62%_center] opacity-80"

@@ -12,13 +12,14 @@
   --muted-foreground: 218 16% 42%;
   --accent: 78 87% 59%;
   --accent-foreground: 220 60% 11%;
-  --primary: 222 100% 60%;
+  /* 흰 글자·연한 배경 위 글자 모두 WCAG AA(4.5:1) 이상이 되도록 한 단계 진하게 */
+  --primary: 222 100% 53%;
   --primary-foreground: 0 0% 100%;
   --destructive: 0 72% 50%;
   --destructive-foreground: 0 0% 100%;
   --border: 218 28% 86%;
   --input: 218 28% 78%;
-  --ring: 222 100% 60%;
+  --ring: 222 100% 53%;
 }
 
 .dark {

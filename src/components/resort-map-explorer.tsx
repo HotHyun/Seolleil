@@ -480,23 +480,23 @@ function SelectedResortCard({
         {resort.nightSkiAvailable ? <StatusBadge>야간</StatusBadge> : null}
         {resort.tags.slice(0, 3).map((tag) => <span key={tag} className="hidden sm:inline-flex"><StatusBadge>{tag}</StatusBadge></span>)}
       </div>
-      <h2 className="mt-2 text-lg font-black sm:mt-3 sm:text-xl">{resort.name}</h2>
+      <h2 className="mt-1.5 text-base font-black sm:mt-3 sm:text-xl">{resort.name}</h2>
       <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{resort.address}</p>
-      <div className="mt-3 flex flex-wrap gap-1.5 sm:mt-4">
+      <div className="mt-3 hidden flex-wrap gap-1.5 sm:mt-4 sm:flex">
         {resort.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}
         {resort.nightSkiAvailable ? <StatusBadge>야간 운영</StatusBadge> : null}
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-2 text-sm sm:mt-4">
+      <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:mt-4">
         <MapStat icon={<Shirt />} label="렌탈 후보" value={`${summary.rentalCount}곳`} />
         <MapStat icon={<Hotel />} label="숙박 후보" value={`${summary.lodgingCount}곳`} />
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-1.5 sm:mt-4 sm:gap-2">
+      <div className="mt-2 grid grid-cols-3 gap-1.5 sm:mt-4 sm:gap-2">
         <Link href={`/plan?resortId=${resort.id}`}>
-          <Button className="h-10 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">트립 만들기</Button>
+          <Button className="h-9 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">트립 만들기</Button>
         </Link>
-        <Button variant="secondary" className="h-10 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm" onClick={onOpenNearby}>주변 보기</Button>
+        <Button variant="secondary" className="h-9 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm" onClick={onOpenNearby}>주변 보기</Button>
         <Link href={`/resorts/${resort.id}`} className="flex-1">
-          <Button variant="secondary" className="h-10 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">상세</Button>
+          <Button variant="secondary" className="h-9 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">상세</Button>
         </Link>
       </div>
     </>
@@ -510,12 +510,12 @@ function NearbySelectedCard({ item }: { item: NearbyMapItem }) {
         {item.type === "rental" ? <Shirt className="h-4 w-4" /> : <Hotel className="h-4 w-4" />}
         {item.type === "rental" ? "렌탈샵" : "숙박"}
       </div>
-      <h2 className="mt-2 text-lg font-black sm:text-xl">{item.name}</h2>
-      <p className="mt-1 text-sm text-muted-foreground">{item.meta}</p>
+      <h2 className="mt-1 text-base font-black sm:mt-2 sm:text-xl">{item.name}</h2>
+      <p className="mt-1 line-clamp-2 text-xs text-muted-foreground sm:text-sm">{item.meta}</p>
       {item.tags?.length ? <div className="mt-3 flex flex-wrap gap-1.5">{item.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}</div> : null}
       {item.href ? (
         <AnalyticsLink href={item.href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: `map_${item.type}`, resortId: item.resortId }}>
-          <Button className="mt-3 w-full sm:mt-4">
+          <Button className="mt-2 h-9 w-full sm:mt-4 sm:h-11">
             지도/예약 확인 <ExternalLink className="h-4 w-4" />
           </Button>
         </AnalyticsLink>
@@ -537,11 +537,11 @@ function MapUnavailable({ resort }: { resort?: SkiResort }) {
 
 function MapStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-lg bg-muted p-2.5 text-left">
+    <div className="flex items-center gap-2.5 rounded-lg bg-muted px-2.5 py-1.5 text-left sm:py-2.5">
       <div className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-md bg-background text-primary sm:flex [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
       <div className="min-w-0">
         <div className="text-[11px] font-bold text-muted-foreground">{label}</div>
-        <div className="mt-0.5 text-base font-black">{value}</div>
+        <div className="text-sm font-black sm:mt-0.5 sm:text-base">{value}</div>
       </div>
     </div>
   );

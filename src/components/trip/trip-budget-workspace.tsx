@@ -137,7 +137,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
           </section>
 
           <section>
-            <div className="mb-3 flex items-center justify-between gap-3"><div><h2 className="font-black">추가 비용</h2><p className="text-xs text-muted-foreground">식비, 기름값, 주차비처럼 여행마다 달라지는 비용을 더하세요.</p></div>{canEdit ? <Button type="button" variant="secondary" className="h-9 px-3" onClick={addExpense}><Plus className="h-4 w-4" /> 추가</Button> : null}</div>
+            <div className="mb-3 flex items-center justify-between gap-3"><div className="min-w-0"><h2 className="font-black">추가 비용</h2><p className="text-xs text-muted-foreground">식비, 기름값, 주차비처럼 여행마다 달라지는 비용을 더하세요.</p></div>{canEdit ? <Button type="button" variant="secondary" className="h-9 shrink-0 whitespace-nowrap px-3 text-xs sm:text-sm" onClick={addExpense}><Plus className="h-4 w-4" /> 추가</Button> : null}</div>
             <div className="space-y-2">
               {budget.extras.map((expense, index) => <div key={expense.id} className="grid grid-cols-[110px_1fr_110px_40px] gap-2 max-sm:grid-cols-[100px_1fr_40px]">
                 <SelectField value={expense.category} onValueChange={value => { setBudget(current => ({ ...current, extras: current.extras.map((item, i) => i === index ? { ...item, category: value as TripExpenseCategory } : item) })); setDirty(true); }} options={categories} />

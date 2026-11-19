@@ -5,6 +5,7 @@ import Link from "next/link";
 import Script from "next/script";
 import { MountainSnow } from "lucide-react";
 import { AuthNav } from "@/components/auth/auth-nav";
+import { SiteFooter } from "@/components/site-footer";
 import { FirebaseSessionProvider } from "@/components/auth/firebase-session-sync";
 import { Toaster, ToastFromUrl } from "@/components/ui/sonner";
 import "@/app/globals.css";
@@ -87,6 +88,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             </div>
           </header>
           {children}
+          <SiteFooter />
           <Suspense><ToastFromUrl /></Suspense>
           <Toaster />
         </FirebaseSessionProvider>

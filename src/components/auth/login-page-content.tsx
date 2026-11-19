@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { FirebaseAuthForms } from "@/components/auth/firebase-auth-forms";
@@ -37,6 +38,7 @@ export function LoginPageContent() {
           {notice ? <p className="rounded-md bg-primary/10 p-3 text-sm font-semibold text-primary">{notice}</p> : null}
           {user?.emailVerified && sessionError ? <p role="alert" className="rounded-md bg-destructive/10 p-3 text-sm font-semibold text-destructive">로그인 상태를 저장하지 못했습니다. 다시 로그인해 주세요.</p> : null}
           <FirebaseAuthForms mode={mode} callbackUrl={callbackUrl} initialError={error} />
+          <p className="text-xs leading-5 text-muted-foreground">로그인하거나 가입하면 <Link href="/terms" className="font-semibold underline underline-offset-2">이용약관</Link>과 <Link href="/privacy" className="font-semibold underline underline-offset-2">개인정보처리방침</Link>에 동의한 것으로 봅니다.</p>
         </CardContent>
       </Card>
     </main>

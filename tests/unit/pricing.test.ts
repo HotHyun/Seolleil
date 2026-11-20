@@ -128,9 +128,22 @@ describe("pricing", () => {
 
   it("stops using reference prices for a resort once its 26/27 prices are published", () => {
     expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "yongpyong").every(rule => rule.upcomingFallback === false)).toBe(true);
-    expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "high1").every(rule => rule.upcomingFallback === true)).toBe(true);
+    expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "high1").every(rule => rule.upcomingFallback === false)).toBe(true);
+    expect(priceRules.filter(rule => rule.season === "2025-2026" && rule.resortId === "jisan").every(rule => rule.upcomingFallback === true)).toBe(true);
     expect(resolveLiftPrice("yongpyong", "6h", "2026-12-20")).not.toHaveProperty("referenceSeason");
-    expect(resolveLiftPrice("high1", "4h", "2026-12-20")).toMatchObject({ referenceSeason: "2025-2026" });
+    expect(resolveLiftPrice("jisan", "4h", "2026-12-20")).toMatchObject({ referenceSeason: "2025-2026" });
+  });
+
+  it("uses the published 26/27 High1 lift table and drops slots that are not in it", () => {
+    expect(resolveLiftPrice("high1", "3h", "2026-12-20")).toMatchObject({ season: "2026-2027", adultPrice: 66000, confidence: "confirmed" });
+    expect(resolveLiftPrice("high1", "4h", "2026-12-20")).toMatchObject({ adultPrice: 73000 });
+    expect(resolveLiftPrice("high1", "7h", "2027-01-16")).toMatchObject({ adultPrice: 88000 });
+    expect(resolveLiftPrice("high1", "full_day", "2027-01-16")).toMatchObject({ adultPrice: 111000 });
+    expect(resolveLiftPrice("high1", "5h", "2026-12-20")).toBeUndefined();
+    expect(resolveLiftPrice("high1", "6h", "2026-12-20")).toBeUndefined();
+    expect(getSellableLiftSlots("high1", "2026-12-20")).toEqual(["3h", "4h", "7h", "full_day"]);
+    // 25/26 날짜는 그 시즌 요금표를 따른다.
+    expect(resolveLiftPrice("high1", "4h", "2026-01-17")).toMatchObject({ season: "2025-2026", adultPrice: 68000 });
   });
 
   it("applies published 26/27 lift prices only to 26/27 visit dates", () => {

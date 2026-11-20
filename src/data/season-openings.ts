@@ -13,7 +13,7 @@ export type SeasonOpening = {
 
 export const seasonOpenings: SeasonOpening[] = [
   { resortId: "yongpyong", openDate: "2026-11-22", status: "official", source: "모나용평 공식 26/27 리프트 요금 안내(개장 특가 11/22)", checkedAt: "2026-11-19" },
-  { resortId: "high1", openDate: "2026-11-27", status: "target", source: "하이원 26/27 개장 목표일(블로그 보도, 공식 공지 확인 필요)", checkedAt: "2026-11-19" },
+  { resortId: "high1", openDate: "2026-11-24", status: "official", source: "하이원리조트 공식 공지 '2026/27 동계시즌 하이원 스키장 개장 안내'(2026-11-18, 11/24 12:00~16:00 제우스 3-1·주피터)", checkedAt: "2026-11-20" },
   { resortId: "o2", openDate: "2026-12-05", status: "target", source: "오투리조트 26/27 시즌권 이용 시작일(공식 개장 공지 확인 필요)", checkedAt: "2026-11-19" },
   { resortId: "oakvalley", openDate: "2026-12-11", status: "official", source: "오크밸리 26/27 시즌권 안내의 스키장 개장일", checkedAt: "2026-11-19" }
 ];

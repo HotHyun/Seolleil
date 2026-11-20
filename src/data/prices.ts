@@ -835,6 +835,21 @@ function upcomingOfficialRentalRules(seed: UpcomingOfficialRentalSeed): RentalPr
 
 const upcomingLiftSeeds: UpcomingLiftSeed[] = [
   {
+    resortId: "high1",
+    resortName: "하이원리조트",
+    sourceName: "하이원 스키 이용요금(26/27 시즌)",
+    sourceUrl: "https://www.high1.com/ski/contents.do",
+    validFrom: "2026-11-24",
+    validTo: "2027-03-31",
+    verificationNote: "공식 스키 이용요금 페이지의 리프트권(시간권) 표 기준(2026-11-20 확인). 표에 없는 2시간·5시간·6시간·야간권은 판매하지 않는 것으로 본다. 주중·주말 구분과 소인 가격은 표시되지 않는다.",
+    slots: [
+      { slot: "3h", adult: 66000, memo: "공식 3시간권. 게이트 최초 통과 시점부터 적용, 정설시간(16~18시) 이용 불가." },
+      { slot: "4h", adult: 73000, memo: "공식 4시간권." },
+      { slot: "7h", adult: 88000, memo: "공식 7시간권." },
+      { slot: "full_day", adult: 111000, memo: "공식 종일권." }
+    ]
+  },
+  {
     resortId: "konjiam",
     resortName: "곤지암리조트",
     sourceName: "곤지암리조트 26/27 얼리버드 리프트권 판매 공지(2026-10-30)",

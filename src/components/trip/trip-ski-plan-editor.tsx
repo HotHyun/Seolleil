@@ -10,7 +10,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Field } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
-import { timeSlotLabels } from "@/lib/constants";
+import { liftSlotOptions } from "@/lib/lift-slots";
 import {
   enumerateTripDates,
   toDateOnly,
@@ -28,10 +28,6 @@ type ScheduleTrip = {
   endDate: Date;
   skiPlan: TripSkiPlan;
 };
-
-const timeOptions = Object.entries(timeSlotLabels)
-  .filter(([value]) => value !== "all")
-  .map(([value, label]) => ({ value, label }));
 
 export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true }: {
   trip: ScheduleTrip;
@@ -91,7 +87,7 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
                 <span className="block font-black">{label}</span>
                 <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">{tripDayTypeLabel(date)} 가격 · 여행 {index + 1}일차</span>
               </button>
-              {selected ? <div className="w-32 shrink-0 max-[390px]:w-28"><SelectField ariaLabel={`${label} 이용 시간`} value={days.get(date)} onValueChange={value => setDays(current => new Map(current).set(date, value as TimeSlot))} options={timeOptions} /></div> : null}
+              {selected ? <div className="w-32 shrink-0 max-[390px]:w-28"><SelectField ariaLabel={`${label} 이용 시간`} value={days.get(date)} onValueChange={value => setDays(current => new Map(current).set(date, value as TimeSlot))} options={liftSlotOptions(trip.resortId, date, days.get(date))} /></div> : null}
             </div>
           </div>;
         })}

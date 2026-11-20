@@ -719,7 +719,7 @@ const high1DetailedRentalRules: RentalPriceRule[] = [
 
 rentalPriceRules.push(...high1DetailedRentalRules);
 
-// 26/27 시즌: 공식 페이지에 26/27 가격이 게시된 리조트만 등록한다. 25/26 규칙과 같은 라벨·구분을 써서 전환 보드가 대체 관계를 인식한다.
+// 26/27 시즌: 공식 페이지에 26/27 가격이 게시된 리조트만 등록한다. 게시된 요금표에 없는 시간권은 판매하지 않는 것으로 보고 규칙을 만들지 않는다(25/26 값을 이어 쓰지 않는다). 25/26 규칙과 같은 라벨·구분을 써서 전환 보드가 대체 관계를 인식한다.
 const upcomingCheckedAt = "2026-11-19";
 
 type UpcomingLiftSeed = {
@@ -730,7 +730,17 @@ type UpcomingLiftSeed = {
   validFrom: string;
   validTo: string;
   verificationNote: string;
-  slots: Array<{ slot: TimeSlot; adult: number; child: number; memo: string }>;
+  slots: Array<{
+    slot: TimeSlot;
+    adult: number;
+    /** 공지에 소인 가격이 없으면 생략한다. */
+    child?: number;
+    /** 주중/주말 구분이 있는 가격만 지정한다. 기본은 all. */
+    dayType?: "weekday" | "weekend";
+    /** 25/26 규칙과 구분이 달라지는 항목이 대체 관계를 잃지 않게 25/26 키를 직접 지정한다. */
+    replacementKey?: string;
+    memo: string;
+  }>;
 };
 
 type UpcomingOfficialRentalSeed = {
@@ -745,16 +755,19 @@ type UpcomingOfficialRentalSeed = {
   clothing: { price: number; max: number };
 };
 
+const upcomingDayTypeSuffix = { weekday: " 주중", weekend: " 주말" } as const;
+
 function upcomingLiftRules(seed: UpcomingLiftSeed): PriceRule[] {
-  return seed.slots.map(({ slot, adult, child, memo }) => ({
-    id: `${seed.resortId}-lift-${slot}-26-27`,
+  return seed.slots.map(({ slot, adult, child, dayType, replacementKey, memo }) => ({
+    id: `${seed.resortId}-lift-${slot}${dayType ? `-${dayType}` : ""}-26-27`,
+    replacementKey,
     resortId: seed.resortId,
     season: UPCOMING_SEASON,
     itemType: "lift_ticket" as const,
-    label: `${seed.resortName} ${slot} 리프트권`,
+    label: `${seed.resortName} ${slot} 리프트권${dayType ? upcomingDayTypeSuffix[dayType] : ""}`,
     validFrom: seed.validFrom,
     validTo: seed.validTo,
-    dayType: "all" as const,
+    dayType: dayType ?? ("all" as const),
     timeSlot: slot,
     adultPrice: adult,
     childPrice: child,
@@ -821,6 +834,24 @@ function upcomingOfficialRentalRules(seed: UpcomingOfficialRentalSeed): RentalPr
 }
 
 const upcomingLiftSeeds: UpcomingLiftSeed[] = [
+  {
+    resortId: "konjiam",
+    resortName: "곤지암리조트",
+    sourceName: "곤지암리조트 26/27 얼리버드 리프트권 판매 공지(2026-10-30)",
+    sourceUrl: "https://m.konjiamresort.co.kr/contact/notice.dev",
+    // 개장은 '12월 중'으로만 공지됐다. 개장일이 확정되기 전 날짜도 가격이 비지 않도록 시즌 초부터 둔다.
+    validFrom: "2026-11-01",
+    validTo: "2027-03-31",
+    verificationNote: "공식 공지의 26/27 리프트권 정상가(주중·주말 2·4·6시간) 기준. 공지에 없는 3시간·야간·종일권은 판매하지 않는 것으로 본다. 소인 가격은 공지에 없다.",
+    slots: [
+      { slot: "2h", dayType: "weekday", adult: 69000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 공지 주중 2시간 정상가. 얼리버드(NOL 한정)는 정상가에 반영하지 않고 할인 안내로 따로 보여 준다." },
+      { slot: "2h", dayType: "weekend", adult: 83000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 공지 주말 2시간 정상가." },
+      { slot: "4h", dayType: "weekday", adult: 81000, memo: "공식 공지 주중 4시간 정상가(25/26과 동일)." },
+      { slot: "4h", dayType: "weekend", adult: 96000, memo: "공식 공지 주말 4시간 정상가(25/26과 동일)." },
+      { slot: "6h", dayType: "weekday", adult: 87000, memo: "공식 공지 주중 6시간 정상가(25/26과 동일)." },
+      { slot: "6h", dayType: "weekend", adult: 105000, memo: "공식 공지 주말 6시간 정상가(25/26과 동일)." }
+    ]
+  },
   {
     resortId: "yongpyong",
     resortName: "모나 용평",

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { resorts } from "@/data/resorts";
 import { priceRules, rentalPriceRules } from "@/data/prices";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
-import { estimateTransportCost, estimateTransportPlanCost, estimateTripCost, getRentalOptionsForResort, liftTicketSavings, resolveLiftPrice } from "@/lib/pricing";
+import { estimateTransportCost, estimateTransportPlanCost, estimateTripCost, getRentalOptionsForResort, getSellableLiftSlots, isLiftSlotNotSold, liftTicketSavings, resolveLiftPrice } from "@/lib/pricing";
 import { tripInput } from "../fixtures/trip-input";
 import { createEmptySkiDay, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
@@ -69,14 +69,45 @@ describe("pricing", () => {
       liftOption.id
     );
 
-    expect(resolveLiftPrice("konjiam", "4h", "2027-01-16")).toMatchObject({ referenceSeason: "2025-2026", confidence: "estimated", adultPrice: 96000 });
+    expect(resolveLiftPrice("jisan", "4h", "2027-01-16")).toMatchObject({ referenceSeason: "2025-2026", confidence: "estimated", adultPrice: 75000 });
+    expect(resolveLiftPrice("konjiam", "4h", "2027-01-16")).toMatchObject({ season: "2026-2027", confidence: "confirmed", adultPrice: 96000 });
+    expect(resolveLiftPrice("konjiam", "4h", "2027-01-16")).not.toHaveProperty("referenceSeason");
     expect(resolveLiftPrice("konjiam", "4h", "2027-01-14")).toMatchObject({ adultPrice: 81000 });
-    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ representative: 192000, confidence: "estimated" });
-    expect(estimate.items.find(item => item.key === "lift_ticket")?.label).toContain("25/26 참고가");
+    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ representative: 192000, confidence: "confirmed" });
+    expect(estimate.items.find(item => item.key === "lift_ticket")?.label).not.toContain("25/26 참고가");
     expect(estimate.items.find(item => item.key === "rental")).toMatchObject({ confidence: "estimated" });
     expect(selectedLiftEstimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "estimated" });
     expect(liftTicketSavings(liftOption, "2027-01-16")).not.toBeNull();
     expect(resolveLiftPrice("konjiam", "4h", "2027-12-16")).toBeUndefined();
+  });
+
+  it("uses the published 26/27 Konjiam lift prices and treats slots missing from the table as not sold", () => {
+    expect(resolveLiftPrice("konjiam", "2h", "2026-12-23")).toMatchObject({ season: "2026-2027", adultPrice: 69000, confidence: "confirmed" });
+    expect(resolveLiftPrice("konjiam", "2h", "2026-12-26")).toMatchObject({ season: "2026-2027", adultPrice: 83000, confidence: "confirmed" });
+    expect(resolveLiftPrice("konjiam", "6h", "2026-12-26")).toMatchObject({ adultPrice: 105000 });
+    // 26/27 요금표에 없는 시간권은 25/26 값으로 대신하지 않는다.
+    expect(resolveLiftPrice("konjiam", "3h", "2026-12-26")).toBeUndefined();
+    expect(resolveLiftPrice("konjiam", "night", "2026-12-26")).toBeUndefined();
+    expect(resolveLiftPrice("konjiam", "full_day", "2026-12-26")).toBeUndefined();
+    // 개장일이 확정되기 전인 11월 방문일도 가격이 비지 않는다.
+    expect(resolveLiftPrice("konjiam", "4h", "2026-11-21")).toMatchObject({ season: "2026-2027", adultPrice: 96000 });
+  });
+
+  it("lists only the lift time slots a resort sells on the visit date", () => {
+    expect(getSellableLiftSlots("konjiam", "2026-12-26")).toEqual(["2h", "4h", "6h"]);
+    expect(getSellableLiftSlots("yongpyong", "2026-12-20")).toEqual(["4h", "6h", "full_day"]);
+    // 지난 시즌 날짜는 그 시즌 요금표 기준이다.
+    expect(getSellableLiftSlots("konjiam", "2026-01-17")).toEqual(expect.arrayContaining(["3h", "4h", "night", "full_day"]));
+    // 판단할 요금 자료가 없는 날짜는 빈 배열이다.
+    expect(getSellableLiftSlots("konjiam", "2030-01-01")).toEqual([]);
+    expect(isLiftSlotNotSold("konjiam", "3h", "2026-12-26")).toBe(true);
+    expect(isLiftSlotNotSold("konjiam", "4h", "2026-12-26")).toBe(false);
+    expect(isLiftSlotNotSold("konjiam", "3h", "2030-01-01")).toBe(false);
+  });
+
+  it("says the selected lift time slot is not sold instead of asking to check the price", () => {
+    const estimate = estimateTripCost(konjiam, tripInput({ visitDate: "2026-12-26", liftTicketTimeSlot: "3h" }));
+    expect(estimate.items.find(item => item.key === "lift_ticket")).toMatchObject({ confidence: "unavailable", label: "리프트권 · 3시간권 미판매" });
   });
 
   it("labels 25/26 shuttle fares as reference prices on 26/27 dates", () => {

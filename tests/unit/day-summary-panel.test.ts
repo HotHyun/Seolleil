@@ -6,11 +6,11 @@ import { getRentalOptionsForResort } from "@/lib/pricing";
 import { buildDaySummaries } from "@/lib/trip-day-summary";
 import { parseTripSkiPlan } from "@/lib/trip-ski-plan";
 
-function render(date: string, edit?: (plan: ReturnType<typeof parseTripSkiPlan>) => void) {
+function render(date: string, edit?: (plan: ReturnType<typeof parseTripSkiPlan>) => void, resortId = "konjiam") {
   const day = new Date(`${date}T00:00:00Z`);
   const plan = parseTripSkiPlan(null, { visitDate: day, endDate: day, liftTicketTimeSlot: "4h", transportType: "car" });
   edit?.(plan);
-  const summaries = buildDaySummaries("konjiam", plan, getRentalOptionsForResort("konjiam"), 2);
+  const summaries = buildDaySummaries(resortId, plan, getRentalOptionsForResort(resortId), 2);
   return renderToStaticMarkup(createElement(DaySummaryPanel, { summaries, peopleCount: 2, onSelectDay: () => {}, canEdit: true }));
 }
 
@@ -35,6 +35,6 @@ describe("day summary panel", () => {
   });
 
   it("flags 25/26 reference prices on 26/27 dates", () => {
-    expect(render("2027-01-16")).toContain("25/26 참고가");
+    expect(render("2027-01-16", undefined, "jisan")).toContain("25/26 참고가");
   });
 });

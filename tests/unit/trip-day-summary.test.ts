@@ -38,10 +38,10 @@ describe("trip day summary", () => {
   });
 
   it("marks a saved shop without items as a candidate and flags 25/26 reference prices on 26/27 dates", () => {
-    const groups = getRentalOptionsForResort("konjiam");
+    const groups = getRentalOptionsForResort("jisan");
     const plan = planFor("2027-01-16");
     plan.days[0] = { ...plan.days[0], rentalShopId: groups[0].shop.id };
-    const [summary] = buildDaySummaries("konjiam", plan, groups, 2);
+    const [summary] = buildDaySummaries("jisan", plan, groups, 2);
 
     expect(summary.rentalState).toBe("shop_only");
     expect(summary.hasReference).toBe(true);

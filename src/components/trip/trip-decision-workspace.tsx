@@ -24,6 +24,8 @@ import { SubmitButton } from "@/components/ui/submit-button";
 import type { NearbyLodging } from "@/data/resort-map";
 import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import type { RentalPriceRule, RentalShop } from "@/lib/types";
+import { LiftPromoNote } from "@/components/lift-promo-note";
+import { liftSlotOptions } from "@/lib/lift-slots";
 import { liftTicketSavings } from "@/lib/pricing";
 import type { TripDecisionView } from "@/lib/trip-workspace";
 import { sortRentalComparisonGroups, type RentalComparisonSort } from "@/lib/rental-comparison";
@@ -123,7 +125,7 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
       <NearbyPlaceHelp resortName={resortName} kind="rental" className="mt-4" />
     </DecisionSection>
 
-    <DecisionSection id="lift" title="공식 리조트 리프트권" description="선택한 날짜에 렌탈샵 할인권 대신 공식 시간권을 적용하세요." icon={<Clock3 />}>{activeSkiDay ? <><div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-muted-foreground">{activeSkiDay.date} · {tripDayTypeLabel(activeSkiDay.date)} 조건입니다. 공식권을 저장하면 이 날짜의 할인권만 해제됩니다.</div><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift_day" /><input type="hidden" name="skiDate" value={activeSkiDay.date} /><SelectField name="liftTicketTimeSlot" ariaLabel={`${activeSkiDay.date} 공식 리프트권 시간`} defaultValue={activeSkiDay.timeSlot} options={Object.entries(timeSlotLabels).filter(([value]) => value !== "all").map(([value,label]) => ({value,label}))} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">이 날짜에 공식권 적용</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></> : <p className="text-sm text-muted-foreground">먼저 스키 날짜를 저장해 주세요.</p>}</DecisionSection>
+    <DecisionSection id="lift" title="공식 리조트 리프트권" description="선택한 날짜에 렌탈샵 할인권 대신 공식 시간권을 적용하세요." icon={<Clock3 />}>{activeSkiDay ? <><div className="mb-4 rounded-xl border border-primary/20 bg-primary/5 p-3 text-sm leading-6 text-muted-foreground">{activeSkiDay.date} · {tripDayTypeLabel(activeSkiDay.date)} 조건입니다. 공식권을 저장하면 이 날짜의 할인권만 해제됩니다.</div><LiftPromoNote resortId={trip.resortId} timeSlot={activeSkiDay.timeSlot} visitDate={activeSkiDay.date} className="mb-4" /><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift_day" /><input type="hidden" name="skiDate" value={activeSkiDay.date} /><SelectField name="liftTicketTimeSlot" ariaLabel={`${activeSkiDay.date} 공식 리프트권 시간`} defaultValue={activeSkiDay.timeSlot} options={liftSlotOptions(trip.resortId, activeSkiDay.date, activeSkiDay.timeSlot)} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">이 날짜에 공식권 적용</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></> : <p className="text-sm text-muted-foreground">먼저 스키 날짜를 저장해 주세요.</p>}</DecisionSection>
     </> : null}
 
     {view === "lodging" ?

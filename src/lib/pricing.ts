@@ -15,7 +15,7 @@ import type {
 } from "@/lib/types";
 import { optionAppliesToDay, rentalOptionIds, type TripSkiPlan } from "@/lib/trip-ski-plan";
 import { normalizeTransportType } from "@/lib/transport";
-import { CURRENT_SEASON, CURRENT_SHUTTLE_SEASON } from "@/lib/constants";
+import { CURRENT_SEASON, CURRENT_SHUTTLE_SEASON, timeSlotLabels } from "@/lib/constants";
 import { canUseAsReference, isUpcomingSeasonDate, previousSeasonDate, ruleForDate, toReferenceRule } from "@/lib/season-fallback";
 
 function appendToIndex<T>(index: Map<string, T[]>, key: string, value: T) {
@@ -77,6 +77,26 @@ export function resolveLiftPrice(resortId: string, timeSlot: TimeSlot, visitDate
   const previousDate = previousSeasonDate(visitDate);
   const reference = previousDate ? pickLiftRule(resortId, timeSlot, previousDate, visitDate, true) : undefined;
   return reference ? toReferenceRule(reference) : undefined;
+}
+
+const liftSlotOrder: TimeSlot[] = ["2h", "3h", "4h", "5h", "6h", "7h", "night", "full_day"];
+
+/**
+ * 방문일에 이 스키장이 판매하는 리프트 시간권. 요금표에 가격이 있는 시간권만 판매하는 것으로 본다.
+ * 새 시즌 공식 요금표가 게시되면 그 표에 없는 시간권은 판매하지 않는 것이다(직전 시즌 값을 이어 쓰지 않는다).
+ * 날짜에 맞는 요금 자료가 하나도 없으면 판단할 수 없으므로 빈 배열을 돌려준다.
+ */
+export function getSellableLiftSlots(resortId: string, visitDate: string): TimeSlot[] {
+  return liftSlotOrder.filter(slot => {
+    const rule = resolveLiftPrice(resortId, slot, visitDate);
+    return rule !== undefined && rule.confidence !== "unavailable";
+  });
+}
+
+/** 요금표로 판매 시간권을 알 수 있는데 선택한 시간권이 그 안에 없으면 true. */
+export function isLiftSlotNotSold(resortId: string, slot: TimeSlot, visitDate: string) {
+  const sellable = getSellableLiftSlots(resortId, visitDate);
+  return sellable.length > 0 && !sellable.includes(slot);
 }
 
 function pickLiftRule(resortId: string, timeSlot: TimeSlot, matchDate: string, visitDate: string, referenceOnly: boolean) {
@@ -344,7 +364,7 @@ export function estimateTripCost(
       note: lift.memo
     });
   } else {
-    items.push({ key: "lift_ticket", label: "리프트권", confidence: "unavailable" });
+    items.push({ key: "lift_ticket", label: isLiftSlotNotSold(resort.id, input.liftTicketTimeSlot, input.visitDate) ? `리프트권 · ${timeSlotLabels[input.liftTicketTimeSlot]} 미판매` : "리프트권", confidence: "unavailable" });
   }
 
   const rental = resolveRentalPrice(resort.id, input, selectedRentalOptionId);
@@ -458,7 +478,7 @@ function estimateSkiPlanItems(resort: SkiResort, input: TripInput, plan: TripSki
         referenceSeason: lift.referenceSeason
       });
     } else {
-      liftItems.push({ key: `lift_ticket:${day.date}`, label: `${day.date} 리프트권`, confidence: "unavailable" });
+      liftItems.push({ key: `lift_ticket:${day.date}`, label: isLiftSlotNotSold(resort.id, day.timeSlot, day.date) ? `${day.date} 리프트권 · ${timeSlotLabels[day.timeSlot]} 미판매` : `${day.date} 리프트권`, confidence: "unavailable" });
     }
 
     const selectedOptionIds = rentalOptionIds(day);

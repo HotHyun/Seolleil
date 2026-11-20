@@ -7,6 +7,7 @@ import { CheckCircle2, ExternalLink, MapPinned, ReceiptText, Sparkles } from "lu
 import { createTripAction } from "@/app/actions";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
+import { LiftPromoNote } from "@/components/lift-promo-note";
 import { PriceContextBanner } from "@/components/price-context-banner";
 import { StatusBadge } from "@/components/status-badge";
 import { CreateTripSubmit } from "@/components/trip/create-trip-submit";
@@ -163,6 +164,7 @@ function RecommendationsContent() {
                     </div>
                     <p className="mt-1 text-xs font-semibold text-muted-foreground">범위 {formatCurrency(recommendation.cost.min)}–{formatCurrency(recommendation.cost.max)} · 리프트·렌탈·교통 기준</p>
                   </div>
+                  <LiftPromoNote resortId={recommendation.resort.id} timeSlot={input.liftTicketTimeSlot} visitDate={input.visitDate} className="mb-4" />
                   <input type="hidden" name="selectedRentalOptionId" value="skip" />
                   <p className="mt-3 rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs leading-5 text-muted-foreground">
                     가격을 비교한 뒤 트립을 만들면 날짜별로 샵과 품목을 바꿀 수 있어요.

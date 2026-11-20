@@ -199,8 +199,8 @@ describe("static data validation", () => {
       targetSeason: "2026-2027",
       sourceShuttleSeason: "25/26",
       targetShuttleSeason: "26/27",
-      completedTargetCount: 14,
-      progressPercent: 4,
+      completedTargetCount: 19,
+      progressPercent: 5,
       researchRecordCount: 39,
       priorityOneResearchCount: 12,
       priorityTwoResearchCount: 15,
@@ -212,11 +212,15 @@ describe("static data validation", () => {
     expect(new Set(priorityTwoIds)).toEqual(new Set(["konjiam", "jisan", "elysian", "wellihilli", "alpensia"]));
     expect(new Set(priorityThreeIds)).toEqual(new Set(["oakvalley", "o2", "muju", "edenvalley"]));
     const partiallyPublished = new Set(["yongpyong", "alpensia"]);
+    // 곤지암은 26/27 리프트 정상가만 게시됐고(미게시 시간권은 25/26 추정값) 렌탈은 아직 없다.
+    const liftOnlyPublished = new Set(["konjiam"]);
     expect(report.seasonTransition.resorts.every(resort =>
       resort.shuttle.status === "not_published" &&
       (partiallyPublished.has(resort.resortId)
         ? resort.lift.status === "in_review" && resort.rental.status === "in_review"
-        : resort.lift.status === "not_published" && resort.rental.status === "not_published")
+        : liftOnlyPublished.has(resort.resortId)
+          ? resort.lift.status === "in_review" && resort.rental.status === "not_published"
+          : resort.lift.status === "not_published" && resort.rental.status === "not_published")
     )).toBe(true);
   });
 

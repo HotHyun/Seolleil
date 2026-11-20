@@ -36,7 +36,7 @@ const costOf = (value: CostableTrip) => (value.selectedRecommendation as { cost:
 
 describe("current trip cost", () => {
   it("replaces a stale stored snapshot with the current price data", () => {
-    const live = withCurrentCost(trip("konjiam", "2027-01-16", "4h"));
+    const live = withCurrentCost(trip("jisan", "2027-01-16", "4h"));
     const lift = costOf(live).items.find(item => item.key.startsWith("lift_ticket"));
 
     expect(costOf(live).representative).toBeGreaterThan(1);

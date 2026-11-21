@@ -16,7 +16,7 @@ export function LiftPromoNote({ resortId, timeSlot, visitDate, className }: { re
     <div className={`rounded-lg border bg-muted/50 p-3 text-xs leading-5 ${className ?? ""}`} data-testid="lift-promo-note">
       <p className="flex items-start gap-2 font-medium text-foreground">
         <Tag className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-        <span>{promotion.title} {timeSlotLabels[timeSlot]} {formatCurrency(match.adultPrice)}{saving}</span>
+        <span>{promotion.title} {timeSlotLabels[timeSlot]} 리프트 {formatCurrency(match.adultPrice)}{match.equipmentRentalPrice !== undefined ? ` · 장비 대여${match.equipmentRentalDuration ? ` ${match.equipmentRentalDuration}` : ""} ${formatCurrency(match.equipmentRentalPrice)}` : ""}{saving}</span>
       </p>
       <p className="mt-1 text-muted-foreground">
         {promotion.channel}에서 {promotion.salesTo.slice(5).replace("-", "/")}까지 판매. 위 예상 총액에는 반영하지 않았어요. {promotion.condition}

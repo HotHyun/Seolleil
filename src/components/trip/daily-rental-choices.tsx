@@ -32,6 +32,7 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
     liftOptions: available.filter(option => option.itemType === "lift_ticket")
   }), [available, rideType]);
   const { equipment, clothing, packages, accessories, liftOptions } = grouped;
+  const usesSeparateRentalSum = packages.some(option => option.memo?.includes("공식 묶음상품이 아니다"));
   const priceAvailability = rentalPriceAvailability(options, day);
   // 26/27 가격이 없어 25/26 가격을 참고가로 쓰는 날짜인지(선택한 날짜에 직접 맞는 상품이 없을 때)
   const usesReferencePrice = priceAvailability === "available" && available.length > 0 && !available.some(option => option.validFrom <= day.date && option.validTo >= day.date);
@@ -84,17 +85,17 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
       <input type="hidden" name="accessoryOptionIds" value="[]" />
       <div>
         <p className="text-xs font-semibold text-muted-foreground">장비와 의류</p>
-        <p className="mt-1 text-xs leading-5 text-muted-foreground">품목을 따로 고르거나 샵의 결합 패키지를 선택하세요.{usesReferencePrice ? " 26/27 가격이 아직 없어 25/26 가격을 참고가로 합산하며, 공식 가격이 게시되면 자동으로 바뀌어요." : ""}</p>
+        <p className="mt-1 text-xs leading-5 text-muted-foreground">{usesSeparateRentalSum ? "품목을 따로 고르거나 공식 장비·의류 가격을 더한 합계를 선택하세요. 합계는 공식 묶음상품이 아닙니다." : "품목을 따로 고르거나 샵의 결합 패키지를 선택하세요."}{usesReferencePrice ? " 26/27 가격이 아직 없어 25/26 가격을 참고가로 합산하며, 공식 가격이 게시되면 자동으로 바뀌어요." : ""}</p>
       </div>
       {packages.length ? <div className="grid grid-cols-2 gap-2 rounded-lg bg-muted p-1" role="group" aria-label="렌탈 선택 방식">
         <ModeButton active={mode === "individual"} onClick={() => setMode("individual")}>개별 선택</ModeButton>
-        <ModeButton active={mode === "package"} onClick={() => setMode("package")}>결합 패키지</ModeButton>
+        <ModeButton active={mode === "package"} onClick={() => setMode("package")}>{usesSeparateRentalSum ? "장비·의류 합계" : "결합 패키지"}</ModeButton>
       </div> : null}
       {mode === "individual" ? <div className="grid gap-3 sm:grid-cols-2">
         <ChoiceField label="장비" value={equipmentId} onValueChange={setEquipmentId} options={equipment} empty="장비를 선택하세요" unavailable="선택한 이용 시간의 장비 가격 미확인" />
         <ChoiceField label="의류" value={clothingId} onValueChange={setClothingId} options={clothing} empty="의류 선택 안 함" unavailable="선택한 이용 시간의 의류 가격 미확인" />
       </div> : <div className="space-y-2">
-        <ChoiceField label="장비 + 의류 패키지" value={packageId} onValueChange={setPackageId} options={packages} empty="패키지를 선택하세요" unavailable="선택한 이용 시간의 패키지 가격 미확인" required />
+        <ChoiceField label={usesSeparateRentalSum ? "장비·의류 별도 대여 합계" : "장비 + 의류 패키지"} value={packageId} onValueChange={setPackageId} options={packages} empty={usesSeparateRentalSum ? "합계를 선택하세요" : "패키지를 선택하세요"} unavailable={usesSeparateRentalSum ? "선택한 이용 시간의 합계를 확인할 수 없습니다" : "선택한 이용 시간의 패키지 가격 미확인"} required />
         {packageSaving > 0 ? <div className="flex items-center gap-2 rounded-lg bg-emerald-500/10 p-3 text-xs font-medium text-emerald-800 dark:text-emerald-200"><PackageCheck className="h-4 w-4" /> 개별 선택보다 1인 {formatCurrency(packageSaving)} 절약</div> : null}
       </div>}
       {accessories.length ? <div>

@@ -729,6 +729,7 @@ type UpcomingLiftSeed = {
   sourceUrl: string;
   validFrom: string;
   validTo: string;
+  lastCheckedAt?: string;
   verificationNote: string;
   slots: Array<{
     slot: TimeSlot;
@@ -778,7 +779,7 @@ function upcomingLiftRules(seed: UpcomingLiftSeed): PriceRule[] {
     sourceUrl: seed.sourceUrl,
     bookingUrl: seed.sourceUrl,
     confidence: "confirmed" as const,
-    lastCheckedAt: upcomingCheckedAt,
+    lastCheckedAt: seed.lastCheckedAt ?? upcomingCheckedAt,
     verifiedByHuman: true,
     verificationNote: seed.verificationNote,
     memo
@@ -835,6 +836,24 @@ function upcomingOfficialRentalRules(seed: UpcomingOfficialRentalSeed): RentalPr
 
 const upcomingLiftSeeds: UpcomingLiftSeed[] = [
   {
+    resortId: "vivaldi",
+    resortName: "비발디파크 스키월드",
+    sourceName: "비발디파크 스키월드 공식 요금&할인 안내",
+    sourceUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
+    validFrom: "2026-11-01",
+    validTo: "2027-03-31",
+    lastCheckedAt: "2026-11-21",
+    verificationNote: "공식 요금&할인 페이지의 현재 리프트 요금을 반영했다. 페이지 자체에는 26/27 시즌 표기가 없어, 현행 26/27 시즌의 공식 가격으로 등록하되 유효 시작일은 개장일 미공지 상태를 고려해 2026-11-01로 두었다. 시즌 운영 종료일도 미공지라 2027-03-31을 앱 시즌 경계로 사용한다. 공식 주말가는 공휴일도 포함하지만 앱은 평일 공휴일을 주말로 자동 분류하지 않는다.",
+    slots: [
+      { slot: "5h", dayType: "weekday", adult: 75000, child: 68000, memo: "주중(월~금) 대인 75,000원·소인 68,000원. 소인은 2014~2023년 출생자 기준. 장비 대여는 약관상 리프트권보다 1시간 더 부여된다." },
+      { slot: "5h", dayType: "weekend", adult: 91000, child: 82000, memo: "주말·공휴일 대인 91,000원·소인 82,000원. 소인은 2014~2023년 출생자 기준. 장비 대여는 약관상 리프트권보다 1시간 더 부여된다." },
+      { slot: "6h", dayType: "weekday", adult: 79000, child: 71000, memo: "주중(월~금) 대인 79,000원·소인 71,000원. 소인은 2014~2023년 출생자 기준. 장비 대여는 약관상 리프트권보다 1시간 더 부여된다.", replacementKey: "vivaldi|lift_ticket|6h|all|비발디파크 스키월드 6h 리프트권" },
+      { slot: "6h", dayType: "weekend", adult: 95000, child: 86000, memo: "주말·공휴일 대인 95,000원·소인 86,000원. 소인은 2014~2023년 출생자 기준. 장비 대여는 약관상 리프트권보다 1시간 더 부여된다.", replacementKey: "vivaldi|lift_ticket|6h|all|비발디파크 스키월드 6h 리프트권" },
+      { slot: "7h", dayType: "weekday", adult: 83000, child: 75000, memo: "주중(월~금) 대인 83,000원·소인 75,000원. 소인은 2014~2023년 출생자 기준. 장비 대여는 약관상 리프트권보다 1시간 더 부여된다." },
+      { slot: "7h", dayType: "weekend", adult: 99000, child: 89000, memo: "주말·공휴일 대인 99,000원·소인 89,000원. 소인은 2014~2023년 출생자 기준. 장비 대여는 약관상 리프트권보다 1시간 더 부여된다." }
+    ]
+  },
+  {
     resortId: "high1",
     resortName: "하이원리조트",
     sourceName: "하이원 스키 이용요금(26/27 시즌)",
@@ -857,6 +876,7 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
     // 개장은 '12월 중'으로만 공지됐다. 개장일이 확정되기 전 날짜도 가격이 비지 않도록 시즌 초부터 둔다.
     validFrom: "2026-11-01",
     validTo: "2027-03-31",
+    lastCheckedAt: "2026-11-21",
     verificationNote: "공식 공지의 26/27 리프트권 정상가(주중·주말 2·4·6시간) 기준. 공지에 없는 3시간·야간·종일권은 판매하지 않는 것으로 본다. 소인 가격은 공지에 없다.",
     slots: [
       { slot: "2h", dayType: "weekday", adult: 69000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 공지 주중 2시간 정상가. 얼리버드(NOL 한정)는 정상가에 반영하지 않고 할인 안내로 따로 보여 준다." },
@@ -874,6 +894,7 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
     sourceUrl: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do",
     validFrom: "2026-11-22",
     validTo: "2027-03-31",
+    lastCheckedAt: "2026-11-21",
     verificationNote: "공식 페이지의 '26/27시즌 리프트 요금' 표(대인·소인) 기준. 8시간권은 종일(full_day)로 매핑.",
     slots: [
       { slot: "4h", adult: 79000, child: 69000, memo: "공식 4시간권. 개장 특가(11/22 하루 10,000원)와 슬로프 1면 운영 시 특가(4시간 30,000원)는 정상가가 아니어서 반영하지 않았다." },
@@ -900,7 +921,177 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
 
 priceRules.push(...upcomingLiftSeeds.flatMap(upcomingLiftRules));
 
+const vivaldiUpcomingRentalCommon = {
+  rentalShopId: "vivaldi-official-rental",
+  resortId: "vivaldi",
+  providerType: "resort_official" as const,
+  season: UPCOMING_SEASON,
+  validFrom: "2026-11-01",
+  validTo: "2027-03-31",
+  sourceType: "official_site" as const,
+  sourceName: "비발디파크 스키월드 공식 요금&할인 안내",
+  sourceUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
+  bookingUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
+  confidence: "confirmed" as const,
+  lastCheckedAt: "2026-11-21",
+  verifiedByHuman: true,
+  verificationNote: "공식 현재 요금표 기준. 페이지에는 26/27 표기가 없고, 공식 이용약관은 장비 대여 시간이 리프트권보다 1시간 길다고 명시한다. 의류 렌탈 가격은 표에 없다. 공식 주말가는 공휴일도 포함하지만 앱은 평일 공휴일을 주말로 자동 분류하지 않는다."
+};
+
+const vivaldiRentalSlots = [
+  { liftSlot: "5h" as const, rentalHours: 6, weekday: 34000, weekend: 43000, childWeekday: 31000, childWeekend: 39000 },
+  { liftSlot: "6h" as const, rentalHours: 7, weekday: 36000, weekend: 45000, childWeekday: 32000, childWeekend: 40000 },
+  { liftSlot: "7h" as const, rentalHours: 8, weekday: 38000, weekend: 47000, childWeekday: 34000, childWeekend: 42000 }
+];
+const vivaldiUpcomingRentalRules: RentalPriceRule[] = [
+  ...vivaldiRentalSlots.flatMap(slot => (["weekday", "weekend"] as const).flatMap(dayType => (["ski", "snowboard"] as const).map(rideType => {
+    const price = slot[dayType];
+    const childPrice = dayType === "weekday" ? slot.childWeekday : slot.childWeekend;
+    return {
+      ...vivaldiUpcomingRentalCommon,
+      id: `vivaldi-official-rental-equipment-${rideType}-${slot.liftSlot}-${dayType}-26-27`,
+      itemType: "equipment" as const,
+      rideType,
+      ageGroup: "adult" as const,
+      timeSlot: slot.liftSlot,
+      dayType,
+      label: `${rideType === "ski" ? "스키" : "보드"} 장비 렌탈 ${slot.rentalHours}시간`,
+      representativePrice: price,
+      priceMin: price,
+      priceMax: price,
+      memo: `리프트 ${slot.liftSlot} 이용에 대응하는 ${slot.rentalHours}시간 대여. 대인 ${price.toLocaleString()}원, 소인 ${childPrice.toLocaleString()}원. 헬멧은 별도.`
+    };
+  }))),
+  ...vivaldiRentalSlots.map(slot => {
+    const price = slot.rentalHours === 6 ? 5000 : slot.rentalHours === 7 ? 6000 : 7000;
+    return {
+      ...vivaldiUpcomingRentalCommon,
+      id: `vivaldi-official-rental-helmet-${slot.liftSlot}-26-27`,
+      itemType: "helmet" as const,
+      rideType: "all" as const,
+      ageGroup: "all" as const,
+      timeSlot: slot.liftSlot,
+      dayType: "all" as const,
+      label: `안전헬멧 렌탈 ${slot.rentalHours}시간`,
+      representativePrice: price,
+      priceMin: price,
+      priceMax: price,
+      memo: `리프트 ${slot.liftSlot} 이용에 대응하는 ${slot.rentalHours}시간 헬멧 대여. 대·소인 균일가.`
+    };
+  })
+];
+
+const konjiamUpcomingRentalCommon = {
+  rentalShopId: "konjiam-official-rental",
+  resortId: "konjiam",
+  providerType: "resort_official" as const,
+  season: UPCOMING_SEASON,
+  validFrom: "2026-11-01",
+  validTo: "2027-03-31",
+  sourceType: "official_site" as const,
+  sourceName: "곤지암리조트 공식 요금 안내",
+  sourceUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
+  bookingUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
+  confidence: "confirmed" as const,
+  lastCheckedAt: "2026-11-21",
+  verifiedByHuman: true,
+  verificationNote: "공식 최신 요금 안내 페이지 기준. 리프트 표에는 26/27 카드 할인 안내가 있지만 렌탈 표 자체에는 시즌명이 없어 26/27 현재 요금으로 반영했다. 부분 장비 렌탈은 풀세트 가격과 구분했다."
+};
+const konjiamUpcomingRentalRates = [
+  { dayType: "weekday" as const, price: 36000 },
+  { dayType: "weekend" as const, price: 39000 }
+];
+const konjiamUpcomingRentalRules: RentalPriceRule[] = [
+  ...konjiamUpcomingRentalRates.flatMap(rate => (["ski", "snowboard"] as const).map(rideType => ({
+    ...konjiamUpcomingRentalCommon,
+    id: `konjiam-official-rental-equipment-${rideType}-${rate.dayType}-26-27`,
+    itemType: "equipment" as const,
+    rideType,
+    ageGroup: "adult" as const,
+    timeSlot: "all" as const,
+    dayType: rate.dayType,
+    label: `${rideType === "ski" ? "스키" : "보드"} 장비 풀세트 렌탈 (6시간)`,
+    representativePrice: rate.price,
+    priceMin: rate.price,
+    priceMax: rate.price,
+    memo: `6시간 풀세트 대여 대인 요금. 주중 36,000원·주말 39,000원. 부분 렌탈은 플레이트/데크 주중 21,000원·주말 26,000원, 부츠 주중 19,000원·주말 23,000원으로 별도 판매.`
+  }))),
+  ...([
+    { timeSlot: "2h", price: 27000, hoursLabel: "4시간 이하" },
+    { timeSlot: "4h", price: 27000, hoursLabel: "4시간 이하" },
+    { timeSlot: "6h", price: 35000, hoursLabel: "4시간 초과" }
+  ] as const).map(({ timeSlot, price, hoursLabel }) => ({
+    ...konjiamUpcomingRentalCommon,
+    id: `konjiam-official-rental-clothing-${timeSlot}-26-27`,
+    itemType: "clothing" as const,
+    rideType: "all" as const,
+    ageGroup: "adult" as const,
+    timeSlot,
+    dayType: "all" as const,
+    label: `의류 풀세트 렌탈 (${hoursLabel})`,
+    representativePrice: price,
+    priceMin: price,
+    priceMax: price,
+    memo: `공식 의류 풀세트 대인 요금 ${price.toLocaleString()}원. 현장 접수만 가능.`
+  })),
+  ...konjiamUpcomingRentalRates.flatMap(rate => ([
+    { timeSlot: "2h", clothingPrice: 27000 },
+    { timeSlot: "4h", clothingPrice: 27000 },
+    { timeSlot: "6h", clothingPrice: 35000 }
+  ] as const).map(({ timeSlot, clothingPrice }) => {
+    const price = rate.price + clothingPrice;
+    return {
+      ...konjiamUpcomingRentalCommon,
+      id: `konjiam-official-rental-separate-sum-${timeSlot}-${rate.dayType}-26-27`,
+      itemType: "equipment_clothing_package" as const,
+      rideType: "all" as const,
+      ageGroup: "adult" as const,
+      timeSlot,
+      dayType: rate.dayType,
+      label: `장비·의류 별도 대여 합산 (${timeSlot})`,
+      representativePrice: price,
+      priceMin: price,
+      priceMax: price,
+      memo: `공식 묶음상품이 아니다. 6시간 장비 풀세트 ${rate.price.toLocaleString()}원과 ${timeSlot === "6h" ? "4시간 초과" : "4시간 이하"} 의류 ${clothingPrice.toLocaleString()}원을 각각 대여할 때의 합계 ${price.toLocaleString()}원.`
+    };
+  })),
+  ...([
+    { timeSlot: "2h", price: 9000, hoursLabel: "4시간 이하" },
+    { timeSlot: "4h", price: 9000, hoursLabel: "4시간 이하" },
+    { timeSlot: "6h", price: 12000, hoursLabel: "4시간 초과" }
+  ] as const).map(({ timeSlot, price, hoursLabel }) => ({
+    ...konjiamUpcomingRentalCommon,
+    id: `konjiam-official-rental-helmet-${timeSlot}-26-27`,
+    itemType: "helmet" as const,
+    rideType: "all" as const,
+    ageGroup: "all" as const,
+    timeSlot,
+    dayType: "all" as const,
+    label: `헬멧 렌탈 (${hoursLabel})`,
+    representativePrice: price,
+    priceMin: price,
+    priceMax: price,
+    memo: "공식 보호장구 요금표 기준. 보호대 렌탈은 10,000원."
+  })),
+  {
+    ...konjiamUpcomingRentalCommon,
+    id: "konjiam-official-rental-protective-gear-26-27",
+    itemType: "protective_gear" as const,
+    rideType: "all" as const,
+    ageGroup: "all" as const,
+    timeSlot: "all" as const,
+    dayType: "all" as const,
+    label: "보호대 렌탈",
+    representativePrice: 10000,
+    priceMin: 10000,
+    priceMax: 10000,
+    memo: "공식 보호장구 요금표 기준."
+  }
+];
+
 rentalPriceRules.push(
+  ...vivaldiUpcomingRentalRules,
+  ...konjiamUpcomingRentalRules,
   ...upcomingOfficialRentalRules({
     resortId: "yongpyong",
     sourceName: "모나용평 26/27시즌 장비·의류 렌탈 요금",

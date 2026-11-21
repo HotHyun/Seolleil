@@ -25,5 +25,42 @@ export const liftPromotions: LiftPromotion[] = [
     sourceName: "곤지암리조트 26/27 얼리버드 리프트권 판매 공지(2026-10-30)",
     sourceUrl: "https://m.konjiamresort.co.kr/contact/notice.dev",
     lastCheckedAt: "2026-11-20"
+  },
+  {
+    id: "yongpyong-opening-day-26-27",
+    resortId: "yongpyong",
+    title: "26/27 개장 당일 특가",
+    channel: "현장 매표소",
+    salesFrom: "2026-11-22",
+    salesTo: "2026-11-22",
+    useFrom: "2026-11-22",
+    useTo: "2026-11-22",
+    prices: [
+      { timeSlot: "4h", dayType: "weekend", adultPrice: 10000, equipmentRentalPrice: 10000, equipmentRentalDuration: "8시간" },
+      { timeSlot: "6h", dayType: "weekend", adultPrice: 10000, equipmentRentalPrice: 10000, equipmentRentalDuration: "8시간" },
+      { timeSlot: "full_day", dayType: "weekend", adultPrice: 10000, equipmentRentalPrice: 10000, equipmentRentalDuration: "8시간" }
+    ],
+    condition: "11월 22일 개장 당일 한정. 리프트는 시간·대상 구분 없이 10,000원이며 스키·보드 장비 8시간 대여는 별도 10,000원입니다.",
+    sourceName: "모나용평 26/27시즌 리프트·장비 렌탈 오픈 특가",
+    sourceUrl: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do",
+    lastCheckedAt: "2026-11-21"
+  },
+  {
+    id: "phoenix-opening-week-26-27",
+    resortId: "phoenix",
+    title: "26/27 개장 기념 특가",
+    channel: "현장 매표소",
+    salesFrom: "2026-11-22",
+    salesTo: "2026-11-27",
+    useFrom: "2026-11-22",
+    useTo: "2026-11-27",
+    prices: [
+      { timeSlot: "7h", dayType: "weekday", adultPrice: 30000, equipmentRentalPrice: 15000, equipmentRentalDuration: "7시간" },
+      { timeSlot: "7h", dayType: "weekend", adultPrice: 30000, equipmentRentalPrice: 15000, equipmentRentalDuration: "7시간" }
+    ],
+    condition: "11월 22일 10:00~16:00, 11월 23~27일 09:00~16:00 운영 시간에 스키하우스 B1 통합 매표소에서 발권합니다. 일반 시즌 요금표와 구분되는 개장 행사 가격입니다.",
+    sourceName: "휘닉스파크 26/27 개장 기념 리프트·장비 대여 특가",
+    sourceUrl: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047550",
+    lastCheckedAt: "2026-11-21"
   }
 ];

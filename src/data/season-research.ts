@@ -46,21 +46,24 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "vivaldi",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "checked_unpublished",
-    sources: [{ name: "비발디파크 스키&보드 공지", url: "https://www.sonohotelsresorts.com/skiboard/notice" }],
-    lastCheckedAt: checkedAt,
+    status: "published",
+    sources: [{ name: "비발디파크 스키월드 요금&할인 안내", url: "https://www.sonohotelsresorts.com/skiboard/discount" }],
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter,
-    note: "공식 요금 페이지의 리프트 요금은 준비 중이고 운영 정보는 25/26 기간입니다. 26/27 일일권·시즌패스 가격 공지는 확인되지 않았습니다."
+    note: "공식 요금표에 현재 5·6·7시간권 대인·소인과 주중·주말 가격이 게시되어 반영했습니다. 요금표 자체에 시즌명이 없어 현행 26/27 가격이라는 시즌 연결에는 판단이 포함됩니다. 가격 페이지의 소인 출생연도는 2014~2023년입니다."
   },
   {
     resortId: "vivaldi",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
-    sources: [{ name: "비발디파크 스키&보드 공지", url: "https://www.sonohotelsresorts.com/skiboard/notice" }],
-    lastCheckedAt: checkedAt,
+    status: "published",
+    sources: [
+      { name: "비발디파크 스키월드 요금&할인 안내", url: "https://www.sonohotelsresorts.com/skiboard/discount" },
+      { name: "비발디파크 스키&보드 이용약관", url: "https://www.sonohotelsresorts.com/skiboard/terms" }
+    ],
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter,
-    note: "26/27 공식 장비·의류 렌탈 가격표가 아직 게시되지 않았습니다."
+    note: "공식 장비 렌탈은 6시간 대인 주중/주말 34,000/43,000원, 7시간 36,000/45,000원, 8시간 38,000/47,000원이며 소인 가격도 게시되어 있습니다. 이용약관은 장비 대여가 리프트권보다 1시간 길다고 명시합니다. 헬멧은 5,000/6,000/7,000원. 의류 가격은 공식 표에 없습니다. 요금표 자체의 시즌 표기가 없어 현행 26/27 가격으로 반영한 점은 확인 필요합니다."
   },
   {
     resortId: "vivaldi",
@@ -84,12 +87,12 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "모나용평 리프트&렌탈요금", url: "https://www.yongpyong.co.kr/kor/skiNboard/utilizationFee/rentCharge.do" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter: "2026-12-15",
-    note: "공식 페이지가 '26/27시즌 리프트 요금'(4·6·8시간, 대인·소인)을 게시해 4h·6h·full_day(8시간)를 등록했습니다. 2h·3h·야간권은 26/27 표에 없어 미등록입니다. 개장 특가와 슬로프 1면 운영 특가는 정상가가 아니라 반영하지 않았습니다.",
+    note: "공식 페이지가 '26/27시즌 리프트 요금'(4·6·8시간, 대인·소인)을 게시해 4h·6h·full_day(8시간)를 등록했습니다. 2h·3h·야간권은 26/27 표에 없어 미등록입니다. 11월 22일 개장 당일 리프트 10,000원·8시간 장비 렌탈 10,000원 특가는 별도 프로모션으로 기록했습니다. 슬로프 1면 운영 특가는 정상가와 별도로 유지합니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
-      { label: "개장 특가", value: "11/22(일) 하루 리프트권 10,000원" },
+      { label: "개장 특가", value: "11/22(일) 하루 리프트권 10,000원 · 장비 8시간 10,000원" },
       { label: "1면 운영 시 특가", value: "4시간 30,000원 · 6시간 35,000원 · 8시간 40,000원 (11/23부터 2면 오픈 시 정상가)" }
     ]
   },
@@ -120,12 +123,14 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     status: "preliminary",
     sources: [
       { name: "휘닉스 26/27 시즌패스 판매 안내", url: "https://phoenixhnr.co.kr/page/board/event/190000047134" },
-      { name: "휘닉스 26/27 스키학교 운영 공고", url: "https://phoenixhnr.co.kr/page/customer/notice/14488" }
+      { name: "휘닉스 26/27 스키학교 운영 공고", url: "https://phoenixhnr.co.kr/page/customer/notice/14488" },
+      { name: "휘닉스 개장 기념 리프트·장비 대여 특가", url: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047550" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter,
-    note: "26/27 시즌패스 2차 판매와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 일일 리프트 가격표는 아직 없습니다. 시즌패스 가격·혜택은 일일권 가격으로 변환하지 않았습니다. 11/3~11/22 판매 중인 26/27 리프트 얼리버드 상품은 할인가라 정상가로 등록하지 않았습니다.",
+    note: "26/27 시즌패스와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 정상 일일 리프트 가격표는 아직 없습니다. 개장 행사(11/22~27) 7시간 리프트 30,000원·장비 대여 15,000원은 기간 한정 프로모션으로 기록했습니다. 시즌패스 가격·혜택은 일일 정상가로 변환하지 않았습니다.",
     announcedFacts: [
+      { label: "개장 특가(11/22~27)", value: "리프트 7시간 30,000원 · 장비 대여 7시간 15,000원" },
       { label: "26/27 리프트 얼리버드(11/3~11/22 판매)", value: "스마트 패스 6H 64,400원 · 라이트 패스 4H 57,900원, 장비 렌탈 포함 시 77,400원 · 70,900원" },
       { label: "BASIC PASS", value: "1차 549,000원 · 2차 599,000원" },
       { label: "판매 기간", value: "1차 2026-08-27 ~ 09-30 · 2차 2026-10-01 ~ 11-30" },
@@ -138,10 +143,13 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     targetSeason: UPCOMING_SEASON,
     category: "rental",
     status: "preliminary",
-    sources: [{ name: "휘닉스 26/27 시즌패스 슈퍼 얼리버드", url: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047000" }],
-    lastCheckedAt: checkedAt,
+    sources: [
+      { name: "휘닉스 26/27 시즌패스 슈퍼 얼리버드", url: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047000" },
+      { name: "휘닉스 개장 기념 리프트·장비 대여 특가", url: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047550" }
+    ],
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter,
-    note: "시즌패스 자녀 혜택에 장비 대여가 포함된 사실은 확인했지만 일반 고객용 장비·의류 일일 렌탈 가격은 미공개입니다.",
+    note: "일반 고객용 정상 장비·의류 일일 렌탈 가격은 미공개입니다. 다만 개장 행사 기간에만 장비 7시간 대여 15,000원이 공지되어 리프트와 함께 기간 한정 프로모션으로 기록했습니다.",
     announcedFacts: [
       { label: "자녀 시즌패스 등록", value: "1인 50,000원 · 최대 2인" },
       { label: "자녀 혜택", value: "장비 대여 포함" }
@@ -161,14 +169,15 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "konjiam",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
+    status: "published",
     sources: [
+      { name: "곤지암리조트 스키 요금 안내", url: "https://m.konjiamresort.co.kr/ski/skiInfo.dev" },
       { name: "곤지암리조트 공지사항", url: "https://reservation.konjiamresort.co.kr/view/customerNotice.do" },
       { name: "NOL 26/27 곤지암 시간권 판매", url: "https://leisure-web.yanolja.com/leisure/10365890" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter,
-    note: "26/27 시즌패스와 20·30·40시간 누적 시간권 판매는 확인했습니다. 이는 일반 방문용 2·4·6시간 일일권과 상품 구조가 달라 가격 규칙에는 반영하지 않았습니다. 2026-11-19 Chrome 확인: 요금 안내 2시간 69,000/83,000원, 4시간 81,000/96,000원, 6시간 87,000/105,000원(주중/주말). 4h·6h는 25/26과 같고 표에 시즌 표기가 없어 26/27 규칙으로 등록하지 않았습니다.",
+    note: "공식 요금 안내의 26/27 카드 할인 안내와 현재 정상가 표를 확인해 2·4·6시간권을 주중/주말별로 등록했습니다. 리프트 정상가는 2시간 69,000/83,000원, 4시간 81,000/96,000원, 6시간 87,000/105,000원입니다(주중/주말). 4·6시간은 25/26과 같고 2시간권이 새로 확인됐습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "선착순 한정 판매" },
       { label: "누적 시간권", value: "20시간 330,000원 · 30시간 430,000원 · 40시간 490,000원" },
@@ -179,14 +188,11 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "konjiam",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
-    sources: [
-      { name: "곤지암리조트 25/26 리프트·렌탈 패키지", url: "https://m.konjiamresort.co.kr/contact/noticeView.dev?idx=1603" },
-      { name: "곤지암리조트 리프트·장비 렌탈 예약 가이드", url: "https://reservation.konjiamresort.co.kr/view/buySkiPassGuide.do" }
-    ],
-    lastCheckedAt: "2026-11-19",
+    status: "published",
+    sources: [{ name: "곤지암리조트 공식 요금 안내", url: "https://m.konjiamresort.co.kr/ski/skiInfo.dev" }],
+    lastCheckedAt: "2026-11-21",
     nextCheckAfter,
-    note: "예약 가이드는 장비 렌탈 절차만, 판매 공지는 25/26 패키지만 안내해 26/27 일반 장비·의류 가격으로 등록할 수 없습니다. 2026-11-19 Chrome 확인: 풀세트 6시간 36,000/39,000원(주중/주말), 의류 풀세트 27,000원(4시간 이하)·35,000원(초과). 시즌 표기가 없어 등록하지 않았습니다."
+    note: "현재 공식 요금 안내에 풀세트 6시간 36,000/39,000원(주중/주말), 부분 플레이트·데크 21,000/26,000원, 부츠 19,000/23,000원, 의류 풀세트 27,000원(4시간 이하)·35,000원(초과), 헬멧 9,000/12,000원, 보호대 10,000원이 게시되어 있습니다. 렌탈 표 자체에 시즌 표기는 없어 현재 요금을 26/27 규칙으로 반영했으며, 별도 판매되는 장비와 의류의 합산을 공식 패키지로 표시하지 않았습니다."
   },
   {
     resortId: "konjiam",

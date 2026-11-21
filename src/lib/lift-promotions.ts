@@ -14,6 +14,9 @@ export type LiftPromotionPrice = {
   adultPrice: number;
   /** 리프트권 + 장비렌탈 패키지 할인가(성인). 공지에 없으면 생략 */
   withRentalPrice?: number;
+  /** 별도 판매되는 장비 렌탈 가격(성인). 패키지 가격과 구분한다. */
+  equipmentRentalPrice?: number;
+  equipmentRentalDuration?: string;
 };
 
 export type LiftPromotion = {
@@ -40,6 +43,8 @@ export type LiftPromotionMatch = {
   promotion: LiftPromotion;
   adultPrice: number;
   withRentalPrice?: number;
+  equipmentRentalPrice?: number;
+  equipmentRentalDuration?: string;
   /** 같은 조건의 정상가. 정상가를 못 구하면 undefined */
   regularPrice?: number;
   /** 정상가 대비 할인액(양수). 정상가를 못 구하면 undefined */
@@ -80,7 +85,15 @@ export function findLiftPromotion(
     if (regularPrice !== undefined && price.adultPrice >= regularPrice) continue;
     const saving = regularPrice === undefined ? undefined : regularPrice - price.adultPrice;
     if (!best || (saving ?? 0) > (best.saving ?? 0)) {
-      best = { promotion, adultPrice: price.adultPrice, withRentalPrice: price.withRentalPrice, regularPrice, saving };
+      best = {
+        promotion,
+        adultPrice: price.adultPrice,
+        withRentalPrice: price.withRentalPrice,
+        equipmentRentalPrice: price.equipmentRentalPrice,
+        equipmentRentalDuration: price.equipmentRentalDuration,
+        regularPrice,
+        saving
+      };
     }
   }
 

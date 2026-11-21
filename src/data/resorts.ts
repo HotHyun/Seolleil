@@ -13,8 +13,8 @@ export const resorts: SkiResort[] = [
     address: "경기도 광주시 도척면 도척윗로 278",
     officialUrl: "https://www.konjiamresort.co.kr/",
     slopeStatusUrl: "https://m.konjiamresort.co.kr/ski/skiLift.dev",
-    liftTicketUrl: "https://www.konjiamresort.co.kr/",
-    rentalUrl: "https://www.konjiamresort.co.kr/",
+    liftTicketUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
+    rentalUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
     shuttleUrl: "https://www.konjiamresort.co.kr/",
     lodgingUrl: "https://reservation.konjiamresort.co.kr/",
     mapLinks: {
@@ -68,8 +68,8 @@ export const resorts: SkiResort[] = [
     address: "강원도 홍천군 서면 한치골길 262",
     officialUrl: "https://www.sonohotelsresorts.com/complex_vp",
     slopeStatusUrl: "https://www.sonohotelsresorts.com/skiboard/status",
-    liftTicketUrl: "https://www.sonohotelsresorts.com/complex_vp",
-    rentalUrl: "https://www.sonohotelsresorts.com/complex_vp",
+    liftTicketUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
+    rentalUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
     shuttleUrl: "https://vivabus.net/",
     lodgingUrl: "https://www.sonohotelsresorts.com/main/reservationinfo",
     mapLinks: {

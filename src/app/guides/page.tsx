@@ -41,7 +41,7 @@ export default function GuidesPage() {
             <p className="mt-1 text-xs text-muted-foreground">{resort.region}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {topics.map((topic) => (
-                <Link key={topic} href={`/guides/${resort.id}/${topic}`} className="inline-flex min-h-9 items-center rounded-full border px-3 text-sm font-medium text-primary transition hover:bg-primary/10">{guideTopicLabels[topic]}</Link>
+                <Link key={topic} href={`/guides/${resort.id}/${topic}`} className="inline-flex min-h-9 items-center rounded-lg border px-3 text-sm font-medium transition-colors hover:bg-muted">{guideTopicLabels[topic]}</Link>
               ))}
             </div>
           </li>

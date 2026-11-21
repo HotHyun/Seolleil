@@ -147,7 +147,7 @@ export default async function GuidePage({ params }: PageProps) {
           <StatusBadge tone={resort.operationStatus === "operating" ? "good" : "warn"}>{resort.operationStatus === "operating" ? "운영" : "운영 여부 확인 필요"}</StatusBadge>
           <StatusBadge>{resort.region}</StatusBadge>
         </div>
-        <h1 className="mt-3 text-3xl font-semibold sm:text-5xl">{copy.heading}</h1>
+        <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">{copy.heading}</h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">{copy.description}</p>
       </header>
 
@@ -252,12 +252,12 @@ function RentalList({ resortId }: { resortId: string }) {
             </div>
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium">
-            {row.equipment ? <span className="rounded-full bg-muted px-2.5 py-1">장비 렌탈</span> : null}
-            {row.clothing ? <span className="rounded-full bg-muted px-2.5 py-1">의류 렌탈</span> : null}
-            {row.pickup ? <span className="rounded-full bg-muted px-2.5 py-1">픽업</span> : null}
-            {row.liftTickets ? <span className="rounded-full bg-muted px-2.5 py-1">리프트권 판매</span> : null}
+            {row.equipment ? <span className="rounded-md bg-muted px-2 py-1">장비 렌탈</span> : null}
+            {row.clothing ? <span className="rounded-md bg-muted px-2 py-1">의류 렌탈</span> : null}
+            {row.pickup ? <span className="rounded-md bg-muted px-2 py-1">픽업</span> : null}
+            {row.liftTickets ? <span className="rounded-md bg-muted px-2 py-1">리프트권 판매</span> : null}
             {row.confidence ? <ConfidenceBadge confidence={row.confidence} /> : null}
-            {row.needsRecheck ? <span className="rounded-full border border-dashed border-amber-500/60 px-2.5 py-1">정보 재확인 필요</span> : null}
+            {row.needsRecheck ? <span className="rounded-md border border-dashed px-2 py-1">정보 재확인 필요</span> : null}
           </div>
           <div className="mt-2 flex flex-wrap gap-x-4">
             {row.url ? <ExternalLinkText href={row.url} label="업체 페이지" resortId={resortId} type="guide_rental_site" /> : null}

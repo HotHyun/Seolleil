@@ -57,8 +57,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
       <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
           <StatusBadge tone={errors.length ? "warn" : "good"}>{report.season}</StatusBadge>
-          <h1 className="mt-3 text-3xl font-semibold md:text-5xl">데이터 품질</h1>
-          <p className="mt-2 text-muted-foreground">가격/렌탈/링크 데이터의 보강 대상을 확인합니다.</p>
+          <h1 className="mt-3 text-3xl font-semibold md:text-4xl">데이터 품질</h1>
+          <p className="mt-2 text-muted-foreground">가격/렌탈/링크 데이터의 보강 대상을 확인해요</p>
         </div>
         <Link href="/admin">
           <Button variant="secondary">운영 대시보드</Button>
@@ -76,26 +76,25 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
       </section>
 
       <Card className="mt-6 overflow-hidden" data-testid="season-transition-board">
-        <div className="border-b border-border bg-zinc-950 px-4 py-5 text-white md:px-6">
+        <div className="border-b px-4 py-5 md:px-6">
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div>
-              <p className="text-xs font-semibold text-lime-300">SEASON TRANSITION</p>
-              <CardTitle className="mt-2 text-xl font-semibold md:text-2xl">
+              <CardTitle className="text-xl font-semibold md:text-2xl">
                 25/26 → 26/27 전환 보드
               </CardTitle>
-              <p className="mt-2 max-w-2xl text-sm text-zinc-300">
+              <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
                 리프트·렌탈·셔틀을 기존 시즌과 나란히 유지하며, 출처와 유효 기간이 확정된 항목만 완료로 집계합니다.
               </p>
             </div>
             <div className="text-right">
               <div className="font-mono text-4xl font-semibold tabular-nums">{report.seasonTransition.progressPercent}%</div>
-              <div className="mt-1 text-xs text-zinc-400">
+              <div className="mt-1 text-xs text-muted-foreground">
                 {report.seasonTransition.completedTargetCount.toLocaleString("ko-KR")} / {report.seasonTransition.replacementTargetCount.toLocaleString("ko-KR")} 항목 완료
               </div>
             </div>
           </div>
-          <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/15" aria-label={`26/27 시즌 전환 ${report.seasonTransition.progressPercent}%`}>
-            <div className="h-full rounded-full bg-lime-300 transition-[width]" style={{ width: `${report.seasonTransition.progressPercent}%` }} />
+          <div className="mt-5 h-1 overflow-hidden rounded-full bg-muted" aria-label={`26/27 시즌 전환 ${report.seasonTransition.progressPercent}%`}>
+            <div className="h-full rounded-full bg-primary transition-[width]" style={{ width: `${report.seasonTransition.progressPercent}%` }} />
           </div>
         </div>
 
@@ -138,11 +137,10 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
           {preliminaryResearch.length ? (
             <div className="mt-4 grid gap-3 md:grid-cols-2" aria-label="26/27 공식 사전 공지">
               {preliminaryResearch.map(({ resortName, category, research }) => (
-                <article key={`${resortName}-${category}`} className="rounded-xl border border-amber-500/25 bg-amber-500/8 p-4">
+                <article key={`${resortName}-${category}`} className="rounded-xl border bg-muted/40 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">OFFICIAL EARLY SIGNAL</p>
-                      <h3 className="mt-1 font-semibold">{resortName} · {category}</h3>
+                      <h3 className="font-semibold">{resortName} · {category}</h3>
                     </div>
                     <StatusBadge tone="warn">사전 공지</StatusBadge>
                   </div>

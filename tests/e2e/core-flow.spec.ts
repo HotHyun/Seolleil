@@ -7,10 +7,10 @@ test.describe("core trip flow", () => {
     await expect(page).toHaveURL(/\/login\?callbackUrl=/);
 
     await page.goto("/trips/not-a-valid-edit-token");
-    await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없습니다." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없어요" })).toBeVisible();
 
     await page.goto("/share/not-a-valid-share-token");
-    await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없습니다." })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "페이지를 찾을 수 없어요" })).toBeVisible();
   });
 
   test("creates a private trip and opens the decision workspace", async ({ page }) => {

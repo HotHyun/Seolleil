@@ -19,10 +19,10 @@ export default function ErrorPage({ error, reset }: { error: Error & { digest?: 
     <main className="page-shell py-12">
       <Card>
         <CardContent className="flex min-h-72 flex-col items-center justify-center gap-4 text-center">
-          <span className="rounded-full bg-destructive/10 p-3 text-destructive"><AlertTriangle className="h-6 w-6" /></span>
+          <span className="text-destructive"><AlertTriangle className="h-6 w-6" /></span>
           <div>
             <p className="text-sm font-semibold text-destructive">화면 오류</p>
-            <h1 className="mt-2 text-3xl font-semibold">화면을 불러오지 못했습니다.</h1>
+            <h1 className="mt-2 text-3xl font-semibold">화면을 불러오지 못했어요</h1>
             <p className="mt-2 text-sm text-muted-foreground">
               입력한 내용은 그대로 두고 먼저 다시 시도해 주세요. 계속 실패하면 홈으로 이동한 뒤 같은 작업을 다시 시작해 주세요.
             </p>

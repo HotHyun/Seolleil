@@ -23,7 +23,7 @@ export default async function AdminPage() {
     <main className="page-shell py-8">
       <div className="mb-8">
         <StatusBadge tone="warn">Admin</StatusBadge>
-        <h1 className="mt-3 text-3xl font-semibold md:text-5xl">운영 대시보드</h1>
+        <h1 className="mt-3 text-3xl font-semibold md:text-4xl">운영 대시보드</h1>
         <p className="mt-2 text-muted-foreground">
           제품 지표는 Umami, 트립 단위 이벤트는 Firebase Console에서 확인합니다. 이 앱은 별도 집계 대시보드를 운영하지 않습니다.
         </p>

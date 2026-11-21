@@ -15,8 +15,8 @@ export const confidenceOrder: PriceConfidence[] = ["confirmed", "phone_confirmed
 export function ConfidenceBadge({ confidence, className }: { confidence: PriceConfidence; className?: string }) {
   const meta = confidenceMeta[confidence];
   return (
-    <span title={meta.note} className={cn("inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border bg-card px-2.5 py-1 text-xs font-bold text-foreground", meta.ring, className)}>
-      <span aria-hidden="true" className={cn("h-2.5 w-2.5 shrink-0 rounded-full", meta.dot)} />
+    <span title={meta.note} className={cn("inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border bg-card px-2 py-1 text-xs font-medium text-foreground", meta.ring, className)}>
+      <span aria-hidden="true" className={cn("h-2 w-2 shrink-0 rounded-full", meta.dot)} />
       {meta.label}
       <span className="sr-only">: {meta.note}</span>
     </span>

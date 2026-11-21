@@ -32,6 +32,8 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))"
         }
       },
+      // 800~900 웨이트는 쓰지 않는다. 아직 정리하지 않은 화면의 font-black도 600으로 내려 화면 간 위계를 맞춘다.
+      fontWeight: { black: "600" },
       borderRadius: {
         lg: "0.5rem",
         md: "0.375rem",

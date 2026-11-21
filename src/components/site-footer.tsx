@@ -3,10 +3,10 @@ import { legal } from "@/lib/legal";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-16 border-t bg-card/60">
+    <footer className="mt-16 border-t">
       <div className="page-shell flex flex-col gap-3 py-8 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <div className="space-y-1">
-          <p className="font-black text-foreground">{legal.serviceName}</p>
+          <p className="font-semibold text-foreground">{legal.serviceName}</p>
           <p>운영: {legal.operatorName} · 문의: <a href={`mailto:${legal.contactEmail}`} className="underline underline-offset-2">{legal.contactEmail}</a></p>
           <p>가격 정보는 시즌 참고용이며 예약 전 공식 판매처에서 최신 가격을 확인해 주세요.</p>
         </div>

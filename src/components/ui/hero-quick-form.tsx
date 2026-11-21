@@ -12,25 +12,25 @@ const hiddenDefaults: Array<[string, string]> = [
   ["priority2", "close"], ["priority3", "rental"], ["liftTicketTimeSlot", "4h"]
 ];
 
-const fieldClass = "h-11 min-h-11 rounded-lg border-white/20 bg-[#071225]/70 px-3 text-sm font-semibold text-white shadow-none hover:translate-y-0 hover:bg-[#071225]/90 focus-visible:ring-white focus-visible:ring-offset-0 data-[placeholder]:text-white/60";
+const fieldClass = "h-11 min-h-11 w-full rounded-lg bg-card px-3 text-sm font-medium shadow-none hover:bg-card";
 
-// Quick start form on the home hero. A GET form to /recommendations with the
-// same defaults as the full plan flow; the date is the only required input.
+// 홈 히어로의 빠른 시작 폼. /recommendations로 보내는 GET 폼이며 날짜만 필수다.
+// 나머지는 전체 플랜 흐름과 같은 기본값(2명·당일·자차·초보)을 쓴다.
 export function HeroQuickForm() {
   const [visitDate, setVisitDate] = useState("");
   return (
-    <form action="/recommendations" method="get" className="hero-reveal hero-delay-4 mt-6 grid max-w-xl gap-2 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-xl sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-      <div className="grid gap-1">
-        <span className="text-xs font-bold text-white/75">방문 날짜</span>
-        <DatePicker name="visitDate" min={todayKst()} value={visitDate} onValueChange={setVisitDate} ariaLabel="방문 날짜" className={`${fieldClass} ${visitDate ? "text-white" : "text-white/60"}`} />
+    <form action="/recommendations" method="get" className="hero-reveal hero-delay-2 mt-8 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+      <div className="grid gap-1.5">
+        <span className="text-xs font-medium text-muted-foreground">방문 날짜</span>
+        <DatePicker name="visitDate" min={todayKst()} value={visitDate} onValueChange={setVisitDate} ariaLabel="방문 날짜" className={`${fieldClass} ${visitDate ? "" : "text-muted-foreground"}`} />
       </div>
-      <div className="grid gap-1">
-        <span className="text-xs font-bold text-white/75">출발지</span>
+      <div className="grid gap-1.5">
+        <span className="text-xs font-medium text-muted-foreground">출발지</span>
         <SelectField name="departureLocation" defaultValue="seoul-gangnam" ariaLabel="출발지" className={fieldClass} options={departureLocations.map(location => ({ value: location.id, label: location.label }))} />
       </div>
       {hiddenDefaults.map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
-      <button type="submit" disabled={!visitDate} className="h-11 rounded-lg bg-[#b8f23d] px-5 text-sm font-black text-[#071225] transition hover:bg-[#c8ff52] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white disabled:cursor-not-allowed disabled:opacity-50">바로 추천 보기</button>
-      <p className="text-xs font-medium text-white/60 sm:col-span-3">{visitDate ? "2명·당일·자차·초보 기준으로 계산해요." : "방문 날짜를 고르면 바로 추천을 볼 수 있어요."} 조건을 직접 정하려면 위의 “내 스키 여행 시작하기”를 눌러 주세요.</p>
+      <button type="submit" disabled={!visitDate} className="h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50">추천 보기</button>
+      <p className="text-xs text-muted-foreground sm:col-span-3">{visitDate ? "2명·당일·자차·초보 기준으로 계산해요" : "날짜를 고르면 추천을 볼 수 있어요"}</p>
     </form>
   );
 }

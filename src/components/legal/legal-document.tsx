@@ -30,14 +30,14 @@ export function LegalList({ items }: { items: ReactNode[] }) {
 export function LegalTable({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
     <div className="overflow-x-auto rounded-lg border">
-      <table className="w-full min-w-[34rem] border-collapse text-left text-xs leading-6">
+      <table className="w-full min-w-[36rem] border-collapse text-left text-xs leading-6">
         <thead className="bg-muted/60">
-          <tr>{head.map(cell => <th key={cell} className="border-b px-3 py-2 font-semibold">{cell}</th>)}</tr>
+          <tr>{head.map((cell, index) => <th key={cell} className={`border-b px-3 py-2 font-semibold ${index === 0 ? "w-28 min-w-28" : ""}`}>{cell}</th>)}</tr>
         </thead>
         <tbody>
           {rows.map((row, rowIndex) => (
             <tr key={rowIndex} className="align-top">
-              {row.map((cell, cellIndex) => <td key={cellIndex} className="border-t px-3 py-2">{cell}</td>)}
+              {row.map((cell, cellIndex) => <td key={cellIndex} className={`border-t px-3 py-2 ${cellIndex === 0 ? "w-28 min-w-28 break-keep font-medium" : ""}`}>{cell}</td>)}
             </tr>
           ))}
         </tbody>

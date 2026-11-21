@@ -104,10 +104,10 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
         <div className="space-y-2">
           <p className="text-xs font-semibold text-muted-foreground">숙소 유형</p>
           <div className="flex gap-2 overflow-x-auto pb-1" aria-label="숙소 유형 필터">
-            <Button type="button" variant={lodgingFilter === "all" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "all"} onClick={() => setLodgingFilter("all")}>전체 {lodgingOptions.length}</Button>
-            <Button type="button" variant={lodgingFilter === "resort_lodging" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "resort_lodging"} onClick={() => setLodgingFilter("resort_lodging")}>리조트 숙소 {resortLodgingCount}</Button>
-            <Button type="button" variant={lodgingFilter === "hotel" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "hotel"} onClick={() => setLodgingFilter("hotel")}>리조트 호텔 {hotelCount}</Button>
-            <Button type="button" variant={lodgingFilter === "nearby_stay" ? "primary" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "nearby_stay"} onClick={() => setLodgingFilter("nearby_stay")}>주변 숙소 {nearbyStayCount}</Button>
+            <Button type="button" variant={lodgingFilter === "all" ? "selected" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "all"} onClick={() => setLodgingFilter("all")}>전체 {lodgingOptions.length}</Button>
+            <Button type="button" variant={lodgingFilter === "resort_lodging" ? "selected" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "resort_lodging"} onClick={() => setLodgingFilter("resort_lodging")}>리조트 숙소 {resortLodgingCount}</Button>
+            <Button type="button" variant={lodgingFilter === "hotel" ? "selected" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "hotel"} onClick={() => setLodgingFilter("hotel")}>리조트 호텔 {hotelCount}</Button>
+            <Button type="button" variant={lodgingFilter === "nearby_stay" ? "selected" : "secondary"} className="h-9 shrink-0 px-3 text-xs" aria-pressed={lodgingFilter === "nearby_stay"} onClick={() => setLodgingFilter("nearby_stay")}>주변 숙소 {nearbyStayCount}</Button>
           </div>
         </div>
         <div className="grid max-h-52 gap-2 overflow-y-auto pr-1">

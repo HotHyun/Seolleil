@@ -17,6 +17,22 @@ describe("lift promotions", () => {
     expect(findLiftPromotion("konjiam", "6h", "2026-12-26", "2026-11-20")?.regularPrice).toBe(regular?.adultPrice);
   });
 
+  it("shows the Yongpyong and Phoenix opening offers with equipment rental priced separately", () => {
+    expect(findLiftPromotion("yongpyong", "4h", "2026-11-22", "2026-11-22")).toMatchObject({
+      adultPrice: 10000,
+      equipmentRentalPrice: 10000,
+      equipmentRentalDuration: "8시간"
+    });
+    expect(findLiftPromotion("yongpyong", "4h", "2026-11-23", "2026-11-22")).toBeUndefined();
+    expect(findLiftPromotion("phoenix", "7h", "2026-11-27", "2026-11-27")).toMatchObject({
+      adultPrice: 30000,
+      equipmentRentalPrice: 15000,
+      equipmentRentalDuration: "7시간"
+    });
+    expect(findLiftPromotion("phoenix", "7h", "2026-11-28", "2026-11-27")).toBeUndefined();
+    expect(resortsWithActivePromotion("2026-11-22")).toEqual(["konjiam", "yongpyong", "phoenix"]);
+  });
+
   it("hides the promotion outside the sales window, for other resorts and for unlisted time slots", () => {
     expect(isPromotionOnSale(konjiamPromotion, "2026-11-03")).toBe(false);
     expect(isPromotionOnSale(konjiamPromotion, "2026-11-04")).toBe(true);

@@ -93,6 +93,50 @@ describe("pricing", () => {
     expect(resolveLiftPrice("konjiam", "4h", "2026-11-21")).toMatchObject({ season: "2026-2027", adultPrice: 96000 });
   });
 
+  it("uses the current official Vivaldi 26/27 lift and equipment rates by day type", () => {
+    expect(resolveLiftPrice("vivaldi", "5h", "2026-12-23")).toMatchObject({
+      season: "2026-2027",
+      adultPrice: 75000,
+      childPrice: 68000,
+      dayType: "weekday"
+    });
+    expect(resolveLiftPrice("vivaldi", "5h", "2026-12-26")).toMatchObject({
+      season: "2026-2027",
+      adultPrice: 91000,
+      childPrice: 82000,
+      dayType: "weekend"
+    });
+    expect(rentalPriceRules.find(rule => rule.id === "vivaldi-official-rental-equipment-ski-5h-weekday-26-27")).toMatchObject({
+      timeSlot: "5h",
+      representativePrice: 34000,
+      memo: expect.stringContaining("소인 31,000원")
+    });
+    expect(rentalPriceRules.find(rule => rule.id === "vivaldi-official-rental-helmet-7h-26-27")).toMatchObject({
+      representativePrice: 7000,
+      label: "안전헬멧 렌탈 8시간"
+    });
+  });
+
+  it("estimates Konjiam equipment and clothing as separately priced items", () => {
+    const weekday = estimateTripCost(konjiam, tripInput({
+      visitDate: "2026-12-23",
+      liftTicketTimeSlot: "4h",
+      peopleCount: 1
+    }));
+    const weekend = estimateTripCost(konjiam, tripInput({
+      visitDate: "2026-12-26",
+      liftTicketTimeSlot: "4h",
+      peopleCount: 1
+    }));
+
+    expect(weekday.items.find(item => item.key === "rental")).toMatchObject({
+      label: "장비·의류 별도 대여 합산 (4h)",
+      representative: 63000,
+      note: expect.stringContaining("공식 묶음상품이 아니다")
+    });
+    expect(weekend.items.find(item => item.key === "rental")).toMatchObject({ representative: 66000 });
+  });
+
   it("lists only the lift time slots a resort sells on the visit date", () => {
     expect(getSellableLiftSlots("konjiam", "2026-12-26")).toEqual(["2h", "4h", "6h"]);
     expect(getSellableLiftSlots("yongpyong", "2026-12-20")).toEqual(["4h", "6h", "full_day"]);

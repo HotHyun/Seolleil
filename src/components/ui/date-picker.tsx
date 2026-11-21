@@ -1,14 +1,16 @@
 "use client";
 
 import * as React from "react";
-import { format } from "date-fns";
-import { ko } from "date-fns/locale";
+import dynamic from "next/dynamic";
 import { CalendarIcon } from "lucide-react";
-import { DayPicker } from "react-day-picker";
-import "react-day-picker/style.css";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+
+const DatePickerCalendar = dynamic(() => import("@/components/ui/date-picker-calendar"), {
+  ssr: false,
+  loading: () => <div aria-hidden="true" className="h-[22rem] w-[19.5rem] max-w-full" />
+});
 
 export function DatePicker({
   id,
@@ -45,7 +47,7 @@ export function DatePicker({
   const maxDate = parseDate(max);
 
   function selectDate(next: Date | undefined) {
-    const nextValue = next ? format(next, "yyyy-MM-dd") : "";
+    const nextValue = next ? toIsoDate(next) : "";
     if (value === undefined) setInternalValue(nextValue);
     onValueChange?.(nextValue);
     if (next) setOpen(false);
@@ -64,45 +66,24 @@ export function DatePicker({
           className={cn("min-h-11 w-full justify-start border-input bg-card px-3 text-left font-semibold", !date && "text-muted-foreground", className)}
         >
           <CalendarIcon className="h-4 w-4" />
-          {date ? format(date, "yyyy년 M월 d일", { locale: ko }) : placeholder}
+          {date ? koreanDateLabel(date) : placeholder}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto max-w-[calc(100vw-2rem)] p-3">
-        <DayPicker
-          mode="single"
-          navLayout="around"
-          selected={date}
-          onSelect={selectDate}
-          disabled={minDate || maxDate ? [
-            ...(minDate ? [{ before: minDate }] : []),
-            ...(maxDate ? [{ after: maxDate }] : [])
-          ] : undefined}
-          locale={ko}
-          weekStartsOn={0}
-          fixedWeeks
-          classNames={{
-            root: "relative p-0 [--rdp-nav_button-height:2.75rem] [--rdp-nav_button-width:2.75rem] [--rdp-accent-color:hsl(var(--foreground))]",
-            month: "relative",
-            month_caption: "relative flex h-11 items-center justify-center px-11",
-            caption_label: "calendar-caption pointer-events-none text-sm font-semibold",
-            nav: "pointer-events-none absolute inset-x-0 top-0 z-10 flex h-11 items-center justify-between",
-            button_previous: "calendar-previous absolute left-0 top-0 z-10 inline-flex h-11 w-11 touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            button_next: "calendar-next absolute right-0 top-0 z-10 inline-flex h-11 w-11 touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            month_grid: "w-full border-collapse",
-            weekdays: "flex",
-            weekday: "w-11 py-2 text-center text-xs font-medium text-muted-foreground",
-            week: "mt-1 flex w-full",
-            day: "relative h-11 w-11 p-0 text-center",
-            day_button: "h-11 w-11 cursor-pointer rounded-lg text-sm font-semibold hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            today: "text-primary",
-            selected: "rounded-lg bg-primary text-primary-foreground hover:bg-primary",
-            outside: "text-muted-foreground/40",
-            disabled: "cursor-not-allowed text-muted-foreground/30 opacity-50"
-          }}
-        />
+        <DatePickerCalendar date={date} onSelect={selectDate} minDate={minDate} maxDate={maxDate} />
       </PopoverContent>
     </Popover>
   );
+}
+
+function toIsoDate(date: Date) {
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+function koreanDateLabel(date: Date) {
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
 }
 
 function parseDate(value?: string) {

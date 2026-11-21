@@ -18,3 +18,4 @@ test-results
 
 firebasekey.json
 share-token-key.txt
+.DS_Store

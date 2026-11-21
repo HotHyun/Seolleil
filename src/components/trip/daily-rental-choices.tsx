@@ -149,7 +149,7 @@ function RentalPriceUnavailable({ shop, options, day, access, save, canEdit, rea
 }
 
 function ModeButton({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
-  return <Button type="button" variant={active ? "primary" : "ghost"} className="min-h-10 cursor-pointer hover:translate-y-0" aria-pressed={active} onClick={onClick}>{children}</Button>;
+  return <Button type="button" variant="ghost" className={cn("min-h-10 cursor-pointer", active && "border border-border bg-background text-foreground hover:bg-background")} aria-pressed={active} onClick={onClick}>{children}</Button>;
 }
 
 function priceOf(option?: RentalPriceRule) {

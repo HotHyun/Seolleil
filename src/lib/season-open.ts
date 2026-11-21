@@ -3,11 +3,8 @@ import { getResort } from "@/data/resorts";
 
 const weekdayNames = ["일", "월", "화", "수", "목", "금", "토"];
 
-/** 한국 시간 기준 오늘(yyyy-MM-dd). 서버·브라우저 시간대와 무관하다. */
-export function todayKst(now: Date = new Date()) {
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
-  return parts;
-}
+export { todayKst } from "@/lib/kst-date";
+import { todayKst } from "@/lib/kst-date";
 
 export function getSeasonOpening(resortId: string | undefined, openings: SeasonOpening[] = seasonOpenings) {
   return resortId ? openings.find((item) => item.resortId === resortId) : undefined;

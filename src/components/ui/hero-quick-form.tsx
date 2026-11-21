@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { DatePicker } from "@/components/ui/date-picker";
-import { SelectField } from "@/components/ui/select-field";
-import { departureLocations } from "@/data/resorts";
-import { todayKst } from "@/lib/season-open";
+import { departureLocations } from "@/data/departure-locations";
+import { todayKst } from "@/lib/kst-date";
 
 const hiddenDefaults: Array<[string, string]> = [
   ["peopleCount", "2"], ["tripDuration", "same_day"], ["transportType", "car"], ["skillLevel", "beginner"],
@@ -26,7 +25,9 @@ export function HeroQuickForm() {
       </div>
       <div className="grid gap-2">
         <span className="text-xs font-medium text-muted-foreground">출발지</span>
-        <SelectField name="departureLocation" defaultValue="seoul-gangnam" ariaLabel="출발지" className={fieldClass} options={departureLocations.map(location => ({ value: location.id, label: location.label }))} />
+        <select name="departureLocation" defaultValue="seoul-gangnam" aria-label="출발지" className="h-11 w-full rounded-lg border border-input bg-card px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+          {departureLocations.map(location => <option key={location.id} value={location.id}>{location.label}</option>)}
+        </select>
       </div>
       {hiddenDefaults.map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
       <button type="submit" disabled={!visitDate} className="h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50">추천 보기</button>

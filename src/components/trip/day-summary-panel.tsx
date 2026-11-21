@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfidenceDot } from "@/components/confidence-badge";
 import { CircleCheck, CircleDashed, Store } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { DaySummary, DaySummaryLine, DaySummaryLineKind } from "@/lib/trip-day-summary";
@@ -38,8 +39,8 @@ export function DaySummaryPanel({ summaries, peopleCount, onSelectDay, canEdit }
         {summaries.map(summary => <DayCard key={summary.date} summary={summary} people={people} onSelectDay={onSelectDay} canEdit={canEdit} />)}
       </div>
       {summaries.length > 1 ? (
-        <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4">
-          <p className="text-xs font-semibold text-primary">전체 {summaries.length}일 렌탈·리프트 합계</p>
+        <div className="rounded-2xl border border-foreground/20 bg-muted/60 p-4">
+          <p className="text-xs font-semibold text-muted-foreground">전체 {summaries.length}일 렌탈·리프트 합계</p>
           <p className="mt-1 text-xl font-semibold">{formatCurrency(grandPerPerson * people)} <span className="text-xs font-semibold text-muted-foreground">1인 {formatCurrency(grandPerPerson)} · {people}명</span></p>
           {anyUnknown ? <p className="mt-1 text-xs text-muted-foreground">가격 미공개 항목은 합계에서 빠져 있어요.</p> : null}
         </div>
@@ -57,7 +58,7 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
           <p className="text-base font-semibold">{formatSummaryDate(summary.date)}</p>
           <p className="text-xs text-muted-foreground">{summary.dayTypeLabel} · {summary.timeSlotLabel}</p>
         </div>
-        <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${confirmed ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200" : summary.rentalState === "shop_only" ? "bg-amber-500/15 text-amber-800 dark:text-amber-200" : "bg-muted text-muted-foreground"}`}>
+        <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${confirmed ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200" : summary.rentalState === "shop_only" ? "bg-muted/60 text-foreground" : "bg-muted text-muted-foreground"}`}>
           {confirmed ? <CircleCheck aria-hidden="true" className="h-4 w-4" /> : <CircleDashed aria-hidden="true" className="h-4 w-4" />}
           {rentalStateLabel(summary.rentalState)}
         </span>
@@ -68,7 +69,7 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
         <div className="min-w-0">
           <p className="text-xs font-medium text-muted-foreground">렌탈샵</p>
           <p className="font-semibold">{summary.shopName ?? "아직 정하지 않았어요"}</p>
-          {summary.rentalState === "shop_only" ? <p className="text-xs text-amber-800 dark:text-amber-200">후보로만 저장됐고 장비·의류 상품은 아직 고르지 않았어요.</p> : null}
+          {summary.rentalState === "shop_only" ? <p className="text-xs text-foreground">후보로만 저장됐고 장비·의류 상품은 아직 고르지 않았어요.</p> : null}
         </div>
       </div>
 
@@ -94,11 +95,11 @@ function LineRow({ line, people }: { line: DaySummaryLine; people: number }) {
       <div className="min-w-0">
         <p className="font-semibold">{kindLabel[line.kind]}</p>
         <p className="text-xs text-muted-foreground">{line.label}{line.source && line.source !== "공식" && line.kind !== "lift" ? ` · ${line.source}` : ""}</p>
-        {line.reference ? <span className="mt-1 inline-block rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">25/26 참고가</span> : null}
+        {line.reference ? <p className="mt-1 text-xs text-muted-foreground">25/26 참고가</p> : null}
       </div>
       <div className="shrink-0 text-right">
         {line.perPerson === null ? <p className="font-semibold text-muted-foreground">가격 미공개</p> : <>
-          <p className="font-semibold">{formatCurrency(line.perPerson)}<span className="text-xs font-semibold text-muted-foreground"> /인</span></p>
+          <p className="flex items-center justify-end gap-2 font-semibold tabular-nums"><ConfidenceDot confidence={line.confidence} />{formatCurrency(line.perPerson)}<span className="text-xs font-normal text-muted-foreground">/인</span></p>
           {people > 1 ? <p className="text-xs text-muted-foreground">{people}명 {formatCurrency(line.perPerson * people)}</p> : null}
         </>}
       </div>

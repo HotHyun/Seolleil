@@ -105,7 +105,7 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-end gap-2">
-            <div className="rounded-full bg-primary/15 px-3 py-1 text-sm font-semibold text-primary">
+            <div className="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-primary">
               {activeTasks.length ? Math.round((completedTasks.length / activeTasks.length) * 100) : 100}%
             </div>
             <Button type="button" variant={showIncompleteOnly ? "primary" : "secondary"} className="h-9 px-3 text-xs hover:translate-y-0" aria-pressed={showIncompleteOnly} onClick={() => setShowIncompleteOnly(current => !current)}><ListFilter aria-hidden="true" className="h-4 w-4" /> {showIncompleteOnly ? "전체 보기" : "미완료만"}</Button>

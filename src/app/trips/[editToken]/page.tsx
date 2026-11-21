@@ -68,7 +68,7 @@ export default async function TripEditPage({
     <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
       <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks}>
       <div className="space-y-4">
-      {activeView === "overview" ? <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-amber-950 sm:p-4">
+      {activeView === "overview" ? <div className="rounded-lg border border-border bg-muted/60 p-3 text-amber-950 sm:p-4">
         <div className="flex gap-3">
           <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
@@ -76,7 +76,7 @@ export default async function TripEditPage({
               <p className="mt-1 text-sm">이 링크는 나만 보관하고, 동행자에게는 관리 메뉴의 읽기 전용 공유 링크를 보내세요.</p>
           </div>
         </div>
-      </div> : <div className="inline-flex max-w-full items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-950"><ShieldAlert aria-hidden="true" className="h-4 w-4 shrink-0" /><span className="min-w-0 text-pretty">편집 권한 링크 사용 중 · 이 링크를 다른 사람에게 보내지 마세요.</span></div>}
+      </div> : <div className="inline-flex max-w-full items-center gap-2 rounded-lg border border-border bg-muted/60 px-3 py-2 text-xs font-semibold text-amber-950"><ShieldAlert aria-hidden="true" className="h-4 w-4 shrink-0" /><span className="min-w-0 text-pretty">편집 권한 링크 사용 중 · 이 링크를 다른 사람에게 보내지 마세요.</span></div>}
 
           {activeView === "overview" ? <Card>
             <CardHeader>

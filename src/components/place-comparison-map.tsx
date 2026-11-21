@@ -89,7 +89,7 @@ export function PlaceComparisonMap({ candidates, selectedId, onSelect }: { candi
       if (!point || !window.kakao?.maps) return [];
       const isSelected = candidate.id === selectedId;
       const size = isSelected ? 40 : 32;
-      const color = candidate.type === "lodging" ? "2563eb" : "f97316";
+      const color = candidate.type === "lodging" ? "475569" : "2257ff";
       const label = candidate.type === "lodging" ? "H" : "R";
       const svg = encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#${color}" stroke="${isSelected ? "white" : "#111827"}" stroke-width="${isSelected ? 4 : 2}"/><text x="20" y="25" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" font-weight="900" fill="white">${label}</text></svg>`);
       const image = new window.kakao.maps.MarkerImage(`data:image/svg+xml;charset=UTF-8,${svg}`, new window.kakao.maps.Size(size, size), { offset: new window.kakao.maps.Point(size / 2, size / 2) });
@@ -109,5 +109,5 @@ export function PlaceComparisonMap({ candidates, selectedId, onSelect }: { candi
 }
 
 function MapFallback({ candidate, error }: { candidate?: PlaceCandidate; error: boolean }) {
-  return <div className="flex h-[260px] items-center justify-center rounded-2xl border bg-[radial-gradient(circle_at_top,hsl(var(--primary)/0.13),transparent_55%),hsl(var(--muted))] p-5 sm:h-[320px]" data-testid="trip-place-map-fallback"><div className="max-w-sm text-center"><span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-card text-primary shadow"><TriangleAlert className="h-5 w-5" /></span><p className="mt-4 font-semibold">{error ? "지도를 불러오지 못했어요" : "지도 연결 전에도 비교할 수 있어요"}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">목록에서 서비스와 가격을 비교하고 선택할 수 있습니다. 위치는 외부 지도에서 정확히 확인해 주세요.</p>{candidate?.externalMapUrl ? <a href={candidate.externalMapUrl} target="_blank" rel="noreferrer"><Button type="button" variant="secondary" className="mt-4">외부 지도에서 보기 <ExternalLink className="h-4 w-4" /></Button></a> : null}</div></div>;
+  return <div className="flex h-[260px] items-center justify-center rounded-2xl border bg-muted p-5 sm:h-[320px]" data-testid="trip-place-map-fallback"><div className="max-w-sm text-center"><span className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-card text-primary shadow"><TriangleAlert className="h-5 w-5" /></span><p className="mt-4 font-semibold">{error ? "지도를 불러오지 못했어요" : "지도 연결 전에도 비교할 수 있어요"}</p><p className="mt-2 text-sm leading-6 text-muted-foreground">목록에서 서비스와 가격을 비교하고 선택할 수 있습니다. 위치는 외부 지도에서 정확히 확인해 주세요.</p>{candidate?.externalMapUrl ? <a href={candidate.externalMapUrl} target="_blank" rel="noreferrer"><Button type="button" variant="secondary" className="mt-4">외부 지도에서 보기 <ExternalLink className="h-4 w-4" /></Button></a> : null}</div></div>;
 }

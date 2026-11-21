@@ -129,7 +129,7 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHr
       <div className={cn("grid min-w-0 gap-3 px-3 pb-24 transition-[grid-template-columns] duration-300 motion-reduce:transition-none sm:px-4 lg:grid lg:gap-0 lg:px-0 lg:pb-0", collapsed ? "lg:grid-cols-[76px_minmax(0,1fr)]" : "lg:grid-cols-[248px_minmax(0,1fr)]")}>
         <aside aria-label="트립 기능" className="sticky top-16 hidden h-[calc(100svh-4rem)] self-start border-r bg-card lg:flex lg:flex-col">
           <div className={cn("border-b py-5", collapsed ? "px-3" : "px-5")}>
-            {collapsed ? <p className="text-center text-sm font-semibold text-primary" aria-label={`준비 진행률 ${progress}%`}>{progress}%</p> : <>
+            {collapsed ? <p className="text-center text-sm font-semibold text-muted-foreground" aria-label={`준비 진행률 ${progress}%`}>{progress}%</p> : <>
               <p className="text-xs text-muted-foreground">준비 진행률</p>
               <p className="mt-1 text-2xl font-semibold tabular-nums">{progress}%</p>
             </>}

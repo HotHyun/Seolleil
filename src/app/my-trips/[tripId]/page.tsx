@@ -81,7 +81,7 @@ export default async function MyTripDetailPage({
             <CardHeader>
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{tripSeasonFor(trip.visitDate, trip.season)}</StatusBadge><StatusBadge>{trip.status}</StatusBadge></div>
+                  <div className="flex flex-wrap items-center gap-2"><StatusBadge tone="good">{tripSeasonFor(trip.visitDate, trip.season)}</StatusBadge><StatusBadge>{trip.status === "planning" ? "계획중" : trip.status === "completed" ? "완료" : trip.status}</StatusBadge></div>
                   <div className="mt-3"><TripIdentityEditor tripId={trip.id} name={getTripDisplayName(trip)} canEdit={canEdit} /></div>
                   <p className="mt-1 text-sm font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
                 </div>

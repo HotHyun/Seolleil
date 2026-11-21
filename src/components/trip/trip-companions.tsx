@@ -12,7 +12,7 @@ export function TripCompanions({ members, currentUserId }: { members: TripMember
 
   return (
     <div className="flex flex-wrap items-center gap-2 text-sm" aria-label="함께 가는 사람">
-      <span className="inline-flex items-center gap-1.5 font-semibold text-muted-foreground">
+      <span className="inline-flex items-center gap-2 font-semibold text-muted-foreground">
         <UsersRound className="h-4 w-4" /> 함께
       </span>
       {companions.slice(0, 4).map(member => <StatusBadge key={member.$id}>{membershipDisplayName(member)}</StatusBadge>)}

@@ -84,7 +84,7 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
                 {selected ? <Clock3 className="h-4 w-4" /> : <CalendarRange className="h-4 w-4" />}
               </button>
               <button type="button" onClick={() => toggleDay(date)} className="min-h-11 min-w-0 flex-1 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <span className="block font-black">{label}</span>
+                <span className="block font-semibold">{label}</span>
                 <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">{tripDayTypeLabel(date)} 가격 · 여행 {index + 1}일차</span>
               </button>
               {selected ? <div className="w-32 shrink-0 max-[390px]:w-28"><SelectField ariaLabel={`${label} 이용 시간`} value={days.get(date)} onValueChange={value => setDays(current => new Map(current).set(date, value as TimeSlot))} options={liftSlotOptions(trip.resortId, date, days.get(date))} /></div> : null}
@@ -93,7 +93,7 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
         })}
       </div> : null}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-muted/50 p-3">
-        <p className="text-xs leading-5 text-muted-foreground">기간을 바꾸면 스키 날짜뿐 아니라 가는 길·돌아오는 길과 숙박 밤도 함께 조정됩니다.</p>
+        <p className="text-sm leading-6 text-muted-foreground">기간을 바꾸면 스키 날짜뿐 아니라 가는 길·돌아오는 길과 숙박 밤도 함께 조정됩니다.</p>
         {canEdit ? <SubmitButton disabled={!rangeIsComplete || !range.some(date => days.has(date))} pendingText="일정 저장 중…">스키 일정 저장</SubmitButton> : null}
       </div>
     </form>

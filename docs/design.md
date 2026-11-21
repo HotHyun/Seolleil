@@ -4,7 +4,9 @@
 
 설레일 supports both light mode and dark mode. Pretendard Variable is served locally and used across the whole product so Korean typography remains balanced at every weight and breakpoint.
 
-The product connects an anticipatory ski-travel landing experience to a practical planning tool. Its visual idea is **Blue Run**: deep midnight slopes, vivid cobalt wayfinding, and a lift-safety lime accent. Operational screens stay compact and calm.
+The product connects a ski-trip landing page to a practical planning tool. Its visual idea is **quiet chrome, one signature**: a cool neutral surface ramp, one cobalt accent used for the primary action and selection, and the **price-confidence dot** as the product's own detail. Operational screens stay compact and calm; richness lives in content (the hero photo and the real result card), never in decoration.
+
+Character: calm, exact, a little warm. Avoid describing the UI as clean, modern, or premium.
 
 ## Core Principles
 
@@ -20,13 +22,12 @@ The product connects an anticipatory ski-travel landing experience to a practica
 
 Use CSS variables from `src/app/globals.css`.
 
-- Light background: near-white.
-- Primary/action in both themes: vivid cobalt blue.
-- Dark background: deep midnight blue.
-- Lime accent: reserved for excitement, completion, and high-contrast landing CTA moments.
-- Surface, border, muted, primary, and ring colors must come from CSS variables in `globals.css`.
-
-Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, `muted`, `card`, and `border` tokens so both themes work.
+- Surfaces, borders, and text come from one cool neutral ramp (`background`, `card`, `muted`, `border`, `foreground`, `muted-foreground`). Three text roles only: foreground, muted-foreground, and the primary color for links.
+- `primary` (cobalt) is the single accent: primary buttons, selection, links, progress.
+- `accent` (lime) is reserved for completion states and is not used on surfaces or buttons. Do not hard-code lime or orange in components.
+- Semantic colors (emerald, amber, destructive) carry meaning only and are used sparingly.
+- No hue gradients, gradient text, colored glows, colored shadows, or radial color washes. The only gradient allowed is the edge fade on horizontally scrollable tables and the photo-to-background mask on the home hero.
+- Borders are hairlines from the `border` token. Dark mode depth comes from surface steps, not shadows.
 
 ## Layout
 
@@ -49,17 +50,17 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 ### Cards
 
 - Use `Card` for repeated items, framed tools, recommendation cards, and side panels.
-- Current default card style is an opaque, softly elevated `glass-panel`. Blur is reserved for navigation and overlays.
-- Avoid cards inside cards unless the nested card is a true repeated item.
+- `glass-panel` is an opaque surface with a hairline border and a 1px neutral shadow. Blur is reserved for the sticky header and overlays.
+- Avoid cards inside cards unless the nested card is a true repeated item. Use a hairline divider (`border-t`) inside a card instead.
 
 ## Components
 
 ### Buttons
 
-- Primary buttons use `primary` fill.
-- Secondary buttons use translucent dark surface with border.
-- Ghost buttons should be reserved for low-emphasis actions.
-- Buttons use `rounded-xl`, bold text, a minimum 44px touch target, and visible focus rings.
+- Primary buttons use the `primary` fill; hover is a slight opacity step (`hover:bg-primary/90`), never a lift or glow.
+- Secondary buttons use the `card` surface with a border. Ghost buttons are for low-emphasis actions.
+- Buttons use `rounded-lg`, `font-semibold`, a minimum 44px touch target, a tiny press scale (`active:scale-[0.98]`), and visible focus rings.
+- Transition only color, background, border, opacity, and transform. Never `transition-all`.
 
 ### Inputs
 
@@ -76,35 +77,30 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 
 ### Badges
 
-- Neutral badges use muted surfaces.
-- Positive/highlight badges use `primary`-tinted surfaces.
+- Neutral badges use muted surfaces with `rounded-md`. Highlight badges use `primary`-tinted surfaces. Avoid full-pill badges.
+- Price confidence is shown with `ConfidenceBadge` / `ConfidenceDot` (`src/components/confidence-badge.tsx`). A filled dot means confirmed; a hollow dot means estimated or unconfirmed. Put the dot next to every price.
 
 ## Page Guidance
 
 ### Home
 
-- Home is both landing page and starting point.
-- It should communicate:
-  - ski resort recommendation
-  - date-based cost estimate
-  - checklist tracking
-  - optional login for trip recovery
-- The first viewport should not feel empty on desktop.
-- Use one short orchestrated hero entrance and subtle preview drift rather than scroll-jacking.
-- The first viewport includes a direct plan CTA, resort browsing CTA, and low-friction trust cues.
-- At 1280px and wider, keep the planner preview explicitly positioned on the right so it cannot be displaced by fluid display typography.
-- Respect `prefers-reduced-motion`; motion is enhancement, never required to understand the page.
-- Below the hero: a data strip (resort count, rental shop count, latest price check date, all computed from static data), a bento board of miniature product tiles (recommendation comparison, price-confidence levels, checklist progress, share links), an FAQ accordion, and a dark final CTA that matches the hero tone.
-- Bento tiles show real UI fragments instead of icon-and-number cards. Sample figures are labelled as examples; never present invented scores or progress as real results.
-- On mobile the hero must fit the headline, both CTAs, and the trust cues in the first screen; the preview card is compacted (secondary comparison list hidden) and the overlay gradient runs vertically.
+- Home is both landing page and starting point. The first viewport states what the product does ("국내 스키장, 이동 시간과 총비용으로 비교해요"), offers one primary action, and shows a real result.
+- Layout: a full-height split. Text and the quick form sit on the page background; the ski photo fills the right ~60% with its left edge masked into the background. The result card straddles the bottom edge of the photo on desktop and stacks below the form on mobile.
+- One primary action (date + departure quick form → `/recommendations`) and one quiet secondary link (`/plan`). No badge above the headline, no checkmark row, no second button.
+- The result card uses real values from the recommendation engine (sample: Gangnam departure, 2 people, same day) with confidence dots, and falls back to fixed sample rows on failure.
+- Below the hero: a data strip (resort count, rental shop count, latest price check date, computed from static data), three feature tiles (price confidence, checklist progress, share links), an FAQ accordion, and a plain final CTA band.
+- Motion: one short fade-and-rise entrance on first load. No looping, floating, or parallax motion. Respect `prefers-reduced-motion`.
 
 ## Typography
 
 - Pretendard Variable is the sole product typeface and is served locally.
-- Korean display copy uses heavy weights with restrained negative tracking; body copy uses medium or semibold weights.
-- Avoid English-only eyebrow labels when a clear Korean label is available.
-- Body copy is at least 16px on mobile with 1.5 or greater line height.
-- Prefer Korean labels and eyebrow copy throughout the Korean product experience.
+- Weights are 400, 500, and 600 only. Hierarchy comes from size and color, not weight. No 700–900 headings.
+- Headlines use `break-keep` and normal or slightly open tracking; never negative tracking on small text.
+- Sentence case, no uppercase tracked labels, no English-only eyebrow labels when a clear Korean label exists.
+- Short UI strings and headlines have no trailing period; multi-sentence paragraphs keep theirs.
+- Body copy is at least 16px on mobile with 1.5 or greater line height. Secondary text is at least 12px (`text-xs`); sentence-length text is 14px (`text-sm`) or larger.
+- Numbers use `tabular-nums`. Prices use `formatCurrency` (`₩289,984`) and ranges use `~`.
+- Spacing sits on the 4px grid; avoid half-steps (`*-1.5`, `*-2.5`, `*-3.5`) except 2px nudges.
 
 ### Plan Form
 
@@ -114,8 +110,9 @@ Do not hard-code lime or orange in components. Use `primary`, `accent`, `ring`, 
 
 ### Recommendations
 
-- Use comparison-oriented layout.
-- Show recommendation reason, travel time, cost range, rental count, and create-trip action.
+- Comparison first: a table of the three resorts (travel time, total range, confidence, rental count, main reason) sits above the cards, with the first column highlighted.
+- Notices (default conditions, resorts not yet open, price-season context) are single quiet lines, not colored boxes.
+- The first card is expanded: name, region and tags, up to three reasons, official links, and a side panel with the total once (with its confidence dot), the lift promotion note, and the create-trip action. Second and third are collapsed rows that expand to the same card.
 - Do not expose internal score numbers.
 
 ### Trip Detail

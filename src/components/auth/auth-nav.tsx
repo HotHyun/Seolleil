@@ -50,7 +50,7 @@ export function AuthNav() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-64">
         <DropdownMenuLabel>
-          <div className="font-black">{user.displayName ?? "내 스키 트립"}</div>
+          <div className="font-semibold">{user.displayName ?? "내 스키 트립"}</div>
           {user.email ? <div className="mt-0.5 truncate text-xs font-normal text-muted-foreground">{user.email}</div> : null}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

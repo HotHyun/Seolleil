@@ -47,8 +47,7 @@ export default async function MyTripsPage() {
     <main className="page-shell py-8">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="mb-2 text-sm font-semibold text-primary">My Trips</p>
-          <h1 className="text-3xl font-black md:text-5xl">내 스키 트립</h1>
+          <h1 className="text-3xl font-semibold md:text-5xl">내 스키 트립</h1>
         </div>
         <a href="/plan">
           <Button>
@@ -74,7 +73,7 @@ export default async function MyTripsPage() {
         <Card>
           <CardContent className="flex min-h-56 flex-col items-center justify-center gap-4 text-center">
             <div>
-              <h2 className="text-2xl font-black">아직 저장된 트립이 없습니다.</h2>
+              <h2 className="text-2xl font-semibold">아직 저장된 트립이 없습니다.</h2>
               <p className="mt-2 text-sm text-muted-foreground">트립을 만들면 이곳에서 다시 열 수 있습니다.</p>
             </div>
             <a href="/plan">
@@ -92,7 +91,7 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
     <Card>
       <CardContent className="p-4">
         <div className="text-xs font-semibold text-muted-foreground">{label}</div>
-        <div className="mt-1 text-2xl font-black">{value}</div>
+        <div className="mt-1 text-2xl font-semibold">{value}</div>
       </CardContent>
     </Card>
   );
@@ -112,7 +111,7 @@ function TripSection({
   return (
     <section>
       <div className="mb-3 flex items-center justify-between">
-        <div>{eyebrow ? <p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-primary">{eyebrow}</p> : null}<h2 className="text-xl font-black">{title}</h2></div>
+        <div>{eyebrow ? <p className="mb-1 text-xs font-medium text-primary">{eyebrow}</p> : null}<h2 className="text-xl font-semibold">{title}</h2></div>
         <span className="text-sm font-semibold text-muted-foreground">{trips.length}개</span>
       </div>
       {trips.length ? (

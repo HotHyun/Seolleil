@@ -110,30 +110,30 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHr
       <div className="lg:hidden">
         <Drawer>
           <DrawerTrigger asChild>
-            <button type="button" aria-label="트립 메뉴 열기" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }} className="fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary text-primary-foreground shadow-[0_12px_32px_hsl(var(--foreground)/.28)] transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
+            <button type="button" aria-label="트립 메뉴 열기" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }} className="fixed right-4 z-40 flex h-14 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
               <Menu aria-hidden="true" className="h-6 w-6" />
             </button>
           </DrawerTrigger>
           <DrawerContent>
             <DrawerHeader>
-              <DrawerTitle className="text-xl font-black">트립 메뉴</DrawerTitle>
+              <DrawerTitle className="text-xl font-semibold">트립 메뉴</DrawerTitle>
               <DrawerDescription className="text-sm leading-6 text-muted-foreground">필요한 계획 화면으로 바로 이동하세요.</DrawerDescription>
             </DrawerHeader>
             <nav className="grid grid-cols-2 gap-2" aria-label="트립 기능">
               {items.map(item => <DrawerClose key={item.id} asChild><WorkspaceLink {...item} href={`${basePath}?view=${item.id}`} active={activeView === item.id} onNavigate={prepareWorkspaceNavigation} /></DrawerClose>)}
             </nav>
-            {backHref ? <div className="mt-4 border-t pt-3"><DrawerClose asChild><Link href={backHref} className="flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-bold text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ArrowLeft aria-hidden="true" className="h-4 w-4" /> 내 트립으로 돌아가기</Link></DrawerClose></div> : null}
+            {backHref ? <div className="mt-4 border-t pt-3"><DrawerClose asChild><Link href={backHref} className="flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><ArrowLeft aria-hidden="true" className="h-4 w-4" /> 내 트립으로 돌아가기</Link></DrawerClose></div> : null}
           </DrawerContent>
         </Drawer>
       </div>
       <div className={cn("grid min-w-0 gap-3 px-3 pb-24 transition-[grid-template-columns] duration-300 motion-reduce:transition-none sm:px-4 lg:grid lg:gap-0 lg:px-0 lg:pb-0", collapsed ? "lg:grid-cols-[76px_minmax(0,1fr)]" : "lg:grid-cols-[248px_minmax(0,1fr)]")}>
         <aside aria-label="트립 기능" className="sticky top-16 hidden h-[calc(100svh-4rem)] self-start border-r bg-card lg:flex lg:flex-col">
-          <div className={cn("border-b bg-primary/10 py-5", collapsed ? "px-3" : "px-5")}>
-            {collapsed ? <p className="text-center text-sm font-black text-primary" aria-label={`준비 진행률 ${progress}%`}>{progress}%</p> : <>
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-primary">Trip workspace</p>
-              <p className="mt-1 text-sm font-bold">준비 진행률 {progress}%</p>
+          <div className={cn("border-b py-5", collapsed ? "px-3" : "px-5")}>
+            {collapsed ? <p className="text-center text-sm font-semibold text-primary" aria-label={`준비 진행률 ${progress}%`}>{progress}%</p> : <>
+              <p className="text-xs text-muted-foreground">준비 진행률</p>
+              <p className="mt-1 text-2xl font-semibold tabular-nums">{progress}%</p>
             </>}
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${progress}%` }} /></div>
+            <div className="mt-3 h-1 overflow-hidden rounded-full bg-muted"><div className="h-full rounded-full bg-primary transition-[width] duration-300 motion-reduce:transition-none" style={{ width: `${progress}%` }} /></div>
           </div>
           <nav className="flex-1 p-2">
             {items.map(item => <WorkspaceLink key={item.id} {...item} href={`${basePath}?view=${item.id}`} active={activeView === item.id} desktop collapsed={collapsed} onNavigate={prepareWorkspaceNavigation} />)}
@@ -149,15 +149,15 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHr
 }
 
 function WorkspaceLink({ href, label, description, icon: Icon, active, desktop = false, collapsed = false, onNavigate, onClick: slotOnClick, ...slotProps }: { href: string; label: string; description: string; icon: typeof LayoutDashboard; active: boolean; desktop?: boolean; collapsed?: boolean; onNavigate?: (href: string) => void } & Omit<React.ComponentPropsWithoutRef<typeof Link>, "href" | "onNavigate">) {
-  return <Link {...slotProps} href={href} scroll={false} onClick={event => { slotOnClick?.(event); if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onNavigate?.(href); }} aria-current={active ? "page" : undefined} aria-label={collapsed ? label : undefined} title={collapsed ? label : undefined} className={cn("group flex min-h-11 items-center rounded-xl border py-2.5 font-bold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring", collapsed ? "justify-center px-2" : "gap-3 px-3", desktop ? "mb-1 w-full border-transparent" : "w-full", active ? "border-primary/30 bg-primary text-primary-foreground shadow-sm" : "border-border bg-card text-foreground hover:border-primary/30 hover:bg-muted")}>
+  return <Link {...slotProps} href={href} scroll={false} onClick={event => { slotOnClick?.(event); if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) onNavigate?.(href); }} aria-current={active ? "page" : undefined} aria-label={collapsed ? label : undefined} title={collapsed ? label : undefined} className={cn("group flex min-h-11 items-center rounded-lg border py-2 font-medium outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-ring", collapsed ? "justify-center px-2" : "gap-3 px-3", desktop ? "mb-1 w-full border-transparent" : "w-full", active ? "border-border bg-muted text-foreground" : "border-border bg-card text-foreground hover:border-primary/30 hover:bg-muted")}>
     <Icon className="h-4 w-4 shrink-0" />
-    {!collapsed ? <span className="text-left"><span className="block text-sm">{label}</span>{desktop ? <span className={cn("mt-0.5 block text-[11px] font-semibold", active ? "text-primary-foreground/75" : "text-muted-foreground")}>{description}</span> : null}</span> : null}
+    {!collapsed ? <span className="text-left"><span className="block text-sm">{label}</span>{desktop ? <span className={cn("mt-0.5 block text-xs", "text-muted-foreground")}>{description}</span> : null}</span> : null}
   </Link>;
 }
 
 function ButtonLike({ onClick, collapsed }: { onClick: () => void; collapsed: boolean }) {
   const Icon = collapsed ? PanelLeftOpen : PanelLeftClose;
-  return <button type="button" onClick={onClick} aria-label={collapsed ? "사이드바 펼치기" : "사이드바 접기"} title={collapsed ? "사이드바 펼치기" : undefined} className={cn("flex min-h-11 w-full items-center rounded-xl px-3 text-sm font-bold text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring", collapsed ? "justify-center" : "gap-3")}>
+  return <button type="button" onClick={onClick} aria-label={collapsed ? "사이드바 펼치기" : "사이드바 접기"} title={collapsed ? "사이드바 펼치기" : undefined} className={cn("flex min-h-11 w-full items-center rounded-xl px-3 text-sm font-medium text-muted-foreground outline-none transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring", collapsed ? "justify-center" : "gap-3")}>
     <Icon className="h-4 w-4 shrink-0" />
     {!collapsed ? <span>사이드바 접기</span> : null}
   </button>;

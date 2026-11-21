@@ -102,11 +102,11 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   }
 
   return (
-    <Card className="overflow-hidden border-primary/20" data-testid="trip-budget-workspace">
-      <CardHeader className="bg-gradient-to-br from-primary/15 via-card to-card">
+    <Card className="overflow-hidden" data-testid="trip-budget-workspace">
+      <CardHeader className="border-b">
         <div className="flex items-start justify-between gap-3">
-          <div><p className="text-xs font-black uppercase tracking-[0.18em] text-primary">Trip budget</p><h1 data-trip-workspace-title tabIndex={-1} className="mt-2 text-pretty text-xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">비용 확정과 1/N 정산</h1><p className="mt-2 text-sm text-muted-foreground">선택 결과를 기준으로 실제 결제 금액과 추가 비용을 정리하세요.</p></div>
-          <ReceiptText className="h-6 w-6 text-primary" />
+          <div><h1 data-trip-workspace-title tabIndex={-1} className="text-pretty text-xl font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">비용 확정과 1/N 정산</h1><p className="mt-2 text-sm text-muted-foreground">선택 결과를 기준으로 실제 결제 금액과 추가 비용을 정리하세요.</p></div>
+          <ReceiptText aria-hidden="true" className="h-5 w-5 text-muted-foreground" />
         </div>
       </CardHeader>
       <CardContent className="space-y-6 p-4 sm:p-6">
@@ -115,7 +115,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
           <input type="hidden" name="extras" value={JSON.stringify(budget.extras)} />
 
           <section aria-labelledby="budget-choices-title">
-            <div className="mb-3"><h2 id="budget-choices-title" className="font-black">현재 선택</h2><p className="mt-1 text-xs text-muted-foreground">선택을 바꾸려면 해당 작업공간으로 이동하세요.</p></div>
+            <div className="mb-3"><h2 id="budget-choices-title" className="font-semibold">현재 선택</h2><p className="mt-1 text-xs text-muted-foreground">선택을 바꾸려면 해당 작업공간으로 이동하세요.</p></div>
             <div className="grid gap-2 sm:grid-cols-2">
               <ChoiceSummary label="리프트권" value={liftLabel} href={`${basePath}?view=rental_lift#lift`} />
               <ChoiceSummary label="렌탈샵·상품" value={rentalLabel} href={`${basePath}?view=rental_lift`} />
@@ -125,8 +125,8 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
           </section>
 
           <section>
-            <h2 className="mb-3 font-black">예상 비용을 실제 금액으로 확정</h2>
-            {referenceKeys.size ? <p className="mb-3 rounded-md bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-200">26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 금액도 자동으로 바뀌어요.</p> : null}
+            <h2 className="mb-3 font-semibold">예상 비용을 실제 금액으로 확정</h2>
+            {referenceKeys.size ? <p className="mb-3 rounded-md bg-amber-500/15 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-200">26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 금액도 자동으로 바뀌어요.</p> : null}
             <div className="grid gap-3 sm:grid-cols-2">
               {budgetCostKeys.map(({ key, label }) => { const item = totals.items.find(candidate => candidate.key === key); return (
                 <Field key={key} label={`${label} · ${budget.overrides[key] !== undefined ? "확정" : item ? `예상 ${formatCurrency(item.amount)}${referenceKeys.has(key) ? " · 25/26 참고가" : ""}` : "직접 입력"}`}>
@@ -137,7 +137,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
           </section>
 
           <section>
-            <div className="mb-3 flex items-center justify-between gap-3"><div className="min-w-0"><h2 className="font-black">추가 비용</h2><p className="text-xs text-muted-foreground">식비, 기름값, 주차비처럼 여행마다 달라지는 비용을 더하세요.</p></div>{canEdit ? <Button type="button" variant="secondary" className="h-9 shrink-0 whitespace-nowrap px-3 text-xs sm:text-sm" onClick={addExpense}><Plus className="h-4 w-4" /> 추가</Button> : null}</div>
+            <div className="mb-3 flex items-center justify-between gap-3"><div className="min-w-0"><h2 className="font-semibold">추가 비용</h2><p className="text-xs text-muted-foreground">식비, 기름값, 주차비처럼 여행마다 달라지는 비용을 더하세요.</p></div>{canEdit ? <Button type="button" variant="secondary" className="h-9 shrink-0 whitespace-nowrap px-3 text-xs sm:text-sm" onClick={addExpense}><Plus className="h-4 w-4" /> 추가</Button> : null}</div>
             <div className="space-y-2">
               {budget.extras.map((expense, index) => <div key={expense.id} className="grid grid-cols-[110px_1fr_110px_40px] gap-2 max-sm:grid-cols-[100px_1fr_40px]">
                 <SelectField value={expense.category} onValueChange={value => { setBudget(current => ({ ...current, extras: current.extras.map((item, i) => i === index ? { ...item, category: value as TripExpenseCategory } : item) })); setDirty(true); }} options={categories} />
@@ -150,10 +150,10 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
           </section>
 
           <div className="rounded-2xl bg-foreground p-5 text-background">
-            <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3"><div className="min-w-0"><p className="text-xs font-bold opacity-70">현재 여행 총액</p><p className="mt-1 break-words text-2xl font-black tabular-nums sm:text-3xl">{formatCurrency(totals.total)}</p></div><div className="min-w-0 max-w-full text-left sm:text-right"><p className="text-xs font-bold opacity-70">1인당</p><p className="mt-1 break-words text-lg font-black tabular-nums text-primary sm:text-xl">{formatCurrency(totals.perPerson)}</p></div></div>
-            <div className="mt-4 flex items-center gap-3 border-t border-background/20 pt-4"><Users className="h-4 w-4" /><label htmlFor="splitCount" className="text-sm font-bold">몇 명이 나눌까요?</label><Input id="splitCount" name="splitCount" type="number" min={1} max={100} value={splitCount} onChange={event => setSplitCount(Number(event.target.value))} className="ml-auto w-20 border-background/30 bg-background/10 text-background" /></div>
+            <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3"><div className="min-w-0"><p className="text-xs font-medium opacity-70">현재 여행 총액</p><p className="mt-1 break-words text-2xl font-semibold tabular-nums sm:text-3xl">{formatCurrency(totals.total)}</p></div><div className="min-w-0 max-w-full text-left sm:text-right"><p className="text-xs font-medium opacity-70">1인당</p><p className="mt-1 break-words text-lg font-semibold tabular-nums text-primary sm:text-xl">{formatCurrency(totals.perPerson)}</p></div></div>
+            <div className="mt-4 flex items-center gap-3 border-t border-background/20 pt-4"><Users className="h-4 w-4" /><label htmlFor="splitCount" className="text-sm font-medium">몇 명이 나눌까요?</label><Input id="splitCount" name="splitCount" type="number" min={1} max={100} value={splitCount} onChange={event => setSplitCount(Number(event.target.value))} className="ml-auto w-20 border-background/30 bg-background/10 text-background" /></div>
           </div>
-          {canEdit && dirty ? <div className="sticky bottom-3 z-20 flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-card/95 p-3 shadow-2xl backdrop-blur" aria-live="polite"><div className="min-w-0"><p className="text-sm font-black">저장하지 않은 변경사항</p><p className="truncate text-xs text-muted-foreground">실제 금액과 정산 정보를 저장하세요.</p></div><SubmitButton className="shrink-0" pendingText="저장 중…">변경사항 저장</SubmitButton></div> : null}
+          {canEdit && dirty ? <div className="sticky bottom-3 z-20 flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-card/95 p-3 shadow-lg backdrop-blur" aria-live="polite"><div className="min-w-0"><p className="text-sm font-semibold">저장하지 않은 변경사항</p><p className="truncate text-xs text-muted-foreground">실제 금액과 정산 정보를 저장하세요.</p></div><SubmitButton className="shrink-0" pendingText="저장 중…">변경사항 저장</SubmitButton></div> : null}
         </form>
       </CardContent>
     </Card>
@@ -161,5 +161,5 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
 }
 
 function ChoiceSummary({ label, value, href }: { label: string; value: string; href: string }) {
-  return <div className="flex min-w-0 items-center gap-3 rounded-xl border bg-muted/40 p-3"><div className="min-w-0 flex-1"><p className="text-xs font-bold text-muted-foreground">{label}</p><p className="mt-1 truncate text-sm font-black">{value}</p></div><Link href={href} aria-label={`${label} 변경`} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-black text-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">변경 <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" /></Link></div>;
+  return <div className="flex min-w-0 items-center gap-3 rounded-xl border bg-muted/40 p-3"><div className="min-w-0 flex-1"><p className="text-xs font-medium text-muted-foreground">{label}</p><p className="mt-1 truncate text-sm font-semibold">{value}</p></div><Link href={href} aria-label={`${label} 변경`} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">변경 <ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link></div>;
 }

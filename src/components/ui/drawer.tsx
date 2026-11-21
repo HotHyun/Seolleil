@@ -19,12 +19,12 @@ const DrawerContent = React.forwardRef<
     <DialogPrimitive.Content
       ref={ref}
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 max-h-[86svh] overflow-y-auto rounded-t-3xl border bg-card px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-3 text-card-foreground shadow-2xl outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom",
+        "fixed inset-x-0 bottom-0 z-50 max-h-[86svh] overflow-y-auto rounded-t-3xl border bg-card px-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] pt-3 text-card-foreground shadow-lg outline-none data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom data-[state=open]:animate-in data-[state=open]:slide-in-from-bottom",
         className
       )}
       {...props}
     >
-      <div aria-hidden="true" className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted-foreground/35" />
+      <div aria-hidden="true" className="mx-auto mb-4 h-2 w-10 rounded-full bg-muted-foreground/35" />
       {children}
     </DialogPrimitive.Content>
   </DialogPrimitive.Portal>
@@ -32,7 +32,7 @@ const DrawerContent = React.forwardRef<
 DrawerContent.displayName = "DrawerContent";
 
 function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mb-4 space-y-1.5", className)} {...props} />;
+  return <div className={cn("mb-4 space-y-2", className)} {...props} />;
 }
 
 export { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger };

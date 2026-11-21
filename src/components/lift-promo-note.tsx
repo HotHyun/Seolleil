@@ -13,9 +13,9 @@ export function LiftPromoNote({ resortId, timeSlot, visitDate, className }: { re
   const saving = match.saving !== undefined && match.saving > 0 ? ` (정상가보다 ${formatCurrency(match.saving)} 저렴)` : "";
 
   return (
-    <div className={`rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs leading-5 ${className ?? ""}`} data-testid="lift-promo-note">
-      <p className="flex items-start gap-1.5 font-black text-foreground">
-        <Tag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+    <div className={`rounded-lg border bg-muted/50 p-3 text-xs leading-5 ${className ?? ""}`} data-testid="lift-promo-note">
+      <p className="flex items-start gap-2 font-medium text-foreground">
+        <Tag className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
         <span>{promotion.title} {timeSlotLabels[timeSlot]} {formatCurrency(match.adultPrice)}{saving}</span>
       </p>
       <p className="mt-1 text-muted-foreground">
@@ -27,7 +27,7 @@ export function LiftPromoNote({ resortId, timeSlot, visitDate, className }: { re
         rel="noreferrer"
         eventName="external_link_click"
         eventData={{ type: "lift_promotion", resortId, promotionId: promotion.id }}
-        className="mt-1 inline-flex min-h-8 items-center font-bold text-primary"
+        className="mt-1 inline-flex min-h-8 items-center font-medium text-primary"
       >
         공식 공지 보기
       </AnalyticsLink>

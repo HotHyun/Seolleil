@@ -72,7 +72,7 @@ export default async function TripEditPage({
         <div className="flex gap-3">
           <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0" />
           <div>
-            <div className="font-black">이 편집 링크를 가진 사람은 트립을 수정할 수 있습니다.</div>
+            <div className="font-semibold">이 편집 링크를 가진 사람은 트립을 수정할 수 있습니다.</div>
               <p className="mt-1 text-sm">이 링크는 나만 보관하고, 동행자에게는 관리 메뉴의 읽기 전용 공유 링크를 보내세요.</p>
           </div>
         </div>
@@ -156,7 +156,7 @@ function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-md bg-muted p-3">
       <div className="text-xs font-semibold text-muted-foreground">{label}</div>
-      <div className="mt-1 font-black">{value}</div>
+      <div className="mt-1 font-semibold">{value}</div>
     </div>
   );
 }

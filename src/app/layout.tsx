@@ -74,21 +74,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           ) : null}
           <WebVitals />
           <a href="#main-content" className="skip-link">본문으로 바로가기</a>
-          <header className="sticky top-0 z-30 border-b bg-card/90 backdrop-blur-xl">
+          <header className="sticky top-0 z-30 border-b bg-background/90 backdrop-blur">
             <div className="page-shell flex h-16 items-center justify-between gap-3">
-              <Link href="/" aria-label="설레일" className="flex shrink-0 items-center gap-2 font-black tracking-[-.02em] text-foreground sm:gap-2.5">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-md shadow-primary/20">
-                  <MountainSnow className="h-5 w-5" />
-                </span>
-                <span className="whitespace-nowrap text-xs sm:text-sm">
+              <Link href="/" aria-label="설레일" className="flex shrink-0 items-center gap-2 text-foreground">
+                <MountainSnow aria-hidden="true" className="h-5 w-5 text-primary" strokeWidth={1.75} />
+                <span className="whitespace-nowrap text-base font-semibold">
                   설레일
                 </span>
               </Link>
-              <nav className="flex shrink-0 items-center gap-1 text-xs font-bold text-muted-foreground sm:gap-3 sm:text-sm">
-                <Link href="/resorts" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-md px-2 hover:bg-muted hover:text-foreground sm:px-0 sm:hover:bg-transparent">
+              <nav className="flex shrink-0 items-center gap-1 text-sm font-medium text-muted-foreground sm:gap-3">
+                <Link href="/resorts" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-md px-2 transition-colors hover:text-foreground sm:px-0">
                   스키장
                 </Link>
-                <Link href="/plan" aria-label="여행 시작" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-lg bg-primary px-2.5 text-primary-foreground transition hover:brightness-110 sm:px-4">
+                <Link href="/plan" aria-label="여행 시작" className="inline-flex min-h-11 items-center whitespace-nowrap rounded-lg bg-primary px-3 text-primary-foreground transition-colors hover:bg-primary/90 sm:px-4">
                   <span className="sm:hidden">시작</span>
                   <span className="hidden sm:inline">여행 시작</span>
                 </Link>

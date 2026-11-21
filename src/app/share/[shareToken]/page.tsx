@@ -70,7 +70,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
       <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
       {activeView === "overview" ? <div className="mb-4">
         <StatusBadge tone="good">{canEdit ? "함께 편집" : "보기 전용"}</StatusBadge>
-        <h1 data-trip-workspace-title tabIndex={-1} className="mt-3 text-3xl font-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-5xl">{getTripDisplayName(trip)}</h1>
+        <h1 data-trip-workspace-title tabIndex={-1} className="mt-3 text-3xl font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-5xl">{getTripDisplayName(trip)}</h1>
         <p className="mt-2 font-semibold text-muted-foreground">{trip.resortNameSnapshot}</p>
       </div> : canEdit ? <div className="mb-3"><StatusBadge tone="good">함께 편집</StatusBadge></div> : null}
           {!canEdit ? <div className="mb-4"><ReadOnlyAccessBanner compact={activeView !== "overview"} /></div> : null}
@@ -105,7 +105,7 @@ function ShareInfo({ icon, label, value }: { icon: React.ReactNode; label: strin
       <span className="[&_svg]:h-4 [&_svg]:w-4">{icon}</span>
       <div>
         <div className="text-xs font-semibold text-muted-foreground">{label}</div>
-        <div className="font-black">{value}</div>
+        <div className="font-semibold">{value}</div>
       </div>
     </div>
   );

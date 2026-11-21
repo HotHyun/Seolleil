@@ -74,7 +74,7 @@ export function ThemeMenuItem({ className }: { className?: string }) {
       type="button"
       onClick={toggleTheme}
       className={cn(
-        "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-left text-sm outline-none transition hover:bg-muted focus:bg-muted",
+        "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-2 text-left text-sm outline-none transition hover:bg-muted focus:bg-muted",
         className
       )}
     >

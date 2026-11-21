@@ -8,10 +8,9 @@ export default function NotFound() {
       <Card>
         <CardContent className="flex min-h-72 flex-col items-center justify-center gap-4 text-center">
           <div>
-            <p className="text-sm font-semibold text-primary">Not Found</p>
-            <h1 className="mt-2 text-3xl font-black">페이지를 찾을 수 없습니다.</h1>
+            <h1 className="mt-2 text-3xl font-semibold">페이지를 찾을 수 없어요</h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              링크가 삭제되었거나 만료되었을 수 있습니다.
+              링크가 삭제되었거나 만료되었을 수 있어요
             </p>
           </div>
           <div className="flex flex-wrap justify-center gap-2">

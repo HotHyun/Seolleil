@@ -199,13 +199,13 @@ export function TripBuilderForm({
               </Field>
               {selectedResort && getSeasonOpening(selectedResort.id) ? <p className="-mt-2 text-xs leading-5 text-muted-foreground" data-testid="open-date-hint">{selectedResort.name}은 {formatOpenDate(getSeasonOpening(selectedResort.id)!.openDate)}부터 {getSeasonOpening(selectedResort.id)!.status === "official" ? "운영해요" : "운영할 예정이에요(변경될 수 있어요)"}. 이전 날짜는 고를 수 없습니다.</p> : null}
               <Field label="이동 계산 기준 지역">
-                <div className="grid gap-1.5">
+                <div className="grid gap-2">
                   <SelectField
                     name="departureLocation"
                     defaultValue={draftValue("departureLocation", "seoul-gangnam")}
                     options={departureLocations.map((location) => ({ value: location.id, label: location.label }))}
                   />
-                  <p className="text-xs leading-5 text-muted-foreground">
+                  <p className="text-sm leading-6 text-muted-foreground">
                     선택한 대표 지역에서의 대략적인 이동 추정치예요. 실시간 교통 상황은 반영하지 않습니다.
                   </p>
                 </div>
@@ -225,7 +225,7 @@ export function TripBuilderForm({
                 />
               </Field>
               {tripDuration === "overnight" ? <Field label="귀가 날짜">
-                <div><DatePicker name="endDate" required min={visitDate || draftValue("visitDate", "")} value={endDate || draftValue("endDate", "")} onValueChange={setEndDate} ariaLabel="여행 귀가 날짜" /><p className="mt-1 text-xs leading-5 text-muted-foreground">스키를 마치고 집으로 돌아오는 날이에요. 실제 스키 이용 날짜는 트립을 만든 뒤 따로 정할 수 있어요.</p></div>
+                <div><DatePicker name="endDate" required min={visitDate || draftValue("visitDate", "")} value={endDate || draftValue("endDate", "")} onValueChange={setEndDate} ariaLabel="여행 귀가 날짜" /><p className="mt-1 text-sm leading-6 text-muted-foreground">스키를 마치고 집으로 돌아오는 날이에요. 실제 스키 이용 날짜는 트립을 만든 뒤 따로 정할 수 있어요.</p></div>
               </Field> : <input type="hidden" name="endDate" value={visitDate || draftValue("visitDate", "")} />}
               <Field label="교통수단">
                 <div>

@@ -108,7 +108,7 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
             <div className="rounded-full bg-primary/15 px-3 py-1 text-sm font-semibold text-primary">
               {activeTasks.length ? Math.round((completedTasks.length / activeTasks.length) * 100) : 100}%
             </div>
-            <Button type="button" variant={showIncompleteOnly ? "primary" : "secondary"} className="h-9 px-3 text-xs hover:translate-y-0" aria-pressed={showIncompleteOnly} onClick={() => setShowIncompleteOnly(current => !current)}><ListFilter aria-hidden="true" className="h-3.5 w-3.5" /> {showIncompleteOnly ? "전체 보기" : "미완료만"}</Button>
+            <Button type="button" variant={showIncompleteOnly ? "primary" : "secondary"} className="h-9 px-3 text-xs hover:translate-y-0" aria-pressed={showIncompleteOnly} onClick={() => setShowIncompleteOnly(current => !current)}><ListFilter aria-hidden="true" className="h-4 w-4" /> {showIncompleteOnly ? "전체 보기" : "미완료만"}</Button>
           </div>
         </div>
         {needsAttention.length ? (
@@ -157,10 +157,10 @@ export function TaskList({ tasks, editToken, tripId, shareToken, basePath }: { t
                   <StatusSelect name="status" defaultValue={task.status} onStatusChange={(status) => updateVisibleTaskStatus(task.id, status)} />
                 </form>
                 </div>
-                {basePath && decisionTarget(task.category, task.title) ? <Link href={`${basePath}?view=${decisionTarget(task.category, task.title)}`} className="mt-2 inline-flex min-h-9 items-center gap-1.5 text-xs font-medium text-primary"><Compass className="h-3.5 w-3.5" /> 선택·예약 도우미 열기</Link> : null}
+                {basePath && decisionTarget(task.category, task.title) ? <Link href={`${basePath}?view=${decisionTarget(task.category, task.title)}`} className="mt-2 inline-flex min-h-9 items-center gap-2 text-xs font-medium text-primary"><Compass className="h-4 w-4" /> 선택·예약 도우미 열기</Link> : null}
                 <details className="group mt-2">
                   <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                    {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-3.5 w-3.5 transition-transform group-open:rotate-180" />
+                    {task.memo ? "메모 편집" : "메모 추가"}<ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
                   </summary>
                   <form action={async (formData) => { const result = await updateTaskDetailsSafeAction(formData); showActionResult(result); if (result.ok) { const title = String(formData.get("title")); const memo = String(formData.get("memo")); setVisibleTasks(current => current.map(item => item.id === task.id ? { ...item, title, memo } : item)); } }} onSubmit={() => window.umami?.track("checklist_details_update")} className={task.isDefault ? "mt-2 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2" : "mt-2 grid gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"}>
                     <AccessFields editToken={editToken} tripId={tripId} shareToken={shareToken} />

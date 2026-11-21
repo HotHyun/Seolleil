@@ -26,7 +26,7 @@ function VerificationSentFallback() {
           <p className="text-sm text-muted-foreground">가입 마지막 단계</p>
           <h1 className="mt-2 text-3xl font-semibold leading-tight sm:text-4xl">이메일을 확인하면<br />트립 준비가 시작돼요</h1>
           <p className="mt-4 max-w-md text-sm leading-6 text-muted-foreground">보낸 인증 링크를 열고 이메일 인증을 완료해 주세요. 인증 전에는 내 트립, 초대, 협업 기능을 사용할 수 없습니다.</p>
-          <p className="mt-5 text-xs leading-5 text-muted-foreground">메일이 보이지 않으면 스팸함을 확인해 주세요. 링크는 다른 사람에게 전달하지 마세요.</p>
+          <p className="mt-5 text-sm leading-6 text-muted-foreground">메일이 보이지 않으면 스팸함을 확인해 주세요. 링크는 다른 사람에게 전달하지 마세요.</p>
         </CardContent>
       </Card>
     </main>

@@ -41,7 +41,7 @@ export default async function AdminPage() {
         <CardContent className="space-y-2 text-sm text-muted-foreground">
           <p>트립 생성 퍼널과 체크리스트 사용률은 Umami custom events로 확인합니다.</p>
           <p>성공한 서버 상태 변화는 Firestore analytics_events 컬렉션, 서버 오류는 Cloudflare Workers Logs에서 확인합니다.</p>
-          {firebaseConsoleUrl ? <a href={firebaseConsoleUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-primary">Firebase Console <ExternalLink className="h-3.5 w-3.5" /></a> : null}
+          {firebaseConsoleUrl ? <a href={firebaseConsoleUrl} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-primary">Firebase Console <ExternalLink className="h-4 w-4" /></a> : null}
         </CardContent>
       </Card>
     </main>

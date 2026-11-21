@@ -57,8 +57,8 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
           <p className="text-base font-semibold">{formatSummaryDate(summary.date)}</p>
           <p className="text-xs text-muted-foreground">{summary.dayTypeLabel} · {summary.timeSlotLabel}</p>
         </div>
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${confirmed ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200" : summary.rentalState === "shop_only" ? "bg-amber-500/15 text-amber-800 dark:text-amber-200" : "bg-muted text-muted-foreground"}`}>
-          {confirmed ? <CircleCheck aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleDashed aria-hidden="true" className="h-3.5 w-3.5" />}
+        <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${confirmed ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200" : summary.rentalState === "shop_only" ? "bg-amber-500/15 text-amber-800 dark:text-amber-200" : "bg-muted text-muted-foreground"}`}>
+          {confirmed ? <CircleCheck aria-hidden="true" className="h-4 w-4" /> : <CircleDashed aria-hidden="true" className="h-4 w-4" />}
           {rentalStateLabel(summary.rentalState)}
         </span>
       </header>
@@ -66,7 +66,7 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
       <div className="mt-3 flex items-start gap-2 rounded-lg bg-muted/60 px-3 py-2 text-sm">
         <Store aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
         <div className="min-w-0">
-          <p className="text-[11px] font-medium text-muted-foreground">렌탈샵</p>
+          <p className="text-xs font-medium text-muted-foreground">렌탈샵</p>
           <p className="font-semibold">{summary.shopName ?? "아직 정하지 않았어요"}</p>
           {summary.rentalState === "shop_only" ? <p className="text-xs text-amber-800 dark:text-amber-200">후보로만 저장됐고 장비·의류 상품은 아직 고르지 않았어요.</p> : null}
         </div>
@@ -78,7 +78,7 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
 
       <footer className="mt-3 flex flex-wrap items-end justify-between gap-3 border-t pt-3">
         <div>
-          <p className="text-[11px] font-medium text-muted-foreground">이 날 합계</p>
+          <p className="text-xs font-medium text-muted-foreground">이 날 합계</p>
           <p className="text-lg font-semibold">{formatCurrency(summary.total)} <span className="text-xs font-semibold text-muted-foreground">1인 {formatCurrency(summary.perPersonTotal)} · {people}명</span></p>
           {summary.hasUnknownPrice ? <p className="text-xs text-muted-foreground">가격 미공개 항목은 합계에서 빠져 있어요.</p> : null}
         </div>
@@ -94,7 +94,7 @@ function LineRow({ line, people }: { line: DaySummaryLine; people: number }) {
       <div className="min-w-0">
         <p className="font-semibold">{kindLabel[line.kind]}</p>
         <p className="text-xs text-muted-foreground">{line.label}{line.source && line.source !== "공식" && line.kind !== "lift" ? ` · ${line.source}` : ""}</p>
-        {line.reference ? <span className="mt-1 inline-block rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:text-amber-200">25/26 참고가</span> : null}
+        {line.reference ? <span className="mt-1 inline-block rounded-full bg-amber-500/15 px-2 py-0.5 text-xs font-semibold text-amber-800 dark:text-amber-200">25/26 참고가</span> : null}
       </div>
       <div className="shrink-0 text-right">
         {line.perPerson === null ? <p className="font-semibold text-muted-foreground">가격 미공개</p> : <>

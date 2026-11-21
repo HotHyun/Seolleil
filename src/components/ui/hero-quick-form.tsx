@@ -20,11 +20,11 @@ export function HeroQuickForm() {
   const [visitDate, setVisitDate] = useState("");
   return (
     <form action="/recommendations" method="get" className="hero-reveal hero-delay-2 mt-8 grid gap-3 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
-      <div className="grid gap-1.5">
+      <div className="grid gap-2">
         <span className="text-xs font-medium text-muted-foreground">방문 날짜</span>
         <DatePicker name="visitDate" min={todayKst()} value={visitDate} onValueChange={setVisitDate} ariaLabel="방문 날짜" className={`${fieldClass} ${visitDate ? "" : "text-muted-foreground"}`} />
       </div>
-      <div className="grid gap-1.5">
+      <div className="grid gap-2">
         <span className="text-xs font-medium text-muted-foreground">출발지</span>
         <SelectField name="departureLocation" defaultValue="seoul-gangnam" ariaLabel="출발지" className={fieldClass} options={departureLocations.map(location => ({ value: location.id, label: location.label }))} />
       </div>

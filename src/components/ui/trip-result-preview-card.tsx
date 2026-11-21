@@ -20,7 +20,7 @@ export function TripResultPreviewCard({ rows, label, className }: { rows: Sample
               <span className="text-xs tabular-nums text-muted-foreground">{index + 1}</span>
               <span className="min-w-0">
                 <span className={cn("block truncate text-sm", index === 0 ? "font-semibold" : "font-medium")}>{row.name}</span>
-                <span className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                   이동 {row.time}
                   <span aria-hidden="true" className={cn("ml-1 h-2 w-2 rounded-full", confidenceMeta[row.confidence].dot)} />
                   {confidenceMeta[row.confidence].label}

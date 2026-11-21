@@ -146,7 +146,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                   </div>
                   <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
                     {research?.announcedFacts?.map(fact => (
-                      <div key={fact.label} className="rounded-lg bg-background/75 p-2.5">
+                      <div key={fact.label} className="rounded-lg bg-background/75 p-3">
                         <dt className="text-muted-foreground">{fact.label}</dt>
                         <dd className="mt-1 font-semibold">{fact.value}</dd>
                       </div>
@@ -189,7 +189,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                     <td><CategoryProgress category={resort.shuttle} /></td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                           <div className="h-full rounded-full bg-primary" style={{ width: `${resort.progressPercent}%` }} />
                         </div>
                         <span className="w-9 text-right font-mono text-xs font-medium tabular-nums">{resort.progressPercent}%</span>
@@ -284,7 +284,7 @@ function CategoryProgress({ category }: { category: SeasonCategoryProgress }) {
     <div className="whitespace-nowrap">
       <div className="flex items-center gap-2">
         <StatusBadge tone={presentation.tone}>{presentation.label}</StatusBadge>
-        <span className="font-mono text-[11px] text-muted-foreground tabular-nums">
+        <span className="font-mono text-xs text-muted-foreground tabular-nums">
           {category.completedTargetCount}/{category.sourceCount}
         </span>
       </div>
@@ -294,8 +294,8 @@ function CategoryProgress({ category }: { category: SeasonCategoryProgress }) {
           target="_blank"
           rel="noreferrer"
           className={category.research.status === "preliminary"
-            ? "mt-1.5 block text-[10px] font-semibold text-amber-600 hover:underline dark:text-amber-300"
-            : "mt-1.5 block text-[10px] font-medium text-muted-foreground hover:text-foreground"}
+            ? "mt-2 block text-xs font-semibold text-amber-600 hover:underline dark:text-amber-300"
+            : "mt-2 block text-xs font-medium text-muted-foreground hover:text-foreground"}
         >
           {category.research.status === "preliminary" ? "공식 사전 공지" : `${category.research.lastCheckedAt.slice(5)} 확인`}
         </a>

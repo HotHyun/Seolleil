@@ -76,7 +76,7 @@ export function FirebaseAuthForms({ mode, callbackUrl, initialError }: { mode: "
       {mode === "signup" ? "이미 계정이 있나요? 로그인" : "처음이신가요? 이메일로 가입"}
     </a>
     {mode === "login" ? <a className="block text-center text-sm text-muted-foreground" href="/forgot-password">비밀번호를 잊으셨나요?</a> : null}
-    <a className="block rounded-lg border border-dashed py-2.5 text-center text-sm font-medium text-foreground hover:bg-muted" href="/plan">로그인 없이 트립 만들기</a>
+    <a className="block rounded-lg border border-dashed py-3 text-center text-sm font-medium text-foreground hover:bg-muted" href="/plan">로그인 없이 트립 만들기</a>
   </div>;
 }
 

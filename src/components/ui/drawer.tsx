@@ -24,7 +24,7 @@ const DrawerContent = React.forwardRef<
       )}
       {...props}
     >
-      <div aria-hidden="true" className="mx-auto mb-4 h-1.5 w-10 rounded-full bg-muted-foreground/35" />
+      <div aria-hidden="true" className="mx-auto mb-4 h-2 w-10 rounded-full bg-muted-foreground/35" />
       {children}
     </DialogPrimitive.Content>
   </DialogPrimitive.Portal>
@@ -32,7 +32,7 @@ const DrawerContent = React.forwardRef<
 DrawerContent.displayName = "DrawerContent";
 
 function DrawerHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("mb-4 space-y-1.5", className)} {...props} />;
+  return <div className={cn("mb-4 space-y-2", className)} {...props} />;
 }
 
 export { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger };

@@ -1,6 +1,6 @@
 "use client";
 
-import { ConfidenceBadge, confidenceMeta } from "@/components/confidence-badge";
+import { ConfidenceBadge, ConfidenceDot, confidenceMeta } from "@/components/confidence-badge";
 import { Suspense, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { Check, ChevronDown, ExternalLink, Info, MapPinned } from "lucide-react";
@@ -100,7 +100,6 @@ function RecommendationsContent() {
                       <h2 className="mt-1 text-xl font-semibold md:text-2xl">{recommendation.resort.name}</h2>
                       <p className="mt-1 text-sm text-muted-foreground">{[recommendation.resort.region, ...recommendation.resort.tags.slice(0, 3)].join(" · ")}</p>
                     </div>
-                    <ConfidenceBadge confidence={recommendation.cost.confidence} />
                   </div>
                   <ul className="mt-5 grid gap-2 text-sm">
                     {recommendation.reasons.slice(0, 3).map((reason) => (
@@ -142,9 +141,9 @@ function RecommendationsContent() {
                   <input type="hidden" name="resortId" value={recommendation.resort.id} />
                   <input type="hidden" name="selectedRentalOptionId" value="skip" />
                   <div>
-                    <p className="text-xs text-muted-foreground">예상 총액 · {input.peopleCount}명</p>
+                    <p className="flex items-center gap-2 text-xs text-muted-foreground">예상 총액 · {input.peopleCount}명 <span className="inline-flex items-center gap-1 pl-2"><ConfidenceDot confidence={recommendation.cost.confidence} />{confidenceMeta[recommendation.cost.confidence].label}</span></p>
                     <p className="mt-1 text-3xl font-semibold tabular-nums">{formatCurrency(recommendation.cost.representative)}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">범위 {formatCurrency(recommendation.cost.min)}–{formatCurrency(recommendation.cost.max)} · 리프트·렌탈·교통</p>
+                    <p className="mt-1 text-xs text-muted-foreground">범위 {formatCurrency(recommendation.cost.min)}~{formatCurrency(recommendation.cost.max)} · 리프트·렌탈·교통</p>
                   </div>
                   <LiftPromoNote resortId={recommendation.resort.id} timeSlot={input.liftTicketTimeSlot} visitDate={input.visitDate} />
                   <CreateTripSubmit isAuthenticated={isAuthenticated} />
@@ -227,10 +226,10 @@ function RentalCostComparison({ resort, input, baseEstimate, expanded }: { resor
           <>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               {official ? <RentalScenarioCard scenario={official} peopleCount={input.peopleCount} /> : (
-                <p className="rounded-lg border border-dashed p-3 text-xs leading-5 text-muted-foreground">이 날짜에 적용할 공식 렌탈 가격을 찾지 못했어요. 공식 요금은 원문에서 확인할 수 있습니다.</p>
+                <p className="rounded-lg border border-dashed p-3 text-sm leading-6 text-muted-foreground">이 날짜에 적용할 공식 렌탈 가격을 찾지 못했어요. 공식 요금은 원문에서 확인할 수 있습니다.</p>
               )}
               {external ? <RentalScenarioCard scenario={external} peopleCount={input.peopleCount} /> : (
-                <p className="rounded-lg border border-dashed p-3 text-xs leading-5 text-muted-foreground">이 날짜에 적용할 주변 샵 가격을 찾지 못했어요. 지도에서 주변 렌탈샵을 확인해 보세요.</p>
+                <p className="rounded-lg border border-dashed p-3 text-sm leading-6 text-muted-foreground">이 날짜에 적용할 주변 샵 가격을 찾지 못했어요. 지도에서 주변 렌탈샵을 확인해 보세요.</p>
               )}
             </div>
             <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs font-medium">
@@ -241,7 +240,7 @@ function RentalCostComparison({ resort, input, baseEstimate, expanded }: { resor
                 주변 샵 더 보기 <MapPinned className="h-3 w-3" />
               </AnalyticsLink>
             </div>
-            <p className="text-xs leading-5 text-muted-foreground">주변 샵은 해당 날짜에 적용 가능한 가격 자료가 있는 후보 중 낮은 대표 예상액으로 계산했어요. 교통·인원·숙박 입력은 두 경우에 동일하게 적용합니다.</p>
+            <p className="text-sm leading-6 text-muted-foreground">주변 샵은 해당 날짜에 적용 가능한 가격 자료가 있는 후보 중 낮은 대표 예상액으로 계산했어요. 교통·인원·숙박 입력은 두 경우에 동일하게 적용합니다.</p>
           </>
         ) : (
           <div className="space-y-2 text-xs leading-5 text-muted-foreground">
@@ -277,7 +276,7 @@ function RentalScenarioCard({ scenario, peopleCount }: { scenario: RentalCostSce
         </div>
         <ConfidenceBadge confidence={scenario.estimate.confidence} />
       </div>
-      <div className="mt-3 divide-y rounded-md border px-2.5">
+      <div className="mt-3 divide-y rounded-md border px-3">
         {scenario.estimate.items.map((item) => <ScenarioCostLine key={item.key} item={item} />)}
       </div>
       <div className="mt-3 flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
@@ -302,7 +301,7 @@ function ScenarioCostLine({ item }: { item: CostItem }) {
         {item.sourceName || item.confidence !== "confirmed" ? <p className="mt-0.5 truncate text-xs font-medium text-muted-foreground">{item.sourceName ?? confidenceMeta[item.confidence].label}</p> : null}
       </div>
       <div className="shrink-0 text-right">
-        <p className="font-semibold">{amount}</p>
+        <p className="flex items-center justify-end gap-2 font-semibold"><ConfidenceDot confidence={item.confidence} />{amount}</p>
         {item.sourceUrl ? <AnalyticsLink href={item.sourceUrl} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "price_source", sourceName: item.sourceName ?? item.key }} className="text-xs font-medium text-primary">출처</AnalyticsLink> : null}
       </div>
     </div>
@@ -395,7 +394,7 @@ function scenarioTotalLabel(estimate: CostEstimate) {
 
 function formatCostItem(item: CostItem) {
   if (item.min !== undefined && item.max !== undefined && item.min !== item.max) {
-    return `${formatCurrency(item.min)}–${formatCurrency(item.max)}`;
+    return `${formatCurrency(item.min)}~${formatCurrency(item.max)}`;
   }
   return formatCurrency(item.representative ?? item.min ?? item.max ?? 0);
 }

@@ -14,8 +14,8 @@ export function LiftPromoNote({ resortId, timeSlot, visitDate, className }: { re
 
   return (
     <div className={`rounded-lg border bg-muted/50 p-3 text-xs leading-5 ${className ?? ""}`} data-testid="lift-promo-note">
-      <p className="flex items-start gap-1.5 font-medium text-foreground">
-        <Tag className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+      <p className="flex items-start gap-2 font-medium text-foreground">
+        <Tag className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
         <span>{promotion.title} {timeSlotLabels[timeSlot]} {formatCurrency(match.adultPrice)}{saving}</span>
       </p>
       <p className="mt-1 text-muted-foreground">

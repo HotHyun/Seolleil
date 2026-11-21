@@ -12,11 +12,16 @@ export const confidenceMeta: Record<PriceConfidence, { label: string; note: stri
 
 export const confidenceOrder: PriceConfidence[] = ["confirmed", "phone_confirmed", "estimated", "unavailable"];
 
+// 설레일의 시그니처: 가격 옆의 작은 점. 채워진 점은 확인된 가격, 속이 빈 점은 아직 확정되지 않은 가격이다.
+export function ConfidenceDot({ confidence, className }: { confidence: PriceConfidence; className?: string }) {
+  return <span aria-hidden="true" className={cn("inline-block h-2 w-2 shrink-0 rounded-full", confidenceMeta[confidence].dot, className)} />;
+}
+
 export function ConfidenceBadge({ confidence, className }: { confidence: PriceConfidence; className?: string }) {
   const meta = confidenceMeta[confidence];
   return (
-    <span title={meta.note} className={cn("inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border bg-card px-2 py-1 text-xs font-medium text-foreground", meta.ring, className)}>
-      <span aria-hidden="true" className={cn("h-2 w-2 shrink-0 rounded-full", meta.dot)} />
+    <span title={meta.note} className={cn("inline-flex shrink-0 items-center gap-2 whitespace-nowrap text-xs font-medium text-muted-foreground", className)}>
+      <ConfidenceDot confidence={confidence} />
       {meta.label}
       <span className="sr-only">: {meta.note}</span>
     </span>

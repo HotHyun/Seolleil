@@ -260,7 +260,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
 
         {selected ? (
           <div data-testid="ski-map-selection" className="absolute inset-x-3 bottom-3 z-20 lg:bottom-4 lg:left-auto lg:right-4 lg:inset-x-auto lg:w-[390px]">
-            <div className="max-h-[50svh] overflow-y-auto rounded-2xl border bg-card p-2.5 shadow-lg sm:p-4">
+            <div className="max-h-[50svh] overflow-y-auto rounded-2xl border bg-card p-3 shadow-lg sm:p-4">
               {selectedNearby && showNearby ? (
                 <NearbySelectedCard item={selectedNearby} />
               ) : (
@@ -345,7 +345,7 @@ function ResortSidebar({
                   </div>
                   <ChevronRight className={cn("h-4 w-4 shrink-0", isSelected ? "text-primary" : "text-muted-foreground")} />
                 </div>
-                <div className="mt-3 flex flex-wrap gap-1.5">
+                <div className="mt-3 flex flex-wrap gap-2">
                   <StatusBadge tone={resort.operationStatus === "operating" ? "good" : "warn"}>{statusLabel(resort.operationStatus)}</StatusBadge>
                   {resort.tags.slice(0, 2).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}
                 </div>
@@ -387,7 +387,7 @@ function NearbySidebar({
         </Button>
         <h1 className="text-2xl font-semibold">{resort.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">주변 렌탈샵과 숙박 후보</p>
-        <div className="mt-4 flex gap-1.5 overflow-x-auto pb-1">{([ ["all", "전체"], ["rental", "렌탈"], ["lodging", "숙박"], ["pickup", "픽업"], ["priced", "가격 확인"] ] as const).map(([value, label]) => <button key={value} type="button" onClick={() => onFilter(value)} className={cn("min-h-9 shrink-0 rounded-lg border px-3 text-xs font-medium", filter === value ? "border-primary bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}>{label}</button>)}</div>
+        <div className="mt-4 flex gap-2 overflow-x-auto pb-1">{([ ["all", "전체"], ["rental", "렌탈"], ["lodging", "숙박"], ["pickup", "픽업"], ["priced", "가격 확인"] ] as const).map(([value, label]) => <button key={value} type="button" onClick={() => onFilter(value)} className={cn("min-h-9 shrink-0 rounded-lg border px-3 text-xs font-medium", filter === value ? "border-primary bg-primary text-primary-foreground" : "bg-background text-muted-foreground")}>{label}</button>)}</div>
       </div>
       <div className="flex-1 overflow-y-auto p-3">
         <div className="grid gap-2">
@@ -473,14 +473,14 @@ function SelectedResortCard({
 }) {
   return (
     <>
-      <div className="flex flex-wrap gap-1.5 sm:gap-2">
+      <div className="flex flex-wrap gap-2 sm:gap-2">
         <StatusBadge tone={resort.operationStatus === "operating" ? "good" : "warn"}>{statusLabel(resort.operationStatus)}</StatusBadge>
         {resort.nightSkiAvailable ? <StatusBadge>야간</StatusBadge> : null}
         {resort.tags.slice(0, 3).map((tag) => <span key={tag} className="hidden sm:inline-flex"><StatusBadge>{tag}</StatusBadge></span>)}
       </div>
       <h2 className="mt-1 text-base font-semibold sm:mt-3 sm:text-xl">{resort.name}</h2>
       <p className="mt-1 hidden text-sm text-muted-foreground sm:block">{resort.address}</p>
-      <div className="mt-3 hidden flex-wrap gap-1.5 sm:mt-4 sm:flex">
+      <div className="mt-3 hidden flex-wrap gap-2 sm:mt-4 sm:flex">
         {resort.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}
         {resort.nightSkiAvailable ? <StatusBadge>야간 운영</StatusBadge> : null}
       </div>
@@ -489,7 +489,7 @@ function SelectedResortCard({
         <MapStat icon={<Shirt />} label="렌탈 후보" value={`${summary.rentalCount}곳`} />
         <MapStat icon={<Hotel />} label="숙박 후보" value={`${summary.lodgingCount}곳`} />
       </div>
-      <div className="mt-2 grid grid-cols-3 gap-1.5 sm:mt-4 sm:gap-2">
+      <div className="mt-2 grid grid-cols-3 gap-2 sm:mt-4 sm:gap-2">
         <Link href={`/plan?resortId=${resort.id}`}>
           <Button className="h-9 w-full px-2 text-xs sm:h-11 sm:px-4 sm:text-sm">트립 만들기</Button>
         </Link>
@@ -511,7 +511,7 @@ function NearbySelectedCard({ item }: { item: NearbyMapItem }) {
       </div>
       <h2 className="mt-1 text-base font-semibold sm:mt-2 sm:text-xl">{item.name}</h2>
       <p className="mt-1 line-clamp-2 text-xs text-muted-foreground sm:text-sm">{item.meta}</p>
-      {item.tags?.length ? <div className="mt-3 flex flex-wrap gap-1.5">{item.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}</div> : null}
+      {item.tags?.length ? <div className="mt-3 flex flex-wrap gap-2">{item.tags.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}</div> : null}
       {item.href ? (
         <AnalyticsLink href={item.href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: `map_${item.type}`, resortId: item.resortId }}>
           <Button className="mt-2 h-9 w-full sm:mt-4 sm:h-11">
@@ -536,10 +536,10 @@ function MapUnavailable({ resort }: { resort?: SkiResort }) {
 
 function MapStat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-lg bg-muted px-2.5 py-1.5 text-left sm:py-2.5">
+    <div className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 text-left sm:py-3">
       <div className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-md bg-background text-primary sm:flex [&_svg]:h-4 [&_svg]:w-4">{icon}</div>
       <div className="min-w-0">
-        <div className="text-[11px] font-medium text-muted-foreground">{label}</div>
+        <div className="text-xs font-medium text-muted-foreground">{label}</div>
         <div className="text-sm font-semibold sm:mt-0.5 sm:text-base">{value}</div>
       </div>
     </div>

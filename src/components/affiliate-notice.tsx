@@ -4,7 +4,7 @@ import { affiliateDisclosure, hasActiveAffiliate } from "@/lib/affiliate";
 export function AffiliateNotice({ className }: { className?: string }) {
   if (!hasActiveAffiliate()) return null;
   return (
-    <p className={`text-[11px] leading-5 text-muted-foreground ${className ?? ""}`} data-testid="affiliate-notice">
+    <p className={`text-xs leading-5 text-muted-foreground ${className ?? ""}`} data-testid="affiliate-notice">
       {affiliateDisclosure}
     </p>
   );

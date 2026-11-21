@@ -64,7 +64,7 @@ export function CreateTripSubmit({
     return (
       <div ref={wrapperRef} className={wrapperClassName}>
         {restored ? (
-          <div className="mb-3 flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2.5 text-sm" role="status">
+          <div className="mb-3 flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-3 text-sm" role="status">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <div><p className="font-semibold">입력한 설정을 그대로 불러왔어요.</p><p className="mt-0.5 text-xs text-muted-foreground">내용을 확인한 뒤 트립을 만들어 주세요.</p></div>
           </div>

@@ -21,7 +21,7 @@ export function LegalSection({ title, children }: { title: string; children: Rea
 
 export function LegalList({ items }: { items: ReactNode[] }) {
   return (
-    <ul className="list-disc space-y-1.5 pl-5">
+    <ul className="list-disc space-y-2 pl-5">
       {items.map((item, index) => <li key={index}>{item}</li>)}
     </ul>
   );

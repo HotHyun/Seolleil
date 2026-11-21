@@ -34,7 +34,7 @@ export function VerificationSentContent() {
             <ResendFirebaseVerification callbackUrl={callbackUrl} />
             <a href="/login"><Button variant="ghost" className="w-full">다른 계정으로 로그인</Button></a>
           </div>
-          <p className="mt-5 text-xs leading-5 text-muted-foreground">메일이 보이지 않으면 스팸함을 확인해 주세요. 링크는 다른 사람에게 전달하지 마세요.</p>
+          <p className="mt-5 text-sm leading-6 text-muted-foreground">메일이 보이지 않으면 스팸함을 확인해 주세요. 링크는 다른 사람에게 전달하지 마세요.</p>
         </CardContent>
       </Card>
     </main>

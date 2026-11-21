@@ -198,7 +198,7 @@ export default async function GuidePage({ params }: PageProps) {
 function ExternalLinkText({ href, label, resortId, type }: { href: string; label: string; resortId: string; type: string }) {
   return (
     <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline">
-      {label} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
+      {label} <ExternalLink className="h-4 w-4" aria-hidden="true" />
     </AnalyticsLink>
   );
 }
@@ -223,7 +223,7 @@ function LiftList({ resortId }: { resortId: string }) {
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <ConfidenceBadge confidence={row.confidence} />
-                  <span className="text-[11px] text-muted-foreground">적용 {row.period} · 확인 {row.checkedAt}</span>
+                  <span className="text-xs text-muted-foreground">적용 {row.period} · 확인 {row.checkedAt}</span>
                 </div>
                 {row.sourceUrl ? <div className="mt-2"><ExternalLinkText href={row.sourceUrl} label="가격 출처" resortId={resortId} type="guide_lift_source" /></div> : null}
               </li>
@@ -248,7 +248,7 @@ function RentalList({ resortId }: { resortId: string }) {
             </div>
             <div className="shrink-0 text-right">
               <p className="text-lg font-semibold tabular-nums">{row.fromPrice !== undefined ? `${formatCurrency(row.fromPrice)}~` : "가격 확인 필요"}</p>
-              {row.priceLabel ? <p className="text-[11px] text-muted-foreground">{row.priceLabel}</p> : null}
+              {row.priceLabel ? <p className="text-xs text-muted-foreground">{row.priceLabel}</p> : null}
             </div>
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium">

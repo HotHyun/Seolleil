@@ -34,7 +34,7 @@ export function NearbyPlaceHelp({ resortName, kind, className = "" }: { resortNa
   const text = kindText[kind];
   return (
     <div className={`rounded-xl border border-dashed bg-muted/30 p-4 ${className}`} data-testid="nearby-place-help">
-      <p className="text-sm font-black">찾는 {text.subject} 목록에 없나요?</p>
+      <p className="text-sm font-semibold">찾는 {text.subject} 목록에 없나요?</p>
       <p className="mt-1 text-xs leading-5 text-muted-foreground">모든 업체를 담지는 못해요. 지도에서 더 찾아보거나, 없는 업체를 알려 주세요. 가격까지 확인된 곳부터 목록에 추가해요.</p>
       <div className="mt-3 flex flex-wrap gap-2">
         <a href={kakaoMapSearchUrl(resortName, kind)} target="_blank" rel="noreferrer">

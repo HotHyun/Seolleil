@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 export function LegalPage({ title, effectiveDate, children }: { title: string; effectiveDate: string; children: ReactNode }) {
   return (
     <main id="main-content" className="page-shell max-w-3xl py-10">
-      <h1 className="text-3xl font-black tracking-[-.02em]">{title}</h1>
+      <h1 className="text-3xl font-semibold">{title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">시행일: {effectiveDate}</p>
       <div className="mt-8 space-y-8 text-sm leading-7 text-foreground/90">{children}</div>
     </main>
@@ -13,7 +13,7 @@ export function LegalPage({ title, effectiveDate, children }: { title: string; e
 export function LegalSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="space-y-3">
-      <h2 className="text-lg font-black">{title}</h2>
+      <h2 className="text-lg font-semibold">{title}</h2>
       {children}
     </section>
   );
@@ -32,7 +32,7 @@ export function LegalTable({ head, rows }: { head: string[]; rows: ReactNode[][]
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full min-w-[34rem] border-collapse text-left text-xs leading-6">
         <thead className="bg-muted/60">
-          <tr>{head.map(cell => <th key={cell} className="border-b px-3 py-2 font-black">{cell}</th>)}</tr>
+          <tr>{head.map(cell => <th key={cell} className="border-b px-3 py-2 font-semibold">{cell}</th>)}</tr>
         </thead>
         <tbody>
           {rows.map((row, rowIndex) => (

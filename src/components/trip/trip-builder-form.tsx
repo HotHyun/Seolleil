@@ -130,20 +130,19 @@ export function TripBuilderForm({
       <React.Fragment key={draftRevision}>
       <Card className="overflow-hidden">
         <div className="h-1 bg-muted">
-          <div className="h-full bg-primary transition-all duration-500 ease-out" style={{ width: `${progress}%` }} />
+          <div className="h-full bg-primary transition-colors duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
         <CardHeader>
           {selectedResort ? (
-            <div className="mb-4 rounded-lg border bg-primary/10 px-3 py-2">
-              <div className="text-xs font-black uppercase tracking-[0.16em] text-primary">Selected resort</div>
-              <div className="mt-1 font-black">{selectedResort.name}</div>
+            <div className="mb-4 rounded-lg border bg-muted/50 px-3 py-2">
+              <div className="text-xs text-muted-foreground">선택한 스키장</div>
+              <div className="mt-1 font-semibold">{selectedResort.name}</div>
               <div className="mt-0.5 text-xs font-semibold text-muted-foreground">{selectedResort.region}</div>
             </div>
           ) : null}
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.18em] text-primary">{activeStep.eyebrow}</p>
-              <CardTitle className="mt-2 flex items-center gap-2 text-2xl font-black">
+              <CardTitle className="flex items-center gap-2 text-2xl font-semibold">
                 <span className="text-primary [&_svg]:h-5 [&_svg]:w-5">
                   <ActiveIcon />
                 </span>
@@ -151,7 +150,7 @@ export function TripBuilderForm({
               </CardTitle>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{activeStep.description}</p>
             </div>
-            <div className="shrink-0 rounded-full bg-muted px-3 py-1 text-xs font-black text-muted-foreground">
+            <div className="shrink-0 text-sm tabular-nums text-muted-foreground">
               {step + 1}/{steps.length}
             </div>
           </div>
@@ -174,17 +173,17 @@ export function TripBuilderForm({
                   }}
                   className={cn(
                     "rounded-lg border p-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                    state === "active" && "border-primary bg-primary/12",
-                    state === "done" && "bg-muted",
+                    state === "active" && "border-foreground/30 bg-muted",
+                    state === "done" && "bg-card",
                     state === "upcoming" && "bg-card",
                     isDisabled && "cursor-not-allowed opacity-50"
                   )}
                 >
                   <div className="flex items-center gap-2">
-                    <span className={cn("flex h-7 w-7 items-center justify-center rounded-md", state === "active" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                    <span className={cn("flex h-7 w-7 items-center justify-center rounded-md", state === "active" ? "bg-primary text-primary-foreground" : state === "done" ? "bg-muted text-primary" : "bg-muted text-muted-foreground")}>
                       {state === "done" ? <CheckCircle2 className="h-4 w-4" /> : <Icon className="h-4 w-4" />}
                     </span>
-                    <span className="text-xs font-black">{item.title}</span>
+                    <span className="text-xs font-semibold">{item.title}</span>
                   </div>
                 </button>
               );
@@ -291,7 +290,7 @@ export function TripBuilderForm({
                 />
               </Field>
               <details className="rounded-xl border bg-card p-4 md:col-span-2">
-                <summary className="min-h-8 cursor-pointer font-bold outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                <summary className="min-h-8 cursor-pointer font-medium outline-none focus-visible:ring-2 focus-visible:ring-ring">
                   예산과 추천 우선순위 설정 <span className="ml-1 text-xs font-medium text-muted-foreground">선택 사항</span>
                 </summary>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
@@ -329,7 +328,7 @@ export function TripBuilderForm({
         </CardContent>
       </Card>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-card/95 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-12px_32px_rgba(15,23,42,0.1)] backdrop-blur sm:sticky sm:inset-x-auto sm:bottom-4 sm:z-10 sm:rounded-xl sm:border sm:p-3 sm:shadow-2xl">
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-card/95 pt-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] shadow-[0_-12px_32px_rgba(15,23,42,0.1)] backdrop-blur sm:sticky sm:inset-x-auto sm:bottom-4 sm:z-10 sm:rounded-xl sm:border sm:p-3 sm:shadow-lg">
         <div className="page-shell mx-auto flex gap-2 sm:w-full">
           <Button
             type="button"

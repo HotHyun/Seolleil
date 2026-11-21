@@ -18,13 +18,12 @@ export function PlanPageContent() {
     <main className="page-shell py-8">
       <AnalyticsTrack eventName="trip_form_start" eventData={ref ? { ref } : undefined} />
       <div className="mb-8 max-w-3xl">
-        <p className="mb-2 text-sm font-semibold text-primary">{selectedResort ? "스키장 고정 트립" : "트립 추천"}</p>
-        <h1 className="text-3xl font-black md:text-5xl">
-          {selectedResort ? `${selectedResort.name} 트립을 바로 만듭니다.` : "조건을 입력하면 추천 3곳을 비교합니다."}
+        <h1 className="text-3xl font-semibold md:text-4xl">
+          {selectedResort ? `${selectedResort.name} 트립 만들기` : "조건을 입력하면 추천 3곳을 비교해요"}
         </h1>
         {selectedResort ? (
           <p className="mt-3 text-sm leading-6 text-muted-foreground">
-            스키장은 고정하고 날짜, 인원, 장비 상태만 입력해 바로 체크리스트와 비용 요약을 만듭니다.
+            날짜, 인원, 장비 상태만 입력하면 체크리스트와 비용 요약이 만들어져요
           </p>
         ) : null}
       </div>

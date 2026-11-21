@@ -35,7 +35,7 @@ export function ProgressSummary({ tasks }: { tasks: Task[] }) {
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-baseline gap-2">
           <div className="text-sm font-semibold text-muted-foreground">준비 진행률</div>
-          <div className="text-2xl font-black text-primary">{percent}%</div>
+          <div className="text-2xl font-semibold text-primary">{percent}%</div>
         </div>
         <div className="text-right text-sm font-semibold text-muted-foreground">
           {completed.length}/{relevant.length} 완료

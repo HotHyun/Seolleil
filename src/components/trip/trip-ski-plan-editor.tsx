@@ -84,7 +84,7 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
                 {selected ? <Clock3 className="h-4 w-4" /> : <CalendarRange className="h-4 w-4" />}
               </button>
               <button type="button" onClick={() => toggleDay(date)} className="min-h-11 min-w-0 flex-1 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-                <span className="block font-black">{label}</span>
+                <span className="block font-semibold">{label}</span>
                 <span className="mt-0.5 block text-xs font-semibold text-muted-foreground">{tripDayTypeLabel(date)} 가격 · 여행 {index + 1}일차</span>
               </button>
               {selected ? <div className="w-32 shrink-0 max-[390px]:w-28"><SelectField ariaLabel={`${label} 이용 시간`} value={days.get(date)} onValueChange={value => setDays(current => new Map(current).set(date, value as TimeSlot))} options={liftSlotOptions(trip.resortId, date, days.get(date))} /></div> : null}

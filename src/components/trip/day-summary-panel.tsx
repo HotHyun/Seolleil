@@ -39,8 +39,8 @@ export function DaySummaryPanel({ summaries, peopleCount, onSelectDay, canEdit }
       </div>
       {summaries.length > 1 ? (
         <div className="rounded-2xl border border-primary/25 bg-primary/5 p-4">
-          <p className="text-xs font-black uppercase tracking-wider text-primary">전체 {summaries.length}일 렌탈·리프트 합계</p>
-          <p className="mt-1 text-xl font-black">{formatCurrency(grandPerPerson * people)} <span className="text-xs font-semibold text-muted-foreground">1인 {formatCurrency(grandPerPerson)} · {people}명</span></p>
+          <p className="text-xs font-semibold text-primary">전체 {summaries.length}일 렌탈·리프트 합계</p>
+          <p className="mt-1 text-xl font-semibold">{formatCurrency(grandPerPerson * people)} <span className="text-xs font-semibold text-muted-foreground">1인 {formatCurrency(grandPerPerson)} · {people}명</span></p>
           {anyUnknown ? <p className="mt-1 text-xs text-muted-foreground">가격 미공개 항목은 합계에서 빠져 있어요.</p> : null}
         </div>
       ) : null}
@@ -54,10 +54,10 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
     <article className={`rounded-2xl border p-4 ${confirmed ? "border-emerald-500/40 bg-emerald-500/[0.04]" : "border-dashed"}`}>
       <header className="flex flex-wrap items-start justify-between gap-2">
         <div>
-          <p className="text-base font-black">{formatSummaryDate(summary.date)}</p>
+          <p className="text-base font-semibold">{formatSummaryDate(summary.date)}</p>
           <p className="text-xs text-muted-foreground">{summary.dayTypeLabel} · {summary.timeSlotLabel}</p>
         </div>
-        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-black ${confirmed ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200" : summary.rentalState === "shop_only" ? "bg-amber-500/15 text-amber-800 dark:text-amber-200" : "bg-muted text-muted-foreground"}`}>
+        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${confirmed ? "bg-emerald-500/15 text-emerald-800 dark:text-emerald-200" : summary.rentalState === "shop_only" ? "bg-amber-500/15 text-amber-800 dark:text-amber-200" : "bg-muted text-muted-foreground"}`}>
           {confirmed ? <CircleCheck aria-hidden="true" className="h-3.5 w-3.5" /> : <CircleDashed aria-hidden="true" className="h-3.5 w-3.5" />}
           {rentalStateLabel(summary.rentalState)}
         </span>
@@ -66,8 +66,8 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
       <div className="mt-3 flex items-start gap-2 rounded-lg bg-muted/60 px-3 py-2 text-sm">
         <Store aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
         <div className="min-w-0">
-          <p className="text-[11px] font-bold text-muted-foreground">렌탈샵</p>
-          <p className="font-black">{summary.shopName ?? "아직 정하지 않았어요"}</p>
+          <p className="text-[11px] font-medium text-muted-foreground">렌탈샵</p>
+          <p className="font-semibold">{summary.shopName ?? "아직 정하지 않았어요"}</p>
           {summary.rentalState === "shop_only" ? <p className="text-xs text-amber-800 dark:text-amber-200">후보로만 저장됐고 장비·의류 상품은 아직 고르지 않았어요.</p> : null}
         </div>
       </div>
@@ -78,8 +78,8 @@ function DayCard({ summary, people, onSelectDay, canEdit }: { summary: DaySummar
 
       <footer className="mt-3 flex flex-wrap items-end justify-between gap-3 border-t pt-3">
         <div>
-          <p className="text-[11px] font-bold text-muted-foreground">이 날 합계</p>
-          <p className="text-lg font-black">{formatCurrency(summary.total)} <span className="text-xs font-semibold text-muted-foreground">1인 {formatCurrency(summary.perPersonTotal)} · {people}명</span></p>
+          <p className="text-[11px] font-medium text-muted-foreground">이 날 합계</p>
+          <p className="text-lg font-semibold">{formatCurrency(summary.total)} <span className="text-xs font-semibold text-muted-foreground">1인 {formatCurrency(summary.perPersonTotal)} · {people}명</span></p>
           {summary.hasUnknownPrice ? <p className="text-xs text-muted-foreground">가격 미공개 항목은 합계에서 빠져 있어요.</p> : null}
         </div>
         {canEdit ? <Button type="button" variant="secondary" className="h-10 px-3 text-xs" onClick={() => onSelectDay(summary.date)}>{confirmed ? "이 날짜 렌탈 바꾸기" : "이 날짜 렌탈 고르기"}</Button> : null}
@@ -92,13 +92,13 @@ function LineRow({ line, people }: { line: DaySummaryLine; people: number }) {
   return (
     <li className="flex items-start justify-between gap-3 py-2">
       <div className="min-w-0">
-        <p className="font-black">{kindLabel[line.kind]}</p>
+        <p className="font-semibold">{kindLabel[line.kind]}</p>
         <p className="text-xs text-muted-foreground">{line.label}{line.source && line.source !== "공식" && line.kind !== "lift" ? ` · ${line.source}` : ""}</p>
-        {line.reference ? <span className="mt-1 inline-block rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-black text-amber-800 dark:text-amber-200">25/26 참고가</span> : null}
+        {line.reference ? <span className="mt-1 inline-block rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-800 dark:text-amber-200">25/26 참고가</span> : null}
       </div>
       <div className="shrink-0 text-right">
-        {line.perPerson === null ? <p className="font-black text-muted-foreground">가격 미공개</p> : <>
-          <p className="font-black">{formatCurrency(line.perPerson)}<span className="text-xs font-semibold text-muted-foreground"> /인</span></p>
+        {line.perPerson === null ? <p className="font-semibold text-muted-foreground">가격 미공개</p> : <>
+          <p className="font-semibold">{formatCurrency(line.perPerson)}<span className="text-xs font-semibold text-muted-foreground"> /인</span></p>
           {people > 1 ? <p className="text-xs text-muted-foreground">{people}명 {formatCurrency(line.perPerson * people)}</p> : null}
         </>}
       </div>

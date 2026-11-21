@@ -30,7 +30,7 @@ export function LoginPageContent() {
     <main className="page-shell grid min-h-[70vh] place-items-center py-10">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-3xl font-black">내 트립 저장하기</CardTitle>
+          <CardTitle className="text-3xl font-semibold">내 트립 저장하기</CardTitle>
         </CardHeader>
         <CardContent className="space-y-5">
           <p className="text-sm leading-6 text-muted-foreground">Google 계정 또는 이메일로 로그인하면 트립을 안전하게 저장하고 동행자를 초대할 수 있습니다.</p>

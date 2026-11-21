@@ -57,7 +57,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
       <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
         <div>
           <StatusBadge tone={errors.length ? "warn" : "good"}>{report.season}</StatusBadge>
-          <h1 className="mt-3 text-3xl font-black md:text-5xl">데이터 품질</h1>
+          <h1 className="mt-3 text-3xl font-semibold md:text-5xl">데이터 품질</h1>
           <p className="mt-2 text-muted-foreground">가격/렌탈/링크 데이터의 보강 대상을 확인합니다.</p>
         </div>
         <Link href="/admin">
@@ -79,8 +79,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
         <div className="border-b border-border bg-zinc-950 px-4 py-5 text-white md:px-6">
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div>
-              <p className="text-xs font-black tracking-[0.16em] text-lime-300">SEASON TRANSITION</p>
-              <CardTitle className="mt-2 text-xl font-black md:text-2xl">
+              <p className="text-xs font-semibold text-lime-300">SEASON TRANSITION</p>
+              <CardTitle className="mt-2 text-xl font-semibold md:text-2xl">
                 25/26 → 26/27 전환 보드
               </CardTitle>
               <p className="mt-2 max-w-2xl text-sm text-zinc-300">
@@ -88,7 +88,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
               </p>
             </div>
             <div className="text-right">
-              <div className="font-mono text-4xl font-black tabular-nums">{report.seasonTransition.progressPercent}%</div>
+              <div className="font-mono text-4xl font-semibold tabular-nums">{report.seasonTransition.progressPercent}%</div>
               <div className="mt-1 text-xs text-zinc-400">
                 {report.seasonTransition.completedTargetCount.toLocaleString("ko-KR")} / {report.seasonTransition.replacementTargetCount.toLocaleString("ko-KR")} 항목 완료
               </div>
@@ -125,8 +125,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                     href={value === "all" ? "/admin/data-quality" : `/admin/data-quality?priority=${value}`}
                     aria-current={active ? "page" : undefined}
                     className={active
-                      ? "rounded-lg bg-background px-3 py-2 text-xs font-black text-foreground shadow-sm"
-                      : "rounded-lg px-3 py-2 text-xs font-bold text-muted-foreground hover:text-foreground"}
+                      ? "rounded-lg bg-background px-3 py-2 text-xs font-semibold text-foreground shadow-sm"
+                      : "rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"}
                   >
                     {label}
                   </Link>
@@ -141,8 +141,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                 <article key={`${resortName}-${category}`} className="rounded-xl border border-amber-500/25 bg-amber-500/8 p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                      <p className="text-[11px] font-black tracking-[0.12em] text-amber-700 dark:text-amber-300">OFFICIAL EARLY SIGNAL</p>
-                      <h3 className="mt-1 font-black">{resortName} · {category}</h3>
+                      <p className="text-[11px] font-semibold text-amber-700 dark:text-amber-300">OFFICIAL EARLY SIGNAL</p>
+                      <h3 className="mt-1 font-semibold">{resortName} · {category}</h3>
                     </div>
                     <StatusBadge tone="warn">사전 공지</StatusBadge>
                   </div>
@@ -150,14 +150,14 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                     {research?.announcedFacts?.map(fact => (
                       <div key={fact.label} className="rounded-lg bg-background/75 p-2.5">
                         <dt className="text-muted-foreground">{fact.label}</dt>
-                        <dd className="mt-1 font-black">{fact.value}</dd>
+                        <dd className="mt-1 font-semibold">{fact.value}</dd>
                       </div>
                     ))}
                   </dl>
                   <p className="mt-3 text-xs leading-5 text-muted-foreground">{research?.note}</p>
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
                     {research?.sources.map(source => (
-                      <a key={source.url} href={source.url} target="_blank" rel="noreferrer" className="text-xs font-bold text-primary hover:underline">
+                      <a key={source.url} href={source.url} target="_blank" rel="noreferrer" className="text-xs font-medium text-primary hover:underline">
                         {source.name}
                       </a>
                     ))}
@@ -185,7 +185,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                 {transitionRows.map((resort) => (
                   <tr key={resort.resortId} className="border-b last:border-0">
                     <td className="py-3"><StatusBadge tone={resort.priority === 1 ? "dark" : "neutral"}>P{resort.priority}</StatusBadge></td>
-                    <td className="font-black">{resort.resortName}</td>
+                    <td className="font-semibold">{resort.resortName}</td>
                     <td><CategoryProgress category={resort.lift} /></td>
                     <td><CategoryProgress category={resort.rental} /></td>
                     <td><CategoryProgress category={resort.shuttle} /></td>
@@ -194,7 +194,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
                         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
                           <div className="h-full rounded-full bg-primary" style={{ width: `${resort.progressPercent}%` }} />
                         </div>
-                        <span className="w-9 text-right font-mono text-xs font-bold tabular-nums">{resort.progressPercent}%</span>
+                        <span className="w-9 text-right font-mono text-xs font-medium tabular-nums">{resort.progressPercent}%</span>
                       </div>
                     </td>
                     <td className="font-mono text-xs tabular-nums">{resort.replacementTargetCount - resort.completedTargetCount}</td>
@@ -228,7 +228,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
             <tbody>
               {report.resorts.map((resort) => (
                 <tr key={resort.resortId} className="border-b">
-                  <td className="py-3 font-bold">{resort.resortName}</td>
+                  <td className="py-3 font-medium">{resort.resortName}</td>
                   <td>{resort.liftRuleCount}</td>
                   <td>{resort.confirmedLiftRuleCount}/{resort.liftRuleCount}</td>
                   <td>{resort.externalRentalShopCount}</td>
@@ -244,8 +244,8 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
       </Card>
 
       <Card className="mt-6" data-testid="admin-shuttle-quality">
-        <CardHeader><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-black tracking-[0.14em] text-primary">25/26 SKI SHUTTLE</p><CardTitle className="mt-2">셔틀 데이터 품질</CardTitle></div><div className="flex flex-wrap gap-2"><StatusBadge tone="good">확정 {shuttleConfirmed}</StatusBadge><StatusBadge tone="warn">재확인 {shuttleRecheck}</StatusBadge><StatusBadge>{shuttleRows.filter(row => row.coverage.status === "no_affiliate_service").length}곳 운행 없음</StatusBadge></div></div></CardHeader>
-        <CardContent className="overflow-x-auto"><table className="w-full min-w-[980px] text-left text-sm"><thead className="text-xs text-muted-foreground"><tr className="border-b"><th className="py-2">스키장</th><th>상태</th><th>노선</th><th>정류장</th><th>확정</th><th>재확인</th><th>출처 누락</th><th>마지막 확인</th><th>다음 조치</th></tr></thead><tbody>{shuttleRows.map(({ resort, routes, coverage, stopCount, missingSourceCount }) => <tr key={resort.id} className="border-b"><td className="py-3 font-bold">{resort.name}</td><td><StatusBadge tone={coverage.status === "confirmed_schedule" ? "good" : coverage.status === "needs_recheck" ? "warn" : "neutral"}>{coverage.status === "confirmed_schedule" ? "확정 시간표" : coverage.status === "needs_recheck" ? "시간 재확인" : "운행 없음"}</StatusBadge></td><td>{routes.length}</td><td>{stopCount}</td><td>{coverage.confirmedRouteCount}</td><td>{coverage.recheckRouteCount}</td><td className={missingSourceCount ? "font-bold text-amber-500" : ""}>{missingSourceCount || "-"}</td><td>{coverage.lastCheckedAt}</td><td className="text-xs text-muted-foreground">{coverage.status === "no_affiliate_service" ? "26/27 신규 공지 확인" : coverage.recheckRouteCount ? "시간·가격 갱신" : routes.some(route => !route.fare || route.fare.type === "unknown") ? "요금 보강" : "26/27 교체 대기"}</td></tr>)}</tbody></table></CardContent>
+        <CardHeader><div className="flex flex-wrap items-end justify-between gap-3"><div><CardTitle className="mt-2">셔틀 데이터 품질</CardTitle></div><div className="flex flex-wrap gap-2"><StatusBadge tone="good">확정 {shuttleConfirmed}</StatusBadge><StatusBadge tone="warn">재확인 {shuttleRecheck}</StatusBadge><StatusBadge>{shuttleRows.filter(row => row.coverage.status === "no_affiliate_service").length}곳 운행 없음</StatusBadge></div></div></CardHeader>
+        <CardContent className="overflow-x-auto"><table className="w-full min-w-[980px] text-left text-sm"><thead className="text-xs text-muted-foreground"><tr className="border-b"><th className="py-2">스키장</th><th>상태</th><th>노선</th><th>정류장</th><th>확정</th><th>재확인</th><th>출처 누락</th><th>마지막 확인</th><th>다음 조치</th></tr></thead><tbody>{shuttleRows.map(({ resort, routes, coverage, stopCount, missingSourceCount }) => <tr key={resort.id} className="border-b"><td className="py-3 font-medium">{resort.name}</td><td><StatusBadge tone={coverage.status === "confirmed_schedule" ? "good" : coverage.status === "needs_recheck" ? "warn" : "neutral"}>{coverage.status === "confirmed_schedule" ? "확정 시간표" : coverage.status === "needs_recheck" ? "시간 재확인" : "운행 없음"}</StatusBadge></td><td>{routes.length}</td><td>{stopCount}</td><td>{coverage.confirmedRouteCount}</td><td>{coverage.recheckRouteCount}</td><td className={missingSourceCount ? "font-medium text-amber-500" : ""}>{missingSourceCount || "-"}</td><td>{coverage.lastCheckedAt}</td><td className="text-xs text-muted-foreground">{coverage.status === "no_affiliate_service" ? "26/27 신규 공지 확인" : coverage.recheckRouteCount ? "시간·가격 갱신" : routes.some(route => !route.fare || route.fare.type === "unknown") ? "요금 보강" : "26/27 교체 대기"}</td></tr>)}</tbody></table></CardContent>
       </Card>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-2">
@@ -260,7 +260,7 @@ export default async function AdminDataQualityPage({ searchParams }: PageProps) 
         <CardContent className="grid gap-2 md:grid-cols-2">
           {report.estimatedItems.slice(0, 60).map((item) => (
             <div key={`${item.scope}-${item.id}`} className="rounded-md border bg-white/7 p-3 text-sm">
-              <div className="font-bold">{item.id}</div>
+              <div className="font-medium">{item.id}</div>
               <div className="mt-1 text-xs text-muted-foreground">
                 {item.scope} · {item.sourceName ?? "출처명 없음"} · {item.lastCheckedAt}
               </div>
@@ -296,8 +296,8 @@ function CategoryProgress({ category }: { category: SeasonCategoryProgress }) {
           target="_blank"
           rel="noreferrer"
           className={category.research.status === "preliminary"
-            ? "mt-1.5 block text-[10px] font-black text-amber-600 hover:underline dark:text-amber-300"
-            : "mt-1.5 block text-[10px] font-bold text-muted-foreground hover:text-foreground"}
+            ? "mt-1.5 block text-[10px] font-semibold text-amber-600 hover:underline dark:text-amber-300"
+            : "mt-1.5 block text-[10px] font-medium text-muted-foreground hover:text-foreground"}
         >
           {category.research.status === "preliminary" ? "공식 사전 공지" : `${category.research.lastCheckedAt.slice(5)} 확인`}
         </a>
@@ -311,7 +311,7 @@ function Metric({ label, value, tone }: { label: string; value: number | string;
     <Card>
       <CardContent className="p-4">
         <div className="text-xs font-semibold text-muted-foreground">{label}</div>
-        <div className={tone === "warn" ? "mt-1 text-3xl font-black text-amber-500" : "mt-1 text-3xl font-black"}>
+        <div className={tone === "warn" ? "mt-1 text-3xl font-semibold text-amber-500" : "mt-1 text-3xl font-semibold"}>
           {typeof value === "number" ? value.toLocaleString("ko-KR") : value}
         </div>
       </CardContent>
@@ -336,7 +336,7 @@ function IssueCard({
       <CardContent className="space-y-2">
         {issues.length ? issues.map((issue) => (
           <div key={`${issue.scope}-${issue.id}-${issue.message}`} className="rounded-md bg-muted px-3 py-2 text-sm">
-            <div className="font-bold">[{issue.scope}] {issue.id}</div>
+            <div className="font-medium">[{issue.scope}] {issue.id}</div>
             <div className="mt-1 text-xs text-muted-foreground">{issue.message}</div>
           </div>
         )) : <p className="rounded-md bg-muted px-3 py-6 text-center text-sm font-semibold text-muted-foreground">{emptyText}</p>}

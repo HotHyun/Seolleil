@@ -147,7 +147,7 @@ export default async function GuidePage({ params }: PageProps) {
           <StatusBadge tone={resort.operationStatus === "operating" ? "good" : "warn"}>{resort.operationStatus === "operating" ? "운영" : "운영 여부 확인 필요"}</StatusBadge>
           <StatusBadge>{resort.region}</StatusBadge>
         </div>
-        <h1 className="mt-3 text-3xl font-black tracking-[-0.03em] sm:text-5xl">{copy.heading}</h1>
+        <h1 className="mt-3 text-3xl font-semibold sm:text-5xl">{copy.heading}</h1>
         <p className="mt-4 text-base leading-7 text-muted-foreground">{copy.description}</p>
       </header>
 
@@ -163,11 +163,11 @@ export default async function GuidePage({ params }: PageProps) {
       </section>
 
       <section className="mt-12 max-w-3xl" aria-labelledby="guide-faq-title">
-        <h2 id="guide-faq-title" className="text-xl font-black">자주 묻는 질문</h2>
+        <h2 id="guide-faq-title" className="text-xl font-semibold">자주 묻는 질문</h2>
         <dl className="mt-4 space-y-3">
           {faq.map((item) => (
             <div key={item.question} className="rounded-2xl border bg-card p-4 sm:p-5">
-              <dt className="font-black">{item.question}</dt>
+              <dt className="font-semibold">{item.question}</dt>
               <dd className="mt-2 text-sm leading-6 text-muted-foreground">{item.answer}</dd>
             </div>
           ))}
@@ -175,7 +175,7 @@ export default async function GuidePage({ params }: PageProps) {
       </section>
 
       <section className="mt-12 max-w-3xl rounded-2xl border border-primary/25 bg-card p-5 sm:p-6">
-        <h2 className="text-lg font-black">{resort.name} 트립을 만들어 볼까요?</h2>
+        <h2 className="text-lg font-semibold">{resort.name} 트립을 만들어 볼까요?</h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">날짜와 인원만 정하면 리프트권·렌탈·교통 예상 비용과 준비 체크리스트를 한 번에 만들 수 있어요. 로그인은 필요 없습니다.</p>
         <div className="mt-4 flex flex-wrap gap-3">
           <AnalyticsLink href={`/plan?resortId=${resortId}&ref=guide`} eventName="guide_cta_click" eventData={{ resortId, topic }}>
@@ -197,7 +197,7 @@ export default async function GuidePage({ params }: PageProps) {
 
 function ExternalLinkText({ href, label, resortId, type }: { href: string; label: string; resortId: string; type: string }) {
   return (
-    <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="inline-flex min-h-9 items-center gap-1 text-xs font-bold text-primary underline-offset-4 hover:underline">
+    <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline">
       {label} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" />
     </AnalyticsLink>
   );
@@ -210,16 +210,16 @@ function LiftList({ resortId }: { resortId: string }) {
     <div className="space-y-8">
       {seasons.map((season) => (
         <div key={season}>
-          <h2 className="text-lg font-black">{season}</h2>
+          <h2 className="text-lg font-semibold">{season}</h2>
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
             {rows.filter((row) => row.seasonLabel === season).map((row) => (
               <li key={row.id} className="rounded-xl border bg-card p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-black">{row.label}</p>
+                    <p className="font-semibold">{row.label}</p>
                     <p className="mt-1 text-xs text-muted-foreground">{row.dayTypeLabel} · {row.timeSlotLabel}</p>
                   </div>
-                  <span className="shrink-0 text-lg font-black tabular-nums">{formatCurrency(row.price)}</span>
+                  <span className="shrink-0 text-lg font-semibold tabular-nums">{formatCurrency(row.price)}</span>
                 </div>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   <ConfidenceBadge confidence={row.confidence} />
@@ -243,15 +243,15 @@ function RentalList({ resortId }: { resortId: string }) {
         <li key={row.id} className="rounded-xl border bg-card p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="font-black">{row.name}</h2>
+              <h2 className="font-semibold">{row.name}</h2>
               {row.address ? <p className="mt-1 text-xs text-muted-foreground">{row.address}</p> : null}
             </div>
             <div className="shrink-0 text-right">
-              <p className="text-lg font-black tabular-nums">{row.fromPrice !== undefined ? `${formatCurrency(row.fromPrice)}~` : "가격 확인 필요"}</p>
+              <p className="text-lg font-semibold tabular-nums">{row.fromPrice !== undefined ? `${formatCurrency(row.fromPrice)}~` : "가격 확인 필요"}</p>
               {row.priceLabel ? <p className="text-[11px] text-muted-foreground">{row.priceLabel}</p> : null}
             </div>
           </div>
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-bold">
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-medium">
             {row.equipment ? <span className="rounded-full bg-muted px-2.5 py-1">장비 렌탈</span> : null}
             {row.clothing ? <span className="rounded-full bg-muted px-2.5 py-1">의류 렌탈</span> : null}
             {row.pickup ? <span className="rounded-full bg-muted px-2.5 py-1">픽업</span> : null}
@@ -277,10 +277,10 @@ function ShuttleList({ resortId }: { resortId: string }) {
         <li key={row.id} className="rounded-xl border bg-card p-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h2 className="font-black">{row.name}</h2>
+              <h2 className="font-semibold">{row.name}</h2>
               <p className="mt-1 text-xs text-muted-foreground">{row.operator} · {row.region} · {row.season} 시즌</p>
             </div>
-            <span className="shrink-0 text-right text-sm font-black">{row.fare}</span>
+            <span className="shrink-0 text-right text-sm font-semibold">{row.fare}</span>
           </div>
           <p className="mt-3 text-sm leading-6 text-muted-foreground">{row.note}</p>
           {row.phone ? <p className="mt-1 text-xs text-muted-foreground">문의 {row.phone}</p> : null}

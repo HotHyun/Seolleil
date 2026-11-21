@@ -62,9 +62,9 @@ const checklistSample = [
 
 const faqs = [
   { q: "가격은 실시간 견적인가요?", a: "아니요. 시즌별로 확인한 참고 가격이며, 항목마다 출처와 확인일, 신뢰도를 함께 보여 드려요. 결제 전에는 공식 판매처에서 최신 가격을 확인해 주세요." },
-  { q: "로그인 없이도 쓸 수 있나요?", a: "네. 로그인 없이 트립을 만들 수 있어요. 대신 편집 링크를 잃으면 다시 찾기 어려우니, 저장하려면 로그인해 두세요." },
+  { q: "로그인 없이도 쓸 수 있나요?", a: "네. 로그인 없이 스키 여행 계획(트립)을 만들 수 있어요. 대신 편집 링크를 잃으면 다시 찾기 어려우니, 저장하려면 로그인해 두세요." },
   { q: "동행자와는 어떻게 공유하나요?", a: "보기 전용 또는 편집 가능한 링크를 여러 개 만들 수 있고, 링크마다 따로 폐기할 수 있어요. 가입한 계정을 초대할 수도 있어요." },
-  { q: "예약이나 결제도 대신 해 주나요?", a: "아니요. 예약은 각 리조트와 렌탈샵의 공식 링크로 연결하고, 설레일에서는 예약·결제·준비 상태를 체크리스트로 관리해요." }
+  { q: "예약이나 결제도 대신 해 주나요?", a: "아니요. 예약은 각 리조트와 렌탈샵의 공식 링크로 연결해요. 설레일에서는 예약 전 가격 비교와 예약·결제·준비 상태 체크리스트를 제공해요." }
 ];
 
 export default function HomePage() {
@@ -94,7 +94,7 @@ export default function HomePage() {
 
       <section className="py-16 sm:py-24">
         <div className="page-shell">
-          <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-tight sm:text-4xl">스키장 선택부터 장갑 챙기기까지, 트립 하나로</h2>
+          <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-tight sm:text-4xl">스키장 추천부터 가격 비교, 장갑 챙기기까지 스키 여행 준비 하나로</h2>
 
           <div className="mt-10 grid gap-4 lg:grid-cols-12">
             <article className="rounded-2xl border bg-card p-6 lg:col-span-7 lg:p-8">

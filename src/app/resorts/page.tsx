@@ -3,8 +3,8 @@ import { AnalyticsTrack } from "@/components/analytics-track";
 import { ResortMapExplorer } from "@/components/resort-map-explorer";
 import { rentalShops, resorts } from "@/data/resorts";
 
-const title = "국내 스키장 지도와 목록 | 설레일";
-const description = "수도권·강원·남부권 국내 스키장을 지도에서 비교하고, 스키장별 주변 렌탈샵과 숙박 후보, 시즌 가격 정보를 확인하세요.";
+const title = "국내 스키장 추천·비교 - 지도와 목록 | 설레일";
+const description = "수도권·강원·남부권 국내 스키장을 지도에서 비교하고, 스키장별 리프트권·렌탈 가격, 주변 렌탈샵과 숙박 후보를 확인해 스키 여행을 계획하세요.";
 export const metadata: Metadata = {
   title,
   description,

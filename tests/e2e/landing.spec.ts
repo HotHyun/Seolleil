@@ -8,7 +8,7 @@ test.describe("landing page", () => {
     await expect(page.getByRole("heading", { name: /이동 시간과 총비용으로/ })).toBeVisible();
     await expect(page.getByRole("link", { name: "조건 직접 입력" })).toBeVisible();
     await expect(page.getByRole("button", { name: "추천 보기" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: /스키장 선택부터 장갑 챙기기까지/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /스키장 추천부터 가격 비교, 장갑 챙기기까지/ })).toBeVisible();
     await expect(page.getByLabel("추천 결과 예시")).toBeVisible();
     await expect(page.getByRole("link", { name: "본문으로 바로가기" })).toHaveAttribute("href", "#main-content");
     await expectClickablePrimaryNav(page);

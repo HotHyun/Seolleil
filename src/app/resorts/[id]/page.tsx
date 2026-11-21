@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const resort = getResort((await params).id);
   if (!resort) return { title: "스키장 상세 | 설레일" };
   const story = getResortStory(resort);
-  const title = `${resort.name} 가격·렌탈·셔틀 정보와 트립 준비 | 설레일`;
+  const title = `${resort.name} 리프트권·렌탈·셔틀 가격 비교와 스키 여행 준비 | 설레일`;
   const description = `${resort.name}(${resort.region}) ${story.summary} 리프트권·렌탈 시즌 가격, 셔틀, 주변 렌탈샵과 숙박 후보를 한곳에서 확인하세요.`;
   const path = `/resorts/${resort.id}`;
   return {

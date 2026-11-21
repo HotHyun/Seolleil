@@ -4,8 +4,8 @@ import { resorts } from "@/data/resorts";
 import { guideTopicLabels, guideTopicsForResort } from "@/lib/guides";
 import { jsonLd, absoluteUrl, ogImagePath } from "@/lib/seo";
 
-const title = "국내 스키장 가이드 - 리프트권 가격·렌탈샵·셔틀 | 설레일";
-const description = "국내 스키장별 리프트권 가격, 주변 렌탈샵 비교, 스키버스·셔틀 요금을 출처와 확인 상태와 함께 정리했습니다.";
+const title = "스키장 가격 비교 가이드 - 리프트권·렌탈샵·스키버스 | 설레일";
+const description = "스키 여행 전에 국내 스키장별 리프트권 가격, 주변 렌탈샵 비교, 스키버스·셔틀 요금을 출처와 확인 상태와 함께 정리했습니다.";
 
 export const metadata: Metadata = {
   title,

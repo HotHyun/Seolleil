@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     url: "/",
     title: siteTitle,
     description: siteDescription,
-    images: [{ url: ogImagePath, width: 1200, height: 630, alt: "설레일 - 국내 스키장 추천과 스키 트립 준비" }]
+    images: [{ url: ogImagePath, width: 1200, height: 630, alt: "설레일 - 국내 스키장 추천·가격 비교·스키 여행 계획" }]
   },
   twitter: { card: "summary_large_image", title: siteTitle, description: siteDescription, images: [ogImagePath] },
   robots: { index: true, follow: true },

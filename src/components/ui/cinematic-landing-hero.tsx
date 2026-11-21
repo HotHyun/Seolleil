@@ -32,10 +32,10 @@ export function CinematicHero({ rows, label }: { rows: SampleRow[]; label: strin
       <div className="page-shell relative flex flex-col py-8 lg:min-h-[min(680px,calc(100svh-4rem))] lg:justify-center lg:py-16">
         <div className="max-w-[520px]">
           <h1 className="hero-reveal break-keep text-balance text-4xl font-semibold leading-[1.2] sm:text-5xl">
-            국내 스키장,<br />이동 시간과 총비용으로<br />비교해요
+            국내 스키장 추천,<br />이동 시간과 총비용으로<br />가격 비교해요
           </h1>
           <p className="hero-reveal hero-delay-1 mt-4 break-keep text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
-            날짜와 출발지를 고르면 리프트·렌탈·교통비를 합친 예상 총액을 보여 드려요.
+            날짜와 출발지를 고르면 당일치기·1박2일 스키 여행의 리프트·렌탈·교통비 예상 총액을 보여 드려요.
           </p>
           <HeroQuickForm />
           <p className="hero-reveal hero-delay-3 mt-4 text-sm text-muted-foreground">

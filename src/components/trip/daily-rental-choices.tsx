@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfidenceDot } from "@/components/confidence-badge";
 import { useEffect, useMemo, useState } from "react";
 import { CalendarClock, Check, CopyCheck, ExternalLink, PackageCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -100,8 +101,8 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
         <p className="mb-2 text-xs font-semibold">보호·추가 장비</p>
         <div className="flex flex-wrap gap-2">{accessories.map(option => {
           const checked = accessoryIds.includes(option.id);
-          return <button key={option.id} type="button" aria-pressed={checked} onClick={() => setAccessoryIds(current => checked ? current.filter(id => id !== option.id) : [...current, option.id])} className={cn("inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", checked ? "border-primary bg-primary/10 text-primary" : "bg-card hover:bg-muted")}>
-            {checked ? <Check className="h-4 w-4" /> : null}{option.label} · {priceLabel(option)}
+          return <button key={option.id} type="button" aria-pressed={checked} onClick={() => setAccessoryIds(current => checked ? current.filter(id => id !== option.id) : [...current, option.id])} className={cn("inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border px-3 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", checked ? "border-foreground/20 bg-muted/60 text-primary" : "bg-card hover:bg-muted")}>
+            {checked ? <Check className="h-4 w-4" /> : null}{option.label} · <ConfidenceDot confidence={option.confidence} className="mx-0.5" />{priceLabel(option)}
           </button>;
         })}</div>
       </div> : null}
@@ -112,14 +113,14 @@ export function DailyRentalChoices({ shop, options, day, peopleCount, rideType, 
       {canEdit ? <SubmitButton variant="secondary" className="w-full" pendingText="렌탈 저장 중…"><CopyCheck className="h-4 w-4" /> {day.date} 렌탈 저장</SubmitButton> : null}
     </form> : <RentalPriceUnavailable shop={shop} options={options} day={day} access={access} save={save} canEdit={canEdit} reason={priceAvailability} />}
 
-    <div className="rounded-xl border border-primary/25 bg-primary/5 p-3">
-      <p className="mb-2 text-xs font-semibold text-primary">이 날짜의 할인 리프트권</p>
+    <div className="rounded-xl border border-foreground/20 bg-muted/60 p-3">
+      <p className="mb-2 text-xs font-semibold text-muted-foreground">이 날짜의 할인 리프트권</p>
       {liftOptions.length ? <form action={save} className="grid gap-2">
         <AccessInput access={access} />
         <input type="hidden" name="decision" value="discounted_lift_day" />
         <input type="hidden" name="skiDate" value={day.date} />
         <SelectField name="selectedLiftTicketOptionId" ariaLabel={`${shop.name} ${day.date} 할인 리프트권`} value={liftId} onValueChange={setLiftId} options={liftOptions.map(option => ({ value: option.id, label: `${option.label} · ${priceLabel(option)}` }))} />
-        {savings ? <div className="rounded-lg bg-background/80 p-3" aria-live="polite"><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-medium text-muted-foreground">공식 {formatCurrency(savings.officialPrice)}</p><p className="text-lg font-semibold text-primary">{formatCurrency(savings.shopPrice)}</p></div><span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">{savings.discountRate}% 절감</span></div><p className="mt-2 text-xs font-semibold">1인 {formatCurrency(savings.savedPerPerson)} · {peopleCount}명 총 {formatCurrency(savings.savedPerPerson * peopleCount)} 절감</p></div> : null}
+        {savings ? <div className="rounded-lg bg-background/80 p-3" aria-live="polite"><div className="flex items-end justify-between gap-3"><div><p className="text-xs font-medium text-muted-foreground">공식 {formatCurrency(savings.officialPrice)}</p><p className="text-lg font-semibold text-muted-foreground">{formatCurrency(savings.shopPrice)}</p></div><span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">{savings.discountRate}% 절감</span></div><p className="mt-2 text-xs font-semibold">1인 {formatCurrency(savings.savedPerPerson)} · {peopleCount}명 총 {formatCurrency(savings.savedPerPerson * peopleCount)} 절감</p></div> : null}
         {canEdit ? <SubmitButton pendingText="할인권 저장 중…">이 날짜에 할인권 적용</SubmitButton> : null}
       </form> : <p className="text-xs leading-5 text-muted-foreground">선택한 날짜·시간에 공개된 할인권이 없습니다.</p>}
     </div>
@@ -140,10 +141,10 @@ function RentalPriceUnavailable({ shop, options, day, access, save, canEdit, rea
     return candidates[0] ? [candidates[0]] : [];
   });
   const sourceUrl = shop.url ?? shop.sourceUrl;
-  return <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-amber-950 dark:text-amber-100">
+  return <div className="rounded-xl border border-border bg-muted/60 p-4 text-amber-950">
     <div className="flex items-start gap-3"><CalendarClock aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0" /><div className="min-w-0"><p className="font-semibold">{reason === "outside_validity" ? `${formatDate(day.date)} 렌탈 가격 미공개` : "저장 가능한 렌탈 가격 미확인"}</p><p className="mt-1 text-xs font-medium leading-5 opacity-85">{reason === "outside_validity" ? `장비나 의류를 대여하지 않는다는 뜻이 아닙니다. 현재 가격 데이터는 ${validFrom}~${validTo} 기준이라 선택한 날짜의 비용과 상품으로 확정할 수 없어요.` : "장비나 의류를 제공하지 않는다는 뜻이 아닙니다. 공개된 시즌 가격표를 확인하지 못해 상품 선택 대신 원문 확인이 필요해요."}</p></div></div>
     {reference.length ? <div className="mt-3 rounded-lg bg-background/65 p-3"><p className="text-xs font-semibold opacity-70">지난 시즌 참고 가격</p><div className="mt-2 grid gap-2 text-xs sm:grid-cols-3">{reference.map(option => <div key={option.id}><span className="font-semibold">{referenceLabel(option.itemType)}</span> <span className="font-semibold">{priceLabel(option)}~</span></div>)}</div></div> : null}
-    <div className="mt-3 flex flex-wrap gap-2">{sourceUrl ? <a href={sourceUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-amber-700/25 bg-background px-3 text-xs font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{/place\.map\.kakao\.com/.test(sourceUrl ?? "") ? "장소·연락처 보기" : "최신 가격 원문"} <ExternalLink aria-hidden="true" className="h-4 w-4" /></a> : null}{canEdit ? <form action={save}><AccessInput access={access} /><input type="hidden" name="decision" value="rental_day" /><input type="hidden" name="skiDate" value={day.date} /><input type="hidden" name="selectedRentalShopId" value={shop.id} /><input type="hidden" name="equipmentOptionId" value="none" /><input type="hidden" name="clothingOptionId" value="none" /><input type="hidden" name="packageOptionId" value="none" /><input type="hidden" name="accessoryOptionIds" value="[]" /><SubmitButton variant="secondary" pendingText="후보 저장 중…">이 날짜의 후보 샵으로 저장</SubmitButton></form> : null}</div>
+    <div className="mt-3 flex flex-wrap gap-2">{sourceUrl ? <a href={sourceUrl} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 text-xs font-semibold text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{/place\.map\.kakao\.com/.test(sourceUrl ?? "") ? "장소·연락처 보기" : "최신 가격 원문"} <ExternalLink aria-hidden="true" className="h-4 w-4" /></a> : null}{canEdit ? <form action={save}><AccessInput access={access} /><input type="hidden" name="decision" value="rental_day" /><input type="hidden" name="skiDate" value={day.date} /><input type="hidden" name="selectedRentalShopId" value={shop.id} /><input type="hidden" name="equipmentOptionId" value="none" /><input type="hidden" name="clothingOptionId" value="none" /><input type="hidden" name="packageOptionId" value="none" /><input type="hidden" name="accessoryOptionIds" value="[]" /><SubmitButton variant="secondary" pendingText="후보 저장 중…">이 날짜의 후보 샵으로 저장</SubmitButton></form> : null}</div>
   </div>;
 }
 
@@ -169,7 +170,7 @@ function formatDate(date: string) {
 }
 
 function Tag({ children }: { children: React.ReactNode }) {
-  return <span className="rounded-full bg-primary/10 px-2 py-1 text-primary">{children}</span>;
+  return <span className="rounded-md bg-muted px-2 py-1 text-muted-foreground">{children}</span>;
 }
 
 function AccessInput({ access }: { access: Access }) {

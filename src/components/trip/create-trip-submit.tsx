@@ -64,7 +64,7 @@ export function CreateTripSubmit({
     return (
       <div ref={wrapperRef} className={wrapperClassName}>
         {restored ? (
-          <div className="mb-3 flex items-start gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-3 text-sm" role="status">
+          <div className="mb-3 flex items-start gap-2 rounded-lg border border-foreground/20 bg-muted/60 px-3 py-3 text-sm" role="status">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
             <div><p className="font-semibold">입력한 설정을 그대로 불러왔어요.</p><p className="mt-0.5 text-xs text-muted-foreground">내용을 확인한 뒤 트립을 만들어 주세요.</p></div>
           </div>
@@ -97,7 +97,7 @@ export function CreateTripSubmit({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <div className="mb-1 flex h-10 w-10 items-center justify-center rounded-lg bg-muted text-primary">
               <ShieldCheck className="h-5 w-5" />
             </div>
             <DialogTitle>트립을 어떻게 저장할까요?</DialogTitle>
@@ -106,7 +106,7 @@ export function CreateTripSubmit({
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-2 text-sm">
-            <div className="flex gap-2 rounded-lg border border-primary/25 bg-primary/10 p-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span><strong className="text-foreground">로그인하고 안전하게 저장</strong><br /><span className="text-muted-foreground">현재 설정을 유지하고 내 트립에 저장합니다.</span></span></div>
+            <div className="flex gap-2 rounded-lg border border-foreground/20 bg-muted/60 p-3"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span><strong className="text-foreground">로그인하고 안전하게 저장</strong><br /><span className="text-muted-foreground">현재 설정을 유지하고 내 트립에 저장합니다.</span></span></div>
             <div className="flex gap-2 rounded-lg border bg-muted/60 p-3"><Link2 className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" /><span><strong className="text-foreground">로그인 없이 링크로 만들기</strong><br /><span className="text-muted-foreground">편집 링크를 잃으면 트립을 다시 찾기 어렵습니다.</span></span></div>
           </div>
           <DialogFooter>

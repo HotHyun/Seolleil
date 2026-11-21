@@ -34,7 +34,7 @@ export function Field({
   children,
   className
 }: {
-  label: string;
+  label: React.ReactNode;
   children: React.ReactElement<{ id?: string }>;
   className?: string;
 }) {

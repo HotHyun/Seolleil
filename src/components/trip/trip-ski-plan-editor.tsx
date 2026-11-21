@@ -78,9 +78,9 @@ export function TripSkiPlanEditor({ trip, editToken, shareToken, canEdit = true 
         {range.map((date, index) => {
           const selected = days.has(date);
           const label = new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(`${date}T00:00:00Z`));
-          return <div key={date} className={cn("rounded-xl border p-3 transition-colors", selected ? "border-primary/40 bg-primary/5" : "bg-muted/30")}>
+          return <div key={date} className={cn("rounded-xl border p-3 transition-colors", selected ? "border-foreground/20 bg-muted/60" : "bg-muted/30")}>
             <div className="flex items-center gap-3">
-              <button type="button" role="checkbox" aria-checked={selected} onClick={() => toggleDay(date)} className={cn("flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected ? "border-primary bg-primary text-primary-foreground" : "bg-card text-muted-foreground")}>
+              <button type="button" role="checkbox" aria-checked={selected} onClick={() => toggleDay(date)} className={cn("flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg border transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", selected ? "border-foreground/30 bg-muted text-foreground" : "bg-card text-muted-foreground")}>
                 {selected ? <Clock3 className="h-4 w-4" /> : <CalendarRange className="h-4 w-4" />}
               </button>
               <button type="button" onClick={() => toggleDay(date)} className="min-h-11 min-w-0 flex-1 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">

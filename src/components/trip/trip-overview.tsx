@@ -50,12 +50,12 @@ export function TripCostAndBooking({ trip }: { trip: TripOverviewData }) {
                 대표 {formatCurrency(displayCost.representative)} · {confidenceMeta[displayCost.confidence].label}
               </div>
               {usesReferencePrice ? (
-                <div className="mt-2 rounded-md bg-amber-500/15 px-3 py-2 text-xs font-semibold text-amber-700 dark:text-amber-200">
+                <div className="mt-2 rounded-md bg-muted/60 px-3 py-2 text-xs font-semibold text-foreground">
                   26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 트립 금액도 자동으로 바뀌어요.
                 </div>
               ) : null}
               {priceChanged && cost && currentCost ? (
-                <div className="mt-2 rounded-md bg-sky-500/15 px-3 py-2 text-xs font-semibold text-sky-800 dark:text-sky-200">
+                <div className="mt-2 rounded-md bg-muted/60 px-3 py-2 text-xs font-semibold text-foreground">
                   가격이 업데이트됐어요. 저장 당시 대표 {formatCurrency(cost.representative)} → 지금 대표 {formatCurrency(currentCost.representative)}
                 </div>
               ) : null}

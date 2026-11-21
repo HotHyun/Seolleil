@@ -78,20 +78,20 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
       <div className="text-right"><p className="text-xs text-muted-foreground">입력한 숙박비</p><p className="font-semibold tabular-nums">{formatCurrency(savedCost)}</p></div>
     </div>
     <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="날짜별 숙박 계획">
-      {plan.lodgingNights.map((night, index) => <button key={night.date} type="button" role="tab" aria-selected={activeNight.date === night.date} onClick={() => chooseNight(night.date)} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeNight.date === night.date ? "border-primary bg-primary text-primary-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-semibold">{formatNightDate(night.date)} 숙박</span><span className={`mt-0.5 block text-xs ${activeNight.date === night.date ? "text-primary-foreground/75" : "text-muted-foreground"}`}>{index + 1}박 · {night.lodgingName ?? "미정"}</span></button>)}
+      {plan.lodgingNights.map((night, index) => <button key={night.date} type="button" role="tab" aria-selected={activeNight.date === night.date} onClick={() => chooseNight(night.date)} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeNight.date === night.date ? "border-foreground/30 bg-muted text-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-semibold">{formatNightDate(night.date)} 숙박</span><span className={`mt-0.5 block text-xs ${activeNight.date === night.date ? "text-muted-foreground" : "text-muted-foreground"}`}>{index + 1}박 · {night.lodgingName ?? "미정"}</span></button>)}
     </div>
     <AffiliateNotice />
     {salesSnapshot ? <section aria-labelledby="official-lodging-sales-title" className="space-y-3 rounded-2xl border bg-muted/15 p-4 sm:p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2"><h3 id="official-lodging-sales-title" className="font-semibold">공식 객실 판매 현황</h3><span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">{salesSnapshot.statusLabel}</span></div>
+          <div className="flex flex-wrap items-center gap-2"><h3 id="official-lodging-sales-title" className="font-semibold">공식 객실 판매 현황</h3><span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">{salesSnapshot.statusLabel}</span></div>
           <p className="mt-2 text-sm leading-6 text-muted-foreground">{salesSnapshot.statusSummary}</p>
         </div>
         <ExternalButton href={salesSnapshot.reservationUrl}>객실 예약·재고 확인</ExternalButton>
       </div>
       {salesSnapshot.offers.length ? <ul className="divide-y rounded-xl border bg-card px-3">
         {salesSnapshot.offers.map((offer) => <li key={offer.title} className="py-3 first:pt-3 last:pb-3">
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between"><div><p className="text-sm font-semibold">{offer.title}</p><p className="mt-1 text-sm font-semibold tabular-nums text-primary">{offer.priceSummary}</p></div>{offer.period ? <span className="text-xs text-muted-foreground sm:text-right">{offer.period}</span> : null}</div>
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between"><div><p className="text-sm font-semibold">{offer.title}</p><p className="mt-1 text-sm font-semibold tabular-nums text-muted-foreground">{offer.priceSummary}</p></div>{offer.period ? <span className="text-xs text-muted-foreground sm:text-right">{offer.period}</span> : null}</div>
           {offer.note ? <p className="mt-1 text-xs leading-5 text-muted-foreground">{offer.note}</p> : null}
           <AnalyticsLink href={offer.url} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "lodging_offer" }} className="mt-2 inline-flex min-h-9 items-center gap-1 text-xs font-semibold text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">공식 상품 보기<ExternalLink className="h-4 w-4" /></AnalyticsLink>
         </li>)}
@@ -111,7 +111,7 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
           </div>
         </div>
         <div className="grid max-h-52 gap-2 overflow-y-auto pr-1">
-          <button type="button" onClick={() => setLodgingId(null)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === null ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-semibold">다른 숙소 직접 입력</span><span className="mt-1 block text-xs text-muted-foreground">외부에서 찾은 숙소도 이 밤에 기록할 수 있어요.</span></button>
+          <button type="button" onClick={() => setLodgingId(null)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === null ? "border-foreground/20 bg-muted/60" : "hover:bg-muted"}`}><span className="font-semibold">다른 숙소 직접 입력</span><span className="mt-1 block text-xs text-muted-foreground">외부에서 찾은 숙소도 이 밤에 기록할 수 있어요.</span></button>
           {visibleOptions.map(item => {
             const lodgingType = item.category === "nearby_stay"
               ? `${item.bookingPlatform ?? "외부 예약처"} · 주변 숙소${item.distanceMinutes !== undefined ? ` · 차량 약 ${item.distanceMinutes}분` : ""}`
@@ -120,7 +120,7 @@ export function TripLodgingPlan({ resortId, plan, lodgingOptions, lodgingSearchU
               || (lodgingFilter === "resort_lodging" && item.category === "condo")
               || (lodgingFilter === "hotel" && item.category === "resort_hotel")
               || (lodgingFilter === "nearby_stay" && item.category === "nearby_stay");
-            return <button key={item.id} type="button" onClick={() => setLodgingId(item.id)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === item.id ? "border-primary bg-primary/5" : "hover:bg-muted"}`}><span className="font-semibold">{item.name}</span><span className="mt-1 block text-xs text-muted-foreground">{lodgingType}{item.id === lodgingId && !matchesFilter ? " · 현재 선택" : ""}</span></button>;
+            return <button key={item.id} type="button" onClick={() => setLodgingId(item.id)} className={`min-h-11 cursor-pointer rounded-xl border p-3 text-left transition-colors ${lodgingId === item.id ? "border-foreground/20 bg-muted/60" : "hover:bg-muted"}`}><span className="font-semibold">{item.name}</span><span className="mt-1 block text-xs text-muted-foreground">{lodgingType}{item.id === lodgingId && !matchesFilter ? " · 현재 선택" : ""}</span></button>;
           })}
         </div>
         <form key={`${activeNight.date}:${lodgingId ?? "custom"}`} action={save} className="grid gap-3 sm:grid-cols-2">

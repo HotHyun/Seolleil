@@ -15,7 +15,7 @@ export function ResortShuttleCoverage({ resortName, routes, coverage }: { resort
 export function CoverageLegend({ coverage }: { coverage: SkiShuttleCoverage }) {
   return <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
     {coverage.confirmedRouteCount > 0 ? <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-emerald-800 dark:text-emerald-200"><CircleCheck className="h-4 w-4" />확정 시간표 {coverage.confirmedRouteCount}</span> : null}
-    {coverage.recheckRouteCount > 0 ? <span className="inline-flex items-center gap-2 rounded-full bg-amber-500/15 px-3 py-1 text-amber-800 dark:text-amber-200"><RotateCcw className="h-4 w-4" />시간 재확인 {coverage.recheckRouteCount}</span> : null}
+    {coverage.recheckRouteCount > 0 ? <span className="inline-flex items-center gap-2 rounded-full bg-muted/60 px-3 py-1 text-foreground"><RotateCcw className="h-4 w-4" />시간 재확인 {coverage.recheckRouteCount}</span> : null}
     {coverage.status === "no_affiliate_service" ? <span className="inline-flex items-center gap-2 rounded-full bg-slate-500/15 px-3 py-1 text-slate-700 dark:text-slate-200"><Ban className="h-4 w-4" />운행 없음</span> : null}
   </div>;
 }

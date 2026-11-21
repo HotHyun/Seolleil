@@ -4,10 +4,10 @@ import { AnalyticsLink } from "@/components/analytics-link";
 // 공유 링크로 들어온 동행자가 자기 트립을 만들도록 안내한다. 가장 비용이 낮은 바이럴 경로다.
 export function ShareInviteCta({ permission }: { permission: "view" | "edit" }) {
   return (
-    <section aria-labelledby="share-invite-cta-title" className="rounded-2xl border bg-card p-5 shadow-sm sm:p-6" data-testid="share-invite-cta">
+    <section aria-labelledby="share-invite-cta-title" className="rounded-2xl border bg-card p-5 sm:p-6" data-testid="share-invite-cta">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <span className="rounded-xl bg-primary/10 p-3 text-primary"><Snowflake aria-hidden="true" className="h-5 w-5" /></span>
+          <span className="text-muted-foreground"><Snowflake aria-hidden="true" className="h-5 w-5" /></span>
           <div>
             <h2 id="share-invite-cta-title" className="font-semibold">나도 스키 트립 만들기</h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">로그인 없이 스키장 추천, 렌탈·리프트·셔틀 비용 비교, 준비물 체크리스트까지 한 번에 만들 수 있어요.</p>

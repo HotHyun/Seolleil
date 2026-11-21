@@ -1,5 +1,6 @@
 "use client";
 
+import { ConfidenceDot } from "@/components/confidence-badge";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -126,11 +127,11 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
 
           <section>
             <h2 className="mb-3 font-semibold">예상 비용을 실제 금액으로 확정</h2>
-            {referenceKeys.size ? <p className="mb-3 rounded-md bg-amber-500/15 px-3 py-2 text-sm font-semibold text-amber-700 dark:text-amber-200">26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 금액도 자동으로 바뀌어요.</p> : null}
+            {referenceKeys.size ? <p className="mb-3 rounded-md bg-muted/60 px-3 py-2 text-sm text-muted-foreground">26/27 공식 가격이 아직 없는 항목은 25/26 가격을 참고가로 합산했어요. 공식 가격이 게시되면 이 금액도 자동으로 바뀌어요.</p> : null}
             <div className="grid gap-3 sm:grid-cols-2">
               {budgetCostKeys.map(({ key, label }) => { const item = totals.items.find(candidate => candidate.key === key); return (
-                <Field key={key} label={`${label} · ${budget.overrides[key] !== undefined ? "확정" : item ? `예상 ${formatCurrency(item.amount)}${referenceKeys.has(key) ? " · 25/26 참고가" : ""}` : "직접 입력"}`}>
-                  <Input name={`${key}Override`} type="number" min={0} inputMode="numeric" defaultValue={budget.overrides[key]} placeholder={item ? String(item.amount) : "0"} onChange={event => setBudget(current => ({ ...current, overrides: { ...current.overrides, [key]: event.target.value === "" ? undefined : Number(event.target.value) } }))} />
+                <Field key={key} label={<span className="inline-flex flex-wrap items-center gap-x-2">{label}<span className="inline-flex items-center gap-2 font-normal text-muted-foreground">{budget.overrides[key] !== undefined ? <><ConfidenceDot confidence="confirmed" />확정</> : item ? <><ConfidenceDot confidence={item.confidence} />예상 {formatCurrency(item.amount)}{referenceKeys.has(key) ? " · 25/26 참고가" : ""}</> : "직접 입력"}</span></span>}>
+                  <Input name={`${key}Override`} type="number" min={0} inputMode="numeric" defaultValue={budget.overrides[key]} placeholder={item ? formatCurrency(item.amount) : "₩0"} onChange={event => setBudget(current => ({ ...current, overrides: { ...current.overrides, [key]: event.target.value === "" ? undefined : Number(event.target.value) } }))} />
                 </Field>
               ); })}
             </div>
@@ -161,5 +162,5 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
 }
 
 function ChoiceSummary({ label, value, href }: { label: string; value: string; href: string }) {
-  return <div className="flex min-w-0 items-center gap-3 rounded-xl border bg-muted/40 p-3"><div className="min-w-0 flex-1"><p className="text-xs font-medium text-muted-foreground">{label}</p><p className="mt-1 truncate text-sm font-semibold">{value}</p></div><Link href={href} aria-label={`${label} 변경`} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-primary hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">변경 <ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link></div>;
+  return <div className="flex min-w-0 items-center gap-3 rounded-xl border bg-muted/40 p-3"><div className="min-w-0 flex-1"><p className="text-xs font-medium text-muted-foreground">{label}</p><p className="mt-1 truncate text-sm font-semibold">{value}</p></div><Link href={href} aria-label={`${label} 변경`} className="inline-flex min-h-9 shrink-0 items-center gap-1 rounded-lg px-2 text-xs font-semibold text-primary hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">변경 <ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link></div>;
 }

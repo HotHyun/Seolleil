@@ -17,6 +17,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getResort } from "@/data/resorts";
 import { getTripByEditTokenHash, getTripDisplayName } from "@/lib/trip-store";
 import { withCurrentCost } from "@/lib/trip-current-cost";
+import { summarizeTripCost } from "@/lib/trip-cost-summary";
 import { hashToken } from "@/lib/tokens";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
@@ -66,7 +67,7 @@ export default async function TripEditPage({
 
   return (
     <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
-      <TripWorkspaceNav basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks}>
+      <TripWorkspaceNav costSummary={summarizeTripCost(trip)} basePath={`/trips/${editToken}`} activeView={activeView} tasks={trip.tasks}>
       <div className="space-y-4">
       {activeView === "overview" ? <div className="rounded-lg border border-border bg-muted/60 p-3 text-amber-950 sm:p-4">
         <div className="flex gap-3">

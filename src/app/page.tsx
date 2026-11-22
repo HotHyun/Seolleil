@@ -1,8 +1,9 @@
-import { ArrowRight, CheckCircle2, Link2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Link2, ShieldCheck } from "lucide-react";
 import { confidenceMeta, confidenceOrder } from "@/components/confidence-badge";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
-import type { SampleRow } from "@/components/ui/trip-result-preview-card";
+import { HeroQuickForm } from "@/components/ui/hero-quick-form";
+import { TripResultPreviewCard, type SampleRow } from "@/components/ui/trip-result-preview-card";
 import { seasonResearchRecords } from "@/data/season-research";
 import { rentalShops, resorts } from "@/data/resorts";
 import { getRecommendations } from "@/lib/recommendation";
@@ -82,7 +83,7 @@ export default function HomePage() {
   return (
     <main id="main-content" className="bg-background" tabIndex={-1}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
-      <CinematicHero rows={sample.rows} label={sample.label} />
+      <CinematicHero resorts={resorts.filter(resort => resort.operationStatus === "operating").map(({ id, name, region }) => ({ id, name, region }))} />
 
       <section aria-label="수록 데이터" className="page-shell">
         <dl className="grid grid-cols-3 gap-4 border-y py-5 sm:py-6">
@@ -94,7 +95,7 @@ export default function HomePage() {
 
       <section className="py-16 sm:py-24">
         <div className="page-shell">
-          <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-tight sm:text-4xl">스키장 추천부터 가격 비교, 장갑 챙기기까지 스키 여행 준비 하나로</h2>
+          <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-tight sm:text-4xl">렌탈·숙박 비교부터 동행자와 비용 나누기까지, 스키 여행 준비 하나로</h2>
 
           <div className="mt-10 grid gap-4 lg:grid-cols-12">
             <article className="rounded-2xl border bg-card p-6 lg:col-span-7 lg:p-8">
@@ -168,13 +169,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-t">
-        <div className="page-shell flex flex-col gap-6 py-14 sm:flex-row sm:items-center sm:justify-between sm:py-16">
+      <section id="recommend" className="scroll-mt-20 border-t py-14 sm:py-20">
+        <div className="page-shell grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
           <div>
-            <h2 className="text-balance text-2xl font-semibold leading-tight sm:text-3xl">날짜와 출발지만 있으면 추천이 나와요</h2>
-            <p className="mt-2 text-muted-foreground">로그인은 나중에 해도 괜찮아요</p>
+            <h2 className="text-balance text-2xl font-semibold leading-tight sm:text-3xl">어디 갈지 모르겠다면 추천받아요</h2>
+            <p className="mt-2 text-muted-foreground">날짜와 출발지만 있으면 이동 시간과 리프트·렌탈·교통 예상 총액으로 스키장을 비교해 드려요. 로그인은 나중에 해도 괜찮아요.</p>
+            <HeroQuickForm />
+            <p className="mt-4 text-sm text-muted-foreground">
+              인원·장비 같은 조건을 직접 정하려면{" "}
+              <AnalyticsLink href="/plan" eventName="home_final_cta_click" className="font-medium text-primary underline-offset-4 hover:underline">조건 직접 입력</AnalyticsLink>
+            </p>
           </div>
-          <AnalyticsLink href="/plan" eventName="home_final_cta_click" className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-primary px-6 font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">내 트립 만들기 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" /></AnalyticsLink>
+          <TripResultPreviewCard rows={sample.rows} label={sample.label} />
         </div>
       </section>
     </main>

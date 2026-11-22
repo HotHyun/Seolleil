@@ -8,6 +8,9 @@ import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerHeader, Dr
 import { isTaskComplete } from "@/lib/checklist";
 import { taskStatusChangedEvent, type TaskStatusChangedDetail } from "@/components/trip/task-status-events";
 import type { TripWorkspaceView } from "@/lib/trip-workspace";
+import type { TripCostSummary } from "@/lib/trip-cost-summary";
+import { tripCostPreviewEvent } from "@/components/trip/trip-cost-events";
+import { formatCurrency } from "@/lib/utils";
 
 const items = [
   { id: "overview", label: "트립 개요", description: "일정과 준비 현황", icon: LayoutDashboard },
@@ -52,7 +55,18 @@ function writeCollapsed(next: boolean) {
   collapsedListeners.forEach(listener => listener());
 }
 
-export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHref }: { basePath: string; activeView: TripWorkspaceView; tasks: Array<{ id: string; category: string; status: string }>; children: React.ReactNode; backHref?: string }) {
+export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHref, costSummary }: { basePath: string; activeView: TripWorkspaceView; tasks: Array<{ id: string; category: string; status: string }>; children: React.ReactNode; backHref?: string; costSummary?: TripCostSummary | null }) {
+  const [liveCost, setLiveCost] = useState(costSummary ?? null);
+  const [syncedCost, setSyncedCost] = useState(costSummary);
+  if (syncedCost !== costSummary) {
+    setSyncedCost(costSummary);
+    setLiveCost(costSummary ?? null);
+  }
+  useEffect(() => {
+    const update = (event: Event) => setLiveCost((event as CustomEvent<TripCostSummary>).detail);
+    window.addEventListener(tripCostPreviewEvent, update);
+    return () => window.removeEventListener(tripCostPreviewEvent, update);
+  }, []);
   const [visibleTasks, setVisibleTasks] = useState(tasks);
   const collapsed = useSyncExternalStore(subscribeCollapsed, readCollapsed, () => false);
   const contentRef = useRef<HTMLElement>(null);
@@ -142,7 +156,10 @@ export function TripWorkspaceNav({ basePath, activeView, tasks, children, backHr
             <ButtonLike onClick={toggleSidebar} collapsed={collapsed} />
           </div>
         </aside>
-        <section ref={contentRef} onClickCapture={prepareLinkedWorkspaceNavigation} className="min-w-0 scroll-mt-16 animate-in fade-in duration-200 motion-reduce:animate-none lg:px-5 lg:py-4 lg:pb-6">{children}</section>
+        <div className="min-w-0">
+          {liveCost ? <TripCostBar summary={liveCost} href={`${basePath}?view=budget`} onNavigate={prepareWorkspaceNavigation} active={activeView === "budget"} /> : null}
+          <section ref={contentRef} onClickCapture={prepareLinkedWorkspaceNavigation} className="min-w-0 scroll-mt-16 animate-in fade-in duration-200 motion-reduce:animate-none lg:px-5 lg:py-4 lg:pb-6">{children}</section>
+        </div>
       </div>
     </>
   );
@@ -161,4 +178,21 @@ function ButtonLike({ onClick, collapsed }: { onClick: () => void; collapsed: bo
     <Icon className="h-4 w-4 shrink-0" />
     {!collapsed ? <span>사이드바 접기</span> : null}
   </button>;
+}
+
+function TripCostBar({ summary, href, active, onNavigate }: { summary: TripCostSummary; href: string; active: boolean; onNavigate: (href: string) => void }) {
+  const unconfirmedShare = summary.total > 0 ? Math.round(summary.estimatedAmount / summary.total * 100) : 0;
+  return (
+    <Link href={href} scroll={false} onClick={() => onNavigate(href)} aria-current={active ? "page" : undefined} aria-label="비용·정산으로 이동" data-testid="trip-cost-bar" style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)" }} className="fixed left-4 right-24 z-30 flex min-h-14 items-center justify-between gap-3 rounded-xl border bg-card px-4 py-2 shadow-lg outline-none transition-colors hover:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring lg:sticky lg:top-16 lg:left-auto lg:right-auto lg:bottom-auto lg:min-h-12 lg:rounded-none lg:bg-card/95 lg:backdrop-blur lg:border-x-0 lg:border-t-0 lg:px-5 lg:shadow-none">
+      <span className="min-w-0">
+        <span className="block text-xs text-muted-foreground">지금까지 예상 총액</span>
+        <span className="block text-lg font-semibold tabular-nums" data-testid="trip-cost-total">{formatCurrency(summary.total)}</span>
+      </span>
+      <span className="shrink-0 text-right">
+        <span className="block text-xs text-muted-foreground">{summary.splitCount}명 기준 1인</span>
+        <span className="block text-sm font-semibold tabular-nums">{formatCurrency(summary.perPerson)}</span>
+        {unconfirmedShare > 0 ? <span className="block text-xs text-muted-foreground">참고가 {unconfirmedShare}%</span> : <span className="block text-xs text-muted-foreground">모두 확정</span>}
+      </span>
+    </Link>
+  );
 }

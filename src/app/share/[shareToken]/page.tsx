@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { hashToken } from "@/lib/tokens";
 import { getShareLinkByTokenHash, getTripByShareTokenHash, getTripDisplayName, recordAnalyticsEvent } from "@/lib/trip-store";
 import { withCurrentCost } from "@/lib/trip-current-cost";
+import { summarizeTripCost } from "@/lib/trip-cost-summary";
 import { getResort } from "@/data/resorts";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
@@ -67,7 +68,7 @@ export default async function SharePage({ params, searchParams }: { params: Prom
   return (
     <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
       <AnalyticsTrack eventName="share_page_view" eventData={{ permission: canEdit ? "edit" : "view" }} />
-      <TripWorkspaceNav basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
+      <TripWorkspaceNav costSummary={summarizeTripCost(trip)} basePath={`/share/${shareToken}`} activeView={activeView} tasks={trip.tasks}>
       {activeView === "overview" ? <div className="mb-4">
         <StatusBadge tone="good">{canEdit ? "함께 편집" : "보기 전용"}</StatusBadge>
         <h1 data-trip-workspace-title tabIndex={-1} className="mt-3 text-3xl font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring md:text-5xl">{getTripDisplayName(trip)}</h1>

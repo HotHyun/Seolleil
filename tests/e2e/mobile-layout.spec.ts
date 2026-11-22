@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 import { expectClickablePrimaryNav, expectNoEmptyMain, expectNoHorizontalOverflow, planQuery } from "./helpers";
 
 const mobilePages = [
-  { path: "/", heading: /이동 시간과 총비용으로/ },
+  { path: "/", heading: /가는 스키장의 여행을/ },
   { path: "/plan", heading: /조건을 입력하면/ },
   { path: planQuery, heading: /추천 스키장 3곳/ },
   { path: "/resorts", heading: /국내 스키장/ },

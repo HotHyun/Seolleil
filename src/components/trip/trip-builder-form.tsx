@@ -10,19 +10,28 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { earliestSelectableDate, formatOpenDate, getSeasonOpening } from "@/lib/season-open";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
-import { departureLocations } from "@/data/resorts";
+import { departureLocations, resorts } from "@/data/resorts";
 import { priorityLabels, timeSlotLabels } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 import { normalizeTransportType } from "@/lib/transport";
 import { currentPathWithSearch, readPendingTripDraft } from "@/lib/pending-trip-draft";
-import type { SkiResort } from "@/lib/types";
+
+export const recommendChoice = "recommend";
+
+// 운영 중인 스키장을 먼저, 운영 확인이 필요한 곳은 뒤에 둔다. 마지막은 추천 흐름으로 가는 선택지다.
+const resortChoiceOptions = [
+  ...[...resorts]
+    .sort((a, b) => Number(b.operationStatus === "operating") - Number(a.operationStatus === "operating") || a.name.localeCompare(b.name, "ko"))
+    .map(resort => ({ value: resort.id, label: resort.operationStatus === "operating" ? `${resort.name} · ${resort.region}` : `${resort.name} · ${resort.region} (운영 확인 필요)` })),
+  { value: recommendChoice, label: "스키장 추천받을래요" }
+];
 
 const steps = [
   {
     icon: CalendarDays,
     title: "여행 정보",
     eyebrow: "Step 1",
-    description: "날짜와 이동 기준 지역만 정하면 시작할 수 있어요."
+    description: "스키장과 날짜, 이동 기준 지역만 정하면 시작할 수 있어요."
   },
   {
     icon: MapPin,
@@ -33,12 +42,17 @@ const steps = [
 ];
 
 export function TripBuilderForm({
-  action = "/recommendations",
-  selectedResort
+  directAction,
+  initialChoice = ""
 }: {
-  action?: string | ((formData: FormData) => void | Promise<void>);
-  selectedResort?: SkiResort;
+  // 스키장을 고른 경우 트립을 바로 만드는 서버 액션. 추천을 고르면 /recommendations로 GET 이동한다.
+  directAction?: (formData: FormData) => void | Promise<void>;
+  initialChoice?: string;
 }) {
+  const [choice, setChoice] = React.useState(initialChoice);
+  const selectedResort = resorts.find(resort => resort.id === choice);
+  const isRecommend = choice === recommendChoice;
+  const action = selectedResort && directAction ? directAction : "/recommendations";
   const { isAuthenticated } = useFirebaseSession();
   const [step, setStep] = React.useState(0);
   const [maxStepReached, setMaxStepReached] = React.useState(0);
@@ -55,10 +69,11 @@ export function TripBuilderForm({
   const ActiveIcon = activeStep.icon;
 
   React.useEffect(() => {
-    if (!isAuthenticated || !selectedResort) return;
+    if (!isAuthenticated) return;
     const draft = readPendingTripDraft(currentPathWithSearch());
-    if (!draft || draft.values.resortId !== selectedResort.id) return;
+    if (!draft || !draft.values.resortId || !resorts.some(resort => resort.id === draft.values.resortId)) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- restores a client-only pending draft after mount
+    setChoice(draft.values.resortId);
     setDraftValues(draft.values);
     setTripDuration(draft.values.tripDuration ?? "same_day");
     setVisitDate(draft.values.visitDate ?? "");
@@ -66,7 +81,7 @@ export function TripBuilderForm({
     setStep(steps.length - 1);
     setMaxStepReached(steps.length - 1);
     setDraftRevision(1);
-  }, [isAuthenticated, selectedResort]);
+  }, [isAuthenticated]);
 
   const draftValue = (name: string, fallback?: string) => draftValues[name] ?? fallback;
 
@@ -75,6 +90,10 @@ export function TripBuilderForm({
     if (!form) return;
 
     if (step === 0) {
+      if (!choice) {
+        setError("스키장을 고르거나 ‘스키장 추천받을래요’를 선택해 주세요.");
+        return;
+      }
       const data = new FormData(form);
       const visitDate = String(data.get("visitDate") ?? "");
       if (!visitDate) {
@@ -133,13 +152,6 @@ export function TripBuilderForm({
           <div className="h-full bg-primary transition-colors duration-500 ease-out" style={{ width: `${progress}%` }} />
         </div>
         <CardHeader>
-          {selectedResort ? (
-            <div className="mb-4 rounded-lg border bg-muted/50 px-3 py-2">
-              <div className="text-xs text-muted-foreground">선택한 스키장</div>
-              <div className="mt-1 font-semibold">{selectedResort.name}</div>
-              <div className="mt-0.5 text-xs font-semibold text-muted-foreground">{selectedResort.region}</div>
-            </div>
-          ) : null}
           <div className="flex items-start justify-between gap-4">
             <div>
               <CardTitle className="flex items-center gap-2 text-2xl font-semibold">
@@ -194,6 +206,20 @@ export function TripBuilderForm({
 
           <div className="relative min-h-[460px]">
             <StepPanel active={step === 0}>
+              <div className="md:col-span-2">
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold text-foreground">스키장</span>
+                    {!isRecommend ? (
+                      <button type="button" onClick={() => { setChoice(recommendChoice); setError(""); }} className="inline-flex min-h-11 items-center rounded-md px-1 text-sm font-medium text-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                        스키장을 추천받고 싶나요?
+                      </button>
+                    ) : null}
+                  </div>
+                  <SelectField value={choice} onValueChange={value => { setChoice(value); setError(""); }} ariaLabel="스키장" placeholder="스키장을 선택해 주세요" options={resortChoiceOptions} />
+                  {isRecommend ? <p className="text-sm leading-6 text-muted-foreground">조건을 입력하면 이동 시간과 예상 총액으로 스키장 3곳을 추천해 드려요.</p> : null}
+                </div>
+              </div>
               <Field label="방문 날짜">
                 <DatePicker name="visitDate" required min={earliestSelectableDate(selectedResort?.id)} value={visitDate || draftValue("visitDate", "")} onValueChange={value => { setVisitDate(value); if (endDate && endDate <= value) setEndDate(""); }} ariaLabel="여행 방문 날짜" />
               </Field>
@@ -354,7 +380,7 @@ export function TripBuilderForm({
               다음 단계 <ArrowRight className="h-4 w-4" />
             </Button>
           ) : (
-            selectedResort ? (
+            selectedResort && directAction ? (
               <CreateTripSubmit
                 isAuthenticated={isAuthenticated}
                 label={`${selectedResort.name} 트립 만들기`}

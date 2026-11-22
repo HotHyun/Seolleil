@@ -160,7 +160,7 @@ export default function HomePage() {
             <HeroQuickForm />
             <p className="mt-4 text-sm text-muted-foreground">
               인원·장비 같은 조건을 직접 정하려면{" "}
-              <AnalyticsLink href="/plan" eventName="home_final_cta_click" className="font-medium text-primary underline-offset-4 hover:underline">조건 직접 입력</AnalyticsLink>
+              <AnalyticsLink href="/plan?mode=recommend" eventName="home_final_cta_click" className="font-medium text-primary underline-offset-4 hover:underline">조건 직접 입력</AnalyticsLink>
             </p>
           </div>
           <TripResultPreviewCard rows={sample.rows} label={sample.label} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { labelKakaoMapLinks } from "@/lib/kakao-map-a11y";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, ChevronRight, ExternalLink, Hotel, List, MapPin, Search, Shirt } from "lucide-react";
 import Link from "next/link";
@@ -105,6 +106,7 @@ export function ResortMapExplorer({ resorts, rentalShops }: { resorts: SkiResort
       map.setCenter(center);
       map.setLevel(showNearby ? 6 : 10);
       kakaoMapRef.current = map;
+      labelKakaoMapLinks(mapRef.current);
       drawKakaoMarkers(map);
     };
 

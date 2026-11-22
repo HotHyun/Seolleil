@@ -16,9 +16,9 @@ function PlanPageFallback() {
     <main className="page-shell py-8" aria-busy="true">
       <AnalyticsTrack eventName="trip_form_start" />
       <div className="mb-8 max-w-3xl">
-        <h1 className="text-3xl font-semibold md:text-4xl">조건을 입력하면 추천 3곳을 비교해요</h1>
+        <h1 className="text-3xl font-semibold md:text-4xl">어느 스키장으로 여행 가세요?</h1>
       </div>
-      <TripBuilderForm action="/recommendations" />
+      <TripBuilderForm />
     </main>
   );
 }

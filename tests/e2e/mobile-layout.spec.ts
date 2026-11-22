@@ -3,7 +3,7 @@ import { expectClickablePrimaryNav, expectNoEmptyMain, expectNoHorizontalOverflo
 
 const mobilePages = [
   { path: "/", heading: /스키장은 정했죠\?/ },
-  { path: "/plan", heading: /조건을 입력하면/ },
+  { path: "/plan", heading: /어느 스키장으로 여행 가세요/ },
   { path: planQuery, heading: /추천 스키장 3곳/ },
   { path: "/resorts", heading: /국내 스키장/ },
   { path: "/login", heading: /내 트립 저장하기/ }

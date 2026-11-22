@@ -1,4 +1,4 @@
-import { CheckCircle2, Link2, ShieldCheck } from "lucide-react";
+import { ArrowRight, CheckCircle2, Link2, ShieldCheck } from "lucide-react";
 import { confidenceMeta, confidenceOrder } from "@/components/confidence-badge";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { CinematicHero } from "@/components/ui/cinematic-landing-hero";
@@ -95,7 +95,7 @@ export default function HomePage() {
 
       <section className="py-16 sm:py-24">
         <div className="page-shell">
-          <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-tight sm:text-4xl">렌탈·숙박 비교부터 동행자와 비용 나누기까지, 스키 여행 준비 하나로</h2>
+          <h2 className="max-w-2xl text-balance text-3xl font-semibold leading-tight sm:text-4xl">스키 여행 준비, 한곳에서</h2>
 
           <div className="mt-10 grid gap-4 lg:grid-cols-12">
             <article className="rounded-2xl border bg-card p-6 lg:col-span-7 lg:p-8">
@@ -152,6 +152,21 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="recommend" className="scroll-mt-20 border-t py-14 sm:py-20">
+        <div className="page-shell grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+          <div>
+            <h2 className="text-balance text-2xl font-semibold leading-tight sm:text-3xl">어디 갈지 모르겠다면 추천받아요</h2>
+            <p className="mt-2 text-muted-foreground">날짜와 출발지만 있으면 이동 시간과 리프트·렌탈·교통 예상 총액으로 스키장을 비교해 드려요. 로그인은 나중에 해도 괜찮아요.</p>
+            <HeroQuickForm />
+            <p className="mt-4 text-sm text-muted-foreground">
+              인원·장비 같은 조건을 직접 정하려면{" "}
+              <AnalyticsLink href="/plan" eventName="home_final_cta_click" className="font-medium text-primary underline-offset-4 hover:underline">조건 직접 입력</AnalyticsLink>
+            </p>
+          </div>
+          <TripResultPreviewCard rows={sample.rows} label={sample.label} />
+        </div>
+      </section>
+
       <section className="border-t py-16 sm:py-20">
         <div className="page-shell grid gap-8 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
           <h2 className="text-balance text-2xl font-semibold leading-tight sm:text-3xl">자주 묻는 질문</h2>
@@ -169,18 +184,14 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="recommend" className="scroll-mt-20 border-t py-14 sm:py-20">
-        <div className="page-shell grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
-          <div>
-            <h2 className="text-balance text-2xl font-semibold leading-tight sm:text-3xl">어디 갈지 모르겠다면 추천받아요</h2>
-            <p className="mt-2 text-muted-foreground">날짜와 출발지만 있으면 이동 시간과 리프트·렌탈·교통 예상 총액으로 스키장을 비교해 드려요. 로그인은 나중에 해도 괜찮아요.</p>
-            <HeroQuickForm />
-            <p className="mt-4 text-sm text-muted-foreground">
-              인원·장비 같은 조건을 직접 정하려면{" "}
-              <AnalyticsLink href="/plan" eventName="home_final_cta_click" className="font-medium text-primary underline-offset-4 hover:underline">조건 직접 입력</AnalyticsLink>
-            </p>
+
+      <section aria-labelledby="home-closing-title" className="page-shell pb-16 sm:pb-24">
+        <div className="flex flex-col gap-6 rounded-2xl bg-primary px-6 py-10 text-primary-foreground sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-14">
+          <div className="max-w-xl">
+            <h2 id="home-closing-title" className="text-balance text-2xl font-semibold leading-tight sm:text-4xl">올겨울도 설레는 스키 여행,<br />준비는 가볍게 시작해요</h2>
+            <p className="mt-3 text-pretty text-primary-foreground/80 sm:text-lg">스키장만 고르면 렌탈·숙박 비교부터 체크리스트, 비용 나누기까지 바로 이어져요.</p>
           </div>
-          <TripResultPreviewCard rows={sample.rows} label={sample.label} />
+          <AnalyticsLink href="/resorts" eventName="home_closing_cta_click" className="group inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-lg bg-background px-6 font-semibold text-foreground transition-colors hover:bg-background/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-background focus-visible:ring-offset-2 focus-visible:ring-offset-primary">스키장 고르러 가기 <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none" /></AnalyticsLink>
         </div>
       </section>
     </main>

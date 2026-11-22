@@ -1,5 +1,6 @@
 "use client";
 
+import { labelKakaoMapLinks } from "@/lib/kakao-map-a11y";
 import { useEffect, useRef, useState } from "react";
 import { ExternalLink, LoaderCircle, MapPin, TriangleAlert } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,6 +81,7 @@ export function PlaceComparisonMap({ candidates, selectedId, onSelect }: { candi
     if (!first) return;
     const center = new window.kakao.maps.LatLng(first.lat, first.lng);
     const map = mapRef.current ?? new window.kakao.maps.Map(containerRef.current, { center, level: 5 });
+    labelKakaoMapLinks(containerRef.current);
     map.setCenter(center);
     map.setLevel(selectedId ? 4 : 5);
     mapRef.current = map;

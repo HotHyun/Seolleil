@@ -51,7 +51,7 @@ function RecommendationsContent() {
           <h1 className="text-balance text-3xl font-semibold md:text-4xl">추천 스키장 3곳</h1>
           <p className="mt-2 text-sm text-muted-foreground">{departureLabel} 출발 · {input.peopleCount}명 · {formatOpenDate(input.visitDate)} 방문</p>
         </div>
-        <a href="/plan" className="shrink-0">
+        <a href="/plan?mode=recommend" className="shrink-0">
           <Button variant="secondary">조건 바꾸기</Button>
         </a>
       </div>
@@ -84,7 +84,7 @@ function RecommendationsContent() {
                   야간·교통 조건을 낮추거나 출발지를 바꿔 다시 시도해 주세요
                 </p>
               </div>
-              <a href="/plan">
+              <a href="/plan?mode=recommend">
                 <Button>조건 바꾸기</Button>
               </a>
             </CardContent>

@@ -20,13 +20,13 @@ export default function DatePickerCalendar({ date, onSelect, minDate, maxDate }:
       weekStartsOn={0}
       fixedWeeks
       classNames={{
-        root: "relative p-0 [--rdp-nav_button-height:2.75rem] [--rdp-nav_button-width:2.75rem] [--rdp-accent-color:hsl(var(--foreground))]",
+        root: "relative p-0 [--rdp-nav_button-height:45px] [--rdp-nav_button-width:45px] [--rdp-accent-color:hsl(var(--foreground))]",
         month: "relative",
         month_caption: "relative flex h-11 items-center justify-center px-11",
         caption_label: "calendar-caption pointer-events-none text-sm font-semibold",
         nav: "pointer-events-none absolute inset-x-0 top-0 z-10 flex h-11 items-center justify-between",
-        button_previous: "calendar-previous absolute left-0 top-0 z-10 inline-flex h-11 w-11 touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        button_next: "calendar-next absolute right-0 top-0 z-10 inline-flex h-11 w-11 touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        button_previous: "calendar-previous absolute shrink-0 min-h-[45px] min-w-[45px] left-0 top-0 z-10 inline-flex h-[45px] w-[45px] touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        button_next: "calendar-next absolute shrink-0 min-h-[45px] min-w-[45px] right-0 top-0 z-10 inline-flex h-[45px] w-[45px] touch-manipulation cursor-pointer items-center justify-center rounded-lg border bg-background text-foreground hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         month_grid: "w-full border-collapse",
         weekdays: "flex",
         weekday: "w-11 py-2 text-center text-xs font-medium text-muted-foreground",

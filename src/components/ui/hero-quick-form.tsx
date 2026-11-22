@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DatePicker } from "@/components/ui/date-picker";
+import { SelectField } from "@/components/ui/select-field";
 import { departureLocations } from "@/data/departure-locations";
 import { todayKst } from "@/lib/kst-date";
 
@@ -10,6 +11,8 @@ const hiddenDefaults: Array<[string, string]> = [
   ["rideType", "ski"], ["ownsEquipment", "false"], ["ownsClothing", "false"], ["priority1", "beginner"],
   ["priority2", "close"], ["priority3", "rental"], ["liftTicketTimeSlot", "4h"]
 ];
+
+const departureOptions = departureLocations.map(location => ({ value: location.id, label: location.label }));
 
 const fieldClass = "h-11 min-h-11 w-full rounded-lg bg-card px-3 text-sm font-medium shadow-none hover:bg-card";
 
@@ -25,9 +28,7 @@ export function HeroQuickForm() {
       </div>
       <div className="grid gap-2">
         <span className="text-xs font-medium text-muted-foreground">출발지</span>
-        <select name="departureLocation" defaultValue="seoul-gangnam" aria-label="출발지" className="h-11 w-full rounded-lg border border-input bg-card px-3 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background">
-          {departureLocations.map(location => <option key={location.id} value={location.id}>{location.label}</option>)}
-        </select>
+        <SelectField name="departureLocation" defaultValue="seoul-gangnam" ariaLabel="출발지" options={departureOptions} className={fieldClass} />
       </div>
       {hiddenDefaults.map(([name, value]) => <input key={name} type="hidden" name={name} value={value} />)}
       <button type="submit" disabled={!visitDate} className="h-11 rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:cursor-not-allowed disabled:opacity-50">추천 보기</button>

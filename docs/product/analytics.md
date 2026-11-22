@@ -30,7 +30,7 @@ MVP에서는 Umami와 Firestore 제품 이벤트를 함께 사용한다.
 
 ## 추적할 Umami 이벤트
 
-- `home_primary_cta_click`, `home_final_cta_click`, `home_resorts_click`: 홈 CTA.
+- `home_primary_cta_click`, `home_final_cta_click`, `home_closing_cta_click`, `home_resorts_click`: 홈 CTA.
 - `trip_form_start`: 조건 입력 화면 진입. `/plan?ref=share`로 들어오면 `ref=share`가 붙어 공유 페이지 유입을 구분한다(`ref`는 소문자·밑줄 20자 이내만 허용).
 - `trip_create_submit`, `trip_create_login_continue`: 트립 생성 시도·로그인 이어가기.
 - `recommendation_view`, `resort_detail_view`, `resort_map_open`.

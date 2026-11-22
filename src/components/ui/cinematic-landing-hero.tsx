@@ -31,10 +31,10 @@ export function CinematicHero({ resorts }: { resorts: PickerResort[] }) {
       <div className="page-shell relative flex flex-col py-8 lg:min-h-[min(680px,calc(100svh-4rem))] lg:justify-center lg:py-16">
         <div className="max-w-[560px]">
           <h1 className="hero-reveal break-keep text-balance text-4xl font-semibold leading-[1.2] sm:text-5xl">
-            가는 스키장의 여행을<br />빠짐없이, 더 합리적으로<br />준비해요
+            스키장은 정했죠?<br />나머지는 여기서 끝내요
           </h1>
           <p className="hero-reveal hero-delay-1 mt-4 break-keep text-pretty text-base leading-7 text-muted-foreground sm:text-lg">
-            렌탈샵·숙박·셔틀을 한곳에서 비교하고, 동행자와 체크리스트를 나누고, 지금까지 고른 여행 비용이 얼마인지 바로 확인해요.
+            렌탈샵, 숙소, 챙길 것, 총비용까지 같이 가는 사람과 한 화면에서 정리해요.
           </p>
           <HeroResortPicker resorts={resorts} />
           <p className="hero-reveal hero-delay-3 mt-4 text-sm text-muted-foreground">

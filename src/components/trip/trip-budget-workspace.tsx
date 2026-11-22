@@ -12,6 +12,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
+import { announceTripCostPreview } from "@/components/trip/trip-cost-events";
+import { summarizeBudget } from "@/lib/trip-cost-summary";
 import { calculateTripBudget, type TripBudgetState, type TripExpenseCategory } from "@/lib/trip-budget";
 import type { CostEstimate } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
@@ -59,6 +61,9 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   const [splitCount, setSplitCount] = useState(trip.splitCount || trip.peopleCount);
   const [dirty, setDirty] = useState(false);
   const totals = useMemo(() => calculateTripBudget(recommendationCost(trip.selectedRecommendation), budget, splitCount), [trip.selectedRecommendation, budget, splitCount]);
+  useEffect(() => {
+    announceTripCostPreview(summarizeBudget(recommendationCost(trip.selectedRecommendation), budget, splitCount));
+  }, [trip.selectedRecommendation, budget, splitCount]);
   const referenceKeys = useMemo(() => new Set((recommendationCost(trip.selectedRecommendation)?.items ?? []).filter(item => item.referenceSeason).map(item => item.key)), [trip.selectedRecommendation]);
   const plannedRentalDays = trip.skiPlan.days.filter(day => rentalOptionIds(day).length > 0).length;
   const rentalLabel = plannedRentalDays ? `${trip.skiPlan.days.length}일 중 ${plannedRentalDays}일 선택됨` : "렌탈하지 않음 / 미정";

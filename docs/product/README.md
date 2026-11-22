@@ -6,6 +6,7 @@
 
 ## 문서 목록
 
+- `resort-first-direction.md`: 스키장 우선(Resort-first) 제품 방향, 홈·플로우 위계, 비용 가시화. 추천은 보조 진입점.
 - `mvp.md`: MVP 범위, 타깃 사용자, 핵심 플로우, 제외 범위.
 - `october-launch-roadmap.md`: 2026년 10월 런칭을 위한 월별 로드맵과 품질 기준.
 - `decisions.md`: 지금까지 확정된 제품/기술 의사결정.

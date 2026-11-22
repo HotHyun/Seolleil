@@ -26,6 +26,7 @@ import { getSession } from "@/lib/session";
 import { getTripTeamPermission, listTripMemberships } from "@/lib/trip-collaboration";
 import { getTripById, getTripDisplayName, listTripShareLinks } from "@/lib/trip-store";
 import { withCurrentCost } from "@/lib/trip-current-cost";
+import { summarizeTripCost } from "@/lib/trip-cost-summary";
 import { getRentalOptionsForResort } from "@/lib/pricing";
 import { getNearbyLodgingsForResort } from "@/data/resort-map";
 import { skiPlanDateLabel } from "@/lib/trip-ski-plan";
@@ -74,7 +75,7 @@ export default async function MyTripDetailPage({
 
   return (
     <main className="min-h-[calc(100svh-4rem)] py-3 sm:py-4 lg:py-0">
-      <TripWorkspaceNav basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks} backHref="/my-trips">
+      <TripWorkspaceNav costSummary={summarizeTripCost(trip)} basePath={`/my-trips/${trip.id}`} activeView={activeView} tasks={trip.tasks} backHref="/my-trips">
         <div className="space-y-4">
           {!canEdit ? <ReadOnlyAccessBanner compact={activeView !== "overview"} /> : null}
           {activeView === "overview" ? <Card>

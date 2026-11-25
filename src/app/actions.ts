@@ -8,6 +8,7 @@ import { tripSeasonFor } from "@/lib/season-fallback";
 import { departureLocations, getRentalShopsForResort, getResort } from "@/data/resorts";
 import { getShuttleStopsForDirection, getSkiShuttleRoutes, routeSupportsShuttleDirection } from "@/data/ski-shuttles";
 import { estimateTripCost, getRentalOptionsForResort } from "@/lib/pricing";
+import { pickShopDay } from "@/lib/rental-shop-comparison";
 import { isLegacyTransportType, normalizeTransportType } from "@/lib/transport";
 import { buildRequiredTasks, getRecommendations } from "@/lib/recommendation";
 import { createToken, hashToken } from "@/lib/tokens";
@@ -603,6 +604,37 @@ export async function updateTripDecisionSafeAction(formData: FormData) {
       patch.selectedRentalOptionId = first.packageOptionId ?? first.equipmentOptionId ?? first.clothingOptionId;
       taskCategory = equipmentOptionId || packageOptionId ? "equipment_rental" : "";
       if (clothingOptionId || packageOptionId) extraTaskCategories.push("clothing_rental");
+    } else if (decision === "rental_shop_plan") {
+      // 샵 비교 화면에서 샵을 고르면 모든 스키 날짜에 그 샵의 가장 싼 기본 구성(장비·의류·할인 리프트권)을 한 번에 채운다.
+      const shopId = String(formData.get("selectedRentalShopId") ?? "");
+      const group = getRentalOptionsForResort(trip.resortId).find(item => item.shop.id === shopId);
+      if (!group) throw new AppError("INVALID_INPUT", "선택한 렌탈샵을 찾을 수 없습니다.");
+      if (!trip.skiPlan.days.length) throw new AppError("INVALID_INPUT", "먼저 스키를 탈 날짜를 저장해 주세요.");
+      const needsEquipment = !trip.ownsEquipment;
+      const needsClothing = !trip.ownsClothing;
+      const picks = new Map(trip.skiPlan.days.map(day => [day.date, pickShopDay(group, day, { rideType: trip.rideType, needsEquipment, needsClothing })]));
+      const skiPlan: TripSkiPlan = {
+        ...trip.skiPlan,
+        days: trip.skiPlan.days.map(day => {
+          const pick = picks.get(day.date)!;
+          return {
+            ...day,
+            rentalShopId: group.shop.id,
+            equipmentOptionId: pick.equipmentOptionId,
+            clothingOptionId: pick.clothingOptionId,
+            packageOptionId: pick.packageOptionId,
+            accessoryOptionIds: day.rentalShopId === group.shop.id ? day.accessoryOptionIds : [],
+            liftTicketOptionId: pick.liftTicketOptionId
+          };
+        })
+      };
+      patch.skiPlan = skiPlan;
+      const first = skiPlan.days[0];
+      patch.selectedRentalShopId = first.rentalShopId;
+      patch.selectedRentalOptionId = first.packageOptionId ?? first.equipmentOptionId ?? first.clothingOptionId;
+      patch.selectedLiftTicketOptionId = first.liftTicketOptionId;
+      taskCategory = skiPlan.days.some(day => day.equipmentOptionId || day.packageOptionId) ? "equipment_rental" : "";
+      if (skiPlan.days.some(day => day.clothingOptionId || day.packageOptionId)) extraTaskCategories.push("clothing_rental");
     } else if (decision === "rental") {
       const optionId = String(formData.get("selectedRentalOptionId") ?? "");
       const option = optionId ? getRentalOptionsForResort(trip.resortId).flatMap(group => group.options.map(item => ({ item, shop: group.shop }))).find(entry => entry.item.id === optionId) : null;

@@ -1,70 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Check, ChevronRight, ExternalLink, Store, Ticket } from "lucide-react";
+import { Check, ExternalLink } from "lucide-react";
 import { ConfidenceDot } from "@/components/confidence-badge";
 import { LiftPromoNote } from "@/components/lift-promo-note";
-import { rentalStateLabel } from "@/components/trip/day-summary-panel";
 import { Button } from "@/components/ui/button";
-import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { timeSlotLabels } from "@/lib/constants";
 import { liftSlotOptions } from "@/lib/lift-slots";
 import { liftTicketSavings, resolveLiftPrice } from "@/lib/pricing";
-import type { DaySummary } from "@/lib/trip-day-summary";
-import { optionAppliesToDay, tripDayTypeLabel, type SkiDayPlan } from "@/lib/trip-ski-plan";
+import { optionAppliesToDay, type SkiDayPlan } from "@/lib/trip-ski-plan";
 import type { RentalPriceRule, RentalShop, TimeSlot } from "@/lib/types";
 import { cn, formatCurrency } from "@/lib/utils";
 
 type Access = { name: string; value: string };
 type Group = { shop: RentalShop; options: RentalPriceRule[] };
 
-// 선택한 날짜의 렌탈·리프트권 현황을 두 칸으로 보여 주고, 리프트권 칸에서 공식권과 렌탈샵 할인권을 비교해 고르게 한다.
-export function DayStatusBar({ resortId, day, summary, groups, peopleCount, access, save, canEdit, liftUrl, onFocusShop }: {
-  resortId: string;
-  day: SkiDayPlan;
-  summary?: DaySummary;
-  groups: Group[];
-  peopleCount: number;
-  access: Access;
-  save: (data: FormData) => Promise<boolean>;
-  canEdit: boolean;
-  liftUrl?: string;
-  onFocusShop: (shopId: string) => void;
-}) {
-  const [open, setOpen] = useState(false);
-  const liftLine = summary?.lines.find(line => line.kind === "lift");
-  const rentalState = summary?.rentalState ?? "none";
-  const confirmed = rentalState === "items";
-  return <>
-    <div className="grid grid-cols-2 gap-2" data-testid="day-status-bar">
-      <button type="button" disabled={!day.rentalShopId} onClick={() => day.rentalShopId && onFocusShop(day.rentalShopId)} className="min-h-16 cursor-pointer rounded-xl border bg-card p-3 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-default disabled:hover:bg-card">
-        <span className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground"><Store aria-hidden="true" className="h-3.5 w-3.5" />렌탈</span>
-        <span className="mt-1 block truncate text-sm font-semibold">{summary?.shopName ?? "아직 정하지 않았어요"}</span>
-        <span className={cn("mt-0.5 block text-xs font-medium", confirmed ? "text-emerald-700 dark:text-emerald-300" : "text-amber-700 dark:text-amber-300")}>{day.rentalShopId ? rentalStateLabel(rentalState) : "아래 지도에서 샵 고르기"}</span>
-      </button>
-      <button type="button" onClick={() => setOpen(true)} className="min-h-16 cursor-pointer rounded-xl border bg-card p-3 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-        <span className="flex items-center justify-between gap-1.5 text-xs font-semibold text-muted-foreground"><span className="flex items-center gap-1.5"><Ticket aria-hidden="true" className="h-3.5 w-3.5" />리프트권</span><ChevronRight aria-hidden="true" className="h-4 w-4" /></span>
-        <span className="mt-1 block truncate text-sm font-semibold">{liftLine?.label ?? `공식 ${timeSlotLabels[day.timeSlot]}`}</span>
-        <span className="mt-0.5 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">{liftLine && liftLine.perPerson !== null ? <><ConfidenceDot confidence={liftLine.confidence} />{formatCurrency(liftLine.perPerson)}/인 · 공식·할인권 비교</> : "가격 미공개 · 공식·할인권 비교"}</span>
-      </button>
-    </div>
-
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerContent className="lg:mx-auto lg:max-w-xl">
-        <DrawerTitle className="text-lg font-semibold">{day.date} 리프트권</DrawerTitle>
-        <DrawerDescription className="mb-4 mt-1 text-sm text-muted-foreground">{tripDayTypeLabel(day.date)} · {timeSlotLabels[day.timeSlot]} 기준이에요. 공식권과 렌탈샵 할인권 중 하나를 고르세요.</DrawerDescription>
-        <div id="lift" className="space-y-4">
-          <LiftChoices key={`${day.date}-${day.timeSlot}-${day.liftTicketOptionId ?? "official"}`} resortId={resortId} day={day} groups={groups} peopleCount={peopleCount} access={access} save={save} canEdit={canEdit} liftUrl={liftUrl} onDone={() => setOpen(false)} />
-        </div>
-      </DrawerContent>
-    </Drawer>
-  </>;
-}
-
-function LiftChoices({ resortId, day, groups, peopleCount, access, save, canEdit, liftUrl, onDone }: {
+// 한 날짜의 리프트권을 공식권과 렌탈샵 할인권 중에서 비교해 고른다.
+export function LiftChoices({ resortId, day, groups, peopleCount, access, save, canEdit, liftUrl, onDone }: {
   resortId: string;
   day: SkiDayPlan;
   groups: Group[];

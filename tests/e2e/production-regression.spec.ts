@@ -203,7 +203,8 @@ test.describe("production regression", () => {
       await expect(decisions.getByText(/렌탈 가격 미공개/)).toHaveCount(0);
       await decisions.getByRole("button", { name: /2027-01-10 렌탈 저장/ }).click();
       await expect(page.getByText("선택을 트립에 저장했어요.").last()).toBeVisible();
-      await decisions.getByTestId("day-status-bar").getByRole("button", { name: /리프트권/ }).click();
+      await decisions.getByTestId("day-summary-panel").getByRole("button", { name: /이 날짜 렌탈/ }).first().click();
+      await page.getByRole("tab", { name: "리프트권" }).click();
       await page.locator("#lift").getByRole("combobox").click();
       await page.getByRole("option", { name: "6시간권" }).click();
       await page.locator("#lift").getByRole("button", { name: "이 날짜에 공식권 적용" }).click();

@@ -64,6 +64,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
   useEffect(() => {
     announceTripCostPreview(summarizeBudget(recommendationCost(trip.selectedRecommendation), budget, splitCount));
   }, [trip.selectedRecommendation, budget, splitCount]);
+  const summary = useMemo(() => summarizeBudget(recommendationCost(trip.selectedRecommendation), budget, splitCount), [trip.selectedRecommendation, budget, splitCount]);
   const referenceKeys = useMemo(() => new Set((recommendationCost(trip.selectedRecommendation)?.items ?? []).filter(item => item.referenceSeason).map(item => item.key)), [trip.selectedRecommendation]);
   const plannedRentalDays = trip.skiPlan.days.filter(day => rentalOptionIds(day).length > 0).length;
   const rentalLabel = plannedRentalDays ? `${trip.skiPlan.days.length}일 중 ${plannedRentalDays}일 선택됨` : "렌탈하지 않음 / 미정";
@@ -111,7 +112,7 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
     <Card className="overflow-hidden" data-testid="trip-budget-workspace">
       <CardHeader className="border-b">
         <div className="flex items-start justify-between gap-3">
-          <div><h1 data-trip-workspace-title tabIndex={-1} className="text-pretty text-xl font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">비용 확정과 1/N 정산</h1><p className="mt-2 text-sm text-muted-foreground">선택 결과를 기준으로 실제 결제 금액과 추가 비용을 정리하세요.</p></div>
+          <div><h1 data-trip-workspace-title tabIndex={-1} className="text-pretty text-xl font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">비용 확정과 1/N 정산</h1><p className="mt-2 text-sm text-muted-foreground">쓴 돈과 쓸 돈을 한눈에 보고, 실제 결제 금액으로 확정하세요.</p></div>
           <ReceiptText aria-hidden="true" className="h-5 w-5 text-muted-foreground" />
         </div>
       </CardHeader>
@@ -119,6 +120,8 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
         <form action={saveBudget} onChange={() => setDirty(true)} className="space-y-6">
           <input type="hidden" name={editToken ? "editToken" : shareToken ? "shareToken" : "tripId"} value={editToken ?? shareToken ?? trip.id} />
           <input type="hidden" name="extras" value={JSON.stringify(budget.extras)} />
+
+          <BudgetHero totals={totals} summary={summary} splitCount={splitCount} onSplitChange={value => { setSplitCount(value); setDirty(true); }} />
 
           <section aria-labelledby="budget-choices-title">
             <div className="mb-3"><h2 id="budget-choices-title" className="font-semibold">현재 선택</h2><p className="mt-1 text-xs text-muted-foreground">선택을 바꾸려면 해당 작업공간으로 이동하세요.</p></div>
@@ -155,14 +158,42 @@ export function TripBudgetWorkspace({ trip, basePath, editToken, shareToken, can
             </div>
           </section>
 
-          <div className="rounded-2xl bg-foreground p-5 text-background">
-            <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3"><div className="min-w-0"><p className="text-xs font-medium opacity-70">현재 여행 총액</p><p className="mt-1 break-words text-2xl font-semibold tabular-nums sm:text-3xl">{formatCurrency(totals.total)}</p></div><div className="min-w-0 max-w-full text-left sm:text-right"><p className="text-xs font-medium opacity-70">1인당</p><p className="mt-1 break-words text-lg font-semibold tabular-nums text-primary sm:text-xl">{formatCurrency(totals.perPerson)}</p></div></div>
-            <div className="mt-4 flex items-center gap-3 border-t border-background/20 pt-4"><Users className="h-4 w-4" /><label htmlFor="splitCount" className="text-sm font-medium">몇 명이 나눌까요?</label><Input id="splitCount" name="splitCount" type="number" min={1} max={100} value={splitCount} onChange={event => setSplitCount(Number(event.target.value))} className="ml-auto w-20 border-background/30 bg-background/10 text-background" /></div>
-          </div>
           {canEdit && dirty ? <div className="sticky bottom-3 z-20 flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-card/95 p-3 shadow-lg backdrop-blur" aria-live="polite"><div className="min-w-0"><p className="text-sm font-semibold">저장하지 않은 변경사항</p><p className="truncate text-xs text-muted-foreground">실제 금액과 정산 정보를 저장하세요.</p></div><SubmitButton className="shrink-0" pendingText="저장 중…">변경사항 저장</SubmitButton></div> : null}
         </form>
       </CardContent>
     </Card>
+  );
+}
+
+const segmentColors = ["bg-sky-400", "bg-emerald-400", "bg-amber-400", "bg-violet-400", "bg-rose-400", "bg-teal-400"];
+
+function BudgetHero({ totals, summary, splitCount, onSplitChange }: { totals: ReturnType<typeof calculateTripBudget>; summary: ReturnType<typeof summarizeBudget>; splitCount: number; onSplitChange: (value: number) => void }) {
+  const rows = [
+    ...totals.items.map(item => ({ key: item.key, label: budgetCostKeys.find(entry => entry.key === item.key)?.label ?? item.label, amount: item.amount, confidence: item.overridden ? "confirmed" as const : item.confidence })),
+    ...(totals.extrasTotal > 0 ? [{ key: "extras", label: "추가 비용", amount: totals.extrasTotal, confidence: "confirmed" as const }] : [])
+  ];
+  const sum = rows.reduce((acc, row) => acc + row.amount, 0);
+  return (
+    <section aria-label="비용 요약" data-testid="budget-hero" className="rounded-2xl bg-foreground p-5 text-background">
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
+        <div className="min-w-0"><p className="text-xs font-medium opacity-70">이번 여행 총액</p><p className="mt-1 break-words text-4xl font-semibold tabular-nums sm:text-5xl">{formatCurrency(totals.total)}</p></div>
+        <div className="min-w-0 text-left sm:text-right"><p className="text-xs font-medium opacity-70">{totals.splitCount}명이 나누면 1인당</p><p className="mt-1 break-words text-2xl font-semibold tabular-nums text-primary">{formatCurrency(totals.perPerson)}</p></div>
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2 text-xs font-semibold">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-background/15 px-2.5 py-1"><ConfidenceDot confidence="confirmed" />확정 {formatCurrency(summary.confirmedAmount)}</span>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-background/15 px-2.5 py-1"><ConfidenceDot confidence="estimated" />예상 {formatCurrency(summary.estimatedAmount)}</span>
+      </div>
+      {sum > 0 ? <div className="mt-4 flex h-3 overflow-hidden rounded-full bg-background/15" role="img" aria-label={rows.map(row => `${row.label} ${formatCurrency(row.amount)}`).join(", ")}>
+        {rows.filter(row => row.amount > 0).map((row, index) => <span key={row.key} className={segmentColors[index % segmentColors.length]} style={{ width: `${(row.amount / sum) * 100}%` }} />)}
+      </div> : null}
+      <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm sm:grid-cols-3">
+        {rows.map((row, index) => <li key={row.key} className="flex min-w-0 items-center gap-2">
+          <span aria-hidden="true" className={`h-2.5 w-2.5 shrink-0 rounded-sm ${segmentColors[index % segmentColors.length]}`} />
+          <span className="min-w-0"><span className="block truncate text-xs opacity-70">{row.label}</span><span className="flex items-center gap-1.5 font-semibold tabular-nums"><ConfidenceDot confidence={row.confidence} />{formatCurrency(row.amount)}</span></span>
+        </li>)}
+      </ul>
+      <div className="mt-4 flex items-center gap-3 border-t border-background/20 pt-4"><Users aria-hidden="true" className="h-4 w-4" /><label htmlFor="splitCount" className="text-sm font-medium">몇 명이 나눌까요?</label><Input id="splitCount" name="splitCount" type="number" min={1} max={100} value={splitCount} onChange={event => onSplitChange(Number(event.target.value))} className="ml-auto w-20 border-background/30 bg-background/10 text-background" /></div>
+    </section>
   );
 }
 

@@ -1,23 +1,14 @@
 "use client";
 
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BedDouble, BusFront, Check, Clock3, ExternalLink, ListChecks, Shirt } from "lucide-react";
+import { BedDouble, BusFront, CalendarRange, ExternalLink, ListChecks } from "lucide-react";
 import { updateTripDecisionSafeAction } from "@/app/actions";
 import { showActionResult } from "@/components/action-result-toast";
 import { AffiliateNotice } from "@/components/affiliate-notice";
 import { AnalyticsLink } from "@/components/analytics-link";
-import dynamic from "next/dynamic";
-import type { PlaceCandidate } from "@/components/place-comparison-map";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// 지도 코드는 지도 영역이 필요한 화면에서만 따로 내려받는다.
-const PlaceComparisonMap = dynamic(() => import("@/components/place-comparison-map").then(module => module.PlaceComparisonMap), {
-  ssr: false,
-  loading: () => <Skeleton className="h-64 w-full" />
-});
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from "@/components/ui/drawer";
 import { Field, Input } from "@/components/ui/field";
 import { SelectField } from "@/components/ui/select-field";
 import { SubmitButton } from "@/components/ui/submit-button";
@@ -33,9 +24,11 @@ import { formatCurrency } from "@/lib/utils";
 import { DailyRentalChoices } from "@/components/trip/daily-rental-choices";
 import { NearbyPlaceHelp } from "@/components/nearby-place-help";
 import { getResort } from "@/data/resorts";
-import { DaySummaryPanel, rentalStateLabel, savedItemsText } from "@/components/trip/day-summary-panel";
+import { DaySummaryPanel, rentalStateLabel } from "@/components/trip/day-summary-panel";
 import { buildDaySummaries } from "@/lib/trip-day-summary";
 import { TripSkiPlanEditor } from "@/components/trip/trip-ski-plan-editor";
+import { DayStatusBar } from "@/components/trip/day-lift-sheet";
+import { RentalMapPicker, type RentalMapFilter } from "@/components/trip/rental-map-picker";
 import { TripLodgingPlan } from "@/components/trip/trip-lodging-plan";
 import { TripTransportPlan } from "@/components/trip/trip-transport-plan";
 import { timeSlotLabels } from "@/lib/constants";
@@ -43,34 +36,30 @@ import { tripDayTypeLabel, type TripSkiPlan } from "@/lib/trip-ski-plan";
 
 type Trip = { id: string; resortId: string; visitDate: Date; endDate: Date; peopleCount: number; rideType: "ski" | "snowboard" | "both"; skiPlan: TripSkiPlan; selectedRentalOptionId: string | null; selectedLiftTicketOptionId: string | null; selectedRentalShopId: string | null; liftTicketTimeSlot: string; transportType: string; shuttleRouteId: string | null; shuttleStopId: string | null; lodgingName: string | null; lodgingUrl: string | null; lodgingCostInput: number | null };
 type RentalGroup = { shop: RentalShop; options: RentalPriceRule[] };
-type RentalFilter = "all" | "verified" | "pickup" | "clothing" | "lift";
 
 export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions, liftUrl, shuttleUrl, lodgingSearchUrl, editToken, shareToken, canEdit = true }: { view: TripDecisionView; trip: Trip; rentalGroups: RentalGroup[]; lodgingOptions: NearbyLodging[]; liftUrl?: string; shuttleUrl?: string; lodgingSearchUrl?: string; editToken?: string; shareToken?: string; canEdit?: boolean }) {
   const router = useRouter();
   const access = editToken ? { name: "editToken", value: editToken } : shareToken ? { name: "shareToken", value: shareToken } : { name: "tripId", value: trip.id };
-  const [filter, setFilter] = useState<RentalFilter>("all");
-  const [showUnconfirmed, setShowUnconfirmed] = useState(false);
+  const [filter, setFilter] = useState<RentalMapFilter>("all");
   const [sort, setSort] = useState<RentalComparisonSort>("verified");
-  const [rentalId, setRentalId] = useState<string | null>(trip.selectedRentalShopId ?? rentalGroups[0]?.shop.id ?? null);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
   const [activeSkiDate, setActiveSkiDate] = useState(trip.skiPlan.days[0]?.date ?? trip.visitDate.toISOString().slice(0, 10));
   const activeSkiDay = trip.skiPlan.days.find(day => day.date === activeSkiDate) ?? trip.skiPlan.days[0];
-  const rentalListRef = useRef<HTMLDivElement | null>(null);
+  const [rentalId, setRentalId] = useState<string | null>(activeSkiDay?.rentalShopId ?? null);
   const summaries = useMemo(() => buildDaySummaries(trip.resortId, trip.skiPlan, rentalGroups, trip.peopleCount), [rentalGroups, trip.peopleCount, trip.resortId, trip.skiPlan]);
-  const activeSummary = summaries.find(summary => summary.date === activeSkiDay?.date);
-  const pickDay = useCallback((date: string) => {
+  // 날짜를 바꾸면 그 날짜에 저장된 샵을 지도에서 다시 보여 주고, 없으면 선택을 비운다.
+  const switchDay = useCallback((date: string) => {
     const day = trip.skiPlan.days.find(item => item.date === date);
     setActiveSkiDate(date);
-    setRentalId(day?.rentalShopId ?? rentalGroups[0]?.shop.id ?? null);
+    setRentalId(day?.rentalShopId ?? null);
+  }, [trip.skiPlan.days]);
+  const pickDay = useCallback((date: string) => {
+    switchDay(date);
     window.requestAnimationFrame(() => document.getElementById("rental")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }));
-  }, [rentalGroups, trip.skiPlan.days]);
+  }, [switchDay]);
   const filtered = useMemo(() => sortRentalComparisonGroups(rentalGroups
     .filter(({ shop }) => filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable)), sort, activeSkiDay?.rentalShopId), [activeSkiDay?.rentalShopId, filter, rentalGroups, sort]);
-  const isUnconfirmedShop = (shop: RentalShop) => Boolean(shop.recommendationTags?.includes("가격미확인"));
-  const confirmedGroups = filtered.filter(({ shop }) => !isUnconfirmedShop(shop));
-  const unconfirmedGroups = filtered.filter(({ shop }) => isUnconfirmedShop(shop));
-  const forceOpenUnconfirmed = unconfirmedGroups.some(({ shop }) => shop.id === rentalId || shop.id === activeSkiDay?.rentalShopId);
   const resortName = getResort(trip.resortId)?.name ?? "스키장";
-  const renderShop = ({ shop, options }: RentalGroup) => { const selected = rentalId === shop.id; const saved = activeSkiDay.rentalShopId === shop.id; return <div key={shop.id} data-rental-shop-id={shop.id} tabIndex={-1} className={`rounded-2xl border bg-transparent text-card-foreground ${selected ? "border-foreground/40 ring-1 ring-foreground/10" : "border-border"}`}><CardHeader className="cursor-pointer pb-3" onClick={() => setRentalId(shop.id)}><div className="flex items-start justify-between gap-3"><div><CardTitle className="text-base">{shop.name}</CardTitle><p className="mt-1 text-xs text-muted-foreground">{shop.distanceMinutes !== undefined ? `리조트에서 약 ${shop.distanceMinutes}분` : "지도에서 위치 확인"}</p></div>{saved ? <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs font-medium text-foreground"><Check className="h-4 w-4" aria-hidden="true" />{activeSummary?.rentalState === "items" ? "이 날짜 확정" : "후보 샵"}</span> : null}</div>{saved && activeSummary ? <p className="mt-2 text-xs font-semibold text-muted-foreground">{savedItemsText(activeSummary)}</p> : null}</CardHeader>{selected ? <CardContent><DailyRentalChoices shop={shop} options={options} day={activeSkiDay} peopleCount={trip.peopleCount} rideType={trip.rideType} access={access} save={save} canEdit={canEdit} /></CardContent> : null}</div>; };
   const shuttleRoutes = useMemo(() => getSkiShuttleRoutes(trip.resortId), [trip.resortId]);
   const shuttleCoverage = useMemo(() => getSkiShuttleCoverage({ id: trip.resortId, shuttleUrl, lastCheckedAt: "2026-07-17" }, shuttleRoutes), [shuttleRoutes, shuttleUrl, trip.resortId]);
   const workspaceCopy = view === "rental_lift"
@@ -78,59 +67,61 @@ export function TripDecisionWorkspace({ view, trip, rentalGroups, lodgingOptions
     : view === "lodging"
       ? { title: "머무를 곳에만 집중해요", description: "공식 리조트 숙소와 호텔을 나눠 비교하고, 객실 판매 현황과 실제 숙박 정보를 기록하세요." }
       : { title: "가는 방법을 구체적으로 정해요", description: "가는 길의 탑승지와 돌아오는 길의 귀가 하차지를 구간별로 확인하세요." };
-  const selectRentalFromMap = useCallback((id: string) => {
-    setRentalId(id);
-    if (rentalGroups.some(({ shop }) => shop.id === id && shop.recommendationTags?.includes("가격미확인"))) setShowUnconfirmed(true);
-    window.requestAnimationFrame(() => {
-      const card = rentalListRef.current?.querySelector<HTMLElement>(`[data-rental-shop-id="${id}"]`);
-      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      card?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "nearest" });
-      card?.focus({ preventScroll: true });
-    });
-  }, [rentalGroups]);
-  async function save(data: FormData) { const result = await updateTripDecisionSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); }
-  const toCandidate = (id: string, name: string, typeOrAddress?: "rental" | "lodging" | string, addressOrLatitude?: string | number, latitudeOrLongitude?: number, longitudeOrUrl?: number | string, externalMapUrl?: string): PlaceCandidate => {
-    const typed = typeOrAddress === "rental" || typeOrAddress === "lodging";
-    const type = typed ? typeOrAddress : "lodging";
-    const address = typed ? (addressOrLatitude as string | undefined) : typeOrAddress;
-    const latitude = typed ? latitudeOrLongitude : (addressOrLatitude as number | undefined);
-    const longitude = typed ? (longitudeOrUrl as number | undefined) : latitudeOrLongitude;
-    const mapUrl = typed ? externalMapUrl : (longitudeOrUrl as string | undefined);
-    return { id, name, type, address, latitude, longitude, searchQuery: `${name} ${address ?? ""}`.trim(), externalMapUrl: mapUrl };
-  };
+  async function saveDecision(data: FormData) { const result = await updateTripDecisionSafeAction(data); showActionResult(result); if (result.ok) router.refresh(); return result.ok; }
+  async function save(data: FormData) { await saveDecision(data); }
 
   return <div className="space-y-5" data-testid="trip-decision-workspace">
     <header className="border-b pb-5"><h1 data-trip-workspace-title tabIndex={-1} className="mt-1 text-pretty text-2xl font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">{workspaceCopy.title}</h1><p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{workspaceCopy.description}</p></header>
 
     {view === "rental_lift" ? <>
+    <section id="rental" className="scroll-mt-28 space-y-3 rounded-xl border bg-card p-3 sm:p-5">
+      <div>
+        <h2 data-trip-workspace-anchor-title tabIndex={-1} className="text-lg font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">지도에서 렌탈샵 고르기</h2>
+        <p className="mt-1 text-sm text-muted-foreground">날짜를 고르고 핀을 누르면 샵 정보가 나와요. 같은 샵은 다른 날짜에도 한 번에 적용할 수 있어요.</p>
+      </div>
+      {activeSkiDay ? <div className="flex items-stretch gap-2">
+        <div className="flex min-w-0 flex-1 gap-2 overflow-x-auto pb-1" role="tablist" aria-label="날짜별 렌탈 계획">
+          {trip.skiPlan.days.map(day => { const state = summaries.find(summary => summary.date === day.date)?.rentalState ?? "none"; const active = activeSkiDate === day.date; return <button key={day.date} type="button" role="tab" aria-selected={active} onClick={() => switchDay(day.date)} className={`min-h-12 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${active ? "border-foreground/40 bg-muted text-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-semibold">{new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))} · {timeSlotLabels[day.timeSlot]}</span><span className={`mt-0.5 block text-xs font-semibold ${state === "items" ? "text-emerald-700 dark:text-emerald-300" : "text-amber-700 dark:text-amber-300"}`}>{rentalStateLabel(state)}</span></button>; })}
+        </div>
+        {canEdit ? <button type="button" onClick={() => setScheduleOpen(true)} className="flex min-h-12 shrink-0 cursor-pointer flex-col items-center justify-center gap-0.5 rounded-xl border bg-card px-3 text-xs font-semibold hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"><CalendarRange aria-hidden="true" className="h-4 w-4" />일정 수정</button> : null}
+      </div> : <div className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">먼저 스키를 탈 날짜를 저장해 주세요.{canEdit ? <Button type="button" variant="secondary" className="ml-2 h-9" onClick={() => setScheduleOpen(true)}>일정 정하기</Button> : null}</div>}
+      {activeSkiDay ? <DayStatusBar resortId={trip.resortId} day={activeSkiDay} summary={summaries.find(summary => summary.date === activeSkiDay.date)} groups={rentalGroups} peopleCount={trip.peopleCount} access={access} save={saveDecision} canEdit={canEdit} liftUrl={liftUrl} onFocusShop={setRentalId} /> : null}
+      {activeSkiDay ? <RentalMapPicker
+        resortId={trip.resortId}
+        groups={filtered}
+        activeDay={activeSkiDay}
+        rideType={trip.rideType}
+        savedShopId={activeSkiDay.rentalShopId}
+        selectedId={rentalId}
+        onSelect={setRentalId}
+        filter={filter}
+        onFilter={setFilter}
+        sort={sort}
+        onSort={setSort}
+        canEdit={canEdit}
+        renderChoices={(group, close) => <DailyRentalChoices shop={group.shop} options={group.options} day={activeSkiDay} peopleCount={trip.peopleCount} rideType={trip.rideType} access={access} save={async data => { if (await saveDecision(data)) close(); }} canEdit={canEdit} />}
+      /> : null}
+      <NearbyPlaceHelp resortName={resortName} kind="rental" />
+    </section>
+
     <DecisionSection id="summary" title="날짜별 확정 현황" description="렌탈샵, 장비·의류, 리프트권이 날짜마다 어떻게 정해졌고 얼마인지 한눈에 확인하세요." icon={<ListChecks />}>
       <DaySummaryPanel summaries={summaries} peopleCount={trip.peopleCount} onSelectDay={pickDay} canEdit={canEdit} />
     </DecisionSection>
-    <DecisionSection id="schedule" title="스키 일정" description="숙박 기간과 실제 스키를 탈 날짜는 다를 수 있어요. 날짜별 이용 시간을 먼저 정하세요." icon={<Clock3 />}>
-      <TripSkiPlanEditor trip={trip} editToken={editToken} shareToken={shareToken} canEdit={canEdit} />
-    </DecisionSection>
     <AffiliateNotice />
-    <DecisionSection id="rental" title="렌탈샵과 상품" description="위치, 제공 품목, 시즌 가격과 원문을 한 화면에서 비교하세요." icon={<Shirt />}>
-      <div className="mb-4">
-        <p className="mb-2 text-xs font-semibold text-muted-foreground">설정할 스키 날짜</p>
-        <div className="flex gap-2 overflow-x-auto pb-1" role="tablist" aria-label="날짜별 렌탈 계획">
-          {trip.skiPlan.days.map(day => <button key={day.date} type="button" role="tab" aria-selected={activeSkiDate === day.date} onClick={() => { setActiveSkiDate(day.date); setRentalId(day.rentalShopId ?? rentalGroups[0]?.shop.id ?? null); }} className={`min-h-11 shrink-0 cursor-pointer rounded-xl border px-3 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${activeSkiDate === day.date ? "border-foreground/30 bg-muted text-foreground" : "bg-card hover:bg-muted"}`}><span className="block text-xs font-semibold">{new Intl.DateTimeFormat("ko-KR", { month: "numeric", day: "numeric", weekday: "short", timeZone: "UTC" }).format(new Date(`${day.date}T00:00:00Z`))}</span><span className={`mt-0.5 block text-xs text-muted-foreground`}>{tripDayTypeLabel(day.date)} · {timeSlotLabels[day.timeSlot]}</span><span className={`mt-0.5 block text-xs font-semibold ${activeSkiDate === day.date ? "text-foreground" : summaries.find(summary => summary.date === day.date)?.rentalState === "items" ? "text-emerald-700 dark:text-emerald-300" : "text-amber-700 dark:text-amber-300"}`}>{rentalStateLabel(summaries.find(summary => summary.date === day.date)?.rentalState ?? "none")}</span></button>)}
-        </div>
-      </div>
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div className="flex gap-2 overflow-x-auto pb-1" aria-label="렌탈샵 필터">{([['all','전체'],['verified','가격 확인'],['pickup','픽업'],['clothing','의류'],['lift','리프트권']] as const).map(([value,label]) => <Button key={value} type="button" variant={filter === value ? "selected" : "secondary"} className="h-9 shrink-0 px-3 text-xs hover:translate-y-0" onClick={() => setFilter(value)}>{label}</Button>)}</div><div className="w-full sm:w-36"><SelectField name="rentalSort" ariaLabel="렌탈샵 정렬" value={sort} onValueChange={(value) => setSort(value as RentalComparisonSort)} options={[{value:"verified",label:"검증순"},{value:"distance",label:"거리순"},{value:"price",label:"가격순"}]} /></div></div>
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(300px,.95fr)]">
-        <PlaceComparisonMap candidates={filtered.map(({shop}) => toCandidate(shop.id, shop.name, "rental", shop.address, shop.latitude, shop.longitude, shop.mapLinks?.kakao ?? shop.mapLinks?.naver))} selectedId={rentalId} onSelect={selectRentalFromMap} />
-        <div ref={rentalListRef} className="max-h-[720px] space-y-3 overflow-y-auto pr-1">{activeSkiDay && filtered.length ? <>{confirmedGroups.map(renderShop)}{unconfirmedGroups.length ? <details open={showUnconfirmed || forceOpenUnconfirmed} onToggle={(event) => setShowUnconfirmed(event.currentTarget.open)} className="rounded-2xl border border-dashed p-3" data-testid="unconfirmed-shops"><summary className="min-h-11 cursor-pointer text-sm font-semibold leading-[44px]">가격 미확인 업체 {unconfirmedGroups.length}곳 더 보기</summary><p className="mb-3 text-sm leading-6 text-muted-foreground">카카오 장소 검색에 스키·보드 렌탈로 등록된 업체예요. 가격과 의류 대여 여부는 업체에 확인해 주세요.</p><div className="space-y-3">{unconfirmedGroups.map(renderShop)}</div></details> : null}</> : <p className="rounded-xl border border-dashed p-5 text-center text-sm text-muted-foreground">{activeSkiDay ? "조건에 맞는 업체가 없습니다." : "먼저 스키를 탈 날짜를 저장해 주세요."}</p>}</div>
-      </div>
-      <NearbyPlaceHelp resortName={resortName} kind="rental" className="mt-4" />
-    </DecisionSection>
 
-    <DecisionSection id="lift" title="공식 리조트 리프트권" description="선택한 날짜에 렌탈샵 할인권 대신 공식 시간권을 적용하세요." icon={<Clock3 />}>{activeSkiDay ? <><div className="mb-4 rounded-xl border border-foreground/20 bg-muted/60 p-3 text-sm leading-6 text-muted-foreground">{activeSkiDay.date} · {tripDayTypeLabel(activeSkiDay.date)} 조건입니다. 공식권을 저장하면 이 날짜의 할인권만 해제됩니다.</div><LiftPromoNote resortId={trip.resortId} timeSlot={activeSkiDay.timeSlot} visitDate={activeSkiDay.date} className="mb-4" /><form action={save} className="space-y-3"><AccessInput access={access} /><input type="hidden" name="decision" value="lift_day" /><input type="hidden" name="skiDate" value={activeSkiDay.date} /><SelectField name="liftTicketTimeSlot" ariaLabel={`${activeSkiDay.date} 공식 리프트권 시간`} defaultValue={activeSkiDay.timeSlot} options={liftSlotOptions(trip.resortId, activeSkiDay.date, activeSkiDay.timeSlot)} /><div className="flex gap-2">{canEdit ? <SubmitButton pendingText="저장 중…">이 날짜에 공식권 적용</SubmitButton> : null}{liftUrl ? <ExternalButton href={liftUrl}>공식 판매처</ExternalButton> : null}</div></form></> : <p className="text-sm text-muted-foreground">먼저 스키 날짜를 저장해 주세요.</p>}</DecisionSection>
+    <Drawer open={scheduleOpen} onOpenChange={setScheduleOpen}>
+      <DrawerContent className="lg:mx-auto lg:max-w-xl">
+        <DrawerTitle className="text-lg font-semibold">스키 일정 수정</DrawerTitle>
+        <DrawerDescription className="mb-4 mt-1 text-sm text-muted-foreground">숙박 기간과 실제 스키를 탈 날짜는 다를 수 있어요. 날짜별 이용 시간을 정하세요.</DrawerDescription>
+        <TripSkiPlanEditor trip={trip} editToken={editToken} shareToken={shareToken} canEdit={canEdit} />
+      </DrawerContent>
+    </Drawer>
+
     </> : null}
 
     {view === "lodging" ?
     <DecisionSection id="lodging" title="숙박 밤별 계획" description="체크인하는 밤마다 숙소와 실제 확인한 1박 비용을 기록하세요. 같은 숙소는 한 번에 적용할 수 있습니다." icon={<BedDouble />}>
-      <TripLodgingPlan resortId={trip.resortId} plan={trip.skiPlan} lodgingOptions={lodgingOptions} lodgingSearchUrl={lodgingSearchUrl} access={access} save={save} canEdit={canEdit} />
+      <TripLodgingPlan resortId={trip.resortId} plan={trip.skiPlan} lodgingOptions={lodgingOptions} lodgingSearchUrl={lodgingSearchUrl} access={access} save={saveDecision} canEdit={canEdit} />
     </DecisionSection>
     : null}
 

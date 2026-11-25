@@ -20,6 +20,8 @@ import { cn } from "@/lib/utils";
 type KakaoMap = {
   setCenter: (latlng: unknown) => void;
   setLevel: (level: number) => void;
+  panTo: (latlng: unknown) => void;
+  setBounds: (bounds: unknown, paddingTop?: number, paddingRight?: number, paddingBottom?: number, paddingLeft?: number) => void;
 };
 
 type KakaoSearchResult = { x: string; y: string };
@@ -42,7 +44,8 @@ declare global {
         MarkerImage: new (src: string, size: unknown, options?: { offset?: unknown }) => unknown;
         Size: new (width: number, height: number) => unknown;
         Point: new (x: number, y: number) => unknown;
-        CustomOverlay: new (options: { content: HTMLElement; map?: KakaoMap; position: unknown; yAnchor?: number }) => KakaoCustomOverlay;
+        CustomOverlay: new (options: { content: HTMLElement; map?: KakaoMap; position: unknown; yAnchor?: number; xAnchor?: number; zIndex?: number; clickable?: boolean }) => KakaoCustomOverlay;
+        LatLngBounds: new () => { extend: (latlng: unknown) => void };
         event: {
           addListener: (target: KakaoMarker, type: string, handler: () => void) => void;
         };

@@ -17,7 +17,7 @@ export type PlaceCandidate = {
 };
 
 type Point = { lat: number; lng: number };
-type MapInstance = { setCenter: (point: unknown) => void; setLevel: (level: number) => void };
+type MapInstance = { setCenter: (point: unknown) => void; setLevel: (level: number) => void; panTo: (point: unknown) => void; setBounds: (bounds: unknown, top?: number, right?: number, bottom?: number, left?: number) => void };
 type MarkerInstance = { setMap: (map: MapInstance | null) => void };
 type SearchResult = { x: string; y: string };
 

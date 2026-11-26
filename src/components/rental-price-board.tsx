@@ -25,7 +25,7 @@ function ItemList({ title, items, basis }: { title: string; items: RentalGuideIt
                 {item.prices.map((entry) => <span key={entry.label} className="font-semibold"><span className="mr-1 text-xs font-normal text-muted-foreground">{entry.label}</span>{formatCurrency(entry.price)}</span>)}
               </p>
             </div>
-            {item.discountable ? <p className="mt-1.5 text-xs font-medium text-primary">우대 할인 적용 가능</p> : <p className="mt-1.5 text-xs text-muted-foreground">우대 할인 없음</p>}
+            {item.discountLabel ? <p className="mt-1.5 text-xs text-muted-foreground">{item.discountLabel}</p> : item.discountable ? <p className="mt-1.5 text-xs font-medium text-primary">우대 할인 적용 가능</p> : <p className="mt-1.5 text-xs text-muted-foreground">우대 할인 없음</p>}
           </li>
         ))}
       </ul>
@@ -57,28 +57,36 @@ export function RentalPriceBoard({ resortId }: { resortId: string }) {
       {discountCards.length ? <section aria-label="렌탈 할인 적용 시 가격">
         <Heading>장비 렌탈, 할인받으면 얼마?</Heading>
         <div className="grid gap-3 sm:grid-cols-3">
-          {discountCards.map(({ discount, rows }) => (
+          {discountCards.map(({ discount, periods }) => (
             <div key={discount.id} className="rounded-xl border bg-card p-4">
               <div className="flex items-baseline justify-between gap-2">
                 <h3 className="font-semibold">{discount.title}</h3>
-                <span className="rounded-md bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary">렌탈 {discount.rates.rental}%</span>
+                {periods.length === 1 ? <span className="rounded-md bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary">렌탈 {discount.rates.rental}%</span> : null}
               </div>
               <p className="mt-1 text-xs text-muted-foreground">{discount.target}</p>
-              {rows.map(({ item, prices }) => (
-                <div key={item.id} className="mt-3">
-                  <p className="text-xs text-muted-foreground">{item.label}{rental.discountCardBasis ? ` · ${rental.discountCardBasis}` : ""}</p>
-                  <p className="mt-1 flex flex-wrap gap-x-4 tabular-nums">
-                    {prices.map((entry) => <span key={entry.label} className="font-semibold"><span className="mr-1 text-xs font-normal text-muted-foreground">{entry.label}</span>{formatCurrency(entry.price)}</span>)}
-                  </p>
-                </div>
-              ))}
+              {periods.map((period, index) => {
+                const rate = index === 0 ? discount.rates.rental : discount.altRates?.rental;
+                return (
+                  <div key={period.label ?? "all"} className="mt-3 space-y-2.5">
+                    {period.label ? <p className="flex items-baseline justify-between gap-2 text-xs"><span className="font-semibold">{period.label}<span className="ml-1.5 font-normal text-muted-foreground">{period.range}</span></span><span className="rounded-md bg-primary/10 px-1.5 py-0.5 font-semibold text-primary">렌탈 {rate}%</span></p> : null}
+                    {period.rows.map(({ item, prices }) => (
+                      <div key={item.id}>
+                        <p className="text-xs text-muted-foreground">{item.label}{rental.discountCardBasis ? ` · ${rental.discountCardBasis}` : ""}</p>
+                        <p className="mt-0.5 flex flex-wrap gap-x-4 tabular-nums">
+                          {prices.map((entry) => <span key={entry.label} className="font-semibold"><span className="mr-1 text-xs font-normal text-muted-foreground">{entry.label}</span>{formatCurrency(entry.price)}</span>)}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
               <ul className="mt-3 space-y-1 border-t pt-3 text-xs leading-5 text-muted-foreground">
                 {discount.notes.map((note) => <li key={note}>{note}</li>)}
               </ul>
             </div>
           ))}
         </div>
-        {verified.length ? <p className="mt-3 text-xs leading-5 text-muted-foreground">현장 구매·증빙 할인: {verified.map((discount) => `${discount.title} ${discount.rates.rental}%`).join(" · ")}</p> : null}
+        {verified.length ? <p className="mt-3 text-xs leading-5 text-muted-foreground">현장 구매·증빙 할인{guide.periods ? `(${guide.periods[0].label}/${guide.periods[1].label})` : ""}: {verified.map((discount) => `${discount.title} ${discount.rates.rental}%${discount.altRates?.rental ? `/${discount.altRates.rental}%` : ""}`).join(" · ")}</p> : null}
         <p className="mt-2 flex items-start gap-1.5 text-xs leading-5 text-muted-foreground"><Info aria-hidden="true" className="mt-0.5 h-3.5 w-3.5 shrink-0" />{rental.discountNote ? `${rental.discountNote} ` : ""}할인가는 공식 할인율로 계산한 참고값이에요.</p>
       </section> : null}
 
@@ -90,7 +98,7 @@ export function RentalPriceBoard({ resortId }: { resortId: string }) {
             <li key={example.title} className="px-3.5 py-3">
               <p className="font-semibold">{example.title}</p>
               <div className="mt-2 grid gap-3 sm:grid-cols-2">
-                {([["weekday", "주중"], ["weekend", "주말"]] as const).map(([key, label]) => {
+                {([["all", "1인"], ["weekday", "주중"], ["weekend", "주말"]] as const).map(([key, label]) => {
                   const cell = example[key];
                   return cell ? (
                     <div key={key}>
@@ -125,7 +133,7 @@ export function RentalPriceBoard({ resortId }: { resortId: string }) {
       </ul>
 
       <p className="text-xs text-muted-foreground">
-        출처: <AnalyticsLink href={guide.sourceUrl} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "guide_rental_price_source", resortId }} className="inline-flex min-h-9 items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">{guide.sourceName} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></AnalyticsLink>
+        출처: <AnalyticsLink href={rental.source?.url ?? guide.sourceUrl} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type: "guide_rental_price_source", resortId }} className="inline-flex min-h-9 items-center gap-1 font-medium text-primary underline-offset-4 hover:underline">{rental.source?.name ?? guide.sourceName} <ExternalLink className="h-3.5 w-3.5" aria-hidden="true" /></AnalyticsLink>
       </p>
     </div>
   );

@@ -62,5 +62,25 @@ export const liftPromotions: LiftPromotion[] = [
     sourceName: "휘닉스파크 26/27 개장 기념 리프트·장비 대여 특가",
     sourceUrl: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047550",
     lastCheckedAt: "2026-11-21"
+  },
+  {
+    id: "phoenix-activity-deal-26-27",
+    resortId: "phoenix",
+    title: "26/27 스노우 파크 액티비티 특가",
+    channel: "휘닉스 파크 공식 홈페이지",
+    salesFrom: "2026-11-23",
+    salesTo: "2026-12-31",
+    useFrom: "2026-11-22",
+    useTo: "2027-03-31",
+    prices: [
+      { timeSlot: "4h", dayType: "weekday", adultPrice: 63300 },
+      { timeSlot: "6h", dayType: "weekday", adultPrice: 70300, withRentalPrice: 83300 },
+      { timeSlot: "4h", dayType: "weekend", adultPrice: 63300 },
+      { timeSlot: "6h", dayType: "weekend", adultPrice: 70300, withRentalPrice: 83300 }
+    ],
+    condition: "라이트 패스(4시간)·스마트 패스(6시간)이고 장비 렌탈 포함 상품은 6시간 기준(스키 또는 보드 택 1, 의류·헬멧 별도)입니다. 이용 기간은 개장일부터 폐장일까지이며 대·소인 구분 없이 같은 가격입니다. 시간은 첫 게이트 통과 시점부터 계산하고 정설 시간은 제외됩니다. 일부 상품은 부분 환불이 되지 않습니다.",
+    sourceName: "휘닉스파크 26/27 스노우 파크 액티비티 특가 혜택",
+    sourceUrl: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/190000047576",
+    lastCheckedAt: "2026-11-26"
   }
 ];

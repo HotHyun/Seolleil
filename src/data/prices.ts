@@ -857,7 +857,7 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
     resortId: "high1",
     resortName: "하이원리조트",
     sourceName: "하이원 스키 이용요금(26/27 시즌)",
-    sourceUrl: "https://www.high1.com/ski/contents.do",
+    sourceUrl: "https://www.high1.com/ski/contents.do?key=750",
     validFrom: "2026-11-24",
     validTo: "2027-03-31",
     verificationNote: "공식 스키 이용요금 페이지의 리프트권(시간권) 표 기준(2026-11-20 확인). 표에 없는 2시간·5시간·6시간·야간권은 판매하지 않는 것으로 본다. 주중·주말 구분과 소인 가격은 표시되지 않는다.",
@@ -866,6 +866,36 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
       { slot: "4h", adult: 73000, memo: "공식 4시간권." },
       { slot: "7h", adult: 88000, memo: "공식 7시간권." },
       { slot: "full_day", adult: 111000, memo: "공식 종일권." }
+    ]
+  },
+  {
+    resortId: "wellihilli",
+    resortName: "웰리힐리파크",
+    sourceName: "웰리힐리파크 스노우파크 운영시간·이용요금",
+    sourceUrl: "https://www.wellihillipark.com/home/guide/pay/snowpark",
+    validFrom: "2026-11-01",
+    validTo: "2027-03-31",
+    lastCheckedAt: "2026-11-26",
+    verificationNote: "공식 이용요금 페이지의 리프트·장비 표(2026-11-26 확인). 표에 시즌 표기가 없고 같은 페이지에 '26/27 겨울시즌 준비중' 문구가 있어, 개장 전 게시 요금을 26/27 요금으로 본 판단이 포함된다. 할인안내 페이지도 개장일 미확정·3/1 종료 일정으로 새 시즌 기준이다. 대인·소인 같은 요금이며 표에 없는 2·3·6시간·종일권은 판매하지 않는 것으로 본다. 야간심야권(5.5시간) 66,000원과 1회권 20,000원은 시간권 슬롯에 맞지 않아 넣지 않았다.",
+    slots: [
+      { slot: "4h", adult: 76000, child: 76000, memo: "공식 4시간권(대·소인 동일). 리프트권 보증금 1,000원 별도.", replacementKey: "wellihilli|lift_ticket|4h|all|웰리힐리파크 4h 리프트권" },
+      { slot: "7h", adult: 91000, child: 91000, memo: "공식 7시간권(대·소인 동일)." },
+      { slot: "night", adult: 56000, child: 56000, memo: "공식 야간권(3.5시간, 대·소인 동일).", replacementKey: "wellihilli|lift_ticket|night|all|웰리힐리파크 night 리프트권" }
+    ]
+  },
+  {
+    resortId: "oakvalley",
+    resortName: "오크밸리",
+    sourceName: "오크밸리 스키 요금안내(26/27시즌)",
+    sourceUrl: "https://oakvalley.co.kr/ski/introduction/charge-info",
+    validFrom: "2026-11-01",
+    validTo: "2027-03-31",
+    lastCheckedAt: "2026-11-26",
+    verificationNote: "공식 요금안내 페이지의 '26/27시즌' 리프트 정상요금 표(2026-11-26 확인). 개장일이 '오픈일'로만 표기되어 가격 규칙은 시즌 초부터 둔다. 소인 가격은 표에 없다. 표에 없는 2·3·6시간권은 판매하지 않는 것으로 본다. 단일(오전·오후·야간) 66,000원, 복합(주간 8시간·오야) 80,000원이며 오야 복합권(13:00~22:00 주중/23:00 주말)은 시간권 슬롯에 맞지 않아 넣지 않았다.",
+    slots: [
+      { slot: "4h", adult: 66000, replacementKey: "oakvalley|lift_ticket|4h|all|오크밸리 4h 리프트권", memo: "공식 단일 오전권(09:00~13:00)·오후권(13:00~17:00) 4시간, 가격 동일." },
+      { slot: "night", adult: 66000, replacementKey: "oakvalley|lift_ticket|night|all|오크밸리 night 리프트권", memo: "공식 단일 야간권(주중 18:30~22:00 3.5시간, 주말 18:30~23:00 5시간). 야간 운영은 2026-12-11~폐장일(2/15~2/18, 2/21 제외)." },
+      { slot: "full_day", adult: 80000, replacementKey: "oakvalley|lift_ticket|full_day|all|오크밸리 full_day 리프트권", memo: "공식 복합 주간권(09:00~17:00, 8시간)." }
     ]
   },
   {
@@ -1107,8 +1137,210 @@ const konjiamUpcomingRentalRules: RentalPriceRule[] = [
   }
 ];
 
+const high1UpcomingRentalCommon = {
+  rentalShopId: "high1-official-rental",
+  resortId: "high1",
+  providerType: "resort_official" as const,
+  season: UPCOMING_SEASON,
+  validFrom: "2026-11-24",
+  validTo: "2027-03-31",
+  dayType: "all" as const,
+  ageGroup: "adult" as const,
+  sourceType: "official_site" as const,
+  sourceName: "하이원리조트 스키 이용요금",
+  sourceUrl: "https://www.high1.com/ski/contents.do?key=750",
+  bookingUrl: "https://www.high1.com/ski/contents.do?key=750",
+  confidence: "confirmed" as const,
+  lastCheckedAt: "2026-11-26",
+  verifiedByHuman: true,
+  verificationNote: "공식 스키 이용요금 페이지의 스키&보드 대여 표 기준(2026-11-26 확인). 표 자체에 시즌 표기는 없지만 같은 페이지가 26/27 시즌 눈썰매장 미운영을 안내해 현재 게시 요금을 26/27로 반영했다. 의류 렌탈 가격은 페이지에 없고, 헬멧은 무료이며 부분품 대여는 할인 대상이 아니다."
+};
+// 공식 대여 시간은 4시간·7시간·종일이다. 리프트 3시간권은 4시간 대여로 묶는다.
+const high1UpcomingRentalRules: RentalPriceRule[] = ([
+  { timeSlot: "3h", price: 28000, hours: "4시간" },
+  { timeSlot: "4h", price: 28000, hours: "4시간" },
+  { timeSlot: "7h", price: 38000, hours: "7시간" },
+  { timeSlot: "full_day", price: 54000, hours: "종일" }
+] as const).flatMap(({ timeSlot, price, hours }) => (["ski", "snowboard"] as const).map(rideType => ({
+  ...high1UpcomingRentalCommon,
+  id: `high1-official-rental-equipment-${rideType}-${timeSlot}-26-27`,
+  itemType: "equipment" as const,
+  rideType,
+  timeSlot,
+  label: `${rideType === "ski" ? "스키" : "보드"} 장비 렌탈 ${hours}`,
+  representativePrice: price,
+  priceMin: price,
+  priceMax: price,
+  memo: `공식 스키·보드 대여 ${hours} ${price.toLocaleString()}원(스키·보드 같은 요금). 부분품 대여는 별도이며 할인되지 않는다. 헬멧은 무료.`
+})));
+
+const wellihilliUpcomingRentalCommon = {
+  rentalShopId: "wellihilli-official-rental",
+  resortId: "wellihilli",
+  providerType: "resort_official" as const,
+  season: UPCOMING_SEASON,
+  validFrom: "2026-11-01",
+  validTo: "2027-03-31",
+  dayType: "all" as const,
+  ageGroup: "adult" as const,
+  sourceType: "official_site" as const,
+  sourceName: "웰리힐리파크 스노우파크 운영시간·이용요금",
+  sourceUrl: "https://www.wellihillipark.com/home/guide/pay/snowpark",
+  bookingUrl: "https://www.wellihillipark.com/home/guide/pay/snowpark",
+  confidence: "confirmed" as const,
+  lastCheckedAt: "2026-11-26",
+  verifiedByHuman: true,
+  verificationNote: "공식 이용요금 페이지의 장비 풀세트·의류 세트(일반) 표 기준(2026-11-26 확인). 표에 시즌 표기가 없고 '26/27 겨울시즌 준비중' 문구가 있어 개장 전 게시 요금을 26/27로 본 판단이 포함된다. 부분 렌탈·용품(헬멧 등)은 별도 요금이며 할인 대상이 아니다."
+};
+const wellihilliRentalSlots = [
+  { timeSlot: "4h" as const, equipment: 35000, clothing: 25000, hours: "4시간" },
+  { timeSlot: "7h" as const, equipment: 40000, clothing: 30000, hours: "7시간" },
+  { timeSlot: "night" as const, equipment: 30000, clothing: undefined, hours: "야간(3.5시간)" }
+];
+const wellihilliUpcomingRentalRules: RentalPriceRule[] = wellihilliRentalSlots.flatMap(({ timeSlot, equipment, clothing, hours }) => [
+  ...(["ski", "snowboard"] as const).map(rideType => ({
+    ...wellihilliUpcomingRentalCommon,
+    id: `wellihilli-official-rental-equipment-${rideType}-${timeSlot}-26-27`,
+    itemType: "equipment" as const,
+    rideType,
+    timeSlot,
+    label: `${rideType === "ski" ? "스키" : "보드"} 장비 풀세트 ${hours}`,
+    representativePrice: equipment,
+    priceMin: equipment,
+    priceMax: equipment,
+    memo: `공식 장비 풀세트 ${hours} ${equipment.toLocaleString()}원. 부분 렌탈은 플레이트·부츠·스키폴을 따로 빌릴 때의 별도 요금이다.`
+  })),
+  ...(clothing === undefined ? [] : [{
+    ...wellihilliUpcomingRentalCommon,
+    id: `wellihilli-official-rental-clothing-${timeSlot}-26-27`,
+    itemType: "clothing" as const,
+    rideType: "all" as const,
+    timeSlot,
+    label: `의류 세트 ${hours}`,
+    representativePrice: clothing,
+    priceMin: clothing,
+    priceMax: clothing,
+    memo: `공식 의류 세트(일반) ${hours} ${clothing.toLocaleString()}원. 회원 요금은 ${(clothing - 3000).toLocaleString()}원.`
+  }])
+]);
+
+// 알펜시아·오크밸리 공식 렌탈: 리프트 시간권과 같은 구분의 요금을 슬롯별로 등록한다.
+function slotRentalRules(config: {
+  shopId: string;
+  resortId: string;
+  sourceName: string;
+  sourceUrl: string;
+  validFrom: string;
+  verificationNote: string;
+  /** 25/26 공식 렌탈 규칙(시간권 구분 없는 대표값)을 대체하는 키. 첫 슬롯 규칙에만 붙인다. */
+  replaces?: Partial<Record<"ski" | "snowboard" | "clothing" | "package", string>>;
+  slots: Array<{ timeSlot: TimeSlot; label: string; equipment: number; clothing?: number; childEquipment?: number }>;
+}): RentalPriceRule[] {
+  const common = {
+    rentalShopId: config.shopId,
+    resortId: config.resortId,
+    providerType: "resort_official" as const,
+    season: UPCOMING_SEASON,
+    validFrom: config.validFrom,
+    validTo: "2027-03-31",
+    dayType: "all" as const,
+    ageGroup: "adult" as const,
+    sourceType: "official_site" as const,
+    sourceName: config.sourceName,
+    sourceUrl: config.sourceUrl,
+    bookingUrl: config.sourceUrl,
+    confidence: "confirmed" as const,
+    lastCheckedAt: "2026-11-26",
+    verifiedByHuman: true,
+    verificationNote: config.verificationNote
+  };
+  return config.slots.flatMap(({ timeSlot, label, equipment, clothing, childEquipment }, index) => [
+    ...(["ski", "snowboard"] as const).map(rideType => ({
+      ...common,
+      replacementKey: index === 0 ? config.replaces?.[rideType] : undefined,
+      id: `${config.shopId}-equipment-${rideType}-${timeSlot}-26-27`,
+      itemType: "equipment" as const,
+      rideType,
+      timeSlot,
+      label: `${rideType === "ski" ? "스키" : "보드"} 장비 렌탈 ${label}`,
+      representativePrice: equipment,
+      priceMin: equipment,
+      priceMax: equipment,
+      memo: `공식 ${label} 장비 렌탈 대인 ${equipment.toLocaleString()}원${childEquipment ? `, 소인 ${childEquipment.toLocaleString()}원` : ""}. 부분 렌탈·헬멧은 별도 요금이며 할인 대상이 아니다.`
+    })),
+    ...(clothing === undefined ? [] : [{
+      ...common,
+      replacementKey: index === 0 ? config.replaces?.clothing : undefined,
+      id: `${config.shopId}-clothing-${timeSlot}-26-27`,
+      itemType: "clothing" as const,
+      rideType: "all" as const,
+      timeSlot,
+      label: `의류 set 렌탈 ${label}`,
+      representativePrice: clothing,
+      priceMin: clothing,
+      priceMax: clothing,
+      memo: `공식 의류 set(상+하) ${label} ${clothing.toLocaleString()}원. 대·소인 같은 요금이며 할인 적용 불가.`
+    }, {
+      ...common,
+      replacementKey: index === 0 ? config.replaces?.package : undefined,
+      id: `${config.shopId}-package-${timeSlot}-26-27`,
+      itemType: "equipment_clothing_package" as const,
+      rideType: "all" as const,
+      timeSlot,
+      label: `장비 + 의류 합산 ${label}`,
+      representativePrice: equipment + clothing,
+      priceMin: equipment + clothing,
+      priceMax: equipment + clothing,
+      memo: `공식 묶음상품이 아니다. 장비 ${equipment.toLocaleString()}원과 의류 set ${clothing.toLocaleString()}원을 각각 대여할 때의 합계.`
+    }])
+  ]);
+}
+
+const alpensiaUpcomingRentalRules = slotRentalRules({
+  shopId: "alpensia-official-rental",
+  resortId: "alpensia",
+  sourceName: "알펜시아 스키700 렌탈 & 시설 이용 요금",
+  sourceUrl: "https://www.alpensia.com/ski/use-cost-rental.do",
+  validFrom: "2026-12-01",
+  replaces: {
+    ski: "alpensia|alpensia-official-rental|equipment|all|all|ski|adult|스키 장비 렌탈",
+    snowboard: "alpensia|alpensia-official-rental|equipment|all|all|snowboard|adult|보드 장비 렌탈",
+    clothing: "alpensia|alpensia-official-rental|clothing|all|all|all|adult|의류 세트 렌탈",
+    package: "alpensia|alpensia-official-rental|equipment_clothing_package|all|all|all|adult|장비 + 의류 패키지"
+  },
+  verificationNote: "공식 렌탈 표(2026-11-26 확인)에 시즌 표기는 없지만 같은 페이지의 운영 일정이 26/27(2027-03-07 폐장)이다. 당일권(11시간) 장비 50,000원·의류 35,000원은 리프트 시간권 슬롯에 맞지 않아 넣지 않았다.",
+  slots: [
+    { timeSlot: "4h", label: "오전·오후권(4시간)", equipment: 32000, childEquipment: 26000, clothing: 20000 },
+    { timeSlot: "night", label: "야간권(3시간)", equipment: 32000, childEquipment: 26000, clothing: 20000 },
+    { timeSlot: "7h", label: "후야권(7시간)", equipment: 40000, childEquipment: 31000, clothing: 30000 },
+    { timeSlot: "full_day", label: "주간권(8시간)", equipment: 40000, childEquipment: 31000, clothing: 30000 }
+  ]
+});
+
+const oakvalleyUpcomingRentalRules = slotRentalRules({
+  shopId: "oakvalley-official-rental",
+  resortId: "oakvalley",
+  sourceName: "오크밸리 스키 요금안내(26/27시즌)",
+  sourceUrl: "https://oakvalley.co.kr/ski/introduction/charge-info",
+  validFrom: "2026-11-01",
+  replaces: {
+    ski: "oakvalley|oakvalley-official-rental|equipment|all|all|ski|adult|스키 장비 렌탈",
+    snowboard: "oakvalley|oakvalley-official-rental|equipment|all|all|snowboard|adult|보드 장비 렌탈"
+  },
+  verificationNote: "공식 요금안내 페이지의 '26/27시즌' 장비렌탈 정상요금 표(2026-11-26 확인). 의류 렌탈 가격은 페이지에 없다. 오야 복합(13:00~22:00 주중/23:00 주말) 35,000원은 시간권 슬롯에 맞지 않아 넣지 않았다.",
+  slots: [
+    { timeSlot: "4h", label: "단일 오전·오후(4시간)", equipment: 28000 },
+    { timeSlot: "night", label: "단일 야간", equipment: 28000 },
+    { timeSlot: "full_day", label: "복합 주간(8시간)", equipment: 35000 }
+  ]
+});
+
 rentalPriceRules.push(
   ...vivaldiUpcomingRentalRules,
+  ...alpensiaUpcomingRentalRules,
+  ...oakvalleyUpcomingRentalRules,
+  ...wellihilliUpcomingRentalRules,
+  ...high1UpcomingRentalRules,
   ...konjiamUpcomingRentalRules,
   ...upcomingOfficialRentalRules({
     resortId: "yongpyong",
@@ -1120,17 +1352,6 @@ rentalPriceRules.push(
     memo: "일반 장비 대인 4시간 44,000원~8시간 54,000원(소인 39,000~49,000원), 의류 한벌 주간 33,000원~주간+야간 50,000원. 고급 장비·부분 렌탈·연일권은 대표값에 넣지 않았다.",
     equipment: { price: 44000, max: 54000 },
     clothing: { price: 33000, max: 50000 }
-  }),
-  ...upcomingOfficialRentalRules({
-    resortId: "alpensia",
-    sourceName: "알펜시아 스키700 렌탈 & 시설 이용 요금",
-    sourceUrl: "https://www.alpensia.com/ski/use-cost-rental.do",
-    validFrom: "2026-12-01",
-    validTo: "2027-03-07",
-    verificationNote: "공식 렌탈 표에 시즌 표기는 없지만 같은 페이지의 운영 일정이 26/27(2027-03-07 폐장)이다. 대표값은 오전·오후·야간 반일권(대인).",
-    memo: "스키·보드 반일 32,000원~당일권 50,000원(소인 26,000~40,000원), 의류 세트 반일 20,000원~당일 35,000원(대·소인 동일). 부분 렌탈과 헬멧은 대표값에 넣지 않았다.",
-    equipment: { price: 32000, max: 50000 },
-    clothing: { price: 20000, max: 35000 }
   })
 );
 

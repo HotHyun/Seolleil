@@ -9,16 +9,19 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "high1",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
+    status: "published",
     sources: [
       { name: "하이원리조트 스키 이용요금", url: "https://www.high1.com/ski/contents.do?key=750" },
+      { name: "하이원리조트 요금/할인안내(스키&보드)", url: "https://www.high1.com/www/contents.do?key=1806" },
+      { name: "하이원리조트 할인(기본·카드별)", url: "https://www.high1.com/www/contents.do?key=1808" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "26/27 X6+ 통합 시즌패스 판매는 확인했지만, 공식 일일 리프트 요금은 아직 없습니다. 시즌패스는 일일권 가격으로 변환하지 않았습니다.",
+    note: "공식 이용요금 페이지의 리프트권(시간권) 3시간 66,000원·4시간 73,000원·7시간 88,000원·종일 111,000원을 반영했습니다(주중·주말 구분과 소인 가격 없음). 같은 페이지가 26/27 시즌 눈썰매장 미운영을 안내해 현행 요금을 26/27로 봤습니다. 할인은 제휴카드(신한·NH·하나·BC) 30%, 지역주민, 국가유공자·장애인·경로, 군경·문화누리카드를 가이드에 정리했습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
+      { label: "스키패스(시즌권) 정상가", value: "대인 600,000원 · 소인 500,000원" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" }
     ]
   },
@@ -26,11 +29,11 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "high1",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
+    status: "published",
     sources: [{ name: "하이원리조트 스키 이용요금", url: "https://www.high1.com/ski/contents.do?key=750" }],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 장비 렌탈 표는 확인되지만 26/27 시즌 표기가 없어 다음 시즌 가격으로 등록하지 않았습니다."
+    note: "공식 스키&보드 대여 4시간 28,000원·7시간 38,000원·종일 54,000원(스키·보드 같은 요금)을 공식 렌탈 요금으로 등록했습니다. 부분품 대여는 별도 요금이고 할인되지 않으며 헬멧은 무료입니다. 의류 렌탈 가격은 공식 페이지에 없고, 표에 시즌 표기가 없는 점은 같은 페이지의 26/27 눈썰매장 미운영 안내로 판단했습니다."
   },
   {
     resortId: "high1",
@@ -126,11 +129,12 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "휘닉스 26/27 스키학교 운영 공고", url: "https://phoenixhnr.co.kr/page/customer/notice/14488" },
       { name: "휘닉스 개장 기념 리프트·장비 대여 특가", url: "https://phoenixhnr.co.kr/page/pyeongchang/board/event/150000047550" }
     ],
-    lastCheckedAt: "2026-11-21",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "26/27 시즌패스와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 정상 일일 리프트 가격표는 아직 없습니다. 개장 행사(11/22~27) 7시간 리프트 30,000원·장비 대여 15,000원은 기간 한정 프로모션으로 기록했습니다. 시즌패스 가격·혜택은 일일 정상가로 변환하지 않았습니다.",
+    note: "26/27 시즌패스와 7시간권 2매 부가 혜택은 확인했지만 일반 고객용 정상 일일 리프트 가격표는 아직 없습니다. 개장 행사(11/22~27) 7시간 리프트 30,000원·장비 대여 15,000원은 기간 한정 프로모션으로 기록했습니다. 시즌패스 가격·혜택은 일일 정상가로 변환하지 않았습니다. 11/26 재확인: 이용 요금/할인 안내 페이지는 개장 행사 표뿐이고, 11/23~12/31 액티비티 특가(라이트 4H 63,300원·스마트 6H 70,300원)가 추가로 게시되어 기간 한정 프로모션으로 기록했습니다. 연령·카드별 상시 할인율 안내는 찾지 못했습니다.",
     announcedFacts: [
       { label: "개장 특가(11/22~27)", value: "리프트 7시간 30,000원 · 장비 대여 7시간 15,000원" },
+      { label: "액티비티 특가(11/23~12/31 판매)", value: "라이트 패스 4H 63,300원 · 스마트 패스 6H 70,300원 · 6H+장비 렌탈 83,300원" },
       { label: "26/27 리프트 얼리버드(11/3~11/22 판매)", value: "스마트 패스 6H 64,400원 · 라이트 패스 4H 57,900원, 장비 렌탈 포함 시 77,400원 · 70,900원" },
       { label: "BASIC PASS", value: "1차 549,000원 · 2차 599,000원" },
       { label: "판매 기간", value: "1차 2026-08-27 ~ 09-30 · 2차 2026-10-01 ~ 11-30" },
@@ -285,14 +289,18 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "wellihilli",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
+    status: "published",
     sources: [
+      { name: "웰리힐리파크 스노우파크 운영시간·이용요금", url: "https://www.wellihillipark.com/home/guide/pay/snowpark" },
+      { name: "웰리힐리파크 할인안내", url: "https://www.wellihillipark.com/home/guide/discount/discount" },
+      { name: "웰리힐리파크 제휴카드 할인", url: "https://www.wellihillipark.com/home/guide/discount/card" },
+      { name: "웰리힐리파크 할인쿠폰", url: "https://www.wellihillipark.com/home/guide/discount/coupon" },
       { name: "웰리힐리파크 공지사항", url: "https://www.wellihillipark.com/" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "26/27 X6+ 시즌패스 및 리조트 회원용 시즌권 판매는 공지됐지만 일반 고객용 일일 리프트 가격은 아직 없습니다. 2026-11-19 Chrome 확인: 시즌권 페이지에는 26/27 횡성군민시즌권(290,000원~)과 회원시즌권만 있고 일일권 가격 경로는 찾지 못했습니다.",
+    note: "26/27 X6+ 시즌패스와 회원용 시즌권 판매는 공지됐습니다. 2026-11-26 Chrome 확인: 공식 이용요금 페이지에 리프트 4시간 76,000원·7시간 91,000원·야간 56,000원·야간심야 66,000원·1회권 20,000원(대·소인 동일)이 게시되어 있지만 같은 페이지에 '26/27 겨울시즌 준비중' 표기가 있고 표에 시즌 표기가 없어 시즌 연결에 판단이 포함되지만 개장 전 게시 요금을 26/27 가격으로 등록했습니다(개장 때 달라지면 갱신). 할인안내 페이지의 우대율(온라인 예약 45~35%, 제휴카드 40~30%, 투숙객 40~30% 등)은 가이드에 정리했고, 개장 당일 특가(4시간·야간 10,000원, 7시간 20,000원)는 개장일 미확정이라 정액 안내로만 기록했습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" },
@@ -303,11 +311,14 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "wellihilli",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
-    sources: [{ name: "웰리힐리파크 스노우파크 예약", url: "https://www.wellihillipark.com/home/reservation/snowpark/season" }],
-    lastCheckedAt: checkedAt,
+    status: "published",
+    sources: [
+      { name: "웰리힐리파크 스노우파크 운영시간·이용요금", url: "https://www.wellihillipark.com/home/guide/pay/snowpark" },
+      { name: "웰리힐리파크 스노우파크 예약", url: "https://www.wellihillipark.com/home/reservation/snowpark/season" }
+    ],
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 스노우파크 예약 화면에 26/27 장비·의류 일반 렌탈 가격표가 게시되지 않았습니다."
+    note: "공식 이용요금 페이지에 장비 풀세트 4시간 35,000원·7시간 40,000원·야간 30,000원·2일권 67,000원, 의류 세트 4시간 일반 25,000원(회원 22,000원)·7시간 30,000원, 부분 렌탈과 용품(헬멧·장갑·보호대) 요금이 게시되어 있습니다. 같은 페이지에 '26/27 겨울시즌 준비중' 표기가 있고 표에 시즌 표기가 없어 시즌 연결에 판단이 포함되지만 개장 전 게시 요금을 26/27 가격으로 등록했습니다(개장 때 달라지면 갱신)."
   },
   {
     resortId: "wellihilli",
@@ -332,9 +343,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "알펜시아 공식 시즌권 안내", url: "https://m.alpensia.com/ski/use-season.do" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter: "2026-12-15",
-    note: "공식 리프트 요금표가 '26/27 시즌'으로 게시되어 오전·오후권(4h), 야간권(night), 주간권(full_day), 후야권(7h)을 등록했습니다. 2h·3h·6h는 26/27 표에 없어 미등록입니다. 개장일은 '오픈일'로만 표기되어 시작일은 12월 1일로 두었습니다.",
+    note: "(2026-11-26 재확인·할인 정리) 공식 할인안내: 신한·우리카드(비수기 주중 40%·주말 30%, 성수기 30%, 본인 포함 4인), 투숙객 30%, 경로·국가유공자·장애인 40%, 강원도민 계열 20~40%, 신한카드 여성 주중 야간 50%를 가이드에 정리했습니다. 공식 리프트 요금표가 '26/27 시즌'으로 게시되어 오전·오후권(4h), 야간권(night), 주간권(full_day), 후야권(7h)을 등록했습니다. 2h·3h·6h는 26/27 표에 없어 미등록입니다. 개장일은 '오픈일'로만 표기되어 시작일은 12월 1일로 두었습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "운영 일정", value: "오픈일 ~ 2027-03-07 · 야간 2026-12-19 ~ 2027-02-13" }
@@ -346,9 +357,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "rental",
     status: "published",
     sources: [{ name: "알펜시아 스키700 렌탈 & 시설 이용 요금", url: "https://www.alpensia.com/ski/use-cost-rental.do" }],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter: "2026-12-15",
-    note: "공식 렌탈 표에 시즌 표기는 없지만 같은 페이지의 운영 일정이 26/27(2027-03-07 폐장)입니다. 스키·보드(반일 32,000원~당일 50,000원)와 의류 세트(반일 20,000원~당일 35,000원)로 등록했고 부분 렌탈·헬멧은 대표값에 넣지 않았습니다."
+    note: "(2026-11-26 재확인) 리프트 슬롯별(4h·야간·7h·종일) 장비·의류 규칙으로 세분했고 소인·당일권·부분 렌탈은 가이드에 정리했습니다. 공식 렌탈 표에 시즌 표기는 없지만 같은 페이지의 운영 일정이 26/27(2027-03-07 폐장)입니다. 스키·보드(반일 32,000원~당일 50,000원)와 의류 세트(반일 20,000원~당일 35,000원)로 등록했고 부분 렌탈·헬멧은 대표값에 넣지 않았습니다."
   },
   {
     resortId: "alpensia",
@@ -367,25 +378,28 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "oakvalley",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
-    sources: [{ name: "오크밸리 공지사항", url: "https://oakvalley.co.kr/customer-service/notice" }],
-    lastCheckedAt: checkedAt,
+    status: "published",
+    sources: [
+      { name: "오크밸리 스키 요금안내", url: "https://oakvalley.co.kr/ski/introduction/charge-info" },
+      { name: "오크밸리 공지사항", url: "https://oakvalley.co.kr/customer-service/notice" }
+    ],
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "26/27 스키·눈놀이동산 시즌권 1차 판매 공지는 확인했지만, 일반 방문용 일일 리프트권 가격표는 아직 없습니다.",
+    note: "공식 요금안내가 '26/27시즌'으로 게시되어 단일 오전·오후·야간권 66,000원(4시간·야간 슬롯)과 복합 주간권 80,000원(8시간, 종일 슬롯)을 등록했습니다. 소인 가격과 2·3·6시간권은 표에 없습니다. 오야 복합권(80,000원)은 시간권 슬롯에 맞지 않아 안내로만 기록했습니다. 할인(NH농협·신한·토스 40~60%, 투숙객 50%/40%, 지역주민·우대 40%/30%, 회원 A·B)은 가이드에 정리했고 적용 기간은 2026-12-11부터입니다.",
     announcedFacts: [
       { label: "시즌권", value: "26/27 1차 판매 공지 · 2026-09-09" },
-      { label: "일일 리프트 요금", value: "미게시" }
+      { label: "야간 운영", value: "2026-12-11 ~ 폐장일(2/15~2/18, 2/21 제외)" }
     ]
   },
   {
     resortId: "oakvalley",
     targetSeason: UPCOMING_SEASON,
     category: "rental",
-    status: "checked_unpublished",
-    sources: [{ name: "오크밸리 고객 서비스 센터", url: "https://oakvalley.co.kr/customer-service/service" }],
-    lastCheckedAt: checkedAt,
+    status: "published",
+    sources: [{ name: "오크밸리 스키 요금안내", url: "https://oakvalley.co.kr/ski/introduction/charge-info" }],
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 고객 서비스 화면은 렌탈샵 연락처만 제공하며 26/27 장비·의류 가격표는 공개하지 않았습니다."
+    note: "공식 요금안내의 '26/27시즌' 장비렌탈 정상요금(단일 오전·오후·야간 28,000원, 복합 주간 35,000원)을 공식 렌탈 요금으로 등록했습니다. 의류·헬멧 가격은 페이지에 없습니다. 장비 렌탈 할인율은 리프트와 같게 안내됩니다."
   },
   {
     resortId: "oakvalley",
@@ -409,9 +423,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "오투리조트 스키 리프트 요금", url: "https://www.o2resort.com/GDE/totalPrice_skiLift.jsp" },
       { name: "무주 덕유산리조트 26/27 시즌권 안내", url: "https://www.mdysresort.com/ski/buy_season_pass04.asp" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "오투 단독 리프트 요금표에는 시즌 표기가 없습니다. 무주·오투 통합 시즌권 판매는 확인했지만 26/27 일일권 가격으로 보지 않았습니다.",
+    note: "(2026-11-26 확인) 26/27 가격은 아직 준비 중이며 게시되면 등록합니다. 오투 단독 리프트 요금표에는 시즌 표기가 없습니다. 무주·오투 통합 시즌권 판매는 확인했지만 26/27 일일권 가격으로 보지 않았습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "무주·오투 통합권 I·II 판매" },
       { label: "이용 기간", value: "2026년 개장일 ~ 2027년 폐장일" }
@@ -426,9 +440,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "오투리조트 스키 렌탈 요금", url: "https://www.o2resort.com/GDE/totalPrice_skiRental.jsp" },
       { name: "오투리조트 스키 공지", url: "https://www.o2resort.com/news/list.xhtml?division=0004&limit=10&page=3" }
     ],
-    lastCheckedAt: checkedAt,
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 렌탈 표는 시즌 미표기 가격이며 26/27 장비 시승회 공지는 신제품 체험 행사로 일반 대여 가격이 아니어서 규칙을 생성하지 않았습니다."
+    note: "(2026-11-26 확인) 26/27 가격은 아직 준비 중이며 게시되면 등록합니다. 공식 렌탈 표는 시즌 미표기 가격이며 26/27 장비 시승회 공지는 신제품 체험 행사로 일반 대여 가격이 아니어서 규칙을 생성하지 않았습니다."
   },
   {
     resortId: "o2",
@@ -449,9 +463,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "무주 덕유산리조트 스키 요금안내", url: "https://www.mdysresort.com/ski/charge.asp" },
       { name: "무주 덕유산리조트 시즌권", url: "https://www.mdysresort.com/ski/buy_season_pass04.asp" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "26/27 무주 통합 시즌권과 무주·오투 통합 시즌권 판매 및 2차 할인 가격표를 확인했습니다. 일일 리프트 요금은 26/27로 갱신되지 않았습니다. 2026-11-19 Chrome 확인: 요금 안내 이미지는 '26/27 시즌, 더 좋은 모습으로 찾아뵙겠습니다' 준비 안내입니다.",
+    note: "(2026-11-26 확인) 26/27 가격은 아직 준비 중이며 게시되면 등록합니다. 26/27 무주 통합 시즌권과 무주·오투 통합 시즌권 판매 및 2차 할인 가격표를 확인했습니다. 일일 리프트 요금은 26/27로 갱신되지 않았습니다. 2026-11-19 Chrome 확인: 요금 안내 이미지는 '26/27 시즌, 더 좋은 모습으로 찾아뵙겠습니다' 준비 안내입니다.",
     announcedFacts: [
       { label: "시즌패스", value: "무주 통합권 I·II 및 무주·오투 통합권 I·II" },
       { label: "이용 기간", value: "2026년 개장일 ~ 2027년 폐장일" },
@@ -464,9 +478,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "rental",
     status: "checked_unpublished",
     sources: [{ name: "무주 덕유산리조트 스키 요금안내", url: "https://www.mdysresort.com/ski/charge.asp" }],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 요금 화면에서 26/27 장비·의류 렌탈 가격과 유효 기간을 확인할 수 없습니다. 2026-11-19 Chrome 확인: 같은 요금 안내 이미지가 26/27 준비 안내입니다."
+    note: "(2026-11-26 확인) 26/27 가격은 아직 준비 중이며 게시되면 등록합니다. 공식 요금 화면에서 26/27 장비·의류 렌탈 가격과 유효 기간을 확인할 수 없습니다. 2026-11-19 Chrome 확인: 같은 요금 안내 이미지가 26/27 준비 안내입니다."
   },
   {
     resortId: "muju",
@@ -490,9 +504,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "에덴밸리 스키장 공식 공지", url: "https://www.edenvalley.co.kr/Inc_board/inc_list.asp?ConfigPID=1&Find=&GotoPage=25&Search=" },
       { name: "에덴밸리 25/26 시즌권 약관", url: "https://edenvalley.co.kr/images/Ski/2526season/2526%EC%8B%9C%EC%A6%8C%EA%B6%8C%EC%95%BD%EA%B4%80%28%EC%9D%BC%EB%B0%98%29.pdf" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 공지는 25/26 시즌이 2026년 3월 1일 종료됐음을 안내하고 약관도 25/26 기준이어서 26/27 리프트 가격은 미발표입니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다. 2025-09에 사전회생계획안 신청 안내 공지가 있어 운영 여부도 함께 확인이 필요합니다."
+    note: "(2026-11-26 확인) 26/27 가격은 아직 준비 중이며 게시되면 등록합니다. 공식 공지는 25/26 시즌이 2026년 3월 1일 종료됐음을 안내하고 약관도 25/26 기준이어서 26/27 리프트 가격은 미발표입니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다. 2025-09에 사전회생계획안 신청 안내 공지가 있어 운영 여부도 함께 확인이 필요합니다."
   },
   {
     resortId: "edenvalley",
@@ -500,9 +514,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "rental",
     status: "checked_unpublished",
     sources: [{ name: "에덴밸리 스키장 공식 공지", url: "https://www.edenvalley.co.kr/Inc_board/inc_list.asp?ConfigPID=1&Find=&GotoPage=25&Search=" }],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 목록에는 25/26 리프트·렌탈 패키지만 남아 있고 26/27 장비·의류 일반 렌탈 가격표는 없습니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다."
+    note: "(2026-11-26 확인) 26/27 가격은 아직 준비 중이며 게시되면 등록합니다. 공식 목록에는 25/26 리프트·렌탈 패키지만 남아 있고 26/27 장비·의류 일반 렌탈 가격표는 없습니다. 2026-11-19 Chrome 확인: 공지 게시판의 최신 글이 2026-02-23 폐장 안내이며 26/27 공지가 없습니다."
   },
   {
     resortId: "edenvalley",

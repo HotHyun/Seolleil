@@ -3,13 +3,12 @@ import { ArrowRight, ExternalLink, Info, Tag } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { ConfidenceBadge, ConfidenceDot } from "@/components/confidence-badge";
 import { liftPromotions } from "@/data/lift-promotions";
-import { buildDiscountCards, getLiftGuideForBoard, getLiftPriceBoard, type LiftPriceBoard as Board } from "@/lib/lift-price-board";
+import { buildDiscountCards, getLiftGuideForBoard, getLiftPriceBoard, slotLabelFor, type LiftPriceBoard as Board } from "@/lib/lift-price-board";
 import { isPromotionOnSale } from "@/lib/lift-promotions";
-import { timeSlotLabels } from "@/lib/constants";
 import { todayKst } from "@/lib/season-open";
 import type { DayType, PriceConfidence } from "@/lib/types";
 import { cn, formatCurrency } from "@/lib/utils";
-import type { DiscountRates, LiftDiscount } from "@/data/lift-discounts";
+import type { DiscountRates, LiftDiscount, ResortLiftGuide } from "@/data/lift-discounts";
 
 const columnLabels: Partial<Record<DayType, string>> = { all: "전체", weekday: "주중", friday: "금요일", weekend: "주말", holiday: "공휴일", peak: "성수기" };
 
@@ -19,7 +18,7 @@ function overallConfidence(board: Board): PriceConfidence {
   return order.find((level) => levels.includes(level)) ?? "confirmed";
 }
 
-function PriceTable({ board }: { board: Board }) {
+function PriceTable({ board, guide }: { board: Board; guide?: ResortLiftGuide }) {
   const showChild = board.rows.some((row) => Object.values(row.cells).some((cell) => cell.childPrice !== undefined));
   return (
     <div className="overflow-hidden rounded-xl border bg-card">
@@ -34,7 +33,7 @@ function PriceTable({ board }: { board: Board }) {
         <tbody className="divide-y">
           {board.rows.map((row) => (
             <tr key={row.slot}>
-              <th scope="row" className="px-3 py-3 text-left font-semibold">{timeSlotLabels[row.slot]}</th>
+              <th scope="row" className="px-3 py-3 text-left font-semibold">{slotLabelFor(guide, row.slot)}</th>
               {board.columns.map((column) => {
                 const cell = row.cells[column];
                 return (
@@ -54,36 +53,52 @@ function PriceTable({ board }: { board: Board }) {
   );
 }
 
+function rateText(weekday?: number, weekend?: number) {
+  return weekend !== undefined && weekend !== weekday ? `주중 ${weekday}% · 주말 ${weekend}%` : `${weekday}%`;
+}
+
+function weekendRateOf(discount: LiftDiscount, index: number) {
+  return index === 0 ? discount.rates.weekend?.lift : discount.altRates?.weekend?.lift;
+}
+
 function RateChip({ label, rate, note }: { label: string; rate?: number; note?: string }) {
   if (!rate) return null;
   return <span className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs font-medium">{label} <strong className="font-semibold text-primary">{rate}%</strong>{note ? <span className="text-muted-foreground">({note})</span> : null}</span>;
 }
 
-function DiscountCards({ board, guide }: { board: Board; guide: NonNullable<ReturnType<typeof getLiftGuideForBoard>> }) {
+function DiscountCards({ board, guide }: { board: Board; guide: ResortLiftGuide }) {
   const cards = buildDiscountCards(board, guide);
   if (!cards.length) return null;
   return (
-    <div className="grid gap-3 sm:grid-cols-3">
-      {cards.map(({ discount, rows }) => (
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      {cards.map(({ discount, periods }) => (
         <div key={discount.id} className="rounded-xl border bg-card p-4">
           <div className="flex items-baseline justify-between gap-2">
             <h3 className="font-semibold">{discount.title}</h3>
-            <span className="rounded-md bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary">리프트 {discount.rates.lift}%</span>
+            {periods.length === 1 ? <span className="rounded-md bg-primary/10 px-2 py-0.5 text-sm font-semibold text-primary">리프트 {rateText(discount.rates.lift, discount.rates.weekend?.lift)}</span> : null}
           </div>
           <p className="mt-1 text-xs text-muted-foreground">{discount.target}</p>
-          <ul className="mt-3 space-y-1.5 text-sm">
-            {rows.map((row) => (
-              <li key={row.slot} className="flex items-baseline justify-between gap-2">
-                <span className="text-muted-foreground">{timeSlotLabels[row.slot]}</span>
-                <span className="text-right font-semibold tabular-nums">
-                  {row.single !== undefined ? formatCurrency(row.single) : <>
-                    {row.weekday !== undefined ? <span><span className="mr-1 text-xs font-normal text-muted-foreground">주중</span>{formatCurrency(row.weekday)}</span> : null}
-                    {row.weekend !== undefined ? <span className="ml-2"><span className="mr-1 text-xs font-normal text-muted-foreground">주말</span>{formatCurrency(row.weekend)}</span> : null}
-                  </>}
-                </span>
-              </li>
-            ))}
-          </ul>
+          {periods.map((period, index) => {
+            const rate = index === 0 ? discount.rates.lift : discount.altRates?.lift;
+            return (
+              <div key={period.label ?? "all"} className="mt-3">
+                {period.label ? <p className="flex items-baseline justify-between gap-2 text-xs"><span className="font-semibold">{period.label}<span className="ml-1.5 font-normal text-muted-foreground">{period.range}</span></span><span className="rounded-md bg-primary/10 px-1.5 py-0.5 font-semibold text-primary">리프트 {rateText(rate, weekendRateOf(discount, index))}</span></p> : null}
+                <ul className="mt-1.5 space-y-1.5 text-sm">
+                  {period.rows.map((row) => (
+                    <li key={row.slot} className="flex items-baseline justify-between gap-2">
+                      <span className="text-muted-foreground">{slotLabelFor(guide, row.slot)}</span>
+                      <span className="text-right font-semibold tabular-nums">
+                        {row.single !== undefined ? formatCurrency(row.single) : <>
+                          {row.weekday !== undefined ? <span><span className="mr-1 text-xs font-normal text-muted-foreground">주중</span>{formatCurrency(row.weekday)}</span> : null}
+                          {row.weekend !== undefined ? <span className="ml-2"><span className="mr-1 text-xs font-normal text-muted-foreground">주말</span>{formatCurrency(row.weekend)}</span> : null}
+                        </>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            );
+          })}
           {discount.weekdayOnly ? <p className="mt-2 text-xs text-muted-foreground">주중에만 적용돼요.</p> : null}
           <ul className="mt-3 space-y-1 border-t pt-3 text-xs leading-5 text-muted-foreground">
             {discount.notes.map((note) => <li key={note}>{note}</li>)}
@@ -94,9 +109,9 @@ function DiscountCards({ board, guide }: { board: Board; guide: NonNullable<Retu
   );
 }
 
-function DiscountList({ discounts, title }: { discounts: LiftDiscount[]; title: string }) {
+function DiscountList({ discounts, title, guide }: { discounts: LiftDiscount[]; title: string; guide: ResortLiftGuide }) {
   if (!discounts.length) return null;
-  const columns: { key: keyof DiscountRates; label: string }[] = [{ key: "lift", label: "리프트" }, { key: "rental", label: "장비렌탈" }, { key: "lesson", label: "강습" }, { key: "sled", label: "눈썰매장" }];
+  const columns: { key: Exclude<keyof DiscountRates, "weekend">; label: string }[] = [{ key: "lift", label: "리프트" }, { key: "rental", label: "장비렌탈" }, { key: "lesson", label: "강습" }, { key: "sled", label: "눈썰매장" }];
   return (
     <div>
       <h3 className="text-sm font-semibold text-muted-foreground">{title}</h3>
@@ -105,9 +120,21 @@ function DiscountList({ discounts, title }: { discounts: LiftDiscount[]; title: 
           <li key={discount.id} className="px-3.5 py-3">
             <p className="font-semibold">{discount.title}</p>
             <p className="text-xs leading-5 text-muted-foreground">{discount.target}</p>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {columns.map((column) => <RateChip key={column.key} label={column.label} rate={discount.rates[column.key]} note={column.key === "lesson" ? discount.lessonNote : undefined} />)}
+            <div className="mt-2 space-y-1.5">
+              {(guide.periods && discount.altRates ? [{ label: guide.periods[0].label, rates: discount.rates }, { label: guide.periods[1].label, rates: discount.altRates }] : [{ label: undefined, rates: discount.rates }]).map((period) => (
+                <div key={period.label ?? "all"} className="flex flex-wrap items-center gap-1.5">
+                  {period.label ? <span className="w-16 shrink-0 text-xs font-medium text-muted-foreground">{period.label}</span> : null}
+                  {columns.map((column) => {
+                    const weekend = column.key === "lift" || column.key === "rental" ? period.rates.weekend?.[column.key] : undefined;
+                    const rate = period.rates[column.key];
+                    return weekend !== undefined && weekend !== rate
+                      ? <span key={column.key} className="inline-flex items-center gap-1.5"><RateChip label={`${column.label} 주중`} rate={rate} /><RateChip label="주말" rate={weekend} /></span>
+                      : <RateChip key={column.key} label={column.label} rate={rate} note={column.key === "lesson" ? discount.lessonNote : undefined} />;
+                  })}
+                </div>
+              ))}
             </div>
+            {discount.notes.length && !discount.highlight ? <ul className="mt-2 space-y-0.5 text-xs leading-5 text-muted-foreground">{discount.notes.map((note) => <li key={note}>{note}</li>)}</ul> : null}
           </li>
         ))}
       </ul>
@@ -115,23 +142,34 @@ function DiscountList({ discounts, title }: { discounts: LiftDiscount[]; title: 
   );
 }
 
-function ActivePromotions({ resortId, board }: { resortId: string; board: Board }) {
+type PromoPrice = (typeof liftPromotions)[number]["prices"][number];
+
+// 주중·주말 가격이 같으면 한 묶음으로 보여 준다.
+function promotionGroups(prices: PromoPrice[]) {
+  const weekday = prices.filter((price) => price.dayType === "weekday");
+  const weekend = prices.filter((price) => price.dayType === "weekend");
+  const key = (list: PromoPrice[]) => JSON.stringify(list.map((price) => [price.timeSlot, price.adultPrice, price.withRentalPrice]));
+  if (weekday.length && key(weekday) === key(weekend)) return [{ label: "주중·주말 동일", prices: weekday }];
+  return [{ label: "주중", prices: weekday }, { label: "주말", prices: weekend }].filter((group) => group.prices.length);
+}
+
+function ActivePromotions({ resortId, guide }: { resortId: string; guide?: ResortLiftGuide }) {
   const today = todayKst();
   const active = liftPromotions.filter((promotion) => promotion.resortId === resortId && isPromotionOnSale(promotion, today));
-  if (!active.length || board.isReference) return null;
+  if (!active.length) return null;
   return (
     <div className="space-y-3">
       {active.map((promotion) => (
         <div key={promotion.id} className="rounded-xl border border-primary/30 bg-primary/[0.04] p-4" data-testid="lift-promotion">
           <p className="flex items-center gap-2 font-semibold"><Tag aria-hidden="true" className="h-4 w-4 text-primary" />{promotion.title}<span className="text-xs font-normal text-muted-foreground">{promotion.channel} · {promotion.salesTo.slice(5).replace("-", "/")}까지 판매</span></p>
           <ul className="mt-3 grid gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2">
-            {(["weekday", "weekend"] as const).map((dayType) => (
-              <li key={dayType}>
-                <p className="text-xs font-semibold text-muted-foreground">{dayType === "weekday" ? "주중" : "주말"}</p>
-                {promotion.prices.filter((price) => price.dayType === dayType).map((price) => (
+            {promotionGroups(promotion.prices).map((group) => (
+              <li key={group.label}>
+                <p className="text-xs font-semibold text-muted-foreground">{group.label}</p>
+                {group.prices.map((price) => (
                   <p key={price.timeSlot} className="flex items-baseline justify-between gap-2">
-                    <span className="text-muted-foreground">{timeSlotLabels[price.timeSlot]}</span>
-                    <span className="font-semibold tabular-nums">{formatCurrency(price.adultPrice)}{price.withRentalPrice !== undefined ? <span className="ml-2 text-xs font-normal text-muted-foreground">+장비 {formatCurrency(price.withRentalPrice)}</span> : null}</span>
+                    <span className="text-muted-foreground">{slotLabelFor(guide, price.timeSlot)}</span>
+                    <span className="font-semibold tabular-nums">{formatCurrency(price.adultPrice)}{price.withRentalPrice !== undefined ? <span className="ml-2 text-xs font-normal text-muted-foreground">장비 포함 {formatCurrency(price.withRentalPrice)}</span> : null}</span>
                   </p>
                 ))}
               </li>
@@ -163,11 +201,11 @@ export function LiftPriceBoard({ resortId, variant = "full", guideHref }: { reso
     return (
       <div className="space-y-3">
         {board.isReference ? <p className="flex items-start gap-2 rounded-lg border bg-muted/50 p-3 text-xs leading-5 text-muted-foreground"><Info aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />{board.seasonLabel} 가격을 참고가로 보여 줘요. 26/27 공식 가격이 게시되면 바뀌어요.</p> : null}
-        <div><Heading meta={meta}><span className="text-sm font-semibold">{board.seasonLabel} 정상가</span></Heading><PriceTable board={board} /></div>
+        <div><Heading meta={meta}><span className="text-sm font-semibold">{board.seasonLabel} 정상가</span></Heading><PriceTable board={board} guide={guide} /></div>
         {cards.length ? (
           <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
             할인
-            {cards.map(({ discount }) => <RateChip key={discount.id} label={discount.title} rate={discount.rates.lift} />)}
+            {cards.map(({ discount }) => <RateChip key={discount.id} label={discount.title} rate={discount.rates.lift} note={discount.altRates?.lift && guide?.periods ? `${guide.periods[1].label} ${discount.altRates.lift}%` : undefined} />)}
           </p>
         ) : null}
         {guideHref ? <Link href={guideHref} className="inline-flex min-h-9 items-center gap-1 text-sm font-semibold text-primary">할인·우대 전체 보기 <ArrowRight aria-hidden="true" className="h-4 w-4" /></Link> : null}
@@ -184,21 +222,21 @@ export function LiftPriceBoard({ resortId, variant = "full", guideHref }: { reso
 
       <section aria-label="정상가">
         <Heading meta={meta}>{board.seasonLabel} 리프트권 정상가</Heading>
-        <PriceTable board={board} />
-        <p className="mt-2 text-xs leading-5 text-muted-foreground">대인 1인 요금이에요(소인 가격이 있으면 함께 표시). 아래 할인가는 공식 할인율로 계산한 참고값이며, 실제 결제 금액은 판매처에서 확인하세요.</p>
+        <PriceTable board={board} guide={guide} />
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">대인 1인 요금이에요(소인 가격이 있으면 함께 표시).{guide?.discounts.length ? " 아래 할인가는 공식 할인율로 계산한 참고값이며, 실제 결제 금액은 판매처에서 확인하세요." : " 실제 결제 금액은 판매처에서 확인하세요."}</p>
       </section>
 
-      {guide ? <section aria-label="할인 적용 시 가격">
+      {guide && buildDiscountCards(board, guide).length ? <section aria-label="할인 적용 시 가격">
         <Heading>할인받으면 얼마?</Heading>
         <DiscountCards board={board} guide={guide} />
       </section> : null}
 
-      <ActivePromotions resortId={resortId} board={board} />
+      <ActivePromotions resortId={resortId} guide={guide} />
 
-      {guide ? <section aria-label="우대 할인율" className="space-y-4">
+      {guide?.discounts.length ? <section aria-label="우대 할인율" className="space-y-4">
         <Heading>우대(할인)율 한눈에</Heading>
-        <DiscountList discounts={anyone} title="누구나 받을 수 있어요" />
-        <DiscountList discounts={verified} title="현장 구매 · 증빙이 필요해요" />
+        <DiscountList discounts={anyone} title="누구나 받을 수 있어요" guide={guide} />
+        <DiscountList discounts={verified} title="현장 구매 · 증빙이 필요해요" guide={guide} />
       </section> : null}
 
       {guide ? <section aria-label="알아두세요">

@@ -17,7 +17,7 @@ describe("lift price board", () => {
   it("derives card, guest and night prices from the official rates", () => {
     const board = getLiftPriceBoard("konjiam")!;
     const cards = buildDiscountCards(board, getLiftGuideForBoard("konjiam", board)!);
-    const byId = Object.fromEntries(cards.map((card) => [card.discount.id, card.rows]));
+    const byId = Object.fromEntries(cards.map((card) => [card.discount.id, card.periods[0].rows]));
     // 공식 카드 할인가(25%)와 같아야 한다.
     expect(byId.card.map((row) => [row.weekday, row.weekend])).toEqual([[51_750, 62_250], [60_750, 72_000], [65_250, 78_750]]);
     expect(byId.guest[0]).toMatchObject({ weekday: discountedPrice(69_000, 30), weekend: discountedPrice(83_000, 30) });
@@ -36,7 +36,7 @@ describe("lift price board", () => {
   it("prices Konjiam rental discounts on the full set only and totals a one-person trip", () => {
     const board = getLiftPriceBoard("konjiam")!;
     const guide = getLiftGuideForBoard("konjiam", board)!;
-    const cards = Object.fromEntries(buildRentalDiscountCards(guide).map((card) => [card.discount.id, card.rows]));
+    const cards = Object.fromEntries(buildRentalDiscountCards(guide).map((card) => [card.discount.id, card.periods[0].rows]));
     expect(cards.card).toHaveLength(1);
     expect(cards.card[0].prices.map((entry) => entry.price)).toEqual([27_000, 29_250]);
     expect(cards.lesson[0].prices.map((entry) => entry.price)).toEqual([18_000, 19_500]);
@@ -54,7 +54,7 @@ describe("lift price board", () => {
     ]);
     const guide = getLiftGuideForBoard("vivaldi", board)!;
     const card = buildDiscountCards(board, guide).find((item) => item.discount.id === "card")!;
-    expect(card.rows[0]).toMatchObject({ weekday: 52_500, weekend: 63_700 });
+    expect(card.periods[0].rows[0]).toMatchObject({ weekday: 52_500, weekend: 63_700 });
     expect(discountedPrice(36_220 / 0.7, 30, 10)).toBe(36_220);
     const example = buildTripExamples(board, guide);
     expect(example[0].weekday).toMatchObject({ lift: 75_000, equipment: 34_000, total: 109_000 });

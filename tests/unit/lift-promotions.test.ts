@@ -33,6 +33,13 @@ describe("lift promotions", () => {
     expect(resortsWithActivePromotion("2026-11-22")).toEqual(["konjiam", "yongpyong", "phoenix"]);
   });
 
+  it("lists the Phoenix activity deal for 4 and 6 hour tickets until the end of December", () => {
+    expect(findLiftPromotion("phoenix", "4h", "2027-01-12", "2026-11-26")).toMatchObject({ adultPrice: 63300, promotion: { id: "phoenix-activity-deal-26-27" } });
+    expect(findLiftPromotion("phoenix", "6h", "2027-01-16", "2026-12-31")).toMatchObject({ adultPrice: 70300, withRentalPrice: 83300 });
+    expect(findLiftPromotion("phoenix", "6h", "2027-01-16", "2027-01-01")).toBeUndefined();
+    expect(findLiftPromotion("phoenix", "7h", "2027-01-12", "2026-11-26")).toBeUndefined();
+  });
+
   it("hides the promotion outside the sales window, for other resorts and for unlisted time slots", () => {
     expect(isPromotionOnSale(konjiamPromotion, "2026-11-03")).toBe(false);
     expect(isPromotionOnSale(konjiamPromotion, "2026-11-04")).toBe(true);

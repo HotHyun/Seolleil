@@ -1,6 +1,6 @@
 import { priceRules } from "@/data/prices";
-import { getResortLiftGuide, type LiftDiscount, type RentalGuideItem, type ResortLiftGuide } from "@/data/lift-discounts";
-import { CURRENT_SEASON, UPCOMING_SEASON } from "@/lib/constants";
+import { getResortLiftGuide, type DiscountRates, type LiftDiscount, type RentalGuideItem, type ResortLiftGuide } from "@/data/lift-discounts";
+import { CURRENT_SEASON, UPCOMING_SEASON, timeSlotLabels } from "@/lib/constants";
 import { seasonLabel } from "@/lib/guides";
 import type { DayType, PriceConfidence, TimeSlot } from "@/lib/types";
 
@@ -66,31 +66,47 @@ export function discountedPrice(price: number, ratePercent: number, roundTo = 1)
   return Math.round((price * (1 - ratePercent / 100)) / roundTo) * roundTo;
 }
 
+export type PeriodBlock<Row> = { label?: string; range?: string; rows: Row[] };
+
 export type DiscountCard = {
   discount: LiftDiscount;
-  rows: { slot: TimeSlot; weekday?: number; weekend?: number; single?: number }[];
+  /** 기간별 할인율이 없으면 블록 하나, 있으면 기간마다 블록 하나 */
+  periods: PeriodBlock<{ slot: TimeSlot; weekday?: number; weekend?: number; single?: number }>[];
 };
+
+/** 할인율이 기간별로 다른 가이드면 기간 이름과 그 기간 할인율을, 아니면 하나짜리 기간을 돌려준다. */
+function periodRates(guide: ResortLiftGuide, discount: LiftDiscount) {
+  if (!guide.periods || !discount.altRates) return [{ label: undefined, range: undefined, rates: discount.rates }];
+  return [
+    { label: guide.periods[0].label, range: guide.periods[0].range, rates: discount.rates },
+    { label: guide.periods[1].label, range: guide.periods[1].range, rates: discount.altRates }
+  ];
+}
 
 /** 리프트권 할인율이 있고 가격표 카드로 보여 줄 할인을 시간권별 할인가로 계산한다. */
 export function buildDiscountCards(board: LiftPriceBoard, guide: ResortLiftGuide): DiscountCard[] {
   return guide.discounts
     .filter((discount) => discount.highlight && discount.rates.lift)
-    .map((discount) => {
-      const rate = discount.rates.lift!;
-      const rows = board.rows.flatMap<DiscountCard["rows"][number]>((row) => {
-        const weekday = row.cells.weekday?.price;
-        const weekend = row.cells.weekend?.price;
-        const single = row.cells.all?.price;
-        if (weekday === undefined && weekend === undefined && single === undefined) return [];
-        return [{
-          slot: row.slot,
-          weekday: weekday === undefined ? undefined : discountedPrice(weekday, rate, guide.roundTo),
-          weekend: discount.weekdayOnly || weekend === undefined ? undefined : discountedPrice(weekend, rate, guide.roundTo),
-          single: single === undefined || discount.weekdayOnly ? undefined : discountedPrice(single, rate, guide.roundTo)
-        }];
-      });
-      return { discount, rows };
-    });
+    .map((discount) => ({
+      discount,
+      periods: periodRates(guide, discount).map(({ label, range, rates }) => {
+        const rate = rates.lift ?? 0;
+        const weekendRate = rates.weekend?.lift;
+        const rows = board.rows.flatMap<PeriodBlock<DiscountCard["periods"][number]["rows"][number]>["rows"][number]>((row) => {
+          const weekday = row.cells.weekday?.price;
+          const weekend = row.cells.weekend?.price;
+          const single = row.cells.all?.price;
+          if (weekday === undefined && weekend === undefined && single === undefined) return [];
+          return [{
+            slot: row.slot,
+            weekday: weekday === undefined ? undefined : discountedPrice(weekday, rate, guide.roundTo),
+            weekend: discount.weekdayOnly || weekend === undefined ? undefined : discountedPrice(weekend, rate, guide.roundTo),
+            single: single === undefined || discount.weekdayOnly || weekendRate !== undefined ? undefined : discountedPrice(single, rate, guide.roundTo)
+          }].map((entry) => single !== undefined && weekendRate !== undefined && !discount.weekdayOnly ? { ...entry, weekday: discountedPrice(single, rate, guide.roundTo), weekend: discountedPrice(single, weekendRate, guide.roundTo) } : entry);
+        });
+        return { label, range, rows };
+      })
+    }));
 }
 
 export function getLiftGuideForBoard(resortId: string, board: LiftPriceBoard) {
@@ -98,9 +114,26 @@ export function getLiftGuideForBoard(resortId: string, board: LiftPriceBoard) {
   return guide && guide.season === board.season ? guide : undefined;
 }
 
+/** 가이드가 정한 이름으로 시간권을 부른다. */
+export function slotLabelFor(guide: ResortLiftGuide | undefined, slot: TimeSlot) {
+  return guide?.slotLabels?.[slot] ?? timeSlotLabels[slot];
+}
+
+function discountedItemPrices(item: RentalGuideItem, rates: DiscountRates, roundTo?: number) {
+  const base = rates.rental ?? 0;
+  const weekend = rates.weekend?.rental;
+  if (weekend === undefined || weekend === base) return item.prices.map((entry) => ({ label: entry.label, price: discountedPrice(entry.price, base, roundTo) }));
+  // 주중·주말 할인율이 다르면 주중·주말 할인가를 따로 보여 준다.
+  const single = item.prices.length === 1;
+  return item.prices.flatMap((entry) => [
+    { label: single ? "주중" : `주중 ${entry.label}`, price: discountedPrice(entry.price, base, roundTo) },
+    { label: single ? "주말" : `주말 ${entry.label}`, price: discountedPrice(entry.price, weekend, roundTo) }
+  ]);
+}
+
 export type RentalDiscountCard = {
   discount: LiftDiscount;
-  rows: { item: RentalGuideItem; prices: { label: string; price: number }[] }[];
+  periods: PeriodBlock<{ item: RentalGuideItem; prices: { label: string; price: number }[] }>[];
 };
 
 /** 장비 렌탈 할인율이 있는 '누구나' 할인을 할인받을 수 있는 품목별 할인가로 계산한다. */
@@ -112,12 +145,16 @@ export function buildRentalDiscountCards(guide: ResortLiftGuide): RentalDiscount
     .filter((discount) => discount.group === "anyone" && discount.rates.rental)
     .map((discount) => ({
       discount,
-      rows: items.map((item) => ({ item, prices: item.prices.map((entry) => ({ label: entry.label, price: discountedPrice(entry.price, discount.rates.rental!, guide.roundTo) })) }))
+      periods: periodRates(guide, discount).map(({ label, range, rates }) => ({
+        label,
+        range,
+        rows: items.map((item) => ({ item, prices: discountedItemPrices(item, rates, guide.roundTo) }))
+      }))
     }));
 }
 
 export type TripExampleCell = { lift: number; equipment: number; clothing?: number; total: number };
-export type TripExample = { title: string; weekday?: TripExampleCell; weekend?: TripExampleCell };
+export type TripExample = { title: string; weekday?: TripExampleCell; weekend?: TripExampleCell; all?: TripExampleCell };
 
 /** 리프트권 + 장비(+의류)를 한 번에 빌릴 때 1인 비용. 구성은 가이드 데이터의 example이 정한다. 의류는 할인하지 않는다. */
 export function buildTripExamples(board: LiftPriceBoard, guide: ResortLiftGuide): TripExample[] {
@@ -126,20 +163,37 @@ export function buildTripExamples(board: LiftPriceBoard, guide: ResortLiftGuide)
   if (!rental || !config) return [];
   const lift = board.rows.find((row) => row.slot === config.liftSlot);
   const equipment = rental.equipment.find((item) => item.id === config.equipmentId);
-  const clothing = config.clothingId ? rental.clothing.find((item) => item.id === config.clothingId)?.prices[0]?.price : undefined;
+  const clothingItem = config.clothingId ? rental.clothing.find((item) => item.id === config.clothingId) : undefined;
+  const clothing = clothingItem ? (config.clothingPriceLabel ? clothingItem.prices.find((entry) => entry.label === config.clothingPriceLabel) : clothingItem.prices[0])?.price : undefined;
   if (!lift || !equipment || (config.clothingId && clothing === undefined)) return [];
+  const labels = { weekday: config.equipmentPriceLabels?.weekday ?? "주중", weekend: config.equipmentPriceLabels?.weekend ?? "주말", all: config.equipmentPriceLabels?.all ?? "전체" };
   const priceOf = (label: string) => equipment.prices.find((entry) => entry.label === label)?.price;
 
-  const scenario = (title: string, rates: { lift: number; rental: number }): TripExample => {
-    const build = (liftPrice: number | undefined, equipmentPrice: number | undefined): TripExampleCell | undefined => {
+  const scenario = (title: string, rates: { lift: number; rental: number }, weekendRates?: { lift: number; rental: number }): TripExample => {
+    const build = (liftPrice: number | undefined, equipmentPrice: number | undefined, useRates = rates): TripExampleCell | undefined => {
       if (liftPrice === undefined || equipmentPrice === undefined) return undefined;
-      const l = discountedPrice(liftPrice, rates.lift, guide.roundTo);
-      const e = discountedPrice(equipmentPrice, rates.rental, guide.roundTo);
+      const l = discountedPrice(liftPrice, useRates.lift, guide.roundTo);
+      const e = discountedPrice(equipmentPrice, useRates.rental, guide.roundTo);
       return { lift: l, equipment: e, clothing, total: l + e + (clothing ?? 0) };
     };
-    return { title, weekday: build(lift.cells.weekday?.price, priceOf("주중")), weekend: build(lift.cells.weekend?.price, priceOf("주말")) };
+    if (weekendRates && lift.cells.all) {
+      const equipmentPrice = priceOf(labels.all);
+      const weekendCell = build(lift.cells.all.price, equipmentPrice, weekendRates);
+      return { title, weekday: build(lift.cells.all.price, equipmentPrice), weekend: weekendCell };
+    }
+    return {
+      title,
+      weekday: build(lift.cells.weekday?.price, priceOf(labels.weekday)),
+      weekend: build(lift.cells.weekend?.price, priceOf(labels.weekend)),
+      all: build(lift.cells.all?.price, priceOf(labels.all))
+    };
   };
 
   const picks = guide.discounts.filter((discount) => discount.group === "anyone" && discount.rates.lift && discount.rates.rental && discount.highlight);
-  return [scenario("정상가", { lift: 0, rental: 0 }), ...picks.map((discount) => scenario(discount.title, { lift: discount.rates.lift!, rental: discount.rates.rental! }))];
+  const scenarios = picks.flatMap((discount) => periodRates(guide, discount).map(({ label, rates }) => scenario(
+    label ? `${discount.title} · ${label}` : discount.title,
+    { lift: rates.lift ?? 0, rental: rates.rental ?? 0 },
+    rates.weekend ? { lift: rates.weekend.lift ?? rates.lift ?? 0, rental: rates.weekend.rental ?? rates.rental ?? 0 } : undefined
+  )));
+  return [scenario("정상가", { lift: 0, rental: 0 }), ...scenarios];
 }

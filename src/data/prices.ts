@@ -916,6 +916,24 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
       { slot: "full_day", adult: 76000, child: 57000, memo: "주간권 09:00~17:00(8시간). 주간 운영은 오픈일~12-18, 2027-02-14~03-07." },
       { slot: "7h", adult: 76000, child: 57000, memo: "후야권 13:00~21:30(7시간)." }
     ]
+  },
+  {
+    resortId: "elysian",
+    resortName: "엘리시안 강촌",
+    sourceName: "엘리시안 강촌 스키 이용요금(26/27 동계)",
+    sourceUrl: "https://www.elysian.co.kr/about-gangchon/ski",
+    validFrom: "2026-11-01",
+    validTo: "2027-03-31",
+    lastCheckedAt: "2026-11-26",
+    verificationNote: "공식 스키 이용요금 페이지의 리프트 정상가 표(대인·소인, 주중·주말) 기준(2026-11-26 확인). 소인 기준에 2027년 초등학교 졸업예정자가 명시되어 26/27 시즌 표다. 표에 없는 2시간·야간·종일권은 판매하지 않는 것으로 본다. 개장은 11월 25일 공지에 따라 12월 초로 안내된다.",
+    slots: [
+      { slot: "3h", dayType: "weekday", adult: 70000, child: 57000, replacementKey: "elysian|lift_ticket|3h|all|엘리시안 강촌 3h 리프트권", memo: "공식 주중(월~금) 3시간 대인 70,000원·소인 57,000원. 정상가이며 할인 전 가격이다." },
+      { slot: "3h", dayType: "weekend", adult: 86000, child: 69000, replacementKey: "elysian|lift_ticket|3h|all|엘리시안 강촌 3h 리프트권", memo: "공식 주말·공휴일 3시간 대인 86,000원·소인 69,000원." },
+      { slot: "4h", dayType: "weekday", adult: 75000, child: 61000, replacementKey: "elysian|lift_ticket|4h|all|엘리시안 강촌 4h 리프트권", memo: "공식 주중 4시간 대인 75,000원·소인 61,000원." },
+      { slot: "4h", dayType: "weekend", adult: 91000, child: 73000, replacementKey: "elysian|lift_ticket|4h|all|엘리시안 강촌 4h 리프트권", memo: "공식 주말·공휴일 4시간 대인 91,000원·소인 73,000원." },
+      { slot: "6h", dayType: "weekday", adult: 85000, child: 69000, replacementKey: "elysian|lift_ticket|6h|all|엘리시안 강촌 6h 리프트권", memo: "공식 주중 6시간 대인 85,000원·소인 69,000원." },
+      { slot: "6h", dayType: "weekend", adult: 101000, child: 81000, replacementKey: "elysian|lift_ticket|6h|all|엘리시안 강촌 6h 리프트권", memo: "공식 주말·공휴일 6시간 대인 101,000원·소인 81,000원." }
+    ]
   }
 ];
 

@@ -248,14 +248,14 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     resortId: "elysian",
     targetSeason: UPCOMING_SEASON,
     category: "lift",
-    status: "preliminary",
+    status: "published",
     sources: [
       { name: "엘리시안 강촌 스키 이용안내", url: "https://www.elysian.co.kr/about-gangchon/ski" },
       { name: "NOL 26/27 X6+ 시즌패스 보도자료", url: "https://nol-universe.com/ko/newsroom/pressRelease/detail?prNo=2544" }
     ],
-    lastCheckedAt: "2026-11-19",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 이용안내는 25/26 운영기간·요금 기준입니다. 26/27 X6+ 시즌패스는 판매 공지가 확인됐지만 SMART 일일 리프트 요금은 아직 없습니다. 2026-11-19 Chrome 확인: 이용요금 표의 소인 기준이 '2026년 초등학교 졸업예정자까지'인 25/26 표입니다.",
+    note: "2026-11-26 Chrome 확인: 이용요금 표의 소인 기준이 '2027년 초등학교 졸업예정자까지'로 바뀌어 26/27 표로 판단했습니다. 3·4·6시간권 대인·소인을 주중/주말별로 등록했고, 표에 없는 2시간·야간·종일권은 판매하지 않는 것으로 봅니다. 렌탈 가격은 공식 페이지에 없습니다.",
     announcedFacts: [
       { label: "26/27 시즌패스", value: "X6+ 통합권 참여 리조트" },
       { label: "1차 판매", value: "2026-09-09 ~ 09-27" }

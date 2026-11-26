@@ -199,21 +199,21 @@ describe("static data validation", () => {
       targetSeason: "2026-2027",
       sourceShuttleSeason: "25/26",
       targetShuttleSeason: "26/27",
-      completedTargetCount: 24,
-      progressPercent: 6,
+      completedTargetCount: 27,
+      progressPercent: 7,
       researchRecordCount: 39,
       priorityOneResearchCount: 12,
       priorityTwoResearchCount: 15,
       priorityThreeResearchCount: 12,
-      preliminaryResearchCount: 9,
-      latestResearchAt: "2026-11-21"
+      preliminaryResearchCount: 8,
+      latestResearchAt: "2026-11-26"
     });
     expect(new Set(priorityOneIds)).toEqual(new Set(["high1", "vivaldi", "yongpyong", "phoenix"]));
     expect(new Set(priorityTwoIds)).toEqual(new Set(["konjiam", "jisan", "elysian", "wellihilli", "alpensia"]));
     expect(new Set(priorityThreeIds)).toEqual(new Set(["oakvalley", "o2", "muju", "edenvalley"]));
     const partiallyPublished = new Set(["vivaldi", "konjiam", "yongpyong", "alpensia"]);
-    // 하이원은 26/27 리프트 요금표만 게시됐고 렌탈은 아직 없다.
-    const liftOnlyPublished = new Set(["high1"]);
+    // 하이원·엘리시안은 26/27 리프트 요금표만 게시됐고 렌탈은 아직 없다.
+    const liftOnlyPublished = new Set(["high1", "elysian"]);
     expect(report.seasonTransition.resorts.every(resort =>
       resort.shuttle.status === "not_published" &&
       (partiallyPublished.has(resort.resortId)

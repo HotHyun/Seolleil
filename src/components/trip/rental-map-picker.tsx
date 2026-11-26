@@ -22,7 +22,7 @@ type Needs = { equipment: boolean; clothing: boolean };
 const filters: Array<[RentalMapFilter, string]> = [["all", "전체"], ["verified", "가격 확인"], ["pickup", "픽업"], ["clothing", "의류"], ["lift", "리프트권"]];
 
 // 렌탈샵 핀마다 예상 총액을 표시하고, 핀을 누르면 리프트권·장비·의류 가격과 총액을 카드로 보여 주는 지도.
-export function RentalMapPicker({ resortId, groups, results, people, needs, savedShopId, selectedId, onSelect, filter, onFilter, canEdit, onPick }: {
+export function RentalMapPicker({ resortId, groups, results, people, needs, savedShopId, selectedId, onSelect, filter, onFilter, canEdit, onPick, unpricedToggle }: {
   resortId: string;
   groups: RentalMapGroup[];
   results: Map<string, ShopComparison>;
@@ -35,6 +35,8 @@ export function RentalMapPicker({ resortId, groups, results, people, needs, save
   onFilter: (filter: RentalMapFilter) => void;
   canEdit: boolean;
   onPick: (shopId: string) => void;
+  // 가격을 확인하지 못한 샵은 기본으로 숨기고, 원하면 지도에 함께 보이게 하는 칩.
+  unpricedToggle?: { count: number; active: boolean; onToggle: () => void };
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<ReturnType<typeof createMap> | null>(null);
@@ -109,6 +111,7 @@ export function RentalMapPicker({ resortId, groups, results, people, needs, save
       <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start gap-2 p-2.5">
         <div className="pointer-events-auto flex min-w-0 flex-1 gap-1.5 overflow-x-auto pb-1" role="group" aria-label="렌탈샵 필터">
           {filters.map(([value, label]) => <button key={value} type="button" aria-pressed={filter === value} onClick={() => onFilter(value)} className={cn("min-h-9 shrink-0 cursor-pointer rounded-full border px-3 text-xs font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", filter === value ? "border-primary bg-primary text-primary-foreground" : "bg-card/95 text-foreground hover:bg-muted")}>{label}</button>)}
+          {unpricedToggle ? <button type="button" aria-pressed={unpricedToggle.active} onClick={unpricedToggle.onToggle} className={cn("min-h-9 shrink-0 cursor-pointer rounded-full border border-dashed px-3 text-xs font-semibold shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", unpricedToggle.active ? "border-primary bg-primary text-primary-foreground" : "bg-card/95 text-foreground hover:bg-muted")}>가격 미확인 {unpricedToggle.count}곳 {unpricedToggle.active ? "숨기기" : "보기"}</button> : null}
         </div>
         <Button type="button" variant="secondary" onClick={() => setListOpen(true)} className="pointer-events-auto h-9 shrink-0 gap-1.5 bg-card/95 px-3 text-xs shadow-sm"><List aria-hidden="true" className="h-4 w-4" />목록 {groups.length}</Button>
       </div>
@@ -117,7 +120,7 @@ export function RentalMapPicker({ resortId, groups, results, people, needs, save
       <div className="absolute inset-x-2.5 bottom-2.5 z-20 lg:right-auto lg:w-[400px]">{card}</div>
     </div> : <div className="space-y-3" data-testid="trip-place-map-fallback">
       <p className="rounded-xl border border-dashed p-3 text-sm leading-6 text-muted-foreground">{state === "error" ? "지도를 불러오지 못했어요." : "지도 연결 전이에요."} 목록에서 렌탈샵을 비교하고 정할 수 있어요. 위치는 외부 지도에서 확인해 주세요.</p>
-      <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="렌탈샵 필터">{filters.map(([value, label]) => <Button key={value} type="button" variant={filter === value ? "selected" : "secondary"} aria-pressed={filter === value} className="h-9 shrink-0 px-3 text-xs hover:translate-y-0" onClick={() => onFilter(value)}>{label}</Button>)}</div>
+      <div className="flex gap-2 overflow-x-auto pb-1" role="group" aria-label="렌탈샵 필터">{filters.map(([value, label]) => <Button key={value} type="button" variant={filter === value ? "selected" : "secondary"} aria-pressed={filter === value} className="h-9 shrink-0 px-3 text-xs hover:translate-y-0" onClick={() => onFilter(value)}>{label}</Button>)}{unpricedToggle ? <Button type="button" variant={unpricedToggle.active ? "selected" : "secondary"} aria-pressed={unpricedToggle.active} className="h-9 shrink-0 border-dashed px-3 text-xs hover:translate-y-0" onClick={unpricedToggle.onToggle}>가격 미확인 {unpricedToggle.count}곳 {unpricedToggle.active ? "숨기기" : "보기"}</Button> : null}</div>
       <ShopList groups={groups} results={results} savedShopId={savedShopId} selectedId={selectedId} onSelect={onSelect} />
       {selected ? card : null}
     </div>}

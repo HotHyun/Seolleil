@@ -32,6 +32,7 @@ export function RentalCompare({ resortId, groups, days, peopleCount, rideType, o
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [confirmId, setConfirmId] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [showUnpriced, setShowUnpriced] = useState(false);
 
   const { baseline, results } = useMemo(() => compareRentalShops(groups, days, peopleCount, { rideType, needsEquipment: needs.equipment, needsClothing: needs.clothing }), [days, groups, needs, peopleCount, rideType]);
   const groupById = useMemo(() => new Map(groups.map(group => [group.shop.id, group])), [groups]);
@@ -41,8 +42,11 @@ export function RentalCompare({ resortId, groups, days, peopleCount, rideType, o
     const shop = group?.shop;
     if (!group || !shop) return [];
     const matches = filter === "all" || (filter === "verified" && shop.dataStatus === "verified_25_26") || (filter === "pickup" && shop.pickupAvailable) || (filter === "clothing" && shop.clothingRentalAvailable) || (filter === "lift" && shop.liftTicketSalesAvailable);
-    return matches ? [group] : [];
-  }), [filter, groupById, results]);
+    // 가격을 확인하지 못한 샵은 기본으로 숨겨 빈 가격이 지도에 늘어서지 않게 한다. 이미 고른 샵은 항상 보인다.
+    const visibleByPrice = result.complete || showUnpriced || shop.id === savedShopId;
+    return matches && visibleByPrice ? [group] : [];
+  }), [filter, groupById, results, savedShopId, showUnpriced]);
+  const unpricedCount = results.filter(result => !result.complete).length;
   const chosen = savedShopId ? resultById.get(savedShopId) : undefined;
   const chosenShop = savedShopId ? groupById.get(savedShopId)?.shop : undefined;
   const confirmShop = confirmId ? groupById.get(confirmId)?.shop : undefined;
@@ -68,7 +72,7 @@ export function RentalCompare({ resortId, groups, days, peopleCount, rideType, o
       <p className="text-sm font-semibold tabular-nums">{formatCurrency(chosen.total!)}{chosen.savings && chosen.savings.perPerson > 0 ? <span className="ml-2 text-emerald-800 dark:text-emerald-200">공식보다 {formatCurrency(chosen.savings.total)} 아낌</span> : null}</p>
     </div> : null}
 
-    <RentalMapPicker resortId={resortId} groups={visibleGroups} results={resultById} people={peopleCount} needs={needs} savedShopId={savedShopId} selectedId={selectedId} onSelect={setSelectedId} filter={filter} onFilter={setFilter} canEdit={canEdit} onPick={setConfirmId} />
+    <RentalMapPicker resortId={resortId} groups={visibleGroups} results={resultById} people={peopleCount} needs={needs} savedShopId={savedShopId} selectedId={selectedId} onSelect={setSelectedId} filter={filter} onFilter={setFilter} canEdit={canEdit} onPick={setConfirmId} unpricedToggle={unpricedCount ? { count: unpricedCount, active: showUnpriced, onToggle: () => setShowUnpriced(value => !value) } : undefined} />
 
     <p className="text-xs leading-5 text-muted-foreground">
       {peopleCount}명 · {days.length}일 · 리프트권{needs.equipment ? " + 장비" : ""}{needs.clothing ? " + 의류" : ""} 렌탈 기준이에요.{" "}

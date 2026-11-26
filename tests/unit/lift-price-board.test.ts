@@ -44,4 +44,20 @@ describe("lift price board", () => {
     expect(examples[0].weekday).toMatchObject({ lift: 81_000, equipment: 36_000, clothing: 27_000, total: 144_000 });
     expect(examples.find((example) => example.title === "제휴카드")?.weekday?.total).toBe(60_750 + 27_000 + 27_000);
   });
+
+  it("prices Vivaldi from the 26/27 table with 5/6/7 hour tickets and 10 won rounding", () => {
+    const board = getLiftPriceBoard("vivaldi")!;
+    expect(board.rows.map((row) => [row.slot, row.cells.weekday?.price, row.cells.weekend?.price])).toEqual([
+      ["5h", 75_000, 91_000],
+      ["6h", 79_000, 95_000],
+      ["7h", 83_000, 99_000]
+    ]);
+    const guide = getLiftGuideForBoard("vivaldi", board)!;
+    const card = buildDiscountCards(board, guide).find((item) => item.discount.id === "card")!;
+    expect(card.rows[0]).toMatchObject({ weekday: 52_500, weekend: 63_700 });
+    expect(discountedPrice(36_220 / 0.7, 30, 10)).toBe(36_220);
+    const example = buildTripExamples(board, guide);
+    expect(example[0].weekday).toMatchObject({ lift: 75_000, equipment: 34_000, total: 109_000 });
+    expect(example[0].weekday?.clothing).toBeUndefined();
+  });
 });

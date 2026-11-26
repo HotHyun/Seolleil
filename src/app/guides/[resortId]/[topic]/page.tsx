@@ -39,19 +39,20 @@ export function generateStaticParams() {
 }
 export const dynamicParams = false;
 
-function guideCopy(resortName: string, topic: GuideTopic, count: number) {
+function guideCopy(resortName: string, topic: GuideTopic, count: number, resortId: string) {
   if (topic === "lift-prices") {
     return {
       title: `${resortName} 리프트권 가격 정리 - 시간권·요일별 비교 | 설레일`,
-      description: `${resortName} 리프트권 시간권·주중/주말 정상가와 카드·투숙객·심야 등 할인·우대 정보를 가격 출처와 함께 한눈에 확인하세요.`,
+      description: `${resortName} 리프트권 시간권·주중/주말 정상가와 제휴카드·투숙객 등 할인·우대 정보를 가격 출처와 함께 한눈에 확인하세요.`,
       heading: `${resortName} 리프트권 가격`
     };
   }
   if (topic === "rental-prices") {
+    const rentalLabel = getResortLiftGuide(resortId)?.rental?.label ?? "장비 렌탈";
     return {
-      title: `${resortName} 장비·의류 렌탈 가격과 할인 정리 | 설레일`,
-      description: `${resortName} 스키·보드 장비, 의류, 보호장구 렌탈 요금과 제휴카드·투숙객 등 우대 할인가, 리프트권까지 합친 1인 비용을 한눈에 확인하세요.`,
-      heading: `${resortName} 장비·의류 렌탈 가격`
+      title: `${resortName} ${rentalLabel} 가격과 할인 정리 | 설레일`,
+      description: `${resortName} 스키·보드 ${rentalLabel} 요금과 제휴카드·투숙객 등 우대 할인가, 리프트권까지 합친 1인 비용을 한눈에 확인하세요.`,
+      heading: `${resortName} ${rentalLabel} 가격`
     };
   }
   if (topic === "rental-shops") {
@@ -79,7 +80,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { resortId, topic } = await params;
   const resort = getResort(resortId);
   if (!resort || !isGuideTopic(topic) || !hasGuideContent(resortId, topic)) return { title: "가이드 | 설레일" };
-  const copy = guideCopy(resort.name, topic, topicCount(resortId, topic));
+  const copy = guideCopy(resort.name, topic, topicCount(resortId, topic), resortId);
   const path = `/guides/${resortId}/${topic}`;
   return {
     title: copy.title,
@@ -110,13 +111,15 @@ function buildFaq(resortId: string, resortName: string, topic: GuideTopic): Faq[
     return faq;
   }
   if (topic === "rental-prices") {
-    const rental = getResortLiftGuide(resortId)?.rental;
+    const guide = getResortLiftGuide(resortId);
+    const rental = guide?.rental;
     const full = rental?.equipment.find((item) => item.discountable);
     const clothing = rental?.clothing[0];
     const faq: Faq[] = [];
-    if (full) faq.push({ question: `${resortName} 스키·보드 장비 렌탈은 얼마인가요?`, answer: `${full.label} 기준 ${full.prices.map((entry) => `${entry.label} ${formatCurrency(entry.price)}`).join(", ")}입니다(${rental?.equipmentBasis}). 부분 렌탈은 단품 가격이 따로 있고 우대 할인을 받을 수 없습니다.` });
+    if (rental && full) faq.push({ question: `${resortName} 스키·보드 장비 렌탈은 얼마인가요?`, answer: `${full.label} 기준 ${full.prices.map((entry) => `${entry.label} ${formatCurrency(entry.price)}`).join(", ")}입니다(${rental.equipmentBasis}). 시간과 연령 구분별 요금은 페이지의 렌탈 요금표를 확인하세요.` });
     if (clothing) faq.push({ question: `${resortName} 의류 렌탈 요금과 예약 방법은요?`, answer: `${clothing.label} ${clothing.prices.map((entry) => `${entry.label} ${formatCurrency(entry.price)}`).join(", ")}이며, 의류 렌탈은 현장 접수만 가능합니다.` });
-    faq.push({ question: "렌탈 할인은 어떻게 받나요?", answer: "제휴카드(신한·하나·우리) 25%, 투숙객 30%, 강습 이용 고객 50% 등 대상별 우대율이 있습니다. 장비 풀세트에만 적용되며 할인가는 공식 할인율로 계산한 참고값입니다." });
+    const rates = guide?.discounts.filter((discount) => discount.group === "anyone" && discount.rates.rental) ?? [];
+    if (rates.length) faq.push({ question: "렌탈 할인은 어떻게 받나요?", answer: `${rates.map((discount) => `${discount.title} ${discount.rates.rental}%`).join(", ")} 등 대상별 우대율이 있습니다. ${rental?.discountNote ?? ""} 할인가는 공식 할인율로 계산한 참고값입니다.`.replace(/\s+/g, " ") });
     return faq;
   }
   if (topic === "rental-shops") {
@@ -142,7 +145,7 @@ export default async function GuidePage({ params }: PageProps) {
   if (!resort || !isGuideTopic(topic) || !hasGuideContent(resortId, topic)) notFound();
 
   const count = topicCount(resortId, topic);
-  const copy = guideCopy(resort.name, topic, count);
+  const copy = guideCopy(resort.name, topic, count, resortId);
   const faq = buildFaq(resortId, resort.name, topic);
   const otherTopics = guideTopicsForResort(resort).filter((item) => item !== topic);
   const path = `/guides/${resortId}/${topic}`;

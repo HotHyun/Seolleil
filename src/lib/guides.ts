@@ -11,7 +11,7 @@ export type GuideTopic = (typeof guideTopics)[number];
 
 export const guideTopicLabels: Record<GuideTopic, string> = {
   "lift-prices": "리프트권 가격",
-  "rental-prices": "장비·의류 렌탈 가격",
+  "rental-prices": "렌탈 요금·할인",
   "rental-shops": "렌탈샵 비교",
   shuttle: "스키버스·셔틀"
 };

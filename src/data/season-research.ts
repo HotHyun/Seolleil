@@ -48,9 +48,9 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
     category: "lift",
     status: "published",
     sources: [{ name: "비발디파크 스키월드 요금&할인 안내", url: "https://www.sonohotelsresorts.com/skiboard/discount" }],
-    lastCheckedAt: "2026-11-21",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
-    note: "공식 요금표에 현재 5·6·7시간권 대인·소인과 주중·주말 가격이 게시되어 반영했습니다. 요금표 자체에 시즌명이 없어 현행 26/27 가격이라는 시즌 연결에는 판단이 포함됩니다. 가격 페이지의 소인 출생연도는 2014~2023년입니다."
+    note: "공식 요금표에 현재 5·6·7시간권 대인·소인과 주중·주말 가격이 게시되어 반영했습니다. 요금표 자체에 시즌명이 없어 현행 26/27 가격이라는 시즌 연결에는 판단이 포함됩니다. 가격 페이지의 소인 출생연도는 2014~2023년입니다. 할인혜택 탭의 우대율(제휴카드 30%, 객실투숙객 20% 등)은 가이드 페이지에 정리했습니다."
   },
   {
     resortId: "vivaldi",
@@ -61,7 +61,7 @@ export const seasonResearchRecords: SeasonResearchRecord[] = [
       { name: "비발디파크 스키월드 요금&할인 안내", url: "https://www.sonohotelsresorts.com/skiboard/discount" },
       { name: "비발디파크 스키&보드 이용약관", url: "https://www.sonohotelsresorts.com/skiboard/terms" }
     ],
-    lastCheckedAt: "2026-11-21",
+    lastCheckedAt: "2026-11-26",
     nextCheckAfter,
     note: "공식 장비 렌탈은 6시간 대인 주중/주말 34,000/43,000원, 7시간 36,000/45,000원, 8시간 38,000/47,000원이며 소인 가격도 게시되어 있습니다. 이용약관은 장비 대여가 리프트권보다 1시간 길다고 명시합니다. 헬멧은 5,000/6,000/7,000원. 의류 가격은 공식 표에 없습니다. 요금표 자체의 시즌 표기가 없어 현행 26/27 가격으로 반영한 점은 확인 필요합니다."
   },

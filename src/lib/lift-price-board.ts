@@ -61,9 +61,9 @@ export function getLiftPriceBoard(resortId: string): LiftPriceBoard | undefined 
   };
 }
 
-/** 정상가에서 할인율(%)만큼 뺀 금액. 원 단위로 반올림한다. */
-export function discountedPrice(price: number, ratePercent: number) {
-  return Math.round(price * (1 - ratePercent / 100));
+/** 정상가에서 할인율(%)만큼 뺀 금액. roundTo원 단위로 반올림한다(기본 1원). */
+export function discountedPrice(price: number, ratePercent: number, roundTo = 1) {
+  return Math.round((price * (1 - ratePercent / 100)) / roundTo) * roundTo;
 }
 
 export type DiscountCard = {
@@ -84,9 +84,9 @@ export function buildDiscountCards(board: LiftPriceBoard, guide: ResortLiftGuide
         if (weekday === undefined && weekend === undefined && single === undefined) return [];
         return [{
           slot: row.slot,
-          weekday: weekday === undefined ? undefined : discountedPrice(weekday, rate),
-          weekend: discount.weekdayOnly || weekend === undefined ? undefined : discountedPrice(weekend, rate),
-          single: single === undefined || discount.weekdayOnly ? undefined : discountedPrice(single, rate)
+          weekday: weekday === undefined ? undefined : discountedPrice(weekday, rate, guide.roundTo),
+          weekend: discount.weekdayOnly || weekend === undefined ? undefined : discountedPrice(weekend, rate, guide.roundTo),
+          single: single === undefined || discount.weekdayOnly ? undefined : discountedPrice(single, rate, guide.roundTo)
         }];
       });
       return { discount, rows };
@@ -107,41 +107,37 @@ export type RentalDiscountCard = {
 export function buildRentalDiscountCards(guide: ResortLiftGuide): RentalDiscountCard[] {
   const rental = guide.rental;
   if (!rental) return [];
-  const items = rental.equipment.filter((item) => item.discountable);
+  const items = rental.equipment.filter((item) => item.discountable && (!rental.discountCardItemIds || rental.discountCardItemIds.includes(item.id)));
   return guide.discounts
     .filter((discount) => discount.group === "anyone" && discount.rates.rental)
     .map((discount) => ({
       discount,
-      rows: items.map((item) => ({ item, prices: item.prices.map((entry) => ({ label: entry.label, price: discountedPrice(entry.price, discount.rates.rental!) })) }))
+      rows: items.map((item) => ({ item, prices: item.prices.map((entry) => ({ label: entry.label, price: discountedPrice(entry.price, discount.rates.rental!, guide.roundTo) })) }))
     }));
 }
 
-export type TripExample = {
-  title: string;
-  note?: string;
-  weekday?: { lift: number; equipment: number; clothing: number; total: number };
-  weekend?: { lift: number; equipment: number; clothing: number; total: number };
-};
+export type TripExampleCell = { lift: number; equipment: number; clothing?: number; total: number };
+export type TripExample = { title: string; weekday?: TripExampleCell; weekend?: TripExampleCell };
 
-/** 4시간권 + 장비 풀세트 + 의류 풀세트(4시간 이하)를 한 번에 빌릴 때 1인 비용. 의류는 공식 우대표에 없어 할인하지 않는다. */
+/** 리프트권 + 장비(+의류)를 한 번에 빌릴 때 1인 비용. 구성은 가이드 데이터의 example이 정한다. 의류는 할인하지 않는다. */
 export function buildTripExamples(board: LiftPriceBoard, guide: ResortLiftGuide): TripExample[] {
   const rental = guide.rental;
-  const lift = board.rows.find((row) => row.slot === "4h");
-  const equipment = rental?.equipment.find((item) => item.discountable);
-  const clothing = rental?.clothing.find((item) => item.prices.length)?.prices[0]?.price;
-  if (!rental || !lift || !equipment || clothing === undefined) return [];
+  const config = rental?.example;
+  if (!rental || !config) return [];
+  const lift = board.rows.find((row) => row.slot === config.liftSlot);
+  const equipment = rental.equipment.find((item) => item.id === config.equipmentId);
+  const clothing = config.clothingId ? rental.clothing.find((item) => item.id === config.clothingId)?.prices[0]?.price : undefined;
+  if (!lift || !equipment || (config.clothingId && clothing === undefined)) return [];
   const priceOf = (label: string) => equipment.prices.find((entry) => entry.label === label)?.price;
 
-  const scenario = (title: string, rates: { lift: number; rental: number }, note?: string): TripExample => {
-    const build = (liftPrice: number | undefined, equipmentPrice: number | undefined) =>
-      liftPrice === undefined || equipmentPrice === undefined
-        ? undefined
-        : (() => {
-            const l = discountedPrice(liftPrice, rates.lift);
-            const e = discountedPrice(equipmentPrice, rates.rental);
-            return { lift: l, equipment: e, clothing, total: l + e + clothing };
-          })();
-    return { title, note, weekday: build(lift.cells.weekday?.price, priceOf("주중")), weekend: build(lift.cells.weekend?.price, priceOf("주말")) };
+  const scenario = (title: string, rates: { lift: number; rental: number }): TripExample => {
+    const build = (liftPrice: number | undefined, equipmentPrice: number | undefined): TripExampleCell | undefined => {
+      if (liftPrice === undefined || equipmentPrice === undefined) return undefined;
+      const l = discountedPrice(liftPrice, rates.lift, guide.roundTo);
+      const e = discountedPrice(equipmentPrice, rates.rental, guide.roundTo);
+      return { lift: l, equipment: e, clothing, total: l + e + (clothing ?? 0) };
+    };
+    return { title, weekday: build(lift.cells.weekday?.price, priceOf("주중")), weekend: build(lift.cells.weekend?.price, priceOf("주말")) };
   };
 
   const picks = guide.discounts.filter((discount) => discount.group === "anyone" && discount.rates.lift && discount.rates.rental && discount.highlight);

@@ -951,9 +951,9 @@ const vivaldiUpcomingRentalCommon = {
   sourceUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
   bookingUrl: "https://www.sonohotelsresorts.com/skiboard/discount",
   confidence: "confirmed" as const,
-  lastCheckedAt: "2026-11-21",
+  lastCheckedAt: "2026-11-26",
   verifiedByHuman: true,
-  verificationNote: "공식 현재 요금표 기준. 페이지에는 26/27 표기가 없고, 공식 이용약관은 장비 대여 시간이 리프트권보다 1시간 길다고 명시한다. 의류 렌탈 가격은 표에 없다. 공식 주말가는 공휴일도 포함하지만 앱은 평일 공휴일을 주말로 자동 분류하지 않는다."
+  verificationNote: "공식 현재 요금표 기준(2026-11-26 재확인). 페이지에는 26/27 표기가 없고, 공식 이용약관은 장비 대여 시간이 리프트권보다 1시간 길다고 명시한다. 의류 렌탈 가격은 표에 없다. 공식 주말가는 공휴일도 포함하지만 앱은 평일 공휴일을 주말로 자동 분류하지 않는다."
 };
 
 const vivaldiRentalSlots = [

@@ -185,7 +185,7 @@ export function LiftPriceBoard({ resortId, variant = "full", guideHref }: { reso
       <section aria-label="정상가">
         <Heading meta={meta}>{board.seasonLabel} 리프트권 정상가</Heading>
         <PriceTable board={board} />
-        <p className="mt-2 text-xs leading-5 text-muted-foreground">성인 기준 1인 요금이에요. 아래 할인가는 공식 할인율로 계산한 참고값이며, 실제 결제 금액은 판매처에서 확인하세요.</p>
+        <p className="mt-2 text-xs leading-5 text-muted-foreground">대인 1인 요금이에요(소인 가격이 있으면 함께 표시). 아래 할인가는 공식 할인율로 계산한 참고값이며, 실제 결제 금액은 판매처에서 확인하세요.</p>
       </section>
 
       {guide ? <section aria-label="할인 적용 시 가격">

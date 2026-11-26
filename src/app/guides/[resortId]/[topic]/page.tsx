@@ -5,6 +5,8 @@ import { ArrowRight, ExternalLink } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
 import { AffiliateNotice } from "@/components/affiliate-notice";
+import { LiftPriceBoard } from "@/components/lift-price-board";
+import { RentalPriceBoard } from "@/components/rental-price-board";
 import { ConfidenceBadge } from "@/components/confidence-badge";
 import { PriceContextBanner } from "@/components/price-context-banner";
 import { StatusBadge } from "@/components/status-badge";
@@ -12,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { getResort } from "@/data/resorts";
 import {
   getGuideParams,
+  dayTypeLabels,
   getLiftGuideRows,
   getRentalGuideRows,
   getShuttleGuideRows,
@@ -22,6 +25,10 @@ import {
   type GuideTopic
 } from "@/lib/guides";
 import { absoluteUrl, jsonLd, ogImagePath } from "@/lib/seo";
+import { getResortLiftGuide } from "@/data/lift-discounts";
+import { getLiftGuideForBoard, getLiftPriceBoard } from "@/lib/lift-price-board";
+import { timeSlotLabels } from "@/lib/constants";
+import type { DayType, TimeSlot } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 
 type PageProps = { params: Promise<{ resortId: string; topic: string }> };
@@ -36,8 +43,15 @@ function guideCopy(resortName: string, topic: GuideTopic, count: number) {
   if (topic === "lift-prices") {
     return {
       title: `${resortName} 리프트권 가격 정리 - 시간권·요일별 비교 | 설레일`,
-      description: `${resortName} 리프트권 ${count}개 가격을 시즌, 요일, 시간권별로 비교하고 가격 출처와 확인 상태를 함께 확인하세요.`,
+      description: `${resortName} 리프트권 시간권·주중/주말 정상가와 카드·투숙객·심야 등 할인·우대 정보를 가격 출처와 함께 한눈에 확인하세요.`,
       heading: `${resortName} 리프트권 가격`
+    };
+  }
+  if (topic === "rental-prices") {
+    return {
+      title: `${resortName} 장비·의류 렌탈 가격과 할인 정리 | 설레일`,
+      description: `${resortName} 스키·보드 장비, 의류, 보호장구 렌탈 요금과 제휴카드·투숙객 등 우대 할인가, 리프트권까지 합친 1인 비용을 한눈에 확인하세요.`,
+      heading: `${resortName} 장비·의류 렌탈 가격`
     };
   }
   if (topic === "rental-shops") {
@@ -56,6 +70,7 @@ function guideCopy(resortName: string, topic: GuideTopic, count: number) {
 
 function topicCount(resortId: string, topic: GuideTopic) {
   if (topic === "lift-prices") return getLiftGuideRows(resortId).length;
+  if (topic === "rental-prices") return 1;
   if (topic === "rental-shops") return getRentalGuideRows(resortId).length;
   return getShuttleGuideRows(resortId).length;
 }
@@ -79,13 +94,29 @@ type Faq = { question: string; answer: string };
 
 function buildFaq(resortId: string, resortName: string, topic: GuideTopic): Faq[] {
   if (topic === "lift-prices") {
-    const rows = getLiftGuideRows(resortId).filter((row) => row.price !== undefined);
-    const first = rows[0];
-    const dayTypes = [...new Set(rows.map((row) => row.dayTypeLabel))];
+    const board = getLiftPriceBoard(resortId);
+    const guide = board ? getLiftGuideForBoard(resortId, board) : undefined;
     const faq: Faq[] = [];
-    if (first) faq.push({ question: `${resortName}에서 가장 저렴한 리프트 시간권은 얼마인가요?`, answer: `${first.seasonLabel} 기준 ${first.label}(${first.dayTypeLabel}·${first.timeSlotLabel})이 ${formatCurrency(first.price)}으로 가장 낮게 등록되어 있습니다. 가격은 판매처 사정에 따라 바뀔 수 있어 예약 전 공식 판매처에서 다시 확인하세요.` });
-    if (dayTypes.length) faq.push({ question: `${resortName} 리프트권 가격은 요일마다 다른가요?`, answer: `등록된 가격은 ${dayTypes.join(", ")} 구분으로 나뉩니다. 방문 날짜에 맞는 구분의 가격을 확인하세요.` });
-    faq.push({ question: "표시된 가격은 확정 가격인가요?", answer: "'확인됨'은 공식 판매처에서 확인한 가격이고, 그 외는 전년 가격이나 전화 확인 등을 바탕으로 한 참고값입니다. 새 시즌 가격이 게시되면 갱신합니다." });
+    const cheapest = board?.rows
+      .flatMap((row) => Object.entries(row.cells).map(([dayType, cell]) => ({ slot: row.slot, dayType: dayType as DayType, price: cell.price })))
+      .reduce<{ slot: TimeSlot; dayType: DayType; price: number } | undefined>((min, item) => (!min || item.price < min.price ? item : min), undefined);
+    if (board && cheapest) faq.push({ question: `${resortName}에서 가장 저렴한 리프트 시간권은 얼마인가요?`, answer: `${board.seasonLabel} 기준 ${timeSlotLabels[cheapest.slot]}(${dayTypeLabels[cheapest.dayType]})이 ${formatCurrency(cheapest.price)}으로 가장 낮게 등록되어 있습니다. 가격은 판매처 사정에 따라 바뀔 수 있어 예약 전 공식 판매처에서 다시 확인하세요.` });
+    if (board && board.columns.length > 1) faq.push({ question: `${resortName} 리프트권 가격은 요일마다 다른가요?`, answer: `등록된 가격은 ${board.columns.map((column) => dayTypeLabels[column]).join(", ")} 구분으로 나뉩니다. 방문 날짜에 맞는 구분의 가격을 확인하세요.` });
+    if (guide) {
+      const cards = guide.discounts.filter((discount) => discount.highlight && discount.rates.lift);
+      if (cards.length) faq.push({ question: `${resortName} 리프트권 할인은 어떤 게 있나요?`, answer: `${cards.map((discount) => `${discount.title} ${discount.rates.lift}%`).join(", ")} 할인이 공식 요금 안내에 있습니다. 대상과 적용 조건은 페이지의 할인 안내를 확인하세요.` });
+    }
+    faq.push({ question: "표시된 가격은 확정 가격인가요?", answer: "'확인됨'은 공식 판매처에서 확인한 가격이고, 그 외는 전년 가격이나 전화 확인 등을 바탕으로 한 참고값입니다. 할인가는 공식 할인율로 계산한 참고값이며, 새 시즌 가격이 게시되면 갱신합니다." });
+    return faq;
+  }
+  if (topic === "rental-prices") {
+    const rental = getResortLiftGuide(resortId)?.rental;
+    const full = rental?.equipment.find((item) => item.discountable);
+    const clothing = rental?.clothing[0];
+    const faq: Faq[] = [];
+    if (full) faq.push({ question: `${resortName} 스키·보드 장비 렌탈은 얼마인가요?`, answer: `${full.label} 기준 ${full.prices.map((entry) => `${entry.label} ${formatCurrency(entry.price)}`).join(", ")}입니다(${rental?.equipmentBasis}). 부분 렌탈은 단품 가격이 따로 있고 우대 할인을 받을 수 없습니다.` });
+    if (clothing) faq.push({ question: `${resortName} 의류 렌탈 요금과 예약 방법은요?`, answer: `${clothing.label} ${clothing.prices.map((entry) => `${entry.label} ${formatCurrency(entry.price)}`).join(", ")}이며, 의류 렌탈은 현장 접수만 가능합니다.` });
+    faq.push({ question: "렌탈 할인은 어떻게 받나요?", answer: "제휴카드(신한·하나·우리) 25%, 투숙객 30%, 강습 이용 고객 50% 등 대상별 우대율이 있습니다. 장비 풀세트에만 적용되며 할인가는 공식 할인율로 계산한 참고값입니다." });
     return faq;
   }
   if (topic === "rental-shops") {
@@ -152,12 +183,13 @@ export default async function GuidePage({ params }: PageProps) {
       </header>
 
       <div className="mt-6 max-w-3xl space-y-4">
-        {topic !== "shuttle" ? <PriceContextBanner /> : null}
+        {topic === "rental-shops" ? <PriceContextBanner /> : null}
         <AffiliateNotice />
       </div>
 
       <section className="mt-8 max-w-4xl" aria-label={guideTopicLabels[topic]}>
-        {topic === "lift-prices" ? <LiftList resortId={resortId} /> : null}
+        {topic === "lift-prices" ? <LiftPriceBoard resortId={resortId} /> : null}
+        {topic === "rental-prices" ? <RentalPriceBoard resortId={resortId} /> : null}
         {topic === "rental-shops" ? <RentalList resortId={resortId} /> : null}
         {topic === "shuttle" ? <ShuttleList resortId={resortId} /> : null}
       </section>
@@ -200,38 +232,6 @@ function ExternalLinkText({ href, label, resortId, type }: { href: string; label
     <AnalyticsLink href={href} target="_blank" rel="noreferrer" eventName="external_link_click" eventData={{ type, resortId }} className="inline-flex min-h-9 items-center gap-1 text-xs font-medium text-primary underline-offset-4 hover:underline">
       {label} <ExternalLink className="h-4 w-4" aria-hidden="true" />
     </AnalyticsLink>
-  );
-}
-
-function LiftList({ resortId }: { resortId: string }) {
-  const rows = getLiftGuideRows(resortId);
-  const seasons = [...new Set(rows.map((row) => row.seasonLabel))];
-  return (
-    <div className="space-y-8">
-      {seasons.map((season) => (
-        <div key={season}>
-          <h2 className="text-lg font-semibold">{season}</h2>
-          <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            {rows.filter((row) => row.seasonLabel === season).map((row) => (
-              <li key={row.id} className="rounded-xl border bg-card p-4">
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <p className="font-semibold">{row.label}</p>
-                    <p className="mt-1 text-xs text-muted-foreground">{row.dayTypeLabel} · {row.timeSlotLabel}</p>
-                  </div>
-                  <span className="shrink-0 text-lg font-semibold tabular-nums">{formatCurrency(row.price)}</span>
-                </div>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <ConfidenceBadge confidence={row.confidence} />
-                  <span className="text-xs text-muted-foreground">적용 {row.period} · 확인 {row.checkedAt}</span>
-                </div>
-                {row.sourceUrl ? <div className="mt-2"><ExternalLinkText href={row.sourceUrl} label="가격 출처" resortId={resortId} type="guide_lift_source" /></div> : null}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </div>
   );
 }
 

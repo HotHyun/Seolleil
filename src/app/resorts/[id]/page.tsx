@@ -5,13 +5,12 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, BedDouble, Check, ExternalLink, Eye, MapPinned, Route, Shirt, Ticket } from "lucide-react";
 import { AnalyticsLink } from "@/components/analytics-link";
 import { AnalyticsTrack } from "@/components/analytics-track";
-import { ConfidenceBadge } from "@/components/confidence-badge";
-import { PriceContextBanner } from "@/components/price-context-banner";
+import { LiftPriceBoard } from "@/components/lift-price-board";
 import { StatusBadge } from "@/components/status-badge";
 import { ResortShuttleCoverage } from "@/components/shuttle-coverage";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { priceRules, rentalPriceRules } from "@/data/prices";
+import { rentalPriceRules } from "@/data/prices";
 import { getResortStory } from "@/data/resort-content";
 import { getSkiShuttleCoverage, getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { getRentalShopsForResort, getResort, resorts } from "@/data/resorts";
@@ -45,7 +44,6 @@ export default async function ResortDetailPage({ params }: PageProps) {
   if (!resort) notFound();
   const story = getResortStory(resort);
   const shops = getRentalShopsForResort(resort.id);
-  const liftPrices = priceRules.filter((rule) => rule.resortId === resort.id && rule.itemType === "lift_ticket");
   const rentalPrices = rentalPriceRules.filter((rule) => rule.resortId === resort.id);
   const shuttleRoutes = getSkiShuttleRoutes(resort.id);
   const shuttleCoverage = getSkiShuttleCoverage(resort, shuttleRoutes);
@@ -97,7 +95,7 @@ export default async function ResortDetailPage({ params }: PageProps) {
             <StoryCard icon={<Eye />} title="이곳에서 만나는 풍경" description={story.sceneryNote} action={<ExternalTextLink href={resort.galleryUrl ?? resort.officialUrl} label="공식 소개 더 보기" resortId={resort.id} type="resort_story" />} />
           </section>
 
-          <Card id="lift" className="scroll-mt-32"><CardHeader><div className="flex items-end justify-between gap-3"><div><CardTitle>리프트권 확인</CardTitle></div><Ticket aria-hidden="true" className="h-5 w-5 text-muted-foreground" /></div></CardHeader><CardContent className="space-y-4"><PriceContextBanner compact /><div className="grid gap-2 sm:grid-cols-2">{liftPrices.slice(0, 6).map((price) => <div key={price.id} className="flex items-center justify-between gap-3 rounded-lg border bg-muted/40 p-3"><div><p className="text-sm font-medium">{price.label}</p><ConfidenceBadge confidence={price.confidence} className="mt-1" /></div><span className="shrink-0 font-semibold">{formatCurrency(price.adultPrice ?? price.priceMin)}</span></div>)}</div></CardContent></Card>
+          <Card id="lift" className="scroll-mt-32"><CardHeader><div className="flex items-end justify-between gap-3"><div><CardTitle>리프트권 확인</CardTitle></div><Ticket aria-hidden="true" className="h-5 w-5 text-muted-foreground" /></div></CardHeader><CardContent><LiftPriceBoard resortId={resort.id} variant="compact" guideHref={`/guides/${resort.id}/lift-prices`} /></CardContent></Card>
 
           <Card id="rental" className="scroll-mt-32"><CardHeader><div className="flex items-end justify-between gap-3"><div><CardTitle>주변 렌탈샵 {shops.length}곳</CardTitle></div><Shirt aria-hidden="true" className="h-5 w-5 text-muted-foreground" /></div></CardHeader><CardContent><p className="mb-4 text-sm leading-6 text-muted-foreground">가격과 픽업 여부를 먼저 훑어보고, 실제 위치 비교는 스키장 지도에서 이어가세요.</p><div className="grid gap-3 sm:grid-cols-2">{shops.slice(0, 6).map((shop) => { const prices = rentalPrices.filter((price) => price.rentalShopId === shop.id); return <div key={shop.id} className="rounded-lg border bg-muted/30 p-4"><div className="flex items-start justify-between gap-3"><div><p className="font-semibold">{shop.name}</p><p className="mt-1 text-xs text-muted-foreground">{shop.id.endsWith("official-rental") ? "공식 렌탈" : "외부 렌탈샵"}{shop.distanceMinutes !== undefined ? ` · 약 ${shop.distanceMinutes}분` : ""}</p></div>{shop.pickupAvailable ? <StatusBadge>픽업</StatusBadge> : null}</div><div className="mt-3 flex flex-wrap gap-2">{shop.recommendationTags?.slice(0, 3).map((tag) => <StatusBadge key={tag}>{tag}</StatusBadge>)}</div>{prices[0] ? <p className="mt-3 text-sm"><span className="text-muted-foreground">확인 가격 </span><strong>{formatCurrency(prices[0].representativePrice)}부터</strong></p> : <p className="mt-3 text-xs text-muted-foreground">가격은 예약 원문에서 확인</p>}</div>; })}</div><NearbyPlaceHelp resortName={resort.name} kind="rental" className="mt-4" /><Link href={`/resorts?resortId=${resort.id}`}><Button variant="secondary" className="mt-5 w-full">지도에서 렌탈·숙박 비교하기 <MapPinned className="h-4 w-4" /></Button></Link></CardContent></Card>
           <Card id="lodging" className="scroll-mt-32"><CardHeader><div className="flex items-end justify-between gap-3"><CardTitle>숙박 찾기</CardTitle><BedDouble aria-hidden="true" className="h-5 w-5 text-muted-foreground" /></div></CardHeader><CardContent><p className="mb-4 text-sm leading-6 text-muted-foreground">숙박 가격과 재고는 실시간으로 보여 드리지 않아요. 공식 숙박과 지도에서 후보를 찾고, 트립에 숙소명·링크·금액을 등록해 동행자와 함께 비교하세요.</p><div className="grid gap-3 sm:grid-cols-2"><ExternalButton href={resort.lodgingUrl} label="공식 숙박 보기" resortId={resort.id} type="lodging" /><Link href={`/resorts?resortId=${resort.id}`}><Button variant="secondary" className="w-full justify-between">지도에서 주변 숙소 찾기 <MapPinned className="h-4 w-4" /></Button></Link></div><NearbyPlaceHelp resortName={resort.name} kind="lodging" className="mt-4" /></CardContent></Card>

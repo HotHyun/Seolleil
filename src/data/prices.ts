@@ -871,20 +871,20 @@ const upcomingLiftSeeds: UpcomingLiftSeed[] = [
   {
     resortId: "konjiam",
     resortName: "곤지암리조트",
-    sourceName: "곤지암리조트 26/27 얼리버드 리프트권 판매 공지(2026-10-30)",
-    sourceUrl: "https://m.konjiamresort.co.kr/contact/notice.dev",
+    sourceName: "곤지암리조트 공식 요금 안내(리프트권 요금)",
+    sourceUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
     // 개장은 '12월 중'으로만 공지됐다. 개장일이 확정되기 전 날짜도 가격이 비지 않도록 시즌 초부터 둔다.
     validFrom: "2026-11-01",
     validTo: "2027-03-31",
-    lastCheckedAt: "2026-11-21",
-    verificationNote: "공식 공지의 26/27 리프트권 정상가(주중·주말 2·4·6시간) 기준. 공지에 없는 3시간·야간·종일권은 판매하지 않는 것으로 본다. 소인 가격은 공지에 없다.",
+    lastCheckedAt: "2026-11-26",
+    verificationNote: "공식 요금 안내 페이지의 26/27 리프트권 정상가(주중·주말 2·4·6시간) 기준(2026-11-26 확인). 표에 없는 3시간·야간·종일권은 판매하지 않는 것으로 본다. 소인 가격은 표에 없다. 카드 할인가는 정상가의 75%(신한·하나·우리카드)이며 총액에는 반영하지 않고 할인 안내로 따로 보여 준다.",
     slots: [
-      { slot: "2h", dayType: "weekday", adult: 69000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 공지 주중 2시간 정상가. 얼리버드(NOL 한정)는 정상가에 반영하지 않고 할인 안내로 따로 보여 준다." },
-      { slot: "2h", dayType: "weekend", adult: 83000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 공지 주말 2시간 정상가." },
-      { slot: "4h", dayType: "weekday", adult: 81000, memo: "공식 공지 주중 4시간 정상가(25/26과 동일)." },
-      { slot: "4h", dayType: "weekend", adult: 96000, memo: "공식 공지 주말 4시간 정상가(25/26과 동일)." },
-      { slot: "6h", dayType: "weekday", adult: 87000, memo: "공식 공지 주중 6시간 정상가(25/26과 동일)." },
-      { slot: "6h", dayType: "weekend", adult: 105000, memo: "공식 공지 주말 6시간 정상가(25/26과 동일)." }
+      { slot: "2h", dayType: "weekday", adult: 69000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 요금표 주중 2시간 정상가. 카드 할인·얼리버드(NOL 한정)는 정상가에 반영하지 않고 할인 안내로 따로 보여 준다." },
+      { slot: "2h", dayType: "weekend", adult: 83000, replacementKey: "konjiam|lift_ticket|2h|all|곤지암리조트 2h 리프트권", memo: "공식 요금표 주말 2시간 정상가." },
+      { slot: "4h", dayType: "weekday", adult: 81000, memo: "공식 요금표 주중 4시간 정상가(25/26과 동일)." },
+      { slot: "4h", dayType: "weekend", adult: 96000, memo: "공식 요금표 주말 4시간 정상가(25/26과 동일)." },
+      { slot: "6h", dayType: "weekday", adult: 87000, memo: "공식 요금표 주중 6시간 정상가(25/26과 동일)." },
+      { slot: "6h", dayType: "weekend", adult: 105000, memo: "공식 요금표 주말 6시간 정상가(25/26과 동일)." }
     ]
   },
   {
@@ -1011,9 +1011,9 @@ const konjiamUpcomingRentalCommon = {
   sourceUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
   bookingUrl: "https://m.konjiamresort.co.kr/ski/skiInfo.dev",
   confidence: "confirmed" as const,
-  lastCheckedAt: "2026-11-21",
+  lastCheckedAt: "2026-11-26",
   verifiedByHuman: true,
-  verificationNote: "공식 최신 요금 안내 페이지 기준. 리프트 표에는 26/27 카드 할인 안내가 있지만 렌탈 표 자체에는 시즌명이 없어 26/27 현재 요금으로 반영했다. 부분 장비 렌탈은 풀세트 가격과 구분했다."
+  verificationNote: "공식 최신 요금 안내 페이지 기준(2026-11-26 재확인). 리프트 표에는 26/27 카드 할인 안내가 있지만 렌탈 표 자체에는 시즌명이 없어 26/27 현재 요금으로 반영했다. 부분 장비 렌탈은 풀세트 가격과 구분했다."
 };
 const konjiamUpcomingRentalRates = [
   { dayType: "weekday" as const, price: 36000 },

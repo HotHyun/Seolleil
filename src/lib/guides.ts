@@ -1,20 +1,22 @@
 import { priceRules, rentalPriceRules } from "@/data/prices";
+import { getResortLiftGuide } from "@/data/lift-discounts";
 import { getRentalShopsForResort, getResort, resorts } from "@/data/resorts";
 import { getSkiShuttleRoutes } from "@/data/ski-shuttles";
 import { CURRENT_SEASON, UPCOMING_SEASON, timeSlotLabels } from "@/lib/constants";
 import type { DayType, PriceConfidence, RentalShop, SkiResort, SkiShuttleRoute } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 
-export const guideTopics = ["lift-prices", "rental-shops", "shuttle"] as const;
+export const guideTopics = ["lift-prices", "rental-prices", "rental-shops", "shuttle"] as const;
 export type GuideTopic = (typeof guideTopics)[number];
 
 export const guideTopicLabels: Record<GuideTopic, string> = {
   "lift-prices": "리프트권 가격",
+  "rental-prices": "장비·의류 렌탈 가격",
   "rental-shops": "렌탈샵 비교",
   shuttle: "스키버스·셔틀"
 };
 
-const dayTypeLabels: Record<DayType, string> = {
+export const dayTypeLabels: Record<DayType, string> = {
   weekday: "평일",
   friday: "금요일",
   weekend: "주말",
@@ -161,6 +163,7 @@ export function getShuttleGuideRows(resortId: string): ShuttleGuideRow[] {
 
 export function hasGuideContent(resortId: string, topic: GuideTopic) {
   if (topic === "lift-prices") return getLiftGuideRows(resortId).length > 0;
+  if (topic === "rental-prices") return Boolean(getResortLiftGuide(resortId)?.rental);
   if (topic === "rental-shops") return getRentalGuideRows(resortId).length > 0;
   return getShuttleGuideRows(resortId).length > 0;
 }
